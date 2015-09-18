@@ -78,7 +78,14 @@ A file `fracas.xml_results/main.html` is created listing all links to the graphi
 4. Compute accuracies per section as a three-way classification (yes, no, unknown) and print them to the console. E.g.:
 
 ```bash
-Results ...
+                              all premi.          single           multi
+generalized_quantifiers   |      0.78      |      0.82      |      0.73     
+plurals                   |      0.67      |      0.67      |      0.67     
+adjectives                |      0.68      |      0.87      |      0.29     
+comparatives              |      0.48      |      0.62      |      0.33     
+attitudes                 |      0.77      |      0.78      |      0.75     
+verbs                     |      0.62      |      0.62      |      ----     
+total                     |      0.69      |      0.75      |      0.58     
 ```
 
 This script will not overwrite the directories with CCG-parsed sentences or entailment judgments, if present. If you would like any directory to be re-built, then you can remove it or rename it, and re-run the pipeline.
