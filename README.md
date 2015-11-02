@@ -110,4 +110,18 @@ You can find our semantic templates in `semantic_templates_en.yaml`. Here are so
 
 If you use this software or semantic templates for your work, please consider citing it as:
 
-* Koji Mineshima, Pascual Martínez-Gómez, Yusuke Miyao, Daisuke Bekki. Higher-order logical inference with compositional semantics. Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing, pages 2055–2061, Lisbon, Portugal, 17-21 September 2015. [pdf](http://www.emnlp2015.org/proceedings/EMNLP/pdf/EMNLP244.pdf)
+* Koji Mineshima, Pascual Martínez-Gómez, Yusuke Miyao, Daisuke Bekki. Higher-order logical inference with compositional semantics. Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing, pages 2055–2061, Lisbon, Portugal, 17-21 September 2015. [pdf](http://www.aclweb.org/anthology/D15-1244)
+
+```
+@InProceedings{mineshima-EtAl:2015:EMNLP,
+  author    = {Mineshima, Koji  and  Mart\'{i}nez-G\'{o}mez, Pascual  and  Miyao, Yusuke  and  Bekki, Daisuke},
+  title     = {Higher-order logical inference with compositional semantics},
+  booktitle = {Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing},
+  month     = {September},
+  year      = {2015},
+  address   = {Lisbon, Portugal},
+  publisher = {Association for Computational Linguistics},
+  pages     = {2055--2061},
+  url       = {http://aclweb.org/anthology/D15-1244}
+}
+```
