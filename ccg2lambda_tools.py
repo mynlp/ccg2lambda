@@ -21,8 +21,9 @@ import simplejson
 from lxml import etree
 from nltk.sem.logic import ConstantExpression
 
+from logic_parser import lexpr
+from normalization import normalize_token
 import semantic_index
-from semantic_rule import lexpr
 
 def build_ccg_tree(ccg_xml, root_id = None):
     """
@@ -43,6 +44,24 @@ def build_ccg_tree(ccg_xml, root_id = None):
             root_span.append(child_node)
     return root_span
 
+def normalize_token(token):
+    """
+    Convert symbols to avoid collisions with reserved punctuation
+    in NLTK and coq.
+    To avoid collisions with reserved words, we prefix each token
+    with an underscore '_'.
+    """
+    normalized = token
+    normalized = re.sub(r'\.', '_DOT', normalized)
+    normalized = re.sub(r',', '_COMMA', normalized)
+    normalized = re.sub(r'\(', '_LEFTB', normalized)
+    normalized = re.sub(r'\)', '_RIGHTB', normalized)
+    normalized = re.sub(r'^-$', '_HYPHEN', normalized)
+    normalized = re.sub(r'^&$', '_AMPERSAND', normalized)
+    if not normalized.startswith('_'):
+        normalized = '_' + normalized
+    return normalized
+
 def normalize_tokens(tokens):
     """
     In our format of XML trees, tokens have their own tree,
@@ -57,9 +76,13 @@ def normalize_tokens(tokens):
         if token.get('base', None) == '*':
             token.set('base', token.get('surf', '*'))
         if 'base' in token.attrib and not token.get('base', '').startswith('_'):
-            token.set('base', '_' + token.get('base', ''))
+            base = token.get('base', '')
+            base_normalized = normalize_token(base)
+            token.set('base', base_normalized)
         if 'surf' in token.attrib and not token.get('surf', '').startswith('_'):
-            token.set('surf', '_' + token.get('surf', ''))
+            surf = token.get('surf', '')
+            surf_normalized = normalize_token(surf)
+            token.set('surf', surf_normalized)
     return tokens
 
 def assign_semantics_to_ccg(ccg_xml, semantic_index):

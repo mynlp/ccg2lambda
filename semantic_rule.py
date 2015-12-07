@@ -17,13 +17,11 @@
 import copy
 import re
 
-from nltk.sem.logic import LogicParser, Expression
+from nltk.sem.logic import Expression
 
 from category import Category
-
-logic_parser = LogicParser(type_check=False)
-def lexpr(formula_str):
-    return logic_parser.parse(formula_str)
+from logic_parser import lexpr
+from normalization import normalize_token
 
 class SemanticRule(object):
     def __init__(self, category, semantics, attributes = {}):
@@ -36,6 +34,10 @@ class SemanticRule(object):
         else:
             self.semantics = semantics
         self.attributes = copy.deepcopy(attributes)
+        if 'surf' in self.attributes:
+          self.attributes['surf'] = normalize_token(self.attributes['surf'])
+        if 'base' in self.attributes:
+          self.attributes['base'] = normalize_token(self.attributes['base'])
 
     def match(self, other):
         # Check class membership and special attribute matches.

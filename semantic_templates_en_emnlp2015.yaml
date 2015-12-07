@@ -65,75 +65,75 @@
 - category: NP
   rule: fa
   semantics: \L F1 F2 F3. forall x. (F1(x) -> (F2(x) -> F3(x)))
-  child0_surf: _the
+  child0_surf: the
   child_any_pos: NNPS
 
 ## Conjunction
 - category: S\S
   rule: conj
   semantics: \L S1 S2. (S1 & S2)
-  child0_surf: _and
+  child0_surf: and
 
 - category: NP\NP
   rule: conj
   semantics: \L Q1 Q2 F1 F2. (Q2(F1, F2) & Q1(F1, F2))
-  child0_surf: _and
+  child0_surf: and
 
 - category: N\N
   rule: conj
   semantics: \L F1 F2 x. (F1(x) & F2(x))
-  child0_surf: _and
+  child0_surf: and
 
 - category: (S\NP)\(S\NP)
   rule: conj
   semantics: \L V1 V2 Q. Q(\w.TrueP, \x.(V1(\F1 F2.F2(x)) & V2(\F1 F2.F2(x))))
-  child0_surf: _and
+  child0_surf: and
 
 - category: (N/N)\(N/N)
   rule: conj
   semantics: \L M1 M2 F x. M1(M2(F),x)
-  child0_surf: _and
+  child0_surf: and
 
 - category: (N/N)/(N/N)
   rule: conj
   semantics: \L M1 M2 F x. M1(M2(F),x)
-  child0_surf: _and
+  child0_surf: and
 
 ## Disjunction
 - category: S\S
   rule: conj
   semantics: \L S1 S2. (S1 & S2)
-  child0_surf: _or
+  child0_surf: or
 
 - category: NP\NP
   rule: conj
   semantics: \L Q1 Q2 F1 F2. (Q2(F1, F2) | Q1(F1, F2))
-  child0_surf: _or
+  child0_surf: or
 
 - category: N/N
   rule: conj
   semantics: \L F1 F2 x. (F1(x) | F2(x))
-  child0_surf: _or
+  child0_surf: or
 
 - category: N\N
   rule: conj
   semantics: \L F1 F2 x. (F1(x) | F2(x))
-  child0_surf: _or
+  child0_surf: or
 
 - category: (S\NP)\(S\NP)
   rule: conj
   semantics: \L V1 V2 Q. Q(\w.TrueP, \x.(V1(\F1 F2.F2(x)) | V2(\F1 F2.F2(x))))
-  child0_surf: _or
+  child0_surf: or
 
 - category: (N/N)\(N/N)
   rule: conj
   semantics: \L M1 M2 F x. (M1(F,x) | M2(F,x))
-  child0_surf: _or
+  child0_surf: or
 
 - category: (N/N)/(N/N)
   rule: conj
   semantics: \L M1 M2 F x. M1(M2(F),x)
-  child0_surf: _or
+  child0_surf: or
 
 ## sententce final particle
 - category: S
@@ -144,33 +144,33 @@
 - category: S
   rule: lp
   semantics: \L S. S
-  child0_surf: _COMMA
+  child0_surf: ","
 
 - category: NP
   rule: rp
   semantics: \L R. L
-  child0_surf: _COMMA
+  child0_surf: ","
 
 - category: S\NP
   rule: rp
   semantics: \L R. L
-  child0_surf: _COMMA
+  child0_surf: ","
 
 - category: NP\NP
   rule: conj
   semantics: \L Q1 Q2 F1 F2. (Q2(F1, F2) & Q1(F1, F2))
-  child0_surf: _COMMA
+  child0_surf: ","
 
 - category: NP\NP
   rule: conj
   semantics: \L Q1 Q2 F1 F2. (Q2(F1, F2) | Q1(F1, F2))
-  child0_surf: _COMMA
-  child_any_surf: _or
+  child0_surf: ","
+  child_any_surf: or
 
 - category: S\S
   rule: conj
   semantics: \L S. S
-  child0_surf: _COMMA
+  child0_surf: ","
 
 
 ##### Noun Phrases and Pronouns #####
@@ -191,23 +191,23 @@
 
 - category: NP
   semantics: \E F1 F2. forall x. (_people(x) -> (F1(x) -> F2(x)))
-  surf: _everyone
+  surf: everyone
 
 - category: NP
   semantics: \E F1 F2. forall x. (F1(x) -> F2(x))
-  surf: _all
+  surf: all
 
 - category: NP
   semantics: \E F1 F2. forall x. (F1(x) -> F2(x))
-  surf: _each
+  surf: each
 
 - category: NP
   semantics: \E F1 F2. exists x. (two(x) & F1(x) & F2(x))
-  surf: _both
+  surf: both
 
 - category: NP
   semantics: \E F1 F2. (exists x. (F1(x) & two(x)) & forall x. (F1(x) -> - F2(x)))
-  surf: _neither
+  surf: neither
 
 
 ##### Determiners #####
@@ -218,67 +218,67 @@
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> F3(x)))
-  surf: _every
+  surf: every
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> F3(x)))
-  surf: _all
+  surf: all
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> F3(x)))
-  surf: _each
+  surf: each
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> F3(x)))
-  surf: _any
+  surf: any
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. exists x. (F1(x) & F2(x) & F3(x))
-  surf: _some
+  surf: some
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. exists x. (F1(x) & F2(x) & F3(x))
-  surf: _a
+  surf: a
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. exists x. (F1(x) & F2(x) & F3(x))
-  surf: _an
+  surf: an
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. exists x. (F1(x) & F2(x) & F3(x))
-  surf: _the
+  surf: the
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. Most(\x(F1(x) & F2(x)), F3)
-  surf: _most
+  surf: most
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. exists x. (two(x) & F1(x) & F2(x) & F3(x))
-  surf: _both
+  surf: both
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. (exists x. (F1(x) & two(x)) & forall x. (F1(x) -> (F2(x) -> - F3(x))))
-  surf: _neither
+  surf: neither
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> - F3(x)))
-  surf: _no
+  surf: "no"
 
 - category: NP[nb=true]/N
   semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> - F3(x)))
-  surf: _few
+  surf: few
 
 - category: NP/NP
   semantics: \E Q F1 F2. forall x. (Q(\w.TrueP, \y.((x = y) & F1(y))) -> F2(x))
-  surf: _all
+  surf: all
 
 - category: NP\NP
   semantics: \E Q F1 F2. forall x. (Q(\w.TrueP, \y.((x = y) & F1(y))) -> F2(x))
-  surf: _all
+  surf: all
 
 - category: NP/NP
   semantics: \E Q. Q
-  surf: _such
+  surf: such
 
 
 ##### Adverbs #####
@@ -315,7 +315,7 @@
 
 - category: N/N
   semantics: \E F1 F2 F3. Most(\x.(F1(x) & F2(x)), F3)
-  surf: _most
+  surf: most
 
 - category: N\N
   semantics: \E F x. (E(x) & F(x))
@@ -352,7 +352,7 @@
 
 - category: ((S\NP)\(S\NP))/(S[ng=true]\NP)
   semantics: \E V1 V2 Q. Q(\w.TrueP, \x.V1(\F1 F2.(V2(\G1 G2.G2(x)) & -F2(x))))
-  surf: _without
+  surf: without
 
 - category: (NP\NP)/(S[ng=true]\NP)
   semantics: \E V Q F. Q(\x.V(\G1 G2.(G2(x) & F(x))))
@@ -390,11 +390,11 @@
 
 - category: (S[dcl=true]\NP)/(S[to=true]\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.V(\F1 F2.E(x,F2(x))))
-  base: _manage
+  base: manage
 
 - category: (S[dcl=true]\NP)/(S[to=true]\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.V(\F1 F2.E(x,F2(x))))
-  base: _fail
+  base: fail
 
 - category: ((S\NP)/(S[ng=true]\NP))/NP
   semantics: \E Q1 V Q2. Q2(\w.TrueP, \x.E(x,Q1(\w.TrueP, \y.V(\F1 F2.F2(y)))))
@@ -418,15 +418,15 @@
 
 - category: (S\NP)/S[em=true]
   semantics: \E S Q. Q(\w.TrueP, \x.E(x,S))
-  base: _know
+  base: know
 
 - category: (S\NP)/S[em=true]
   semantics: \E S Q. Q(\w.TrueP, \x.E(x,S))
-  base: _manage
+  base: manage
 
 - category: (S\NP)/S[em=true]
   semantics: \E S Q. Q(\w.TrueP, \x.E(x,S))
-  base: _fail
+  base: fail
 
 - category: (S\NP)/S[qem=true]
   semantics: \E S Q. Q(\w.TrueP, \x.E(x,S))
@@ -440,22 +440,22 @@
 
 - category: (S\NP)/NP
   semantics: \E Q1 Q2. Q2(\w.TrueP, \x.Q1(\w.TrueP, \y.(x = y)))
-  base: _be
+  base: be
 
 - category: (S[dcl=true]\NP)/PP
   semantics: \E F Q. Q(\w.TrueP, F)
-  base: _be
+  base: be
 
 - category: (S\NP)/(S[pss=true]\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.V(\F1 F2.F2(x)))
 
 - category: (S\NP)/(S[adj=true]\NP)
   semantics: \E X. X
-  base: _be
+  base: be
 
 - category: (S\NP)/(S[adj=true]\NP)
   semantics: \E X. X
-  base: _be
+  base: be
 
 - category: ((S[dcl=true]\NP[expl=true])/S[em=true])/(S[adj=true]\NP)
   semantics: \E V S Q. V(\F1 F2.F2(S))
@@ -469,15 +469,15 @@
 
 - category: (S\NP)\(S\NP) 
   semantics: \E V Q. Q(\w.TrueP, \x.-V(\F1 F2.F2(x)))
-  surf: _not
+  surf: not
 
 - category: (S[adj=true]\NP)/(S[adj=true]\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.-V(\F1 F2.F2(x)))
-  surf: _not
+  surf: not
 
 - category: (S\NP)\(S\NP) 
   semantics: \E V Q. Q(\w.TrueP, \x.-V(\F1 F2.F2(x)))
-  surf: _never
+  surf: never
 
 
 ##### Adjectives #####
@@ -488,15 +488,15 @@
 
 - category: S[adj=true]\NP
   semantics: \E Q. Q(\w.TrueP, \x.E(x))
-  surf: _true
+  surf: "true"
 
 - category: S[adj=true]\NP
   semantics: \E Q. Q(\w.TrueP, \x.E(x))
-  surf: _false
+  surf: "false"
 
 - category: N/N
   semantics: \E F x. E(F(x))
-  surf: _former
+  surf: former
 
 - category: (S[adj=true]\NP)/S[em=true]
   semantics: \E S Q. Q(\w.TrueP, \x.E(x,S))
@@ -511,54 +511,54 @@
 
 - category: (S[dcl=true]\NP)/(S[b=true]\NP)
   semantics: \E V. V
-  base: _do
+  base: do
 
 - category: (S[dcl=true]\NP)/NP
   semantics: \E Q1 Q2. Q2(\w.TrueP, \x.-(Q1(\w.TrueP, \y.(x = y))))
-  surf: _isn't
+  surf: isn't
 
 - category: (S[dcl=true]\NP)/NP
   semantics: \E Q1 Q2. Q2(\w.TrueP, \x.-(Q1(\w.TrueP, \y.(x = y))))
-  surf: _aren't
+  surf: aren't
 
 - category: (S[adj=true]\NP)/(S[adj=true]\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.-V(\F1 F2.F2(x)))
-  surf: _isn't
+  surf: isn't
 
 - category: (S[adj=true]\NP)/(S[adj=true]\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.-V(\F1 F2.F2(x)))
-  surf: _aren't
+  surf: aren't
 
 - category: (S[dcl=true]\NP)/(S\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.-V(\F1 F2.F2(x)))
-  surf: _don't
+  surf: don't
 
 - category:  (S[dcl=true]\NP)/(S\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.-V(\F1 F2.F2(x)))
-  surf: _doesn't
+  surf: doesn't
 
 - category:  (S[dcl=true]\NP)/(S\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.-V(\F1 F2.F2(x)))
-  surf: _didn't
+  surf: didn't
 
 
 ##### Floating quantifiers #####
 
 - category: (S\NP)/(S\NP)
   semantics: \E V Q. forall x. (Q(\w.TrueP, \y.(x = y)) -> V(\F1 F2.F2(x)))
-  surf: _all
+  surf: all
 
 - category: (S\NP)\(S\NP)
   semantics: \E V Q. forall x. (Q(\w.TrueP, \y.(x = y)) -> V(\F1 F2.F2(x)))
-  surf: _all
+  surf: all
 
 - category: (S\NP)/(S\NP)
   semantics: \E V Q. forall x. (Q(\w.TrueP, \y.(x = y)) -> V(\F1 F2.F2(x)))
-  surf: _each
+  surf: each
 
 - category: (S\NP)\(S\NP)
   semantics: \E V Q. forall x. (Q(\w.TrueP, \y.(x = y)) -> V(\F1 F2.F2(x)))
-  surf: _each
+  surf: each
 
 
 ##### Relative clauses #####
@@ -588,7 +588,7 @@
 
 - category: (S/S)/S[dcl=true]
   semantics: \E S1 S2. (S1 -> S2)
-  surf: _if
+  surf: if
 
 - category: ((S\NP)\(S\NP))/S[dcl=true]
   semantics: \E S V Q. E(S, V(Q))
@@ -597,24 +597,24 @@
 - category: ((S\NP)\(S\NP))/S[dcl=true]
   semantics: \E S V Q. E(S, V(Q))
   coq_type: Prop -> Prop -> Prop
-  surf: _after
+  surf: after
 
 - category: ((S\NP)\(S\NP))/S[dcl=true]
   semantics: \E S V Q. E(S, V(Q))
   coq_type: Prop -> Prop -> Prop
-  surf: _before
+  surf: before
 
 - category: (S/S)/S[dcl=true]
   semantics: \E S1 S2. (S1 -> S2)
-  surf: _when
+  surf: when
 
 - category: (S\NP)/(S\NP)
   semantics: \E V Q. V(Q)
-  surf: _either
+  surf: either
 
 - category : N/N
   semantics: \E X.X
-  surf: _either
+  surf: either
 
 
 ##### Semantically empty expressions #####
@@ -641,10 +641,10 @@
 
 - category: .
   semantics: \S X. X
-  surf: _DOT
+  surf: "."
 
 - category: =true,
   semantics: \S X. X
-  surf: _COMMA
+  surf: ","
 
 

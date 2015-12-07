@@ -20,7 +20,8 @@ import simplejson
 import yaml
 
 from category import Category
-from semantic_rule import SemanticRule, lexpr
+from logic_parser import lexpr
+from semantic_rule import SemanticRule
 
 class SemanticIndex(object):
     def __init__(self, contents):
@@ -118,7 +119,7 @@ def find_node_by_id(node_id, xml_tree):
     for span in xml_tree:
         if span.get('id') == node_id:
             return span
-    assert True, 'It should have found a span for id {0}'.format(node_id)
+    raise(ValueError('It should have found a span for id {0}'.format(node_id)))
 
 def load_semantic_rules(fn):
     semantic_rules = []

@@ -114,8 +114,8 @@ def candc_to_transccg(ccg_tree, sentence_number):
         # in nltk or coq. We also substitute dots '.' by 'DOT'.
         word = normalize_string(token.get('word'), 'surf')
         lemma = normalize_string(token.get('lemma'), 'base')
-        token.set('surf', '_%s' % word)
-        token.set('base', '_%s' % lemma)
+        token.set('surf', word)
+        token.set('base', lemma)
         del token.attrib['word']
         del token.attrib['lemma']
     tokens_node = etree.Element('tokens')
@@ -146,8 +146,6 @@ def normalize_string(raw_string, attribute):
     normalized = raw_string
     if attribute == 'base':
         normalized = normalized.lower()
-    normalized = re.sub(r'\.', 'DOT', normalized)
-    normalized = re.sub(r',', 'COMMA', normalized)
     return normalized
 
 def make_transccg_xml_tree(transccg_trees):

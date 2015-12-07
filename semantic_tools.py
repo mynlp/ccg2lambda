@@ -22,12 +22,12 @@ import string
 import subprocess
 
 from nltk import Tree
-
-from nltk2coq import normalize_interpretation
 from nltk.sem.logic import (typecheck, read_type, ConstantExpression,
-  AbstractVariableExpression, InconsistentTypeHierarchyException, LogicParser)
+  AbstractVariableExpression, InconsistentTypeHierarchyException)
+
 from knowledge import get_lexical_relations, get_tokens_from_ccg_tree
-from semantic_rule import lexpr
+from logic_parser import lexpr
+from nltk2coq import normalize_interpretation
 
 def get_tree_or_string(tree_str):
     return Tree.fromstring(tree_str) if tree_str.startswith('(') else tree_str

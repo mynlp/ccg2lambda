@@ -16,7 +16,7 @@
 
 from nltk.sem.logic import *
 
-from semantic_rule import lexpr
+from logic_parser import lexpr
 
 def normalize_interpretation(expression):
     norm_interp_str = coq_string_expr(expression)

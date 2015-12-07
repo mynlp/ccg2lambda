@@ -25,9 +25,9 @@ from nltk.sem.logic import LogicParser
 
 from ccg2lambda_tools import assign_semantics_to_ccg
 from knowledge import get_lexical_relations
+from logic_parser import lexpr
 from nltk2coq import normalize_interpretation
 from semantic_index import SemanticRule, SemanticIndex
-from semantic_rule import lexpr
 from semantic_tools import (resolve_prefix_to_infix_operations, build_dynamic_library,
   convert_coq_to_nltk_type, convert_coq_signatures_to_nltk, merge_dynamic_libraries)
 
