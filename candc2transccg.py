@@ -190,7 +190,8 @@ def main(args=None):
         sys.exit(1)
     candc_trees_filename = args[0]
 
-    xml_tree = etree.parse(candc_trees_filename)
+    parser = etree.XMLParser(remove_blank_text=True)
+    xml_tree = etree.parse(candc_trees_filename, parser)
     root = xml_tree.getroot()
     ccg_trees = root.findall('ccg')
 
@@ -200,6 +201,7 @@ def main(args=None):
         transccg_trees.append(transccg_tree)
 
     transccg_xml_tree = make_transccg_xml_tree(transccg_trees)
+    # transccg_xml_tree.write(pretty_print=True, encoding='utf-8')
     encoding = xml_tree.docinfo.encoding
     result = etree.tostring(transccg_xml_tree, xml_declaration=True,
                             encoding=encoding, pretty_print=True)
