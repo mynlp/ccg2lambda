@@ -24,10 +24,7 @@ def normalize_token(token):
     with an underscore '_'.
     """
     normalized = token
-    try:
-      normalized = re.sub(r'\.', '_DOT', normalized)
-    except TypeError:
-      from pudb import set_trace; set_trace()
+    normalized = re.sub(r'\.', '_DOT', normalized)
     normalized = re.sub(r',', '_COMMA', normalized)
     normalized = re.sub(r'\(', '_LEFTB', normalized)
     normalized = re.sub(r'\)', '_RIGHTB', normalized)

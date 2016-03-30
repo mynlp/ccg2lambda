@@ -26,13 +26,13 @@
 - category: NP
   rule: lex
   semantics: \C F1 F2. - exists x. (C(x) & F1(x) & F2(x))
-  child_any_base: _few
+  child_any_base: few
 
 # Unary rule for proportional NPs
 - category: NP
   rule: lex
   semantics: \C. C
-  child_any_base: _most
+  child_any_base: most
 
 # existential type-raising for proper nouns from N to NP
 - category: NP
@@ -44,7 +44,7 @@
   rule: lex
   semantics: \E F1 F2. exists x. ((x = E) & F1(E) & F2(E))
   child_any_pos: NNP
-  child_any_base: _either
+  child_any_base: either
 
 - category: N\N
   rule: lex

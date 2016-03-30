@@ -44,24 +44,6 @@ def build_ccg_tree(ccg_xml, root_id = None):
             root_span.append(child_node)
     return root_span
 
-def normalize_token(token):
-    """
-    Convert symbols to avoid collisions with reserved punctuation
-    in NLTK and coq.
-    To avoid collisions with reserved words, we prefix each token
-    with an underscore '_'.
-    """
-    normalized = token
-    normalized = re.sub(r'\.', '_DOT', normalized)
-    normalized = re.sub(r',', '_COMMA', normalized)
-    normalized = re.sub(r'\(', '_LEFTB', normalized)
-    normalized = re.sub(r'\)', '_RIGHTB', normalized)
-    normalized = re.sub(r'^-$', '_HYPHEN', normalized)
-    normalized = re.sub(r'^&$', '_AMPERSAND', normalized)
-    if not normalized.startswith('_'):
-        normalized = '_' + normalized
-    return normalized
-
 def normalize_tokens(tokens):
     """
     In our format of XML trees, tokens have their own tree,

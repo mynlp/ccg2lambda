@@ -21,6 +21,7 @@ import yaml
 
 from category import Category
 from logic_parser import lexpr
+from normalization import normalize_token
 from semantic_rule import SemanticRule
 
 class SemanticIndex(object):
@@ -81,6 +82,10 @@ class SemanticIndex(object):
             # Assign coq types.
             ccg_tree.set('coq_type', ccg_tree[0].attrib.get('coq_type', "[]"))
         else:
+            # try:
+            #   predicate_left  = lexpr(ccg_tree[0].get('sem'))
+            # except:
+            #   from pudb import set_trace; set_trace()
             predicate_left  = lexpr(ccg_tree[0].get('sem'))
             predicate_right = lexpr(ccg_tree[1].get('sem'))
             semantics = semantic_template(predicate_left).simplify()
@@ -133,6 +138,9 @@ def load_semantic_rules(fn):
         category = attributes['category']
         semantics = lexpr(attributes['semantics'])
         del attributes['category'], attributes['semantics']
+        for attr_name, attr_val in attributes.items():
+          if attr_name.endswith('base') or attr_name.endswith('surf'):
+            attributes[attr_name] = normalize_token(attr_val)
         new_semantic_rule = \
           SemanticRule(category, semantics, attributes)
         semantic_rules.append(new_semantic_rule)
