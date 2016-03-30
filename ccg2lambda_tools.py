@@ -75,8 +75,9 @@ def assign_semantics_to_ccg(ccg_xml, semantic_index):
     In returns a CCG lxml tree structure with a new 'sem' field that
     contains the semantics at each node.
     """
-    ccg_tree = build_ccg_tree(ccg_xml.find('.//ccg'))
-    tokens = ccg_xml.find('.//tokens')
+    ccg_flat_tree = copy.deepcopy(ccg_xml.find('.//ccg'))
+    ccg_tree = build_ccg_tree(ccg_flat_tree)
+    tokens = copy.deepcopy(ccg_xml.find('.//tokens'))
     tokens = normalize_tokens(tokens)
     assign_semantics(ccg_tree, semantic_index, tokens)
     return ccg_tree

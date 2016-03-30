@@ -17,6 +17,9 @@
 
 from __future__ import print_function
 
+import argparse
+import codecs
+import json
 import logging
 from lxml import etree
 import os
@@ -29,10 +32,7 @@ from semantic_tools import prove_from_ccg
 from visualization_tools import convert_trees_to_mathml
 
 def main(args = None):
-    USAGE=textwrap.dedent("""\
-        Usage:
-            python validity.py <categories_template.yaml> <parsed_sentences.xml> --[arbi-types|auto-types]
-
+    DESCRIPTION=textwrap.dedent("""\
             categories_template.yaml should contain the semantic templates
               in YAML format.
             parsed_sentence.xml contains the parsed sentences. All CCG trees correspond
@@ -47,27 +47,33 @@ def main(args = None):
             inference of types is enabled. This automatic inference relies on the naive
             implementation in the sem/logic module of NLTK.
       """)
-    if args is None:
-        args = sys.argv[1:]
-    if len(args) not in [2, 3]:
-        print('Wrong number of arguments.')
-        print(USAGE)
-        sys.exit(1)
-    if not os.path.exists(args[0]) or not os.path.exists(args[1]):
-        print('File does not exist: {0} or {1}'.format(args[0], args[1]))
-        sys.exit(1)
-    expression_templates_filename = args[0]
-    parsed_sentences_filename = args[1]
-    if len(args) == 3 and args[2] == '--arbi-types':
-        arbi_types_requested = True
-    else:
-        arbi_types_requested = False
 
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=DESCRIPTION)
+    parser.add_argument("expression_templates_filename")
+    parser.add_argument("parsed_sentences_filename")
+    parser.add_argument("--sem_out_fname", dest="sem_out_fname", nargs='?',
+                        type=str, default="")
+    parser.add_argument("--theorem_template", dest="theorem_template", nargs='?',
+                        type=str, default="")
+    parser.add_argument("--arbi-types", action="store_true", default=False)
+    parser.add_argument("--abduction", action="store_true", default=False)
+    parser.add_argument("--gold_trees", action="store_true", default=False)
+    args = parser.parse_args()
+      
+    if not os.path.exists(args.expression_templates_filename):
+      print('File does not exist: {0}'.format(args.expression_templates_filename))
+    if not os.path.exists(args.parsed_sentences_filename):
+      print('File does not exist: {0}'.format(args.parsed_sentences_filename))
+    
     logging.basicConfig(level=logging.WARNING)
 
-    semantic_index = SemanticIndex(expression_templates_filename)
+    semantic_index = SemanticIndex(args.expression_templates_filename)
 
-    ccg_xml_trees = etree.parse(parsed_sentences_filename).findall('.//sentence')
+    parser = etree.XMLParser(remove_blank_text=True)
+    ccg_xml_trees = etree.parse(
+        args.parsed_sentences_filename, parser).findall('.//sentence')
 
     logical_interpretations = []
     ccg_tree_list = []
@@ -93,6 +99,7 @@ def main(args = None):
     print(inference_result, file=sys.stdout)
     html_str = convert_trees_to_mathml(ccg_tree_list, ccg_tokens_list, coq_scripts)
     print(html_str, file=sys.stderr)
+
 
 if __name__ == '__main__':
     main()
