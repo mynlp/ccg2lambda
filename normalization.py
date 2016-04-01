@@ -33,3 +33,17 @@ def normalize_token(token):
     if not normalized.startswith('_'):
         normalized = '_' + normalized
     return normalized
+
+def denormalize_token(token):
+    """
+    Unconvert symbols. This is the reverse operation as above.
+    """
+    denormalized = token
+    denormalized = re.sub('_DOT', r'\.', denormalized)
+    denormalized = re.sub('_COMMA', r',', denormalized)
+    denormalized = re.sub('_LEFTB', r'\(', denormalized)
+    denormalized = re.sub('_RIGHTB', r'\)', denormalized)
+    denormalized = re.sub('_HYPHEN', r'^-$', denormalized)
+    denormalized = re.sub('_AMPERSAND', r'^&$', denormalized)
+    denormalized = denormalized.lstrip('_')
+    return denormalized

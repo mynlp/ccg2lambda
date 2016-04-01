@@ -126,7 +126,7 @@ def convert_trees_to_mathml(tree_list, tokens_list, verbatim_strings = []):
       'Number of ccg_trees and ccg_tokens differ: {0} vs. {1}'\
       .format(len(tree_list), len(tokens_list))
     num_hypotheses = len(tree_list) - 1
-    sentence_ids = ["Hypothesis {0}: ".format(i + 1) for i in range(num_hypotheses)]
+    sentence_ids = ["Premise {0}: ".format(i + 1) for i in range(num_hypotheses)]
     sentence_ids.append("Conclusion: ")
     mathml_str = ""
     for sentence_id, tree, tokens in zip(sentence_ids, tree_list, tokens_list):

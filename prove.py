@@ -26,9 +26,9 @@ import os
 import sys
 import textwrap
 
-from ccg2lambda_tools import assign_semantics_to_ccg
+from ccg2lambda_tools import assign_semantics_to_ccg, build_ccg_tree
 from semantic_index import SemanticIndex
-from semantic_tools import prove_from_ccg
+from semantic_tools import prove_doc
 from visualization_tools import convert_trees_to_mathml
 
 def main(args = None):
@@ -64,36 +64,15 @@ def main(args = None):
     parser = etree.XMLParser(remove_blank_text=True)
     doc = etree.parse(args.sem, parser)
 
-    # TODO: implement prove_from_trees cleanly.
+    # from pudb import set_trace; set_trace()
     inference_result, coq_scripts = prove_doc(doc)
     print(inference_result, file=sys.stdout)
     # TODO: make convert_trees_to_mathml work with general trees.
-    html_str = convert_trees_to_mathml(ccg_tree_list, ccg_tokens_list, coq_scripts)
-    print(html_str, file=sys.stderr)
-
-    # TODO: exit gracefully.
-    sys.exit(1)
-
-    for tree in trees:
-        ccg_tree = assign_semantics_to_ccg(ccg_xml, semantic_index)
-        ccg_tree_list.append(ccg_tree)
-        assert 'sem' in ccg_tree.attrib, \
-          'The assignment of semantics to CCG tree may have failed. Tree: {0}'\
-          .format(etree.tostring(ccg_tree, pretty_print=True, encoding = 'utf-8')\
-                  .decode('utf-8'))
-        lambda_expression = ccg_tree.get('sem')
-        logical_interpretations.append(lambda_expression)
-        ccg_tokens = ccg_xml.find("tokens")
-        ccg_tokens_list.append(ccg_tokens)
-    if arbi_types_requested:
-        inference_result, coq_scripts = \
-          prove_from_ccg(logical_interpretations, ccg_trees=ccg_tree_list,
-                                                ccg_xml_trees=ccg_xml_trees)
-    else:
-        inference_result, coq_scripts = \
-          prove_from_ccg(logical_interpretations, ccg_xml_trees=ccg_xml_trees)
-    print(inference_result, file=sys.stdout)
-    html_str = convert_trees_to_mathml(ccg_tree_list, ccg_tokens_list, coq_scripts)
+    # html_str = convert_trees_to_mathml(ccg_tree_list, ccg_tokens_list, coq_scripts)
+    ccg_trees = [build_ccg_tree(c) for c in doc.xpath('//ccg')]
+    # from pudb import set_trace; set_trace()
+    html_str = convert_trees_to_mathml(
+        ccg_trees, doc.xpath('//tokens'), coq_scripts)
     print(html_str, file=sys.stderr)
 
 if __name__ == '__main__':

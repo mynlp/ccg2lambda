@@ -28,6 +28,7 @@ from nltk.sem.logic import (typecheck, read_type, ConstantExpression,
 from knowledge import get_lexical_relations, get_tokens_from_ccg_tree
 from logic_parser import lexpr
 from nltk2coq import normalize_interpretation
+from normalization import normalize_token
 
 def linearize_type(pred_type):
     linearized_type = []
@@ -138,6 +139,23 @@ def remove_reserved_predicates(signature):
         if reserved_predicate in signature:
             del signature[reserved_predicate]
     return signature
+
+def get_dynamic_library_from_doc(doc, formulas):
+    # Each type is of the form "predicate : basic_type -> ... -> basic_type."
+    types = set(doc.xpath('//semantics//@type'))
+    coq_lib = ['Parameter {0}.'.format(t) for t in types]
+    nltk_sig = convert_coq_signatures_to_nltk(coq_lib)
+    coq_lib_augmented = build_dynamic_library(formulas, nltk_sig)
+    # coq_static_lib_path is useful to get reserved predicates.
+    # ccg_xml_trees is useful to get full list of tokens
+    # for which we need to specify types.
+    dynamic_library = merge_dynamic_libraries(
+        coq_lib=coq_lib,
+        nltk_lib=coq_lib_augmented,
+        coq_static_lib_path='coqlib.v', 
+        doc=doc)
+    dynamic_library_str = '\n'.join(dynamic_library)
+    return dynamic_library_str
 
 def build_library_entry(predicate, pred_type):
     """
@@ -254,17 +272,9 @@ def get_predicate_type_from_library(predicate, lib):
     assert isinstance(lib, dict)
     return lib.get(predicate, None)
 
-def merge_dynamic_libraries(coq_lib, nltk_lib, coq_static_lib_path, ccg_xml_trees):
+def merge_dynamic_libraries(coq_lib, nltk_lib, coq_static_lib_path, doc):
     reserved_predicates = get_reserved_preds_from_coq_static_lib(coq_static_lib_path)
-    required_predicates = []
-    for ccg_xml_tree in ccg_xml_trees:
-        tokens_node = ccg_xml_tree.find('.//tokens')
-        tokens = [token.get('base') for token in tokens_node]
-        required_predicates.extend(tokens)
-    required_predicates = list(set(required_predicates))
-    # Library entries are of the form:
-    # Parameter _predicate : Type1 -> Type2 ...
-    # We index library entries by the predicate they define.
+    required_predicates = set(normalize_token(t) for t in doc.xpath('//token/@base'))
     coq_lib_index = {coq_lib_entry.split()[1] : coq_lib_entry \
                        for coq_lib_entry in coq_lib}
     nltk_lib_index = {nltk_lib_entry.split()[1] : nltk_lib_entry \

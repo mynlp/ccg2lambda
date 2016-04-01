@@ -114,6 +114,9 @@ if [ ! -d "$parsed_dir" ]; then
   echo
 fi
 
+# debug="plurals"
+debug=""
+
 # 5) For every entailment problem, call the validity.py script. Print debug information:
 #    5.1) CCG tree in HTML, with semantic assignments (for every premise and hypothesis).
 #    5.2) Possible error messages when assigning semantics to each tree (the results/*.html).
@@ -122,16 +125,18 @@ fi
 if [ ! -d $results_dir ]; then
   echo -n "Judging entailment."
   mkdir -p $results_dir
-  for f in ${plain_dir}/*.tok; do
+  for f in ${plain_dir}/*${debug}*.tok; do
     # Display progress.
     echo -n "."
     base_filename=${f##*/}
-    # This call to validity.py requests the arbitrary types specified in semantic template,
-    # complemented with an automatic type specification by NLTK for the remaining lexical entries.
-    python validity.py \
-      $category_templates \
+    python semparse.py \
       $parsed_dir/${base_filename/.tok/.xml} \
+      $category_templates \
+      $parsed_dir/${base_filename/.tok/.sem.xml} \
       --arbi-types \
+      2> $parsed_dir/${base_filename/.tok/.sem.err}
+    python prove.py \
+      $parsed_dir/${base_filename/.tok/.sem.xml} \
     > ${results_dir}/${base_filename/.tok/.answer} \
     2> ${results_dir}/${base_filename/.tok/.html}
   done
@@ -163,7 +168,7 @@ red_color="rgb(255,0,0)"
 green_color="rgb(0,255,0)"
 white_color="rgb(255,255,255)"
 gray_color="rgb(136,136,136)"
-for gold_filename in ${plain_dir}/*.answer; do
+for gold_filename in ${plain_dir}/*${debug}*.answer; do
   base_filename=${gold_filename##*/}
   system_filename=${results_dir}/${base_filename/.txt/.answer}
   gold_answer=`cat $gold_filename`
@@ -193,7 +198,7 @@ echo "
 # Collect results and print accuracies.
 rm -f gold.results system.results
 
-for f in ${plain_dir}/*.tok; do
+for f in ${plain_dir}/*${debug}*.tok; do
   base_filename=${f##*/}
   base_filename=${base_filename/.tok/}
   num_lines=`cat $f | wc -l`

@@ -19,12 +19,13 @@ from __future__ import print_function
 
 import argparse
 import codecs
-import json
 import logging
 from lxml import etree
 import os
 import sys
 import textwrap
+
+from nltk.sem.logic import LogicalExpressionException
 
 from ccg2lambda_tools import assign_semantics_to_ccg
 from semantic_index import SemanticIndex
@@ -57,8 +58,10 @@ def main(args = None):
       
     if not os.path.exists(args.templates):
       print('File does not exist: {0}'.format(args.templates))
+      sys.exit(1)
     if not os.path.exists(args.ccg):
       print('File does not exist: {0}'.format(args.ccg))
+      sys.exit(1)
     
     logging.basicConfig(level=logging.WARNING)
 
@@ -67,30 +70,40 @@ def main(args = None):
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.parse(args.ccg, parser)
 
+    # from pudb import set_trace; set_trace()
     for sentence in root.findall('.//sentence'):
-        sem_tree = assign_semantics_to_ccg(sentence, semantic_index)
-        filter_attributes(sem_tree)
         sem_node = etree.Element('semantics')
-        sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
+        try:
+          sem_node.set('status', 'success')
+          sem_tree = assign_semantics_to_ccg(sentence, semantic_index)
+          filter_attributes(sem_tree)
+          sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
+        except LogicalExpressionException:
+          sem_node.set('status', 'failed')
         sentence.append(sem_node)
 
     root_xml_str = serialize_tree(root)
     with codecs.open(args.sem, 'wb') as fout:
       fout.write(root_xml_str)
 
-keep_attributes = set(['id', 'child', 'sem'])
+keep_attributes = set(['id', 'child', 'sem', 'type'])
 def filter_attributes(tree):
-  attrib_to_delete = [a for a in tree.attrib.keys() if a not in keep_attributes]
-  for a in attrib_to_delete:
-    del tree.attrib[a]
-  for child in tree:
-    filter_attributes(child)
-  return
+    if 'coq_type' in tree.attrib and 'child' not in tree.attrib:
+        sem_type = \
+            tree.attrib['coq_type'].lstrip('["Parameter ').rstrip('."]')
+        if sem_type:
+            tree.attrib['type'] = sem_type
+    attrib_to_delete = [a for a in tree.attrib.keys() if a not in keep_attributes]
+    for a in attrib_to_delete:
+        del tree.attrib[a]
+    for child in tree:
+        filter_attributes(child)
+    return
 
 def serialize_tree(tree):
-  tree_str = etree.tostring(
-    tree, xml_declaration=True, encoding='utf-8', pretty_print=True)
-  return tree_str
+    tree_str = etree.tostring(
+        tree, xml_declaration=True, encoding='utf-8', pretty_print=True)
+    return tree_str
 
 if __name__ == '__main__':
     main()

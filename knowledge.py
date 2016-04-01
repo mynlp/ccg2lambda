@@ -19,15 +19,10 @@ import itertools
 import re
 
 from linguistic_tools import linguistic_relationship
+from normalization import denormalize_token
 
 def get_tokens_from_ccg_tree(ccg_xml_tree):
-    tokens_node = ccg_xml_tree.find('.//tokens')
-    tokens = [token.get('base') for token in tokens_node]
-    for i in range(len(tokens)):
-        tokens[i] = re.sub(r'DOT', r'.', tokens[i])
-        tokens[i] = re.sub(r'COMMA', r',', tokens[i])
-        if tokens[i].startswith('_'):
-            tokens[i] = tokens[i][1:]
+    tokens = [denormalize_token(t) for t in ccg_xml_tree.xpath('//token/@base')]
     return tokens
 
 def create_antonym_axioms(relations_to_pairs):
