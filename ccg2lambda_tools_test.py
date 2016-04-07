@@ -787,7 +787,7 @@ class get_attributes_from_ccg_node_recursivelyTestCase(unittest.TestCase):
                                'category' : 'cat1',
                                'end' : '2',
                                'begin' : '1',
-                               'id' : 't1_1',
+                               'id' : 'sp1-1',
                                'base' : 'base1',
                                'pos' : 'pos1',
                                'surf' : 'surf1'}
@@ -819,7 +819,7 @@ class get_attributes_from_ccg_node_recursivelyTestCase(unittest.TestCase):
                                'child0_terminal' : 't1_1',
                                'child0_surf' : 'surf1',
                                'child0_category' : 'cat1',
-                               'child0_id' : 't1_1'}
+                               'child0_id' : 'sp1-1'}
         self.assertEqual(len(expected_attributes), len(attributes))
         for k in expected_attributes:
             self.assertEqual(expected_attributes.get(k, None), attributes.get(k, None))
@@ -853,7 +853,7 @@ class get_attributes_from_ccg_node_recursivelyTestCase(unittest.TestCase):
                                'child0_child0_terminal' : 't1_1',
                                'child0_child0_surf' : 'surf1',
                                'child0_child0_category' : 'cat1',
-                               'child0_child0_id' : 't1_1'}
+                               'child0_child0_id' : 'sp1-1'}
         self.assertEqual(len(expected_attributes), len(attributes))
         for k in expected_attributes:
             self.assertEqual(expected_attributes.get(k, None), attributes.get(k, None))
@@ -890,7 +890,7 @@ class get_attributes_from_ccg_node_recursivelyTestCase(unittest.TestCase):
                                'child0_child0_terminal' : 't1_1',
                                'child0_child0_surf' : 'surf1',
                                'child0_child0_category' : 'cat1',
-                               'child0_child0_id' : 't1_1',
+                               'child0_child0_id' : 'sp1-1',
                                'child1_category' : 'NP2',
                                'child1_rule' : 'lex2',
                                'child1_id' : 'sp1-4',
@@ -898,7 +898,7 @@ class get_attributes_from_ccg_node_recursivelyTestCase(unittest.TestCase):
                                'child1_child0_terminal' : 't1_2',
                                'child1_child0_surf' : 'surf2',
                                'child1_child0_category' : 'cat2',
-                               'child1_child0_id' : 't1_2'}
+                               'child1_child0_id' : 'sp1-2'}
         self.assertEqual(len(expected_attributes), len(attributes),
                          '\n{0}\nvs.\n{1}'.format(expected_attributes, attributes))
         for k in expected_attributes:
@@ -932,7 +932,7 @@ class get_attributes_from_ccg_node_recursivelyTestCase(unittest.TestCase):
                                'child0_terminal' : 't1_2',
                                'child0_surf' : 'surf2',
                                'child0_category' : 'cat2',
-                               'child0_id' : 't1_2'}
+                               'child0_id' : 'sp1-2'}
         self.assertEqual(len(expected_attributes), len(attributes),
                          '\n{0}\nvs.\n{1}'.format(expected_attributes, attributes))
         for k in expected_attributes:
