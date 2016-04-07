@@ -142,9 +142,11 @@ def convert_doc_to_mathml(doc, verbatim_strings = []):
                     + convert_node_to_mathml(ccg_trees[i], sem_trees[i], tokens[i]) \
                     + "</math>"
 
-    verbatim_text = "<p>Script piped to coq</p>"
-    for vb_str in verbatim_strings:
-        verbatim_text += "<pre>\n" + vb_str + "\n</pre>\n"
+    verbatim_text = ""
+    if verbatim_strings:
+       verbatim_text = "<p>Script piped to coq</p>"
+       for vb_str in verbatim_strings:
+           verbatim_text += "<pre>\n" + vb_str + "\n</pre>\n"
 
     html_str = """\
   <!doctype html>
