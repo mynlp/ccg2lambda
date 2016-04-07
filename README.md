@@ -33,19 +33,19 @@ python run_tests.py
 Our system assigns semantics to CCG structures, as obtained by the [C&C parser](http://svn.ask.it.usyd.edu.au/trac/candc). In order to install the C&C parser, you may need to register, download the parser and the models, and follow their [instructions](http://svn.ask.it.usyd.edu.au/trac/candc/wiki/Installation) to set it up. For this software to find the C&C parser, please create a file `candc_location.txt` with the path to the C&C parser:
 
 ```bash
-$ echo "/path/to/candc-1.00/" > candc_location.txt
+echo "/path/to/candc-1.00/" > candc_location.txt
 ```
 
 Finally, please install the [Coq Proof Assistant](https://coq.inria.fr/) that we use for automated reasoning. In Ubuntu, you can install it by:
 
 ```bash
-$ sudo apt-get install coq
+sudo apt-get install coq
 ```
 
 Then, compile the coq library that contains the axioms:
 
 ```bash
-$ coqc coqlib.v
+coqc coqlib.v
 ```
 
 ## Using the Semantic Parser
@@ -139,7 +139,6 @@ graphdebug.html may contain plain debugging information
 (e.g. python error messages, etc.). Here is the `graphdebug.html`
 of the example above:
 
-Inline-style: 
 ![alt text](./doc/images/graphdebug.png "Visualization of semantic parser and prover")
 
 ## Visualization
@@ -156,8 +155,7 @@ python visualize.py sentences.xml > sentences.html
 and then open the file `sentences.html` with your favourite web browser.
 You should be able to see something like this:
 
-Inline-style: 
-![alt text](./doc/images/ccg_html.png "Visualization of CCG tree (without semantic representations)")
+![alt text](./doc/images/ccg_html.png "Visualization of CCG trees (without semantic representations)")
 
 ## Running the RTE pipeline on FraCas.
 
