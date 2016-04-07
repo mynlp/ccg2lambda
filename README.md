@@ -10,25 +10,23 @@ nltk 3, lxml, simplejson and yaml python libraries. I recommend to use a python 
 and install the packages in the virtual environment with `pip`:
 
 ```bash
-$ virtualenv --no-site-packages --distribute -p /usr/bin/python3 py3
-$ source py3/bin/activate
-(py3)$ pip install -I nltk==3.0.0
-(py3)$ pip install lxml simplejson pyyaml
+git clone git@github.com:mynlp/ccg2lambda.git
+virtualenv --no-site-packages --distribute -p /usr/bin/python3 py3
+source py3/bin/activate
+pip install lxml simplejson pyyaml -I nltk==3.0.0
 ```
 
 You also need to install WordNet:
 
 ```bash
-(py3)$ python
->>> import nltk
->>> nltk.download('wordnet')
+python -c "import nltk; nltk.download('wordnet')"
 ```
 
 To ensure that all software is working as expected, you can run the tests:
 
 ```bash
-(py3)$ cd ccg2lambda/
-(py3)$ python run_tests.py
+cd ccg2lambda/
+python run_tests.py
 ```
 (all tests should pass, except a few expected failures).
 
@@ -50,7 +48,118 @@ Then, compile the coq library that contains the axioms:
 $ coqc coqlib.v
 ```
 
-## Running the pipeline.
+## Using the Semantic Parser
+
+Let's assume that we have a file `sentences.txt` with one sentence per line,
+and that we want to semantic parse those sentences. Here is the content of
+my file:
+
+```
+All women ordered coffee or tea.
+Some woman did not order coffee.
+Some woman ordered tea.
+```
+
+And we want to obtain a symbolic semantic representation such as:
+
+```
+forall x. (woman(x) -> exists y. ((tea(y) \/ coffee(y)) /\ order(x, y)))
+exists x. (woman(x) /\ -exists y. (cofee(y) /\ order(x, y)))
+exists x. (woman(x) /\ exists y. (tea(y) /\ order(x, y)))
+```
+
+First we need to obtain the CCG derivations (parse trees) of the sentences
+in the text file using C&C and convert its XML format into Jigg's XML format:
+
+```bash
+cat sentences.txt | perl tokenizer.perl -l en 2>/dev/null > sentences.tok
+/path/to/candc-1.00/bin/candc --models /path/to/candc-1.00/models --candc-printer xml --input sentences.tok > sentences.candc.xml
+python candc2transccg.py sentences.candc.xml > sentences.xml
+```
+
+Then, we are ready to obtain the semantic representations by using semantic
+templates and the CCG derivations obtained above:
+
+```bash
+python semparse.py sentences.xml semantic_templates_en_emnlp2015.yaml sentences.sem.xml
+```
+
+The semantic representations are in the `sentences.sem.xml` file,
+where a new XML node `<semantics>` has been added with as many child nodes
+as the CCG structure. Each semantic span has the logical representation
+obtained up to that span. The root span has the logical representation
+of the whole sentence. Here there is an excerpt of the semantics XML node
+of the last sentence:
+
+```xml
+<semantics status="success" root="s2_sp0">
+  <span id="s2_sp0" child="s2_sp1 s2_sp9" sem="exists x.(_woman(x) &amp; TrueP &amp; exists z4.(_tea(z4) &amp; TrueP &amp; _order(x,z4)))"/>
+  <span id="s2_sp1" child="s2_sp2 s2_sp5" sem="exists x.(_woman(x) &amp; TrueP &amp; exists z4.(_tea(z4) &amp; TrueP &amp; _order(x,z4)))"/>
+  <span id="s2_sp2" child="s2_sp3 s2_sp4" sem="\F2 F3.exists x.(_woman(x) &amp; F2(x) &amp; F3(x))"/>
+  <span id="s2_sp3" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+  <span id="s2_sp4" sem="\x._woman(x)" type="_woman : Entity -&gt; Prop"/>
+  <span id="s2_sp5" child="s2_sp6 s2_sp7" sem="\Q2.Q2(\w.TrueP,\x.exists z4.(_tea(z4) &amp; TrueP &amp; _order(x,z4)))"/>
+  <span id="s2_sp6" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._order(x,y)))" type="_order : Entity -&gt; Entity -&gt; Prop"/>
+  <span id="s2_sp7" child="s2_sp8" sem="\F1 F2.exists x.(_tea(x) &amp; F1(x) &amp; F2(x))"/>
+  <span id="s2_sp8" sem="\x._tea(x)" type="_tea : Entity -&gt; Prop"/>
+  <span id="s2_sp9" sem="\X.X"/>
+</semantics>
+```
+
+The `sem` attribute contains the logical formulas, and the `type` attributes
+the types of the predicates (types only appear at the leaves).
+
+## Using a prover (Coq) for recognizing textual entailment
+
+We believe that the semantic representations above can be used
+for several NLP tasks. We have been using them so far
+for recognizing textual entailment. For this purpose,
+we assume that all sentences in the file are premises,
+except the last one, which is the conclusion.
+
+To build a theorem out of those logical representations,
+pipe it to a theorem prover (Coq) and judge the entailment
+relation, you can run the following command:
+
+```bash
+python prove.py sentences.sem.xml 2> graphdebug.html
+```
+
+That command will output `yes` (entailment relation - the conclusion
+can be proved given the premises), `no` (contradiction - the negated
+conclusion can be proved), `unknown` (otherwise).
+
+If the parsing process and theorem proving succeeded,
+graphdebug.html will have a graphical representation
+of the CCG trees, augmented with logical formulas at
+every node below the syntactic category. The script
+that pipes the theorem to Coq is also displayed at
+the bottom. If the semantic parsing or prover fails,
+graphdebug.html may contain plain debugging information
+(e.g. python error messages, etc.). Here is the `graphdebug.html`
+of the example above:
+
+Inline-style: 
+![alt text](./doc/images/graphdebug.png "Visualization of semantic parser and prover")
+
+## Visualization
+
+It is also possible to visualize CCG trees, either before
+or after augmenting them with semantic representations.
+For example, to visualize the CCG trees only (without
+semantic representations):
+
+```bash
+python visualize.py sentences.xml > sentences.html
+```
+
+and then open the file `sentences.html` with your favourite web browser.
+You should be able to see something like this:
+
+Inline-style: 
+![alt text](./doc/images/ccg_html.png "Visualization of CCG tree (without semantic representations)")
+
+## Running the RTE pipeline on FraCas.
 
 First, you need to download the copy of [FraCaS provided by MacCartney and Manning (2007)](http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml):
 
