@@ -29,7 +29,7 @@ import textwrap
 from ccg2lambda_tools import assign_semantics_to_ccg, build_ccg_tree
 from semantic_index import SemanticIndex
 from semantic_tools import prove_doc
-from visualization_tools import convert_trees_to_mathml
+from visualization_tools import convert_doc_to_mathml
 
 def main(args = None):
     DESCRIPTION=textwrap.dedent("""\
@@ -64,15 +64,9 @@ def main(args = None):
     parser = etree.XMLParser(remove_blank_text=True)
     doc = etree.parse(args.sem, parser)
 
-    # from pudb import set_trace; set_trace()
     inference_result, coq_scripts = prove_doc(doc)
     print(inference_result, file=sys.stdout)
-    # TODO: make convert_trees_to_mathml work with general trees.
-    # html_str = convert_trees_to_mathml(ccg_tree_list, ccg_tokens_list, coq_scripts)
-    ccg_trees = [build_ccg_tree(c) for c in doc.xpath('//ccg')]
-    # from pudb import set_trace; set_trace()
-    html_str = convert_trees_to_mathml(
-        ccg_trees, doc.xpath('//tokens'), coq_scripts)
+    html_str = convert_doc_to_mathml(doc, coq_scripts)
     print(html_str, file=sys.stderr)
 
 if __name__ == '__main__':

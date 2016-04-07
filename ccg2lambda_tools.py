@@ -25,7 +25,7 @@ from logic_parser import lexpr
 from normalization import normalize_token
 import semantic_index
 
-def build_ccg_tree(ccg_xml, root_id = None):
+def build_ccg_tree(ccg_xml, root_id=None):
     """
     This function re-arranges the nodes of the XML CCG tree to have
     a tree structure. It will be useful to traverse the tree.
@@ -169,6 +169,8 @@ def assign_semantics(ccg_tree, semantic_index, tokens):
     Visit recursively the CCG tree in depth-first order, assigning lambda expressions
     (semantics) to each node.
     """
+    # if ccg_tree.get('id') == 's0_sp19':
+    #   from pudb import set_trace; set_trace()
     category = ccg_tree.attrib['category']
     if len(ccg_tree) == 0:
         semantics = semantic_index.get_semantic_representation(ccg_tree, tokens)

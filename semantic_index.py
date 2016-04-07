@@ -82,10 +82,6 @@ class SemanticIndex(object):
             # Assign coq types.
             ccg_tree.set('coq_type', ccg_tree[0].attrib.get('coq_type', "[]"))
         else:
-            # try:
-            #   predicate_left  = lexpr(ccg_tree[0].get('sem'))
-            # except:
-            #   from pudb import set_trace; set_trace()
             predicate_left  = lexpr(ccg_tree[0].get('sem'))
             predicate_right = lexpr(ccg_tree[1].get('sem'))
             semantics = semantic_template(predicate_left).simplify()
@@ -98,6 +94,10 @@ class SemanticIndex(object):
         return semantics
 
 def get_attributes_from_ccg_node_recursively(ccg_tree, tokens):
+    """
+    Copies attributes from children node into the current node,
+    to make them accessible in constant time.
+    """
     if 'child' in ccg_tree.attrib:
         attributes = ccg_tree.attrib
         for i, child in enumerate(ccg_tree):
@@ -108,7 +108,10 @@ def get_attributes_from_ccg_node_recursively(ccg_tree, tokens):
         attributes = ccg_tree.attrib
         token_id = ccg_tree.get('terminal')
         token_node = find_node_by_id(token_id, tokens)
+        node_id = attributes.get('id')
         attributes.update(token_node.attrib)
+        # Restore the node ID, that has been overwritten by the previous update.
+        attributes['id'] = node_id
     return attributes
 
 def make_rule_pattern_from_ccg_node(ccg_tree, tokens):
@@ -121,6 +124,12 @@ def make_rule_pattern_from_ccg_node(ccg_tree, tokens):
     return rule_pattern
 
 def find_node_by_id(node_id, xml_tree):
+    nodes = xml_tree.xpath('.//descendant-or-self::*[@id="%s"]' % node_id)
+    if not nodes:
+        raise(ValueError('It should have found a span for id {0}'.format(node_id)))
+    return nodes[0]
+
+def find_node_by_id_(node_id, xml_tree):
     for span in xml_tree:
         if span.get('id') == node_id:
             return span
