@@ -120,10 +120,7 @@ for f in ${plain_dir}/*.tok; do
 done
 echo
 
-# debug="plurals"
-debug=""
-
-# 5) For every entailment problem, call the validity.py script. Print debug information:
+# 5) For every entailment problem, do semantic parsing and prove theorem. Print debug information:
 #    5.1) CCG tree in HTML, with semantic assignments (for every premise and hypothesis).
 #    5.2) Possible error messages when assigning semantics to each tree (the results/*.html).
 #    5.3) The resulting coq program, with the exact instruction to run it in coq (verbatim in results/*.html).
@@ -132,7 +129,7 @@ echo -n "Judging entailment"
 if [ ! -d $results_dir ]; then
   mkdir -p $results_dir
 fi
-for f in ${plain_dir}/*${debug}*.tok; do
+for f in ${plain_dir}/*.tok; do
   base_filename=${f##*/}
   if [ ! -e "$parsed_dir/${base_filename/.tok/.sem.xml}" ]; then
     # Display progress.
@@ -143,13 +140,13 @@ for f in ${plain_dir}/*${debug}*.tok; do
       $parsed_dir/${base_filename/.tok/.sem.xml} \
       --arbi-types \
       2> $parsed_dir/${base_filename/.tok/.sem.err}
-    fi
-    if [ ! -e "{results_dir}/${base_filename/.tok/.answer}" ]; then
-      python prove.py \
-        $parsed_dir/${base_filename/.tok/.sem.xml} \
-      > ${results_dir}/${base_filename/.tok/.answer} \
-      2> ${results_dir}/${base_filename/.tok/.html}
-    fi
+  fi
+  if [ ! -e "{results_dir}/${base_filename/.tok/.answer}" ]; then
+    python prove.py \
+      $parsed_dir/${base_filename/.tok/.sem.xml} \
+    > ${results_dir}/${base_filename/.tok/.answer} \
+    2> ${results_dir}/${base_filename/.tok/.html}
+  fi
 done
 echo
 
@@ -178,7 +175,7 @@ red_color="rgb(255,0,0)"
 green_color="rgb(0,255,0)"
 white_color="rgb(255,255,255)"
 gray_color="rgb(136,136,136)"
-for gold_filename in ${plain_dir}/*${debug}*.answer; do
+for gold_filename in ${plain_dir}/*.answer; do
   base_filename=${gold_filename##*/}
   system_filename=${results_dir}/${base_filename/.txt/.answer}
   gold_answer=`cat $gold_filename`
@@ -208,7 +205,7 @@ echo "
 # Collect results and print accuracies.
 rm -f gold.results system.results
 
-for f in ${plain_dir}/*${debug}*.tok; do
+for f in ${plain_dir}/*.tok; do
   base_filename=${f##*/}
   base_filename=${base_filename/.tok/}
   num_lines=`cat $f | wc -l`
