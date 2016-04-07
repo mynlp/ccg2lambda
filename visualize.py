@@ -18,12 +18,16 @@
 from __future__ import print_function
 
 import argparse
+import codecs
+import json
 import logging
 from lxml import etree
 import os
 import sys
 import textwrap
 
+from ccg2lambda_tools import assign_semantics_to_ccg, build_ccg_tree
+from semantic_index import SemanticIndex
 from semantic_tools import prove_doc
 from visualization_tools import convert_doc_to_mathml
 

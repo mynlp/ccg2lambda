@@ -73,17 +73,19 @@ results_dir=${dataset}"_results"
 #         per problem category.
 #    2.2) Extract the gold entailment relation and save it into a file indexed
 #         by the name of the dataset problem.
+echo "Extracting problems from "${dataset}" XML file"
 if [ ! -d "$plain_dir" ]; then
-  echo "Extracting problems from "${dataset}" XML file."
   mkdir -p $plain_dir
-  python extract_entailment_problems.py $dataset $plain_dir
-  # Tokenize text.
-  for f in ${plain_dir}/*.txt; do
+fi
+python extract_entailment_problems.py $dataset $plain_dir
+# Tokenize text.
+for f in ${plain_dir}/*.txt; do
+  if [ ! -e "${f/.txt/.tok}" ]; then
     cat $f | \
     perl tokenizer.perl -l en 2>/dev/null | \
     sed 's/ _ /_/g' > ${f/.txt/.tok}
-  done
-fi
+  fi
+done
 
 # 3) If directory with parsed sentences does not exist, then call the parser.
 #    Here we check whether the variable is pointing to the right C&C parser directory.
@@ -97,22 +99,26 @@ if [ ! -e "${parser_dir}"/bin/candc ]; then
 fi
 
 # Parse files.
+echo -n "Parsing ${dataset}"
 if [ ! -d "$parsed_dir" ]; then
-  echo -n ${dataset}" parsing."
   mkdir $parsed_dir
-  for f in ${plain_dir}/*.tok; do
+fi
+for f in ${plain_dir}/*.tok; do
+  base_filename=${f##*/}
+  if [ ! -e "${parsed_dir}/${base_filename}.candc.xml" ]; then
     # Display progress.
     echo -n "."
-    base_filename=${f##*/}
     # C&C parse and conversion into transccg format.
     eval $parser_cmd $f \
       2> ${parsed_dir}/${base_filename}.log \
        > ${parsed_dir}/${base_filename}.candc.xml
+  fi
+  if [ ! -e "${parsed_dir}/${base_filename/.tok/}.xml" ]; then
     python candc2transccg.py ${parsed_dir}/${base_filename}.candc.xml \
       > ${parsed_dir}/${base_filename/.tok/}.xml
-  done
-  echo
-fi
+  fi
+done
+echo
 
 # debug="plurals"
 debug=""
@@ -122,26 +128,30 @@ debug=""
 #    5.2) Possible error messages when assigning semantics to each tree (the results/*.html).
 #    5.3) The resulting coq program, with the exact instruction to run it in coq (verbatim in results/*.html).
 #    5.4) Final entailment judgment, and its gold judgment (in results/*.answer).
+echo -n "Judging entailment"
 if [ ! -d $results_dir ]; then
-  echo -n "Judging entailment."
   mkdir -p $results_dir
-  for f in ${plain_dir}/*${debug}*.tok; do
+fi
+for f in ${plain_dir}/*${debug}*.tok; do
+  base_filename=${f##*/}
+  if [ ! -e "$parsed_dir/${base_filename/.tok/.sem.xml}" ]; then
     # Display progress.
     echo -n "."
-    base_filename=${f##*/}
     python semparse.py \
       $parsed_dir/${base_filename/.tok/.xml} \
       $category_templates \
       $parsed_dir/${base_filename/.tok/.sem.xml} \
       --arbi-types \
       2> $parsed_dir/${base_filename/.tok/.sem.err}
-    python prove.py \
-      $parsed_dir/${base_filename/.tok/.sem.xml} \
-    > ${results_dir}/${base_filename/.tok/.answer} \
-    2> ${results_dir}/${base_filename/.tok/.html}
-  done
-  echo
-fi
+    fi
+    if [ ! -e "{results_dir}/${base_filename/.tok/.answer}" ]; then
+      python prove.py \
+        $parsed_dir/${base_filename/.tok/.sem.xml} \
+      > ${results_dir}/${base_filename/.tok/.answer} \
+      2> ${results_dir}/${base_filename/.tok/.html}
+    fi
+done
+echo
 
 # 6) Print a summary (precision, recall, f-score) of the errors at individual fracas problems,
 #    per problem category and a global score.
