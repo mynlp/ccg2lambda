@@ -326,7 +326,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig =  convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib = build_dynamic_library(expression, coq_sig)
-        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', [sentence])
+        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop."]
         self.assertCountEqual(expected_lib, lib)
@@ -358,7 +358,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig =  convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib = build_dynamic_library(expression, coq_sig)
-        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', [sentence])
+        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop."]
         self.assertCountEqual(expected_lib, lib)
@@ -390,7 +390,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig =  convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib = build_dynamic_library(expression, coq_sig)
-        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', [sentence])
+        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Entity -> Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop."]
         self.assertCountEqual(expected_lib, lib)
@@ -422,7 +422,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig =  convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib = build_dynamic_library(expression, coq_sig)
-        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', [sentence])
+        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Prop -> Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop."]
         self.assertCountEqual(expected_lib, lib)
@@ -455,7 +455,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig =  convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib = build_dynamic_library(expression, coq_sig)
-        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', [sentence])
+        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Prop -> Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop -> Prop."]
         self.assertCountEqual(expected_lib, lib)
