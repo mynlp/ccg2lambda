@@ -141,7 +141,7 @@ for f in ${plain_dir}/*.tok; do
       --arbi-types \
       2> $parsed_dir/${base_filename/.tok/.sem.err}
   fi
-  if [ ! -e "{results_dir}/${base_filename/.tok/.answer}" ]; then
+  if [ ! -e "${results_dir}/${base_filename/.tok/.answer}" ]; then
     python prove.py \
       $parsed_dir/${base_filename/.tok/.sem.xml} \
     > ${results_dir}/${base_filename/.tok/.answer} \
