@@ -144,8 +144,9 @@ for f in ${plain_dir}/*.tok; do
   if [ ! -e "${results_dir}/${base_filename/.tok/.answer}" ]; then
     python prove.py \
       $parsed_dir/${base_filename/.tok/.sem.xml} \
+    --graph_out ${results_dir}/${base_filename/.tok/.html} \
     > ${results_dir}/${base_filename/.tok/.answer} \
-    2> ${results_dir}/${base_filename/.tok/.html}
+    2> ${results_dir}/${base_filename/.tok/.err}
   fi
 done
 echo
