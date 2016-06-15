@@ -1,0 +1,2 @@
+Either Smith, Jones or Anderson signed the contract.
+If Smith and Anderson did not sign the contract, Jones signed the contract.

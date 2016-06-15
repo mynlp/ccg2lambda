@@ -1,0 +1,3 @@
+John spoke to Mary.
+And to Sue.
+John spoke to Sue.

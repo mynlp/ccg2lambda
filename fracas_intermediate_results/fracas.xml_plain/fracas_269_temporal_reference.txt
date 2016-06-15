@@ -1,0 +1,4 @@
+Smith swam.
+Jones swam.
+Smith swam before Jones swam.
+Jones swam after Smith swam.

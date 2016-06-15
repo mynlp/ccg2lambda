@@ -1,0 +1,4 @@
+Smith swam to the shore.
+Jones swam to the shore.
+Smith swam to the shore before Jones swam to the shore.
+Jones swam to the shore after Smith swam to the shore.

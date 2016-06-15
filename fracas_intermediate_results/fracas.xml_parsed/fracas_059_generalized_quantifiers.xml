@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+  <document>
+    <sentences>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t0_0" surf="A" base="a"/>
+          <token start="1" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t0_1" surf="few" base="few"/>
+          <token start="2" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t0_2" surf="female" base="female"/>
+          <token start="3" span="1" pos="NN" chunk="I-NP" entity="O" cat="N/N" id="t0_3" surf="committee" base="committee"/>
+          <token start="4" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t0_4" surf="members" base="member"/>
+          <token start="5" span="1" pos="VBP" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/PP" id="t0_5" surf="are" base="be"/>
+          <token start="6" span="1" pos="IN" chunk="I-PP" entity="O" cat="PP/NP" id="t0_6" surf="from" base="from"/>
+          <token start="7" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" cat="N" id="t0_7" surf="Scandinavia" base="scandinavia"/>
+          <token start="8" span="1" pos="." chunk="O" entity="O" cat="." id="t0_8" surf="." base="."/>
+        </tokens>
+        <ccg root="s0_sp0" id="s0_ccg0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp17" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp11" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp4" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="O" id="s0_sp3" surf="A" base="a" terminal="t0_0" category="NP[nb=true]/N"/>
+          <span id="s0_sp4" child="s0_sp5 s0_sp6" pos="None" category="N" rule="fa"/>
+          <span start="1" span="1" pos="JJ" chunk="I-NP" entity="O" id="s0_sp5" surf="few" base="few" terminal="t0_1" category="N/N"/>
+          <span id="s0_sp6" child="s0_sp7 s0_sp8" pos="None" category="N" rule="fa"/>
+          <span start="2" span="1" pos="JJ" chunk="I-NP" entity="O" id="s0_sp7" surf="female" base="female" terminal="t0_2" category="N/N"/>
+          <span id="s0_sp8" child="s0_sp9 s0_sp10" pos="None" category="N" rule="fa"/>
+          <span start="3" span="1" pos="NN" chunk="I-NP" entity="O" id="s0_sp9" surf="committee" base="committee" terminal="t0_3" category="N/N"/>
+          <span start="4" span="1" pos="NNS" chunk="I-NP" entity="O" id="s0_sp10" surf="members" base="member" terminal="t0_4" category="N"/>
+          <span id="s0_sp11" child="s0_sp12 s0_sp13" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="5" span="1" pos="VBP" chunk="I-VP" entity="O" id="s0_sp12" surf="are" base="be" terminal="t0_5" category="(S[dcl=true]\NP)/PP"/>
+          <span id="s0_sp13" child="s0_sp14 s0_sp15" pos="None" category="PP" rule="fa"/>
+          <span start="6" span="1" pos="IN" chunk="I-PP" entity="O" id="s0_sp14" surf="from" base="from" terminal="t0_6" category="PP/NP"/>
+          <span id="s0_sp15" child="s0_sp16" pos="None" category="NP" rule="lex"/>
+          <span start="7" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" id="s0_sp16" surf="Scandinavia" base="scandinavia" terminal="t0_7" category="N"/>
+          <span start="8" span="1" pos="." chunk="O" entity="O" id="s0_sp17" surf="." base="." terminal="t0_8" category="."/>
+        </ccg>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="IN" chunk="I-ADVP" entity="O" cat="(S/S)/(S[asup]\NP)" id="t1_0" surf="At" base="at"/>
+          <token start="1" span="1" pos="JJS" chunk="I-ADVP" entity="O" cat="S[asup]\NP" id="t1_1" surf="least" base="least"/>
+          <token start="2" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t1_2" surf="a" base="a"/>
+          <token start="3" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t1_3" surf="few" base="few"/>
+          <token start="4" span="1" pos="NN" chunk="I-NP" entity="O" cat="N/N" id="t1_4" surf="committee" base="committee"/>
+          <token start="5" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t1_5" surf="members" base="member"/>
+          <token start="6" span="1" pos="VBP" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/PP" id="t1_6" surf="are" base="be"/>
+          <token start="7" span="1" pos="IN" chunk="I-PP" entity="O" cat="PP/NP" id="t1_7" surf="from" base="from"/>
+          <token start="8" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" cat="N" id="t1_8" surf="Scandinavia" base="scandinavia"/>
+          <token start="9" span="1" pos="." chunk="O" entity="O" cat="." id="t1_9" surf="." base="."/>
+        </tokens>
+        <ccg root="s1_sp0" id="s1_ccg0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp19" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp5" pos="None" category="S[dcl=true]" rule="fa"/>
+          <span id="s1_sp2" child="s1_sp3 s1_sp4" pos="None" category="S[X=true]/S[X=true]" rule="fa"/>
+          <span start="0" span="1" pos="IN" chunk="I-ADVP" entity="O" id="s1_sp3" surf="At" base="at" terminal="t1_0" category="(S/S)/(S[asup=true]\NP)"/>
+          <span start="1" span="1" pos="JJS" chunk="I-ADVP" entity="O" id="s1_sp4" surf="least" base="least" terminal="t1_1" category="S[asup=true]\NP"/>
+          <span id="s1_sp5" child="s1_sp6 s1_sp13" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s1_sp6" child="s1_sp7 s1_sp8" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="2" span="1" pos="DT" chunk="I-NP" entity="O" id="s1_sp7" surf="a" base="a" terminal="t1_2" category="NP[nb=true]/N"/>
+          <span id="s1_sp8" child="s1_sp9 s1_sp10" pos="None" category="N" rule="fa"/>
+          <span start="3" span="1" pos="JJ" chunk="I-NP" entity="O" id="s1_sp9" surf="few" base="few" terminal="t1_3" category="N/N"/>
+          <span id="s1_sp10" child="s1_sp11 s1_sp12" pos="None" category="N" rule="fa"/>
+          <span start="4" span="1" pos="NN" chunk="I-NP" entity="O" id="s1_sp11" surf="committee" base="committee" terminal="t1_4" category="N/N"/>
+          <span start="5" span="1" pos="NNS" chunk="I-NP" entity="O" id="s1_sp12" surf="members" base="member" terminal="t1_5" category="N"/>
+          <span id="s1_sp13" child="s1_sp14 s1_sp15" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="6" span="1" pos="VBP" chunk="I-VP" entity="O" id="s1_sp14" surf="are" base="be" terminal="t1_6" category="(S[dcl=true]\NP)/PP"/>
+          <span id="s1_sp15" child="s1_sp16 s1_sp17" pos="None" category="PP" rule="fa"/>
+          <span start="7" span="1" pos="IN" chunk="I-PP" entity="O" id="s1_sp16" surf="from" base="from" terminal="t1_7" category="PP/NP"/>
+          <span id="s1_sp17" child="s1_sp18" pos="None" category="NP" rule="lex"/>
+          <span start="8" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" id="s1_sp18" surf="Scandinavia" base="scandinavia" terminal="t1_8" category="N"/>
+          <span start="9" span="1" pos="." chunk="O" entity="O" id="s1_sp19" surf="." base="." terminal="t1_9" category="."/>
+        </ccg>
+      </sentence>
+    </sentences>
+  </document>
+</root>
+

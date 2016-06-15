@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <document>
+    <sentences>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t0_0" surf="Every" base="every"/>
+          <token start="1" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t0_1" surf="committee" base="committee"/>
+          <token start="2" span="1" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" id="t0_2" surf="has" base="have"/>
+          <token start="3" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t0_3" surf="a" base="a"/>
+          <token start="4" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t0_4" surf="chairman" base="chairman"/>
+          <token start="5" span="1" pos="." chunk="O" entity="O" cat="." id="t0_5" surf="." base="."/>
+        </tokens>
+        <ccg root="s0_sp0" id="s0_ccg0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp10" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp5" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp4" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="O" id="s0_sp3" surf="Every" base="every" terminal="t0_0" category="NP[nb=true]/N"/>
+          <span start="1" span="1" pos="NN" chunk="I-NP" entity="O" id="s0_sp4" surf="committee" base="committee" terminal="t0_1" category="N"/>
+          <span id="s0_sp5" child="s0_sp6 s0_sp7" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="2" span="1" pos="VBZ" chunk="I-VP" entity="O" id="s0_sp6" surf="has" base="have" terminal="t0_2" category="(S[dcl=true]\NP)/NP"/>
+          <span id="s0_sp7" child="s0_sp8 s0_sp9" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="3" span="1" pos="DT" chunk="I-NP" entity="O" id="s0_sp8" surf="a" base="a" terminal="t0_3" category="NP[nb=true]/N"/>
+          <span start="4" span="1" pos="NN" chunk="I-NP" entity="O" id="s0_sp9" surf="chairman" base="chairman" terminal="t0_4" category="N"/>
+          <span start="5" span="1" pos="." chunk="O" entity="O" id="s0_sp10" surf="." base="." terminal="t0_5" category="."/>
+        </ccg>
+        <semantics status="success" root="s0_sp0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp10" sem="all x.(_committee(x) -&gt; (TrueP -&gt; exists z1.(_chairman(z1) &amp; TrueP &amp; _have(x,z1))))"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp5" sem="all x.(_committee(x) -&gt; (TrueP -&gt; exists z1.(_chairman(z1) &amp; TrueP &amp; _have(x,z1))))"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp4" sem="\F2 F3.all x.(_committee(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s0_sp3" sem="\F1 F2 F3.all x.(F1(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s0_sp4" sem="\x._committee(x)" type="_committee : Entity -&gt; Prop"/>
+          <span id="s0_sp5" child="s0_sp6 s0_sp7" sem="\Q2.Q2(\w.TrueP,\x.exists z1.(_chairman(z1) &amp; TrueP &amp; _have(x,z1)))"/>
+          <span id="s0_sp6" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._have(x,y)))" type="_have : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s0_sp7" child="s0_sp8 s0_sp9" sem="\F2 F3.exists x.(_chairman(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s0_sp8" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s0_sp9" sem="\x._chairman(x)" type="_chairman : Entity -&gt; Prop"/>
+          <span id="s0_sp10" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="PRP" chunk="I-NP" entity="O" cat="NP" id="t1_0" surf="He" base="he"/>
+          <token start="1" span="1" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[pss]\NP)" id="t1_1" surf="is" base="be"/>
+          <token start="2" span="1" pos="VBN" chunk="I-VP" entity="O" cat="(S[pss]\NP)/NP" id="t1_2" surf="appointed" base="appoint"/>
+          <token start="3" span="1" pos="PRP$" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t1_3" surf="its" base="its"/>
+          <token start="4" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t1_4" surf="members" base="member"/>
+          <token start="5" span="1" pos="." chunk="O" entity="O" cat="." id="t1_5" surf="." base="."/>
+        </tokens>
+        <ccg root="s1_sp0" id="s1_ccg0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp10" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp3" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span start="0" span="1" pos="PRP" chunk="I-NP" entity="O" id="s1_sp2" surf="He" base="he" terminal="t1_0" category="NP"/>
+          <span id="s1_sp3" child="s1_sp4 s1_sp5" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="1" span="1" pos="VBZ" chunk="I-VP" entity="O" id="s1_sp4" surf="is" base="be" terminal="t1_1" category="(S[dcl=true]\NP)/(S[pss=true]\NP)"/>
+          <span id="s1_sp5" child="s1_sp6 s1_sp7" pos="None" category="S[pss=true]\NP" rule="fa"/>
+          <span start="2" span="1" pos="VBN" chunk="I-VP" entity="O" id="s1_sp6" surf="appointed" base="appoint" terminal="t1_2" category="(S[pss=true]\NP)/NP"/>
+          <span id="s1_sp7" child="s1_sp8 s1_sp9" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="3" span="1" pos="PRP$" chunk="I-NP" entity="O" id="s1_sp8" surf="its" base="its" terminal="t1_3" category="NP[nb=true]/N"/>
+          <span start="4" span="1" pos="NNS" chunk="I-NP" entity="O" id="s1_sp9" surf="members" base="member" terminal="t1_4" category="N"/>
+          <span start="5" span="1" pos="." chunk="O" entity="O" id="s1_sp10" surf="." base="." terminal="t1_5" category="."/>
+        </ccg>
+        <semantics status="success" root="s1_sp0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp10" sem="exists x.(TrueP &amp; exists z2.(_member(z2) &amp; TrueP &amp; _appoint(x,z2)))"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp3" sem="exists x.(TrueP &amp; exists z2.(_member(z2) &amp; TrueP &amp; _appoint(x,z2)))"/>
+          <span id="s1_sp2" sem="\F1 F2.exists x.(F1(x) &amp; F2(x))"/>
+          <span id="s1_sp3" child="s1_sp4 s1_sp5" sem="\Q.Q(\w.TrueP,\x.exists z2.(_member(z2) &amp; TrueP &amp; _appoint(x,z2)))"/>
+          <span id="s1_sp4" sem="\V Q.Q(\w.TrueP,\x.V(\F1 F2.F2(x)))"/>
+          <span id="s1_sp5" child="s1_sp6 s1_sp7" sem="\Q2.Q2(\w.TrueP,\x.exists z2.(_member(z2) &amp; TrueP &amp; _appoint(x,z2)))"/>
+          <span id="s1_sp6" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._appoint(x,y)))" type="_appoint : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s1_sp7" child="s1_sp8 s1_sp9" sem="\F2 F3.exists x.(_member(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s1_sp8" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s1_sp9" sem="\x._member(x)" type="_member : Entity -&gt; Prop"/>
+          <span id="s1_sp10" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t2_0" surf="Every" base="every"/>
+          <token start="1" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t2_1" surf="committee" base="committee"/>
+          <token start="2" span="1" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" id="t2_2" surf="has" base="have"/>
+          <token start="3" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t2_3" surf="a" base="a"/>
+          <token start="4" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t2_4" surf="chairman" base="chairman"/>
+          <token start="5" span="1" pos="VBN" chunk="I-VP" entity="O" cat="S[pss]\NP" id="t2_5" surf="appointed" base="appoint"/>
+          <token start="6" span="1" pos="IN" chunk="I-PP" entity="O" cat="((S\NP)\(S\NP))/NP" id="t2_6" surf="by" base="by"/>
+          <token start="7" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t2_7" surf="members" base="member"/>
+          <token start="8" span="1" pos="IN" chunk="I-PP" entity="O" cat="(NP\NP)/NP" id="t2_8" surf="of" base="of"/>
+          <token start="9" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t2_9" surf="the" base="the"/>
+          <token start="10" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t2_10" surf="committee" base="committee"/>
+          <token start="11" span="1" pos="." chunk="O" entity="O" cat="." id="t2_11" surf="." base="."/>
+        </tokens>
+        <ccg root="s2_sp0" id="s2_ccg0">
+          <span id="s2_sp0" child="s2_sp1 s2_sp24" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s2_sp1" child="s2_sp2 s2_sp5" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s2_sp2" child="s2_sp3 s2_sp4" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="O" id="s2_sp3" surf="Every" base="every" terminal="t2_0" category="NP[nb=true]/N"/>
+          <span start="1" span="1" pos="NN" chunk="I-NP" entity="O" id="s2_sp4" surf="committee" base="committee" terminal="t2_1" category="N"/>
+          <span id="s2_sp5" child="s2_sp6 s2_sp7" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="2" span="1" pos="VBZ" chunk="I-VP" entity="O" id="s2_sp6" surf="has" base="have" terminal="t2_2" category="(S[dcl=true]\NP)/NP"/>
+          <span id="s2_sp7" child="s2_sp8 s2_sp11" pos="None" category="NP" rule="ba"/>
+          <span id="s2_sp8" child="s2_sp9 s2_sp10" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="3" span="1" pos="DT" chunk="I-NP" entity="O" id="s2_sp9" surf="a" base="a" terminal="t2_3" category="NP[nb=true]/N"/>
+          <span start="4" span="1" pos="NN" chunk="I-NP" entity="O" id="s2_sp10" surf="chairman" base="chairman" terminal="t2_4" category="N"/>
+          <span id="s2_sp11" child="s2_sp12" pos="None" category="NP\NP" rule="lex"/>
+          <span id="s2_sp12" child="s2_sp13 s2_sp14" pos="None" category="S[pss=true]\NP" rule="ba"/>
+          <span start="5" span="1" pos="VBN" chunk="I-VP" entity="O" id="s2_sp13" surf="appointed" base="appoint" terminal="t2_5" category="S[pss=true]\NP"/>
+          <span id="s2_sp14" child="s2_sp15 s2_sp16" pos="None" category="(S[X=true]\NP)\(S[X=true]\NP)" rule="fa"/>
+          <span start="6" span="1" pos="IN" chunk="I-PP" entity="O" id="s2_sp15" surf="by" base="by" terminal="t2_6" category="((S\NP)\(S\NP))/NP"/>
+          <span id="s2_sp16" child="s2_sp17 s2_sp19" pos="None" category="NP" rule="ba"/>
+          <span id="s2_sp17" child="s2_sp18" pos="None" category="NP" rule="lex"/>
+          <span start="7" span="1" pos="NNS" chunk="I-NP" entity="O" id="s2_sp18" surf="members" base="member" terminal="t2_7" category="N"/>
+          <span id="s2_sp19" child="s2_sp20 s2_sp21" pos="None" category="NP\NP" rule="fa"/>
+          <span start="8" span="1" pos="IN" chunk="I-PP" entity="O" id="s2_sp20" surf="of" base="of" terminal="t2_8" category="(NP\NP)/NP"/>
+          <span id="s2_sp21" child="s2_sp22 s2_sp23" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="9" span="1" pos="DT" chunk="I-NP" entity="O" id="s2_sp22" surf="the" base="the" terminal="t2_9" category="NP[nb=true]/N"/>
+          <span start="10" span="1" pos="NN" chunk="I-NP" entity="O" id="s2_sp23" surf="committee" base="committee" terminal="t2_10" category="N"/>
+          <span start="11" span="1" pos="." chunk="O" entity="O" id="s2_sp24" surf="." base="." terminal="t2_11" category="."/>
+        </ccg>
+        <semantics status="success" root="s2_sp0">
+          <span id="s2_sp0" child="s2_sp1 s2_sp24" sem="all x.(_committee(x) -&gt; (TrueP -&gt; exists z8.(_chairman(z8) &amp; exists z5.(_member(z5) &amp; exists z4.(_committee(z4) &amp; TrueP &amp; _of(z5,z4)) &amp; TrueP &amp; _by(z8,z5) &amp; _appoint(z8)) &amp; TrueP &amp; _have(x,z8))))"/>
+          <span id="s2_sp1" child="s2_sp2 s2_sp5" sem="all x.(_committee(x) -&gt; (TrueP -&gt; exists z8.(_chairman(z8) &amp; exists z5.(_member(z5) &amp; exists z4.(_committee(z4) &amp; TrueP &amp; _of(z5,z4)) &amp; TrueP &amp; _by(z8,z5) &amp; _appoint(z8)) &amp; TrueP &amp; _have(x,z8))))"/>
+          <span id="s2_sp2" child="s2_sp3 s2_sp4" sem="\F2 F3.all x.(_committee(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s2_sp3" sem="\F1 F2 F3.all x.(F1(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s2_sp4" sem="\x._committee(x)" type="_committee : Entity -&gt; Prop"/>
+          <span id="s2_sp5" child="s2_sp6 s2_sp7" sem="\Q2.Q2(\w.TrueP,\x.exists z8.(_chairman(z8) &amp; exists z5.(_member(z5) &amp; exists z4.(_committee(z4) &amp; TrueP &amp; _of(z5,z4)) &amp; TrueP &amp; _by(z8,z5) &amp; _appoint(z8)) &amp; TrueP &amp; _have(x,z8)))"/>
+          <span id="s2_sp6" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._have(x,y)))" type="_have : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s2_sp7" child="s2_sp8 s2_sp11" sem="\F1 F3.exists x.(_chairman(x) &amp; exists z5.(_member(z5) &amp; exists z4.(_committee(z4) &amp; TrueP &amp; _of(z5,z4)) &amp; TrueP &amp; _by(x,z5) &amp; _appoint(x)) &amp; F1(x) &amp; F3(x))"/>
+          <span id="s2_sp8" child="s2_sp9 s2_sp10" sem="\F2 F3.exists x.(_chairman(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s2_sp9" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s2_sp10" sem="\x._chairman(x)" type="_chairman : Entity -&gt; Prop"/>
+          <span id="s2_sp11" child="s2_sp12" sem="\Q F1.Q(\x.(exists z5.(_member(z5) &amp; exists z4.(_committee(z4) &amp; TrueP &amp; _of(z5,z4)) &amp; TrueP &amp; _by(x,z5) &amp; _appoint(x)) &amp; F1(x)))"/>
+          <span id="s2_sp12" child="s2_sp13 s2_sp14" sem="\Q2.Q2(\w.TrueP,\x.exists z5.(_member(z5) &amp; exists z4.(_committee(z4) &amp; TrueP &amp; _of(z5,z4)) &amp; TrueP &amp; _by(x,z5) &amp; _appoint(x)))"/>
+          <span id="s2_sp13" sem="\Q.Q(\w.TrueP,\x._appoint(x))" type="_appoint : Entity -&gt; Prop"/>
+          <span id="s2_sp14" child="s2_sp15 s2_sp16" sem="\V Q2.Q2(\w.TrueP,\x.exists z5.(_member(z5) &amp; exists z4.(_committee(z4) &amp; TrueP &amp; _of(z5,z4)) &amp; TrueP &amp; _by(x,z5) &amp; V(\F1 F2.F2(x))))"/>
+          <span id="s2_sp15" sem="\Q1 V Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(_by(x,y) &amp; V(\F1 F2.F2(x)))))" type="_by : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s2_sp16" child="s2_sp17 s2_sp19" sem="\F1 F2.exists x.(_member(x) &amp; exists z4.(_committee(z4) &amp; TrueP &amp; _of(x,z4)) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s2_sp17" child="s2_sp18" sem="\F1 F2.exists x.(_member(x) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s2_sp18" sem="\x._member(x)" type="_member : Entity -&gt; Prop"/>
+          <span id="s2_sp19" child="s2_sp20 s2_sp21" sem="\Q2 F1.Q2(\x.(exists z4.(_committee(z4) &amp; TrueP &amp; _of(x,z4)) &amp; F1(x)))"/>
+          <span id="s2_sp20" sem="\Q1 Q2 F1.Q2(\x.(Q1(\w.TrueP,\y._of(x,y)) &amp; F1(x)))" type="_of : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s2_sp21" child="s2_sp22 s2_sp23" sem="\F2 F3.exists x.(_committee(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s2_sp22" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s2_sp23" sem="\x._committee(x)" type="_committee : Entity -&gt; Prop"/>
+          <span id="s2_sp24" sem="\X.X"/>
+        </semantics>
+      </sentence>
+    </sentences>
+  </document>
+</root>

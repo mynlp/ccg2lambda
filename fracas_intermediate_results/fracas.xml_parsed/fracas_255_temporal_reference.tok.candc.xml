@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="candc.xml"?>
+
+<candc>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="fa" cat="S[dcl]">
+   <rule type="fa" cat="S[X]/S[X]">
+    <lf start="0" span="1" word="Since" lemma="since" pos="IN" chunk="I-SBAR" entity="O" cat="(S/S)/NP" />
+    <rule type="lex" cat="NP">
+     <lf start="1" span="1" word="1992" lemma="1992" pos="CD" chunk="I-NP" entity="I-DAT" cat="N" />
+    </rule>
+   </rule>
+   <rule type="ba" cat="S[dcl]">
+    <rule type="lex" cat="NP">
+     <lf start="2" span="1" word="ITEL" lemma="ITEL" pos="NNP" chunk="I-NP" entity="I-ORG" cat="N" />
+    </rule>
+    <rule type="fa" cat="S[dcl]\NP">
+     <lf start="3" span="1" word="has" lemma="have" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[pt]\NP)" />
+     <rule type="fa" cat="S[pt]\NP">
+      <lf start="4" span="1" word="made" lemma="make" pos="VBN" chunk="I-VP" entity="O" cat="(S[pt]\NP)/NP" />
+      <rule type="fa" cat="NP[nb]">
+       <lf start="5" span="1" word="a" lemma="a" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+       <lf start="6" span="1" word="loss" lemma="loss" pos="NN" chunk="I-NP" entity="O" cat="N" />
+      </rule>
+     </rule>
+    </rule>
+   </rule>
+  </rule>
+  <lf start="7" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <lf start="0" span="1" word="It" lemma="it" pos="PRP" chunk="I-NP" entity="O" cat="NP" />
+   <rule type="fa" cat="S[dcl]\NP">
+    <rule type="bx" cat="(S[dcl]\NP)/NP">
+     <lf start="1" span="1" word="is" lemma="be" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+     <lf start="2" span="1" word="now" lemma="now" pos="RB" chunk="I-ADVP" entity="O" cat="(S\NP)\(S\NP)" />
+    </rule>
+    <rule type="lex" cat="NP">
+     <lf start="3" span="1" word="1996" lemma="1996" pos="CD" chunk="I-NP" entity="I-DAT" cat="N" />
+    </rule>
+   </rule>
+  </rule>
+  <lf start="4" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="lex" cat="NP">
+    <lf start="0" span="1" word="ITEL" lemma="ITEL" pos="NNP" chunk="I-NP" entity="I-ORG" cat="N" />
+   </rule>
+   <rule type="ba" cat="S[dcl]\NP">
+    <rule type="fa" cat="S[dcl]\NP">
+     <lf start="1" span="1" word="made" lemma="make" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+     <rule type="fa" cat="NP[nb]">
+      <lf start="2" span="1" word="a" lemma="a" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+      <lf start="3" span="1" word="loss" lemma="loss" pos="NN" chunk="I-NP" entity="O" cat="N" />
+     </rule>
+    </rule>
+    <rule type="fa" cat="(S[X]\NP)\(S[X]\NP)">
+     <lf start="4" span="1" word="in" lemma="in" pos="IN" chunk="I-PP" entity="O" cat="((S\NP)\(S\NP))/NP" />
+     <rule type="lex" cat="NP">
+      <lf start="5" span="1" word="1993" lemma="1993" pos="CD" chunk="I-NP" entity="I-DAT" cat="N" />
+     </rule>
+    </rule>
+   </rule>
+  </rule>
+  <lf start="6" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+</candc>

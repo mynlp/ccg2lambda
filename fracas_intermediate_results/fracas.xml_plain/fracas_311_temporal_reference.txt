@@ -1,0 +1,3 @@
+Smith had left the house at a quarter past five.
+Then she took a taxi to the station.
+Smith left the house before she took a taxi to the station.

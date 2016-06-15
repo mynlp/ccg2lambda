@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="candc.xml"?>
+
+<candc>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="lex" cat="NP">
+    <lf start="0" span="1" word="John" lemma="John" pos="NNP" chunk="I-NP" entity="I-PER" cat="N" />
+   </rule>
+   <rule type="fa" cat="S[dcl]\NP">
+    <lf start="1" span="1" word="has" lemma="have" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[pt]\NP)" />
+    <rule type="fa" cat="S[pt]\NP">
+     <lf start="2" span="1" word="spoken" lemma="speak" pos="VBN" chunk="I-VP" entity="O" cat="(S[pt]\NP)/PP" />
+     <rule type="fa" cat="PP">
+      <lf start="3" span="1" word="to" lemma="to" pos="TO" chunk="I-PP" entity="O" cat="PP/NP" />
+      <rule type="lex" cat="NP">
+       <lf start="4" span="1" word="Mary" lemma="Mary" pos="NNP" chunk="I-NP" entity="I-PER" cat="N" />
+      </rule>
+     </rule>
+    </rule>
+   </rule>
+  </rule>
+  <lf start="5" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="lex" cat="NP">
+    <lf start="0" span="1" word="Bill" lemma="Bill" pos="NNP" chunk="I-NP" entity="O" cat="N" />
+   </rule>
+   <rule type="fa" cat="S[dcl]\NP">
+    <lf start="1" span="1" word="is" lemma="be" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[ng]\NP)" />
+    <rule type="ba" cat="S[ng]\NP">
+     <lf start="2" span="1" word="going" lemma="go" pos="VBG" chunk="I-VP" entity="O" cat="S[ng]\NP" />
+     <lf start="3" span="1" word="to" lemma="to" pos="TO" chunk="I-VP" entity="O" cat="(S\NP)\(S\NP)" />
+    </rule>
+   </rule>
+  </rule>
+  <lf start="4" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="lex" cat="NP">
+    <lf start="0" span="1" word="Bill" lemma="Bill" pos="NNP" chunk="I-NP" entity="O" cat="N" />
+   </rule>
+   <rule type="fa" cat="S[dcl]\NP">
+    <lf start="1" span="1" word="will" lemma="will" pos="MD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[b]\NP)" />
+    <rule type="fa" cat="S[b]\NP">
+     <lf start="2" span="1" word="speak" lemma="speak" pos="VB" chunk="I-VP" entity="O" cat="(S[b]\NP)/PP" />
+     <rule type="fa" cat="PP">
+      <lf start="3" span="1" word="to" lemma="to" pos="TO" chunk="I-PP" entity="O" cat="PP/NP" />
+      <rule type="lex" cat="NP">
+       <lf start="4" span="1" word="Mary" lemma="Mary" pos="NNP" chunk="I-NP" entity="I-PER" cat="N" />
+      </rule>
+     </rule>
+    </rule>
+   </rule>
+  </rule>
+  <lf start="5" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+</candc>

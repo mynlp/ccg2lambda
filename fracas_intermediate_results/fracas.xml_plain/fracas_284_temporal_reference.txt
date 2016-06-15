@@ -1,0 +1,3 @@
+Smith wrote a report in two hours.
+Smith started writing the report at 8 am.
+Smith had finished writing the report by 11 am.

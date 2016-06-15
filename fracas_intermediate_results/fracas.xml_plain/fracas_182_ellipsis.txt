@@ -1,0 +1,2 @@
+Smith represents his company and so does Jones.
+Jones represents Jones' company.

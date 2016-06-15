@@ -1,0 +1,3 @@
+The PC_6082 is faster than 500 MIPS.
+The ITEL_ZX is slower than 500 MIPS.
+The PC_6082 is faster than the ITEL_ZX.

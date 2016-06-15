@@ -1,0 +1,2 @@
+Smith wrote to a representative every week.
+There is a representative that Smith wrote to every week.

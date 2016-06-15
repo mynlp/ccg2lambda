@@ -1,0 +1,1513 @@
+  <!doctype html>
+  <html lang='en'>
+  <head>
+    <meta charset='UTF-8'>
+    <title>CCG to Lambda conversion</title>
+    <style>
+      body {
+        font-size: 1em;
+      }
+    </style>
+    <script type="text/javascript"
+            src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+  </head>
+  <body>
+  <p>Premise 1: Every representative has read this report .</p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac linethickness='0px'>
+  <mrow><mrow><mo>rp</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>Every</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.all x.(F1(x) -> (F2(x) -> F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>representative</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._representative(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.all x.(_representative(x) -> (F2(x) -> F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>has</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[pt=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\V Q.Q(\w.TrueP,\x.(_have(x) & V(\F1 F2.F2(x))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>read</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[pt=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._read(x,y)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>this</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.exists x.(F1(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>report</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._report(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.exists x.(_report(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[pt=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z1.(_report(z1) & TrueP & _read(x,z1)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q.Q(\w.TrueP,\x.(_have(x) & exists z1.(_report(z1) & TrueP & _read(x,z1))))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>all x.(_representative(x) -> (TrueP -> (_have(x) & exists z1.(_report(z1) & TrueP & _read(x,z1)))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>.</mtext>
+</mrow>
+  <mrow></mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\X.X</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>all x.(_representative(x) -> (TrueP -> (_have(x) & exists z1.(_report(z1) & TrueP & _read(x,z1)))))</mtext>
+</mrow>
+</mfrac>
+</math><p>Premise 2: No two representatives have read it at the same time .</p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac linethickness='0px'>
+  <mrow><mrow><mo>rp</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>No</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.all x.(F1(x) -> (F2(x) -> -F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>two</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F x.(_two(x) & F(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>representatives</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._representative(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x.(_two(x) & _representative(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.all x.((_two(x) & _representative(x)) -> (F2(x) -> -F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>have</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[pt=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\V Q.Q(\w.TrueP,\x.(_have(x) & V(\F1 F2.F2(x))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>read</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[pt=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._read(x,y)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>it</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2.exists x.(F1(x) & F2(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[pt=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z3.(TrueP & _read(x,z3)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>at</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>((S\NP)\(S\NP))/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 V Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(_at(x,y) & V(\F1 F2.F2(x)))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>the</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.exists x.(F1(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>same</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F x.(_same(x) & F(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>time</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._time(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x.(_same(x) & _time(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.exists x.(_same(x) & _time(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)\(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\V Q2.Q2(\w.TrueP,\x.exists z4.(_same(z4) & _time(z4) & TrueP & _at(x,z4) & V(\F1 F2.F2(x))))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[pt=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z4.(_same(z4) & _time(z4) & TrueP & _at(x,z4) & exists z3.(TrueP & _read(x,z3))))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q.Q(\w.TrueP,\x.(_have(x) & exists z4.(_same(z4) & _time(z4) & TrueP & _at(x,z4) & exists z3.(TrueP & _read(x,z3)))))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>all x.((_two(x) & _representative(x)) -> (TrueP -> -(_have(x) & exists z4.(_same(z4) & _time(z4) & TrueP & _at(x,z4) & exists z3.(TrueP & _read(x,z3))))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>.</mtext>
+</mrow>
+  <mrow></mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\X.X</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>all x.((_two(x) & _representative(x)) -> (TrueP -> -(_have(x) & exists z4.(_same(z4) & _time(z4) & TrueP & _at(x,z4) & exists z3.(TrueP & _read(x,z3))))))</mtext>
+</mrow>
+</mfrac>
+</math><p>Premise 3: No representative took less than half a day to read the report .</p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac linethickness='0px'>
+  <mrow><mrow><mo>rp</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>No</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.all x.(F1(x) -> (F2(x) -> -F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>representative</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._representative(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.all x.(_representative(x) -> (F2(x) -> -F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>took</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._take(x,y)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>less</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[adj=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q.Q(\w.TrueP,\x._less(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>than</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>((NP/NP)/(NP/NP))\(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[adj=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x0 x1 x2 x3 x4._than(x4,x3,x2,x1,x0)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>(NP/NP)/(NP/NP)  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x1 x2 x3 x4._than(x4,x3,x2,x1,\Q.Q(\w.TrueP,\x._less(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>half</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x0._half(x0)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP/NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x2 x3 x4._than(x4,x3,x2,\x0._half(x0),\Q.Q(\w.TrueP,\x._less(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>a</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.exists x.(F1(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>day</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._day(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.exists x.(_day(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x3 x4._than(x4,x3,\F2 F3.exists x.(_day(x) & F2(x) & F3(x)),\x0._half(x0),\Q.Q(\w.TrueP,\x._less(x)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x._than(\y._take(x,y),\w.TrueP,\F2 F3.exists z7.(_day(z7) & F2(z7) & F3(z7)),\x0._half(x0),\Q.Q(\w.TrueP,\z8._less(z8))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>lex</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>to</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[to=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\X.X</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>read</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._read(x,y)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>the</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.exists x.(F1(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>report</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._report(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.exists x.(_report(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z9.(_report(z9) & TrueP & _read(x,z9)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[to=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z9.(_report(z9) & TrueP & _read(x,z9)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)\(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z9.(_report(z9) & TrueP & _read(x,z9)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>TrueP(\x._than(\y._take(x,y),\w.TrueP,\F2 F3.exists z7.(_day(z7) & F2(z7) & F3(z7)),\x0._half(x0),\Q.Q(\w.TrueP,\z8._less(z8))),\x.exists z9.(_report(z9) & TrueP & _read(x,z9)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>TrueP(\x._than(\y._take(x,y),\w.TrueP,\F2 F3.exists z7.(_day(z7) & F2(z7) & F3(z7)),\x0._half(x0),\Q.Q(\w.TrueP,\z8._less(z8))),\x.exists z9.(_report(z9) & TrueP & _read(x,z9)),\F2 F3.all x.(_representative(x) -> (F2(x) -> -F3(x))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>.</mtext>
+</mrow>
+  <mrow></mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\X.X</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>TrueP(\x._than(\y._take(x,y),\w.TrueP,\F2 F3.exists z7.(_day(z7) & F2(z7) & F3(z7)),\x0._half(x0),\Q.Q(\w.TrueP,\z8._less(z8))),\x.exists z9.(_report(z9) & TrueP & _read(x,z9)),\F2 F3.all x.(_representative(x) -> (F2(x) -> -F3(x))))</mtext>
+</mrow>
+</mfrac>
+</math><p>Premise 4: There are sixteen representatives .</p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac linethickness='0px'>
+  <mrow><mrow><mo>rp</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>There</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[thr=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2.exists x.F2(x)</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>are</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[thr=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>)/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(x = y)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>lex</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>sixteen</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F x.(_sixteen(x) & F(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>representatives</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._representative(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x.(_sixteen(x) & _representative(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2.exists x.(_sixteen(x) & _representative(x) & F1(x) & F2(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[thr=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z10.(_sixteen(z10) & _representative(z10) & TrueP & (x = z10)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>exists x z10.(_sixteen(z10) & _representative(z10) & TrueP & (x = z10))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>.</mtext>
+</mrow>
+  <mrow></mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\X.X</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>exists x z10.(_sixteen(z10) & _representative(z10) & TrueP & (x = z10))</mtext>
+</mrow>
+</mfrac>
+</math><p>Conclusion: It took the representatives more than a week to read the report .</p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac linethickness='0px'>
+  <mrow><mrow><mo>rp</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>It</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2.exists x.(F1(x) & F2(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>took</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._take(x,y)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>the</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.exists x.(F1(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>representatives</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._representative(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.exists x.(_representative(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z11.(_representative(z11) & TrueP & _take(x,z11)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>more</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S\NP)\(S\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\V Q.Q(\w.TrueP,\x.(_more(x) & V(\F1 F2.F2(x))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>than</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>(((S\NP)\(S\NP))\((S\NP)\(S\NP)))/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x0 x1 x2 x3 x4 x5 x6 x7._than(x7,x6,x5,x4,x3,x2,x1,x0)</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>a</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.exists x.(F1(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>week</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._week(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.exists x.(_week(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>((S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)\(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP))\((S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)\(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP))  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x1 x2 x3 x4 x5 x6 x7._than(x7,x6,x5,x4,x3,x2,x1,\F2 F3.exists x.(_week(x) & F2(x) & F3(x)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)\(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x2 x3 x4 x5 x6 x7._than(x7,x6,x5,x4,x3,x2,\V Q.Q(\w.TrueP,\x.(_more(x) & V(\F1 F2.F2(x)))),\F2 F3.exists x.(_week(x) & F2(x) & F3(x)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x3 x4 x5 x6 x7._than(x7,x6,x5,x4,x3,\Q2.Q2(\w.TrueP,\x.exists z11.(_representative(z11) & TrueP & _take(x,z11))),\V Q.Q(\w.TrueP,\x.(_more(x) & V(\F1 F2.F2(x)))),\F2 F3.exists x.(_week(x) & F2(x) & F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>lex</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>to</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[to=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\X.X</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>read</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._read(x,y)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>the</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.exists x.(F1(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>report</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._report(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.exists x.(_report(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z12.(_report(z12) & TrueP & _read(x,z12)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[to=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z12.(_report(z12) & TrueP & _read(x,z12)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)\(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z12.(_report(z12) & TrueP & _read(x,z12)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x5 x6 x7._than(x7,x6,x5,\x.exists z12.(_report(z12) & TrueP & _read(x,z12)),\w.TrueP,\Q2.Q2(\w.TrueP,\x.exists z11.(_representative(z11) & TrueP & _take(x,z11))),\V Q.Q(\w.TrueP,\x.(_more(x) & V(\F1 F2.F2(x)))),\F2 F3.exists x.(_week(x) & F2(x) & F3(x)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x6 x7._than(x7,x6,\F1 F2.exists x.(F1(x) & F2(x)),\x.exists z12.(_report(z12) & TrueP & _read(x,z12)),\w.TrueP,\Q2.Q2(\w.TrueP,\x.exists z11.(_representative(z11) & TrueP & _take(x,z11))),\V Q.Q(\w.TrueP,\x.(_more(x) & V(\F1 F2.F2(x)))),\F2 F3.exists x.(_week(x) & F2(x) & F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>.</mtext>
+</mrow>
+  <mrow></mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\X.X</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x6 x7._than(x7,x6,\F1 F2.exists x.(F1(x) & F2(x)),\x.exists z12.(_report(z12) & TrueP & _read(x,z12)),\w.TrueP,\Q2.Q2(\w.TrueP,\x.exists z11.(_representative(z11) & TrueP & _take(x,z11))),\V Q.Q(\w.TrueP,\x.(_more(x) & V(\F1 F2.F2(x)))),\F2 F3.exists x.(_week(x) & F2(x) & F3(x)))</mtext>
+</mrow>
+</mfrac>
+</math><p>Script piped to coq</p><pre>
+echo "Require Export coqlib. 
+Parameter _take : Entity -> Entity -> Prop.
+Parameter _sixteen : Entity -> Prop.
+Parameter _half : Entity -> Prop.
+Parameter _report : Entity -> Prop.
+Parameter _read : Entity -> Entity -> Prop.
+Parameter _at : Entity -> Entity -> Prop.
+Parameter _have : Entity -> Prop.
+Parameter _week : Entity -> Prop.
+Parameter _same : Entity -> Prop.
+Parameter _less : Entity -> Prop.
+Parameter _more : Entity -> Prop.
+Parameter _two : Entity -> Prop.
+Parameter _time : Entity -> Prop.
+Parameter _representative : Entity -> Prop.
+Parameter _than : Entity -> Prop -> Prop -> Entity -> Entity -> Prop -> Entity -> Prop -> Prop -> Entity -> Prop -> Prop -> Entity -> Entity -> Prop -> Prop -> Prop -> Prop.
+Parameter _day : Entity -> Prop.
+
+
+
+Theorem t1: (forall x, ((_representative x) -> (True -> (and (_have x) (exists z1, (and (and (_report z1) True) (_read x z1))))))) -> (forall x, ((and (_two x) (_representative x)) -> (True -> (not (and (_have x) (exists z4, (and (and (and (and (_same z4) (_time z4)) True) (_at x z4)) (exists z3, (and True (_read x z3)))))))))) -> (True (fun x => (_than (fun y => (_take x y)) (fun w => True) (fun F2 F3 => (exists z7, (and (and (_day z7) (F2 z7)) (F3 z7)))) (fun x0 => (_half x0)) (fun Q => (Q (fun w => True) (fun z8 => (_less z8)))))) (fun x => (exists z9, (and (and (_report z9) True) (_read x z9)))) (fun F2 F3 => (forall x, ((_representative x) -> ((F2 x) -> (not (F3 x))))))) -> (exists x z10, (and (and (and (_sixteen z10) (_representative z10)) True) (x = z10))) -> (fun x6 x7 => (_than x7 x6 (fun F1 F2 => (exists x, (and (F1 x) (F2 x)))) (fun x => (exists z12, (and (and (_report z12) True) (_read x z12)))) (fun w => True) (fun Q2 => (Q2 (fun w => True) (fun x => (exists z11, (and (and (_representative z11) True) (_take x z11)))))) (fun V Q => (Q (fun w => True) (fun x => (and (_more x) (V (fun F1 F2 => (F2 x))))))) (fun F2 F3 => (exists x, (and (and (_week x) (F2 x)) (F3 x)))))). nltac. Qed." | coqtop
+</pre>
+<pre>
+echo "Require Export coqlib. 
+Parameter _take : Entity -> Entity -> Prop.
+Parameter _sixteen : Entity -> Prop.
+Parameter _half : Entity -> Prop.
+Parameter _report : Entity -> Prop.
+Parameter _read : Entity -> Entity -> Prop.
+Parameter _at : Entity -> Entity -> Prop.
+Parameter _have : Entity -> Prop.
+Parameter _week : Entity -> Prop.
+Parameter _same : Entity -> Prop.
+Parameter _less : Entity -> Prop.
+Parameter _more : Entity -> Prop.
+Parameter _two : Entity -> Prop.
+Parameter _time : Entity -> Prop.
+Parameter _representative : Entity -> Prop.
+Parameter _than : Entity -> Prop -> Prop -> Entity -> Entity -> Prop -> Entity -> Prop -> Prop -> Entity -> Prop -> Prop -> Entity -> Entity -> Prop -> Prop -> Prop -> Prop.
+Parameter _day : Entity -> Prop.
+
+
+
+Theorem t1: (forall x, ((_representative x) -> (True -> (and (_have x) (exists z1, (and (and (_report z1) True) (_read x z1))))))) -> (forall x, ((and (_two x) (_representative x)) -> (True -> (not (and (_have x) (exists z4, (and (and (and (and (_same z4) (_time z4)) True) (_at x z4)) (exists z3, (and True (_read x z3)))))))))) -> (True (fun x => (_than (fun y => (_take x y)) (fun w => True) (fun F2 F3 => (exists z7, (and (and (_day z7) (F2 z7)) (F3 z7)))) (fun x0 => (_half x0)) (fun Q => (Q (fun w => True) (fun z8 => (_less z8)))))) (fun x => (exists z9, (and (and (_report z9) True) (_read x z9)))) (fun F2 F3 => (forall x, ((_representative x) -> ((F2 x) -> (not (F3 x))))))) -> (exists x z10, (and (and (and (_sixteen z10) (_representative z10)) True) (x = z10))) -> (~ (fun x6 x7 => (_than x7 x6 (fun F1 F2 => (exists x, (and (F1 x) (F2 x)))) (fun x => (exists z12, (and (and (_report z12) True) (_read x z12)))) (fun w => True) (fun Q2 => (Q2 (fun w => True) (fun x => (exists z11, (and (and (_representative z11) True) (_take x z11)))))) (fun V Q => (Q (fun w => True) (fun x => (and (_more x) (V (fun F1 F2 => (F2 x))))))) (fun F2 F3 => (exists x, (and (and (_week x) (F2 x)) (F3 x))))))). nltac. Qed." | coqtop
+</pre>
+  </body>
+  </html>
+  

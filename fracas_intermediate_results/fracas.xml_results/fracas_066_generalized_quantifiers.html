@@ -1,0 +1,944 @@
+  <!doctype html>
+  <html lang='en'>
+  <head>
+    <meta charset='UTF-8'>
+    <title>CCG to Lambda conversion</title>
+    <style>
+      body {
+        font-size: 1em;
+      }
+    </style>
+    <script type="text/javascript"
+            src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+  </head>
+  <body>
+  <p>Premise 1: Every resident of the North American continent can travel freely within Europe .</p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac linethickness='0px'>
+  <mrow><mrow><mo>rp</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>Every</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.all x.(F1(x) -> (F2(x) -> F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>resident</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._resident(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.all x.(_resident(x) -> (F2(x) -> F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>of</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>(NP\NP)/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 Q2 F1.Q2(\x.(Q1(\w.TrueP,\y._of(x,y)) & F1(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>the</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.exists x.(F1(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>North</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>(N/N)/(N/N)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\A F x.(_north(x) & A(F,x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>American</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F x.(_american(x) & F(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N/N  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F x.(_north(x) & _american(x) & F(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>continent</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._continent(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x.(_north(x) & _american(x) & _continent(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.exists x.(_north(x) & _american(x) & _continent(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2 F1.Q2(\x.(exists z1.(_north(z1) & _american(z1) & _continent(z1) & TrueP & _of(x,z1)) & F1(x)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F3.all x.(_resident(x) -> ((exists z1.(_north(z1) & _american(z1) & _continent(z1) & TrueP & _of(x,z1)) & F1(x)) -> F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>can</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\V Q.Q(\w.TrueP,\x.V(\F1 F2._can(F2(x))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>travel</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q.Q(\w.TrueP,\x._travel(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>freely</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S\NP)\(S\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\V Q.Q(\w.TrueP,\x.(_freely(x) & V(\F1 F2.F2(x))))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q.Q(\w.TrueP,\x.(_freely(x) & _travel(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>within</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>((S\NP)\(S\NP))/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 V Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(_within(x,y) & V(\F1 F2.F2(x)))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>lex</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>Europe</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>_europe</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2.exists x.((x = _europe) & F1(_europe) & F2(_europe))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)\(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\V Q2.Q2(\w.TrueP,\x.exists z3.((z3 = _europe) & TrueP & _within(x,_europe) & V(\F1 F2.F2(x))))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z3.((z3 = _europe) & TrueP & _within(x,_europe) & _freely(x) & _travel(x)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q.Q(\w.TrueP,\x._can(exists z3.((z3 = _europe) & TrueP & _within(x,_europe) & _freely(x) & _travel(x))))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>all x.(_resident(x) -> ((exists z1.(_north(z1) & _american(z1) & _continent(z1) & TrueP & _of(x,z1)) & TrueP) -> _can(exists z3.((z3 = _europe) & TrueP & _within(x,_europe) & _freely(x) & _travel(x)))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>.</mtext>
+</mrow>
+  <mrow></mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\X.X</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>all x.(_resident(x) -> ((exists z1.(_north(z1) & _american(z1) & _continent(z1) & TrueP & _of(x,z1)) & TrueP) -> _can(exists z3.((z3 = _europe) & TrueP & _within(x,_europe) & _freely(x) & _travel(x)))))</mtext>
+</mrow>
+</mfrac>
+</math><p>Premise 2: Every Canadian resident is a resident of the North American continent .</p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac linethickness='0px'>
+  <mrow><mrow><mo>rp</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>Every</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.all x.(F1(x) -> (F2(x) -> F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>Canadian</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F x.(_canadian(x) & F(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>resident</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._resident(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x.(_canadian(x) & _resident(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.all x.((_canadian(x) & _resident(x)) -> (F2(x) -> F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>is</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(x = y)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>a</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.exists x.(F1(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>resident</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._resident(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.exists x.(_resident(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>of</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>(NP\NP)/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 Q2 F1.Q2(\x.(Q1(\w.TrueP,\y._of(x,y)) & F1(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>the</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.exists x.(F1(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>North</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F x.(_north(x) & F(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>American</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F x.(_american(x) & F(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>continent</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._continent(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x.(_american(x) & _continent(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x.(_north(x) & _american(x) & _continent(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.exists x.(_north(x) & _american(x) & _continent(x) & F2(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2 F1.Q2(\x.(exists z6.(_north(z6) & _american(z6) & _continent(z6) & TrueP & _of(x,z6)) & F1(x)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F3.exists x.(_resident(x) & exists z6.(_north(z6) & _american(z6) & _continent(z6) & TrueP & _of(x,z6)) & F1(x) & F3(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z7.(_resident(z7) & exists z6.(_north(z6) & _american(z6) & _continent(z6) & TrueP & _of(z7,z6)) & TrueP & (x = z7)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>all x.((_canadian(x) & _resident(x)) -> (TrueP -> exists z7.(_resident(z7) & exists z6.(_north(z6) & _american(z6) & _continent(z6) & TrueP & _of(z7,z6)) & TrueP & (x = z7))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>.</mtext>
+</mrow>
+  <mrow></mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\X.X</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>all x.((_canadian(x) & _resident(x)) -> (TrueP -> exists z7.(_resident(z7) & exists z6.(_north(z6) & _american(z6) & _continent(z6) & TrueP & _of(z7,z6)) & TrueP & (x = z7))))</mtext>
+</mrow>
+</mfrac>
+</math><p>Conclusion: Every Canadian resident can travel freely within Europe .</p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac linethickness='0px'>
+  <mrow><mrow><mo>rp</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>Every</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2 F3.all x.(F1(x) -> (F2(x) -> F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>Canadian</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N/N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F x.(_canadian(x) & F(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>resident</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x._resident(x)</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\x.(_canadian(x) & _resident(x))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[nb=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F2 F3.all x.((_canadian(x) & _resident(x)) -> (F2(x) -> F3(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>can</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)/(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\V Q.Q(\w.TrueP,\x.V(\F1 F2._can(F2(x))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mrow><mo>ba</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>travel</mtext>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q.Q(\w.TrueP,\x._travel(x))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>freely</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S\NP)\(S\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\V Q.Q(\w.TrueP,\x.(_freely(x) & V(\F1 F2.F2(x))))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q.Q(\w.TrueP,\x.(_freely(x) & _travel(x)))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>fa</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>within</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>((S\NP)\(S\NP))/NP  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q1 V Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(_within(x,y) & V(\F1 F2.F2(x)))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mrow><mo>lex</mo><mfrac linethickness='3px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>Europe</mtext>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>N  </mi>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>_europe</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow>  <mi mathvariant='italic' fontsize='1.0' color='Red'>NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\F1 F2.exists x.((x = _europe) & F1(_europe) & F2(_europe))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+<msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)\(S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[X=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP)  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\V Q2.Q2(\w.TrueP,\x.exists z9.((z9 = _europe) & TrueP & _within(x,_europe) & V(\F1 F2.F2(x))))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[b=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q2.Q2(\w.TrueP,\x.exists z9.((z9 = _europe) & TrueP & _within(x,_europe) & _freely(x) & _travel(x)))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>\NP  </mi>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\Q.Q(\w.TrueP,\x._can(exists z9.((z9 = _europe) & TrueP & _within(x,_europe) & _freely(x) & _travel(x))))</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>all x.((_canadian(x) & _resident(x)) -> (TrueP -> _can(exists z9.((z9 = _europe) & TrueP & _within(x,_europe) & _freely(x) & _travel(x)))))</mtext>
+</mrow>
+</mfrac>
+<mfrac linethickness='0px'>
+  <mrow><mfrac linethickness='0px'>
+  <mrow><mtext  fontsize='1.0' color='Black'>.</mtext>
+</mrow>
+  <mrow></mrow>
+</mfrac>
+</mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>\X.X</mtext>
+</mrow>
+</mfrac>
+</mrow>
+  <mrow><msub>
+  <mi mathvariant='italic' fontsize='1.0' color='Red'>S  </mi>
+  <mrow>
+    <mi mathvariant='italic' fontsize='0.8' color='Purple'>[dcl=true]  </mi>
+  </mrow>
+</msub>
+</mrow>
+</mfrac>
+</mrow></mrow>
+  <mrow><mtext  fontsize='1.0' color='Blue'>all x.((_canadian(x) & _resident(x)) -> (TrueP -> _can(exists z9.((z9 = _europe) & TrueP & _within(x,_europe) & _freely(x) & _travel(x)))))</mtext>
+</mrow>
+</mfrac>
+</math><p>Script piped to coq</p><pre>
+echo "Require Export coqlib. 
+Parameter _resident : Entity -> Prop.
+Parameter _continent : Entity -> Prop.
+Parameter _travel : Entity -> Prop.
+Parameter _within : Entity -> Entity -> Prop.
+Parameter _american : Entity -> Prop.
+Parameter _europe : Entity.
+Parameter _canadian : Entity -> Prop.
+Parameter _of : Entity -> Entity -> Prop.
+Parameter _can : Prop -> Prop.
+Parameter _freely : Entity -> Prop.
+Parameter _north : Entity -> Prop.
+
+
+
+Theorem t1: (forall x, ((_resident x) -> ((and (exists z1, (and (and (and (and (_north z1) (_american z1)) (_continent z1)) True) (_of x z1))) True) -> (_can (exists z3, (and (and (and (and (z3 = _europe) True) (_within x _europe)) (_freely x)) (_travel x))))))) -> (forall x, ((and (_canadian x) (_resident x)) -> (True -> (exists z7, (and (and (and (_resident z7) (exists z6, (and (and (and (and (_north z6) (_american z6)) (_continent z6)) True) (_of z7 z6)))) True) (x = z7)))))) -> (forall x, ((and (_canadian x) (_resident x)) -> (True -> (_can (exists z9, (and (and (and (and (z9 = _europe) True) (_within x _europe)) (_freely x)) (_travel x))))))). nltac. Qed." | coqtop
+</pre>
+  </body>
+  </html>
+  

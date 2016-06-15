@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <document>
+    <sentences>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t0_0" surf="All" base="all"/>
+          <token start="1" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t0_1" surf="Europeans" base="european"/>
+          <token start="2" span="1" pos="VBP" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" id="t0_2" surf="have" base="have"/>
+          <token start="3" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t0_3" surf="the" base="the"/>
+          <token start="4" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t0_4" surf="right" base="right"/>
+          <token start="5" span="1" pos="TO" chunk="I-VP" entity="O" cat="(S[to]\NP)/(S[b]\NP)" id="t0_5" surf="to" base="to"/>
+          <token start="6" span="1" pos="VB" chunk="I-VP" entity="O" cat="S[b]\NP" id="t0_6" surf="live" base="live"/>
+          <token start="7" span="1" pos="IN" chunk="I-PP" entity="O" cat="((S\NP)\(S\NP))/NP" id="t0_7" surf="in" base="in"/>
+          <token start="8" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" cat="N" id="t0_8" surf="Europe" base="europe"/>
+          <token start="9" span="1" pos="." chunk="O" entity="O" cat="." id="t0_9" surf="." base="."/>
+        </tokens>
+        <ccg root="s0_sp0" id="s0_ccg0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp20" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp5" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp4" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="O" id="s0_sp3" surf="All" base="all" terminal="t0_0" category="NP[nb=true]/N"/>
+          <span start="1" span="1" pos="NNS" chunk="I-NP" entity="O" id="s0_sp4" surf="Europeans" base="european" terminal="t0_1" category="N"/>
+          <span id="s0_sp5" child="s0_sp6 s0_sp7" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="2" span="1" pos="VBP" chunk="I-VP" entity="O" id="s0_sp6" surf="have" base="have" terminal="t0_2" category="(S[dcl=true]\NP)/NP"/>
+          <span id="s0_sp7" child="s0_sp8 s0_sp9" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="3" span="1" pos="DT" chunk="I-NP" entity="O" id="s0_sp8" surf="the" base="the" terminal="t0_3" category="NP[nb=true]/N"/>
+          <span id="s0_sp9" child="s0_sp10 s0_sp11" pos="None" category="N" rule="ba"/>
+          <span start="4" span="1" pos="NN" chunk="I-NP" entity="O" id="s0_sp10" surf="right" base="right" terminal="t0_4" category="N"/>
+          <span id="s0_sp11" child="s0_sp12" pos="None" category="N\N" rule="lex"/>
+          <span id="s0_sp12" child="s0_sp13 s0_sp14" pos="None" category="S[to=true]\NP" rule="fa"/>
+          <span start="5" span="1" pos="TO" chunk="I-VP" entity="O" id="s0_sp13" surf="to" base="to" terminal="t0_5" category="(S[to=true]\NP)/(S[b=true]\NP)"/>
+          <span id="s0_sp14" child="s0_sp15 s0_sp16" pos="None" category="S[b=true]\NP" rule="ba"/>
+          <span start="6" span="1" pos="VB" chunk="I-VP" entity="O" id="s0_sp15" surf="live" base="live" terminal="t0_6" category="S[b=true]\NP"/>
+          <span id="s0_sp16" child="s0_sp17 s0_sp18" pos="None" category="(S[X=true]\NP)\(S[X=true]\NP)" rule="fa"/>
+          <span start="7" span="1" pos="IN" chunk="I-PP" entity="O" id="s0_sp17" surf="in" base="in" terminal="t0_7" category="((S\NP)\(S\NP))/NP"/>
+          <span id="s0_sp18" child="s0_sp19" pos="None" category="NP" rule="lex"/>
+          <span start="8" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" id="s0_sp19" surf="Europe" base="europe" terminal="t0_8" category="N"/>
+          <span start="9" span="1" pos="." chunk="O" entity="O" id="s0_sp20" surf="." base="." terminal="t0_9" category="."/>
+        </ccg>
+        <semantics status="success" root="s0_sp0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp20" sem="all x.(_european(x) -&gt; (TrueP -&gt; exists z4.(exists z1.((z1 = _europe) &amp; TrueP &amp; _in(z4,_europe) &amp; _live(z4)) &amp; _right(z4) &amp; TrueP &amp; _have(x,z4))))"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp5" sem="all x.(_european(x) -&gt; (TrueP -&gt; exists z4.(exists z1.((z1 = _europe) &amp; TrueP &amp; _in(z4,_europe) &amp; _live(z4)) &amp; _right(z4) &amp; TrueP &amp; _have(x,z4))))"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp4" sem="\F2 F3.all x.(_european(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s0_sp3" sem="\F1 F2 F3.all x.(F1(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s0_sp4" sem="\x._european(x)" type="_european : Entity -&gt; Prop"/>
+          <span id="s0_sp5" child="s0_sp6 s0_sp7" sem="\Q2.Q2(\w.TrueP,\x.exists z4.(exists z1.((z1 = _europe) &amp; TrueP &amp; _in(z4,_europe) &amp; _live(z4)) &amp; _right(z4) &amp; TrueP &amp; _have(x,z4)))"/>
+          <span id="s0_sp6" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._have(x,y)))" type="_have : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s0_sp7" child="s0_sp8 s0_sp9" sem="\F2 F3.exists x.(exists z1.((z1 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; _live(x)) &amp; _right(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s0_sp8" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s0_sp9" child="s0_sp10 s0_sp11" sem="\x.(exists z1.((z1 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; _live(x)) &amp; _right(x))"/>
+          <span id="s0_sp10" sem="\x._right(x)" type="_right : Entity -&gt; Prop"/>
+          <span id="s0_sp11" child="s0_sp12" sem="\F x.(exists z1.((z1 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; _live(x)) &amp; F(x))"/>
+          <span id="s0_sp12" child="s0_sp13 s0_sp14" sem="\Q2.Q2(\w.TrueP,\x.exists z1.((z1 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; _live(x)))"/>
+          <span id="s0_sp13" sem="\X.X"/>
+          <span id="s0_sp14" child="s0_sp15 s0_sp16" sem="\Q2.Q2(\w.TrueP,\x.exists z1.((z1 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; _live(x)))"/>
+          <span id="s0_sp15" sem="\Q.Q(\w.TrueP,\x._live(x))" type="_live : Entity -&gt; Prop"/>
+          <span id="s0_sp16" child="s0_sp17 s0_sp18" sem="\V Q2.Q2(\w.TrueP,\x.exists z1.((z1 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; V(\F1 F2.F2(x))))"/>
+          <span id="s0_sp17" sem="\Q1 V Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(_in(x,y) &amp; V(\F1 F2.F2(x)))))" type="_in : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s0_sp18" child="s0_sp19" sem="\F1 F2.exists x.((x = _europe) &amp; F1(_europe) &amp; F2(_europe))"/>
+          <span id="s0_sp19" sem="_europe"/>
+          <span id="s0_sp20" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t1_0" surf="Every" base="every"/>
+          <token start="1" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t1_1" surf="person" base="person"/>
+          <token start="2" span="1" pos="WP" chunk="B-NP" entity="O" cat="(NP\NP)/(S[dcl]\NP)" id="t1_2" surf="who" base="who"/>
+          <token start="3" span="1" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" id="t1_3" surf="has" base="have"/>
+          <token start="4" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t1_4" surf="the" base="the"/>
+          <token start="5" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t1_5" surf="right" base="right"/>
+          <token start="6" span="1" pos="TO" chunk="I-VP" entity="O" cat="(S[to]\NP)/(S[b]\NP)" id="t1_6" surf="to" base="to"/>
+          <token start="7" span="1" pos="VB" chunk="I-VP" entity="O" cat="S[b]\NP" id="t1_7" surf="live" base="live"/>
+          <token start="8" span="1" pos="IN" chunk="I-PP" entity="O" cat="((S\NP)\(S\NP))/NP" id="t1_8" surf="in" base="in"/>
+          <token start="9" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" cat="N" id="t1_9" surf="Europe" base="europe"/>
+          <token start="10" span="1" pos="MD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[b]\NP)" id="t1_10" surf="can" base="can"/>
+          <token start="11" span="1" pos="VB" chunk="I-VP" entity="O" cat="S[b]\NP" id="t1_11" surf="travel" base="travel"/>
+          <token start="12" span="1" pos="RB" chunk="I-ADVP" entity="O" cat="(S\NP)\(S\NP)" id="t1_12" surf="freely" base="freely"/>
+          <token start="13" span="1" pos="IN" chunk="I-PP" entity="O" cat="((S\NP)\(S\NP))/NP" id="t1_13" surf="within" base="within"/>
+          <token start="14" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" cat="N" id="t1_14" surf="Europe" base="europe"/>
+          <token start="15" span="1" pos="." chunk="O" entity="O" cat="." id="t1_15" surf="." base="."/>
+        </tokens>
+        <ccg root="s1_sp0" id="s1_ccg0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp33" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp23" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s1_sp2" child="s1_sp3 s1_sp6" pos="None" category="NP" rule="ba"/>
+          <span id="s1_sp3" child="s1_sp4 s1_sp5" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="O" id="s1_sp4" surf="Every" base="every" terminal="t1_0" category="NP[nb=true]/N"/>
+          <span start="1" span="1" pos="NN" chunk="I-NP" entity="O" id="s1_sp5" surf="person" base="person" terminal="t1_1" category="N"/>
+          <span id="s1_sp6" child="s1_sp7 s1_sp8" pos="None" category="NP\NP" rule="fa"/>
+          <span start="2" span="1" pos="WP" chunk="B-NP" entity="O" id="s1_sp7" surf="who" base="who" terminal="t1_2" category="(NP\NP)/(S[dcl=true]\NP)"/>
+          <span id="s1_sp8" child="s1_sp9 s1_sp10" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="3" span="1" pos="VBZ" chunk="I-VP" entity="O" id="s1_sp9" surf="has" base="have" terminal="t1_3" category="(S[dcl=true]\NP)/NP"/>
+          <span id="s1_sp10" child="s1_sp11 s1_sp12" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="4" span="1" pos="DT" chunk="I-NP" entity="O" id="s1_sp11" surf="the" base="the" terminal="t1_4" category="NP[nb=true]/N"/>
+          <span id="s1_sp12" child="s1_sp13 s1_sp14" pos="None" category="N" rule="ba"/>
+          <span start="5" span="1" pos="NN" chunk="I-NP" entity="O" id="s1_sp13" surf="right" base="right" terminal="t1_5" category="N"/>
+          <span id="s1_sp14" child="s1_sp15" pos="None" category="N\N" rule="lex"/>
+          <span id="s1_sp15" child="s1_sp16 s1_sp17" pos="None" category="S[to=true]\NP" rule="fa"/>
+          <span start="6" span="1" pos="TO" chunk="I-VP" entity="O" id="s1_sp16" surf="to" base="to" terminal="t1_6" category="(S[to=true]\NP)/(S[b=true]\NP)"/>
+          <span id="s1_sp17" child="s1_sp18 s1_sp19" pos="None" category="S[b=true]\NP" rule="ba"/>
+          <span start="7" span="1" pos="VB" chunk="I-VP" entity="O" id="s1_sp18" surf="live" base="live" terminal="t1_7" category="S[b=true]\NP"/>
+          <span id="s1_sp19" child="s1_sp20 s1_sp21" pos="None" category="(S[X=true]\NP)\(S[X=true]\NP)" rule="fa"/>
+          <span start="8" span="1" pos="IN" chunk="I-PP" entity="O" id="s1_sp20" surf="in" base="in" terminal="t1_8" category="((S\NP)\(S\NP))/NP"/>
+          <span id="s1_sp21" child="s1_sp22" pos="None" category="NP" rule="lex"/>
+          <span start="9" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" id="s1_sp22" surf="Europe" base="europe" terminal="t1_9" category="N"/>
+          <span id="s1_sp23" child="s1_sp24 s1_sp25" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="10" span="1" pos="MD" chunk="I-VP" entity="O" id="s1_sp24" surf="can" base="can" terminal="t1_10" category="(S[dcl=true]\NP)/(S[b=true]\NP)"/>
+          <span id="s1_sp25" child="s1_sp26 s1_sp29" pos="None" category="S[b=true]\NP" rule="ba"/>
+          <span id="s1_sp26" child="s1_sp27 s1_sp28" pos="None" category="S[b=true]\NP" rule="ba"/>
+          <span start="11" span="1" pos="VB" chunk="I-VP" entity="O" id="s1_sp27" surf="travel" base="travel" terminal="t1_11" category="S[b=true]\NP"/>
+          <span start="12" span="1" pos="RB" chunk="I-ADVP" entity="O" id="s1_sp28" surf="freely" base="freely" terminal="t1_12" category="(S\NP)\(S\NP)"/>
+          <span id="s1_sp29" child="s1_sp30 s1_sp31" pos="None" category="(S[X=true]\NP)\(S[X=true]\NP)" rule="fa"/>
+          <span start="13" span="1" pos="IN" chunk="I-PP" entity="O" id="s1_sp30" surf="within" base="within" terminal="t1_13" category="((S\NP)\(S\NP))/NP"/>
+          <span id="s1_sp31" child="s1_sp32" pos="None" category="NP" rule="lex"/>
+          <span start="14" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" id="s1_sp32" surf="Europe" base="europe" terminal="t1_14" category="N"/>
+          <span start="15" span="1" pos="." chunk="O" entity="O" id="s1_sp33" surf="." base="." terminal="t1_15" category="."/>
+        </ccg>
+        <semantics status="success" root="s1_sp0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp33" sem="all x.(_person(x) -&gt; ((exists z8.(exists z5.((z5 = _europe) &amp; TrueP &amp; _in(z8,_europe) &amp; _live(z8)) &amp; _right(z8) &amp; TrueP &amp; _have(x,z8)) &amp; TrueP) -&gt; _can(exists z11.((z11 = _europe) &amp; TrueP &amp; _within(x,_europe) &amp; _freely(x) &amp; _travel(x)))))"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp23" sem="all x.(_person(x) -&gt; ((exists z8.(exists z5.((z5 = _europe) &amp; TrueP &amp; _in(z8,_europe) &amp; _live(z8)) &amp; _right(z8) &amp; TrueP &amp; _have(x,z8)) &amp; TrueP) -&gt; _can(exists z11.((z11 = _europe) &amp; TrueP &amp; _within(x,_europe) &amp; _freely(x) &amp; _travel(x)))))"/>
+          <span id="s1_sp2" child="s1_sp3 s1_sp6" sem="\F1 F3.all x.(_person(x) -&gt; ((exists z8.(exists z5.((z5 = _europe) &amp; TrueP &amp; _in(z8,_europe) &amp; _live(z8)) &amp; _right(z8) &amp; TrueP &amp; _have(x,z8)) &amp; F1(x)) -&gt; F3(x)))"/>
+          <span id="s1_sp3" child="s1_sp4 s1_sp5" sem="\F2 F3.all x.(_person(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s1_sp4" sem="\F1 F2 F3.all x.(F1(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s1_sp5" sem="\x._person(x)" type="_person : Entity -&gt; Prop"/>
+          <span id="s1_sp6" child="s1_sp7 s1_sp8" sem="\Q F1.Q(\x.(exists z8.(exists z5.((z5 = _europe) &amp; TrueP &amp; _in(z8,_europe) &amp; _live(z8)) &amp; _right(z8) &amp; TrueP &amp; _have(x,z8)) &amp; F1(x)))"/>
+          <span id="s1_sp7" sem="\V Q F1.Q(\x.(V(\F2 F3.F3(x)) &amp; F1(x)))"/>
+          <span id="s1_sp8" child="s1_sp9 s1_sp10" sem="\Q2.Q2(\w.TrueP,\x.exists z8.(exists z5.((z5 = _europe) &amp; TrueP &amp; _in(z8,_europe) &amp; _live(z8)) &amp; _right(z8) &amp; TrueP &amp; _have(x,z8)))"/>
+          <span id="s1_sp9" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._have(x,y)))" type="_have : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s1_sp10" child="s1_sp11 s1_sp12" sem="\F2 F3.exists x.(exists z5.((z5 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; _live(x)) &amp; _right(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s1_sp11" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s1_sp12" child="s1_sp13 s1_sp14" sem="\x.(exists z5.((z5 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; _live(x)) &amp; _right(x))"/>
+          <span id="s1_sp13" sem="\x._right(x)" type="_right : Entity -&gt; Prop"/>
+          <span id="s1_sp14" child="s1_sp15" sem="\F x.(exists z5.((z5 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; _live(x)) &amp; F(x))"/>
+          <span id="s1_sp15" child="s1_sp16 s1_sp17" sem="\Q2.Q2(\w.TrueP,\x.exists z5.((z5 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; _live(x)))"/>
+          <span id="s1_sp16" sem="\X.X"/>
+          <span id="s1_sp17" child="s1_sp18 s1_sp19" sem="\Q2.Q2(\w.TrueP,\x.exists z5.((z5 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; _live(x)))"/>
+          <span id="s1_sp18" sem="\Q.Q(\w.TrueP,\x._live(x))" type="_live : Entity -&gt; Prop"/>
+          <span id="s1_sp19" child="s1_sp20 s1_sp21" sem="\V Q2.Q2(\w.TrueP,\x.exists z5.((z5 = _europe) &amp; TrueP &amp; _in(x,_europe) &amp; V(\F1 F2.F2(x))))"/>
+          <span id="s1_sp20" sem="\Q1 V Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(_in(x,y) &amp; V(\F1 F2.F2(x)))))" type="_in : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s1_sp21" child="s1_sp22" sem="\F1 F2.exists x.((x = _europe) &amp; F1(_europe) &amp; F2(_europe))"/>
+          <span id="s1_sp22" sem="_europe"/>
+          <span id="s1_sp23" child="s1_sp24 s1_sp25" sem="\Q.Q(\w.TrueP,\x._can(exists z11.((z11 = _europe) &amp; TrueP &amp; _within(x,_europe) &amp; _freely(x) &amp; _travel(x))))"/>
+          <span id="s1_sp24" sem="\V Q.Q(\w.TrueP,\x.V(\F1 F2._can(F2(x))))" type="_can : Prop -&gt; Prop"/>
+          <span id="s1_sp25" child="s1_sp26 s1_sp29" sem="\Q2.Q2(\w.TrueP,\x.exists z11.((z11 = _europe) &amp; TrueP &amp; _within(x,_europe) &amp; _freely(x) &amp; _travel(x)))"/>
+          <span id="s1_sp26" child="s1_sp27 s1_sp28" sem="\Q.Q(\w.TrueP,\x.(_freely(x) &amp; _travel(x)))"/>
+          <span id="s1_sp27" sem="\Q.Q(\w.TrueP,\x._travel(x))" type="_travel : Entity -&gt; Prop"/>
+          <span id="s1_sp28" sem="\V Q.Q(\w.TrueP,\x.(_freely(x) &amp; V(\F1 F2.F2(x))))" type="_freely : Entity -&gt; Prop"/>
+          <span id="s1_sp29" child="s1_sp30 s1_sp31" sem="\V Q2.Q2(\w.TrueP,\x.exists z11.((z11 = _europe) &amp; TrueP &amp; _within(x,_europe) &amp; V(\F1 F2.F2(x))))"/>
+          <span id="s1_sp30" sem="\Q1 V Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(_within(x,y) &amp; V(\F1 F2.F2(x)))))" type="_within : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s1_sp31" child="s1_sp32" sem="\F1 F2.exists x.((x = _europe) &amp; F1(_europe) &amp; F2(_europe))"/>
+          <span id="s1_sp32" sem="_europe"/>
+          <span id="s1_sp33" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t2_0" surf="All" base="all"/>
+          <token start="1" span="1" pos="NNPS" chunk="I-NP" entity="O" cat="N" id="t2_1" surf="Europeans" base="europeans"/>
+          <token start="2" span="1" pos="MD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[b]\NP)" id="t2_2" surf="can" base="can"/>
+          <token start="3" span="1" pos="VB" chunk="I-VP" entity="O" cat="S[b]\NP" id="t2_3" surf="travel" base="travel"/>
+          <token start="4" span="1" pos="RB" chunk="I-ADVP" entity="O" cat="(S\NP)\(S\NP)" id="t2_4" surf="freely" base="freely"/>
+          <token start="5" span="1" pos="IN" chunk="I-PP" entity="O" cat="((S\NP)\(S\NP))/NP" id="t2_5" surf="within" base="within"/>
+          <token start="6" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" cat="N" id="t2_6" surf="Europe" base="europe"/>
+          <token start="7" span="1" pos="." chunk="O" entity="O" cat="." id="t2_7" surf="." base="."/>
+        </tokens>
+        <ccg root="s2_sp0" id="s2_ccg0">
+          <span id="s2_sp0" child="s2_sp1 s2_sp15" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s2_sp1" child="s2_sp2 s2_sp5" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s2_sp2" child="s2_sp3 s2_sp4" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="O" id="s2_sp3" surf="All" base="all" terminal="t2_0" category="NP[nb=true]/N"/>
+          <span start="1" span="1" pos="NNPS" chunk="I-NP" entity="O" id="s2_sp4" surf="Europeans" base="europeans" terminal="t2_1" category="N"/>
+          <span id="s2_sp5" child="s2_sp6 s2_sp7" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="2" span="1" pos="MD" chunk="I-VP" entity="O" id="s2_sp6" surf="can" base="can" terminal="t2_2" category="(S[dcl=true]\NP)/(S[b=true]\NP)"/>
+          <span id="s2_sp7" child="s2_sp8 s2_sp11" pos="None" category="S[b=true]\NP" rule="ba"/>
+          <span id="s2_sp8" child="s2_sp9 s2_sp10" pos="None" category="S[b=true]\NP" rule="ba"/>
+          <span start="3" span="1" pos="VB" chunk="I-VP" entity="O" id="s2_sp9" surf="travel" base="travel" terminal="t2_3" category="S[b=true]\NP"/>
+          <span start="4" span="1" pos="RB" chunk="I-ADVP" entity="O" id="s2_sp10" surf="freely" base="freely" terminal="t2_4" category="(S\NP)\(S\NP)"/>
+          <span id="s2_sp11" child="s2_sp12 s2_sp13" pos="None" category="(S[X=true]\NP)\(S[X=true]\NP)" rule="fa"/>
+          <span start="5" span="1" pos="IN" chunk="I-PP" entity="O" id="s2_sp12" surf="within" base="within" terminal="t2_5" category="((S\NP)\(S\NP))/NP"/>
+          <span id="s2_sp13" child="s2_sp14" pos="None" category="NP" rule="lex"/>
+          <span start="6" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" id="s2_sp14" surf="Europe" base="europe" terminal="t2_6" category="N"/>
+          <span start="7" span="1" pos="." chunk="O" entity="O" id="s2_sp15" surf="." base="." terminal="t2_7" category="."/>
+        </ccg>
+        <semantics status="success" root="s2_sp0">
+          <span id="s2_sp0" child="s2_sp1 s2_sp15" sem="all x.(_europeans(x) -&gt; (TrueP -&gt; _can(exists z15.((z15 = _europe) &amp; TrueP &amp; _within(x,_europe) &amp; _freely(x) &amp; _travel(x)))))"/>
+          <span id="s2_sp1" child="s2_sp2 s2_sp5" sem="all x.(_europeans(x) -&gt; (TrueP -&gt; _can(exists z15.((z15 = _europe) &amp; TrueP &amp; _within(x,_europe) &amp; _freely(x) &amp; _travel(x)))))"/>
+          <span id="s2_sp2" child="s2_sp3 s2_sp4" sem="\F2 F3.all x.(_europeans(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s2_sp3" sem="\F1 F2 F3.all x.(F1(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s2_sp4" sem="\x._europeans(x)" type="_europeans : Entity -&gt; Prop"/>
+          <span id="s2_sp5" child="s2_sp6 s2_sp7" sem="\Q.Q(\w.TrueP,\x._can(exists z15.((z15 = _europe) &amp; TrueP &amp; _within(x,_europe) &amp; _freely(x) &amp; _travel(x))))"/>
+          <span id="s2_sp6" sem="\V Q.Q(\w.TrueP,\x.V(\F1 F2._can(F2(x))))" type="_can : Prop -&gt; Prop"/>
+          <span id="s2_sp7" child="s2_sp8 s2_sp11" sem="\Q2.Q2(\w.TrueP,\x.exists z15.((z15 = _europe) &amp; TrueP &amp; _within(x,_europe) &amp; _freely(x) &amp; _travel(x)))"/>
+          <span id="s2_sp8" child="s2_sp9 s2_sp10" sem="\Q.Q(\w.TrueP,\x.(_freely(x) &amp; _travel(x)))"/>
+          <span id="s2_sp9" sem="\Q.Q(\w.TrueP,\x._travel(x))" type="_travel : Entity -&gt; Prop"/>
+          <span id="s2_sp10" sem="\V Q.Q(\w.TrueP,\x.(_freely(x) &amp; V(\F1 F2.F2(x))))" type="_freely : Entity -&gt; Prop"/>
+          <span id="s2_sp11" child="s2_sp12 s2_sp13" sem="\V Q2.Q2(\w.TrueP,\x.exists z15.((z15 = _europe) &amp; TrueP &amp; _within(x,_europe) &amp; V(\F1 F2.F2(x))))"/>
+          <span id="s2_sp12" sem="\Q1 V Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(_within(x,y) &amp; V(\F1 F2.F2(x)))))" type="_within : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s2_sp13" child="s2_sp14" sem="\F1 F2.exists x.((x = _europe) &amp; F1(_europe) &amp; F2(_europe))"/>
+          <span id="s2_sp14" sem="_europe"/>
+          <span id="s2_sp15" sem="\X.X"/>
+        </semantics>
+      </sentence>
+    </sentences>
+  </document>
+</root>

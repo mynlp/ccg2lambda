@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="candc.xml"?>
+
+<candc>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="ba" cat="NP[nb]">
+    <rule type="lex" cat="NP">
+     <lf start="0" span="1" word="John" lemma="John" pos="NNP" chunk="I-NP" entity="I-PER" cat="N" />
+    </rule>
+    <rule type="conj" cat="NP[nb]\NP[nb]">
+     <lf start="1" span="1" word="and" lemma="and" pos="CC" chunk="O" entity="O" cat="conj" />
+     <rule type="fa" cat="NP[nb]">
+      <lf start="2" span="1" word="his" lemma="his" pos="PRP$" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+      <lf start="3" span="1" word="colleagues" lemma="colleague" pos="NNS" chunk="I-NP" entity="O" cat="N" />
+     </rule>
+    </rule>
+   </rule>
+   <rule type="ba" cat="S[dcl]\NP">
+    <lf start="4" span="1" word="went" lemma="go" pos="VBD" chunk="I-VP" entity="O" cat="S[dcl]\NP" />
+    <rule type="fa" cat="(S[X]\NP)\(S[X]\NP)">
+     <lf start="5" span="1" word="to" lemma="to" pos="TO" chunk="I-PP" entity="O" cat="((S\NP)\(S\NP))/NP" />
+     <rule type="fa" cat="NP[nb]">
+      <lf start="6" span="1" word="a" lemma="a" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+      <lf start="7" span="1" word="meeting" lemma="meeting" pos="NN" chunk="I-NP" entity="O" cat="N" />
+     </rule>
+    </rule>
+   </rule>
+  </rule>
+  <lf start="8" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <lf start="0" span="1" word="They" lemma="they" pos="PRP" chunk="I-NP" entity="O" cat="NP" />
+   <rule type="fa" cat="S[dcl]\NP">
+    <lf start="1" span="1" word="hated" lemma="hate" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+    <lf start="2" span="1" word="it" lemma="it" pos="PRP" chunk="I-NP" entity="O" cat="NP" />
+   </rule>
+  </rule>
+  <lf start="3" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="fa" cat="NP[nb]">
+    <rule type="ba" cat="NP[nb]/N">
+     <rule type="lex" cat="NP">
+      <lf start="0" span="1" word="John" lemma="John" pos="NNP" chunk="I-NP" entity="I-PER" cat="N" />
+     </rule>
+     <lf start="1" span="1" word="'s" lemma="'s" pos="POS" chunk="B-NP" entity="O" cat="(NP[nb]/N)\NP" />
+    </rule>
+    <lf start="2" span="1" word="colleagues" lemma="colleague" pos="NNS" chunk="I-NP" entity="O" cat="N" />
+   </rule>
+   <rule type="fa" cat="S[dcl]\NP">
+    <lf start="3" span="1" word="hated" lemma="hate" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+    <rule type="fa" cat="NP[nb]">
+     <lf start="4" span="1" word="the" lemma="the" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+     <lf start="5" span="1" word="meeting" lemma="meeting" pos="NN" chunk="I-NP" entity="O" cat="N" />
+    </rule>
+   </rule>
+  </rule>
+  <lf start="6" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+</candc>

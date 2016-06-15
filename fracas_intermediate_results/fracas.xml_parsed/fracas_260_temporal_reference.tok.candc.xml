@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="candc.xml"?>
+
+<candc>
+<ccg>
+ <rule type="fa" cat="S[dcl]">
+  <lf start="0" span="1" word="Yesterday" lemma="yesterday" pos="NN" chunk="I-NP" entity="O" cat="S/S" />
+  <rule type="rp" cat="S[dcl]">
+   <rule type="ba" cat="S[dcl]">
+    <rule type="lex" cat="NP">
+     <lf start="1" span="1" word="APCOM" lemma="APCOM" pos="NNP" chunk="I-NP" entity="I-ORG" cat="N" />
+    </rule>
+    <rule type="fa" cat="S[dcl]\NP">
+     <lf start="2" span="1" word="signed" lemma="sign" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+     <rule type="fa" cat="NP[nb]">
+      <lf start="3" span="1" word="the" lemma="the" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+      <lf start="4" span="1" word="contract" lemma="contract" pos="NN" chunk="I-NP" entity="O" cat="N" />
+     </rule>
+    </rule>
+   </rule>
+   <lf start="5" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+  </rule>
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="lex" cat="NP">
+    <lf start="0" span="1" word="Today" lemma="today" pos="NN" chunk="I-NP" entity="I-DAT" cat="N" />
+   </rule>
+   <rule type="ba" cat="S[dcl]\NP">
+    <rule type="fa" cat="S[dcl]\NP">
+     <lf start="1" span="1" word="is" lemma="be" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+     <rule type="rp" cat="NP">
+      <rule type="lex" cat="NP">
+       <lf start="2" span="1" word="Saturday" lemma="Saturday" pos="NNP" chunk="I-NP" entity="I-DAT" cat="N" />
+      </rule>
+      <lf start="3" span="1" word="," lemma="," pos="," chunk="O" entity="I-DAT" cat="," />
+     </rule>
+    </rule>
+    <rule type="fa" cat="(S[X]\NP)\(S[X]\NP)">
+     <lf start="4" span="1" word="July" lemma="July" pos="NNP" chunk="I-NP" entity="I-DAT" cat="((S\NP)\(S\NP))/N[num]" />
+     <lf start="5" span="1" word="14th" lemma="14th" pos="CD" chunk="I-NP" entity="I-DAT" cat="N[num]" />
+    </rule>
+   </rule>
+  </rule>
+  <lf start="6" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="lex" cat="NP">
+    <lf start="0" span="1" word="APCOM" lemma="APCOM" pos="NNP" chunk="I-NP" entity="I-ORG" cat="N" />
+   </rule>
+   <rule type="ba" cat="S[dcl]\NP">
+    <rule type="ba" cat="S[dcl]\NP">
+     <rule type="fa" cat="S[dcl]\NP">
+      <lf start="1" span="1" word="signed" lemma="sign" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+      <rule type="fa" cat="NP[nb]">
+       <lf start="2" span="1" word="the" lemma="the" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+       <lf start="3" span="1" word="contract" lemma="contract" pos="NN" chunk="I-NP" entity="O" cat="N" />
+      </rule>
+     </rule>
+     <lf start="4" span="1" word="Friday" lemma="Friday" pos="NNP" chunk="B-NP" entity="I-DAT" cat="(S\NP)\(S\NP)" />
+    </rule>
+    <rule type="ltc" cat="(S[X]\NP)\(S[X]\NP)">
+     <lf start="5" span="1" word="," lemma="," pos="," chunk="O" entity="I-DAT" cat="," />
+     <rule type="lex" cat="NP">
+      <lf start="6" span="1" word="13th" lemma="13th" pos="NN" chunk="I-NP" entity="I-DAT" cat="N" />
+     </rule>
+    </rule>
+   </rule>
+  </rule>
+  <lf start="7" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+</candc>

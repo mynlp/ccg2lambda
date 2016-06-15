@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+  <document>
+    <sentences>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="NNP" chunk="I-NP" entity="I-PER" cat="N/N" id="t0_0" surf="Smith" base="smith"/>
+          <token start="1" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t0_1" surf="swam" base="swam"/>
+          <token start="2" span="1" pos="." chunk="O" entity="O" cat="." id="t0_2" surf="." base="."/>
+        </tokens>
+        <ccg root="s0_sp0" id="s0_ccg0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp2" pos="None" category="N" rule="fa"/>
+          <span start="0" span="1" pos="NNP" chunk="I-NP" entity="I-PER" id="s0_sp1" surf="Smith" base="smith" terminal="t0_0" category="N/N"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp4" pos="None" category="N" rule="rp"/>
+          <span start="1" span="1" pos="NN" chunk="I-NP" entity="O" id="s0_sp3" surf="swam" base="swam" terminal="t0_1" category="N"/>
+          <span start="2" span="1" pos="." chunk="O" entity="O" id="s0_sp4" surf="." base="." terminal="t0_2" category="."/>
+        </ccg>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="NNP" chunk="I-NP" entity="I-PER" cat="N/N" id="t1_0" surf="Jones" base="jones"/>
+          <token start="1" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t1_1" surf="swam" base="swam"/>
+          <token start="2" span="1" pos="." chunk="O" entity="O" cat="." id="t1_2" surf="." base="."/>
+        </tokens>
+        <ccg root="s1_sp0" id="s1_ccg0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp2" pos="None" category="N" rule="fa"/>
+          <span start="0" span="1" pos="NNP" chunk="I-NP" entity="I-PER" id="s1_sp1" surf="Jones" base="jones" terminal="t1_0" category="N/N"/>
+          <span id="s1_sp2" child="s1_sp3 s1_sp4" pos="None" category="N" rule="rp"/>
+          <span start="1" span="1" pos="NN" chunk="I-NP" entity="O" id="s1_sp3" surf="swam" base="swam" terminal="t1_1" category="N"/>
+          <span start="2" span="1" pos="." chunk="O" entity="O" id="s1_sp4" surf="." base="." terminal="t1_2" category="."/>
+        </ccg>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="NNP" chunk="I-NP" entity="I-PER" cat="N/N" id="t2_0" surf="Smith" base="smith"/>
+          <token start="1" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t2_1" surf="swam" base="swam"/>
+          <token start="2" span="1" pos="IN" chunk="I-PP" entity="O" cat="(NP\NP)/NP" id="t2_2" surf="before" base="before"/>
+          <token start="3" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" cat="N/N" id="t2_3" surf="Jones" base="jones"/>
+          <token start="4" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t2_4" surf="swam" base="swam"/>
+          <token start="5" span="1" pos="." chunk="O" entity="O" cat="." id="t2_5" surf="." base="."/>
+        </tokens>
+        <ccg root="s2_sp0" id="s2_ccg0">
+          <span id="s2_sp0" child="s2_sp1 s2_sp12" pos="None" category="NP" rule="rp"/>
+          <span id="s2_sp1" child="s2_sp2 s2_sp6" pos="None" category="NP" rule="ba"/>
+          <span id="s2_sp2" child="s2_sp3" pos="None" category="NP" rule="lex"/>
+          <span id="s2_sp3" child="s2_sp4 s2_sp5" pos="None" category="N" rule="fa"/>
+          <span start="0" span="1" pos="NNP" chunk="I-NP" entity="I-PER" id="s2_sp4" surf="Smith" base="smith" terminal="t2_0" category="N/N"/>
+          <span start="1" span="1" pos="NN" chunk="I-NP" entity="O" id="s2_sp5" surf="swam" base="swam" terminal="t2_1" category="N"/>
+          <span id="s2_sp6" child="s2_sp7 s2_sp8" pos="None" category="NP\NP" rule="fa"/>
+          <span start="2" span="1" pos="IN" chunk="I-PP" entity="O" id="s2_sp7" surf="before" base="before" terminal="t2_2" category="(NP\NP)/NP"/>
+          <span id="s2_sp8" child="s2_sp9" pos="None" category="NP" rule="lex"/>
+          <span id="s2_sp9" child="s2_sp10 s2_sp11" pos="None" category="N" rule="fa"/>
+          <span start="3" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" id="s2_sp10" surf="Jones" base="jones" terminal="t2_3" category="N/N"/>
+          <span start="4" span="1" pos="NN" chunk="I-NP" entity="O" id="s2_sp11" surf="swam" base="swam" terminal="t2_4" category="N"/>
+          <span start="5" span="1" pos="." chunk="O" entity="O" id="s2_sp12" surf="." base="." terminal="t2_5" category="."/>
+        </ccg>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" cat="N/N" id="t3_0" surf="Jones" base="jones"/>
+          <token start="1" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t3_1" surf="swam" base="swam"/>
+          <token start="2" span="1" pos="IN" chunk="I-PP" entity="O" cat="(NP\NP)/NP" id="t3_2" surf="after" base="after"/>
+          <token start="3" span="1" pos="NNP" chunk="I-NP" entity="I-PER" cat="N/N" id="t3_3" surf="Smith" base="smith"/>
+          <token start="4" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t3_4" surf="swam" base="swam"/>
+          <token start="5" span="1" pos="." chunk="O" entity="O" cat="." id="t3_5" surf="." base="."/>
+        </tokens>
+        <ccg root="s3_sp0" id="s3_ccg0">
+          <span id="s3_sp0" child="s3_sp1 s3_sp12" pos="None" category="NP" rule="rp"/>
+          <span id="s3_sp1" child="s3_sp2 s3_sp6" pos="None" category="NP" rule="ba"/>
+          <span id="s3_sp2" child="s3_sp3" pos="None" category="NP" rule="lex"/>
+          <span id="s3_sp3" child="s3_sp4 s3_sp5" pos="None" category="N" rule="fa"/>
+          <span start="0" span="1" pos="NNP" chunk="I-NP" entity="I-LOC" id="s3_sp4" surf="Jones" base="jones" terminal="t3_0" category="N/N"/>
+          <span start="1" span="1" pos="NN" chunk="I-NP" entity="O" id="s3_sp5" surf="swam" base="swam" terminal="t3_1" category="N"/>
+          <span id="s3_sp6" child="s3_sp7 s3_sp8" pos="None" category="NP\NP" rule="fa"/>
+          <span start="2" span="1" pos="IN" chunk="I-PP" entity="O" id="s3_sp7" surf="after" base="after" terminal="t3_2" category="(NP\NP)/NP"/>
+          <span id="s3_sp8" child="s3_sp9" pos="None" category="NP" rule="lex"/>
+          <span id="s3_sp9" child="s3_sp10 s3_sp11" pos="None" category="N" rule="fa"/>
+          <span start="3" span="1" pos="NNP" chunk="I-NP" entity="I-PER" id="s3_sp10" surf="Smith" base="smith" terminal="t3_3" category="N/N"/>
+          <span start="4" span="1" pos="NN" chunk="I-NP" entity="O" id="s3_sp11" surf="swam" base="swam" terminal="t3_4" category="N"/>
+          <span start="5" span="1" pos="." chunk="O" entity="O" id="s3_sp12" surf="." base="." terminal="t3_5" category="."/>
+        </ccg>
+      </sentence>
+    </sentences>
+  </document>
+</root>
+

@@ -1,0 +1,3 @@
+ITEL won more orders than APCOM.
+APCOM won ten orders.
+ITEL won at least eleven orders.

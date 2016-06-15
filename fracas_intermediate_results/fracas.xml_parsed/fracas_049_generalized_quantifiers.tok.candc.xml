@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="candc.xml"?>
+
+<candc>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="fa" cat="NP[nb]">
+    <lf start="0" span="1" word="A" lemma="a" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+    <lf start="1" span="1" word="Swede" lemma="Swede" pos="NNP" chunk="I-NP" entity="I-ORG" cat="N" />
+   </rule>
+   <rule type="fa" cat="S[dcl]\NP">
+    <lf start="2" span="1" word="won" lemma="win" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+    <rule type="fa" cat="NP[nb]">
+     <lf start="3" span="1" word="a" lemma="a" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+     <rule type="fa" cat="N">
+      <lf start="4" span="1" word="Nobel" lemma="Nobel" pos="NNP" chunk="I-NP" entity="O" cat="N/N" />
+      <lf start="5" span="1" word="prize" lemma="prize" pos="NN" chunk="I-NP" entity="O" cat="N" />
+     </rule>
+    </rule>
+   </rule>
+  </rule>
+  <lf start="6" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="fa" cat="NP[nb]">
+    <lf start="0" span="1" word="Every" lemma="every" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+    <lf start="1" span="1" word="Swede" lemma="swede" pos="NN" chunk="I-NP" entity="O" cat="N" />
+   </rule>
+   <rule type="fa" cat="S[dcl]\NP">
+    <lf start="2" span="1" word="is" lemma="be" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+    <rule type="fa" cat="NP[nb]">
+     <lf start="3" span="1" word="a" lemma="a" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+     <lf start="4" span="1" word="Scandinavian" lemma="scandinavian" pos="JJ" chunk="I-NP" entity="O" cat="N" />
+    </rule>
+   </rule>
+  </rule>
+  <lf start="5" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="NP">
+  <rule type="ba" cat="NP">
+   <rule type="fa" cat="NP[nb]">
+    <lf start="0" span="1" word="A" lemma="a" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+    <rule type="fa" cat="N">
+     <lf start="1" span="1" word="Scandinavian" lemma="scandinavian" pos="JJ" chunk="I-NP" entity="O" cat="N/N" />
+     <lf start="2" span="1" word="won" lemma="won" pos="NN" chunk="I-NP" entity="O" cat="N" />
+    </rule>
+   </rule>
+   <rule type="fa" cat="NP\NP">
+    <lf start="3" span="1" word="a" lemma="a" pos="DT" chunk="B-NP" entity="O" cat="(NP\NP)/N" />
+    <rule type="fa" cat="N">
+     <lf start="4" span="1" word="Nobel" lemma="Nobel" pos="NNP" chunk="I-NP" entity="O" cat="N/N" />
+     <lf start="5" span="1" word="prize" lemma="prize" pos="NN" chunk="I-NP" entity="O" cat="N" />
+    </rule>
+   </rule>
+  </rule>
+  <lf start="6" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+</candc>

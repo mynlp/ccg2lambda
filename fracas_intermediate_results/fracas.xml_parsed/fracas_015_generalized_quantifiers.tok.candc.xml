@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="candc.xml"?>
+
+<candc>
+<ccg>
+ <rule type="fa" cat="S[dcl]">
+  <rule type="fa" cat="S[X]/S[X]">
+   <lf start="0" span="1" word="At" lemma="at" pos="IN" chunk="I-NP" entity="O" cat="(S/S)/(S[asup]\NP)" />
+   <lf start="1" span="1" word="least" lemma="least" pos="JJS" chunk="I-NP" entity="O" cat="S[asup]\NP" />
+  </rule>
+  <rule type="rp" cat="S[dcl]">
+   <rule type="ba" cat="S[dcl]">
+    <rule type="lex" cat="NP">
+     <rule type="fa" cat="N">
+      <lf start="2" span="1" word="three" lemma="three" pos="CD" chunk="I-NP" entity="O" cat="N/N" />
+      <lf start="3" span="1" word="tenors" lemma="tenor" pos="NNS" chunk="I-NP" entity="O" cat="N" />
+     </rule>
+    </rule>
+    <rule type="fa" cat="S[dcl]\NP">
+     <lf start="4" span="1" word="will" lemma="will" pos="MD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[b]\NP)" />
+     <rule type="fa" cat="S[b]\NP">
+      <rule type="fa" cat="(S[b]\NP)/PP">
+       <lf start="5" span="1" word="take" lemma="take" pos="VB" chunk="I-VP" entity="O" cat="((S[b]\NP)/PP)/NP" />
+       <rule type="lex" cat="NP">
+        <lf start="6" span="1" word="part" lemma="part" pos="NN" chunk="I-NP" entity="O" cat="N" />
+       </rule>
+      </rule>
+      <rule type="fa" cat="PP">
+       <lf start="7" span="1" word="in" lemma="in" pos="IN" chunk="I-PP" entity="O" cat="PP/NP" />
+       <rule type="fa" cat="NP[nb]">
+        <lf start="8" span="1" word="the" lemma="the" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+        <lf start="9" span="1" word="concert" lemma="concert" pos="NN" chunk="I-NP" entity="O" cat="N" />
+       </rule>
+      </rule>
+     </rule>
+    </rule>
+   </rule>
+   <lf start="10" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+  </rule>
+ </rule>
+</ccg>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <lf start="0" span="1" word="There" lemma="there" pos="EX" chunk="I-NP" entity="O" cat="NP[thr]" />
+   <rule type="fa" cat="S[dcl]\NP[thr]">
+    <lf start="1" span="1" word="are" lemma="be" pos="VBP" chunk="I-VP" entity="O" cat="(S[dcl]\NP[thr])/NP" />
+    <rule type="ba" cat="NP">
+     <rule type="lex" cat="NP">
+      <lf start="2" span="1" word="tenors" lemma="tenor" pos="NNS" chunk="I-NP" entity="O" cat="N" />
+     </rule>
+     <rule type="fa" cat="NP\NP">
+      <lf start="3" span="1" word="who" lemma="who" pos="WP" chunk="B-NP" entity="O" cat="(NP\NP)/(S[dcl]\NP)" />
+      <rule type="fa" cat="S[dcl]\NP">
+       <lf start="4" span="1" word="will" lemma="will" pos="MD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[b]\NP)" />
+       <rule type="fa" cat="S[b]\NP">
+        <rule type="fa" cat="(S[b]\NP)/PP">
+         <lf start="5" span="1" word="take" lemma="take" pos="VB" chunk="I-VP" entity="O" cat="((S[b]\NP)/PP)/NP" />
+         <rule type="lex" cat="NP">
+          <lf start="6" span="1" word="part" lemma="part" pos="NN" chunk="I-NP" entity="O" cat="N" />
+         </rule>
+        </rule>
+        <rule type="fa" cat="PP">
+         <lf start="7" span="1" word="in" lemma="in" pos="IN" chunk="I-PP" entity="O" cat="PP/NP" />
+         <rule type="fa" cat="NP[nb]">
+          <lf start="8" span="1" word="the" lemma="the" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+          <lf start="9" span="1" word="concert" lemma="concert" pos="NN" chunk="I-NP" entity="O" cat="N" />
+         </rule>
+        </rule>
+       </rule>
+      </rule>
+     </rule>
+    </rule>
+   </rule>
+  </rule>
+  <lf start="10" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+</candc>

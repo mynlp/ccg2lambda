@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <document>
+    <sentences>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t0_0" surf="A" base="a"/>
+          <token start="1" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t0_1" surf="few" base="few"/>
+          <token start="2" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t0_2" surf="great" base="great"/>
+          <token start="3" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t0_3" surf="tenors" base="tenor"/>
+          <token start="4" span="1" pos="VBP" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" id="t0_4" surf="sing" base="sing"/>
+          <token start="5" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t0_5" surf="popular" base="popular"/>
+          <token start="6" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t0_6" surf="music" base="music"/>
+          <token start="7" span="1" pos="." chunk="O" entity="O" cat="." id="t0_7" surf="." base="."/>
+        </tokens>
+        <ccg root="s0_sp0" id="s0_ccg0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp15" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp9" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp4" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="O" id="s0_sp3" surf="A" base="a" terminal="t0_0" category="NP[nb=true]/N"/>
+          <span id="s0_sp4" child="s0_sp5 s0_sp6" pos="None" category="N" rule="fa"/>
+          <span start="1" span="1" pos="JJ" chunk="I-NP" entity="O" id="s0_sp5" surf="few" base="few" terminal="t0_1" category="N/N"/>
+          <span id="s0_sp6" child="s0_sp7 s0_sp8" pos="None" category="N" rule="fa"/>
+          <span start="2" span="1" pos="JJ" chunk="I-NP" entity="O" id="s0_sp7" surf="great" base="great" terminal="t0_2" category="N/N"/>
+          <span start="3" span="1" pos="NNS" chunk="I-NP" entity="O" id="s0_sp8" surf="tenors" base="tenor" terminal="t0_3" category="N"/>
+          <span id="s0_sp9" child="s0_sp10 s0_sp11" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="4" span="1" pos="VBP" chunk="I-VP" entity="O" id="s0_sp10" surf="sing" base="sing" terminal="t0_4" category="(S[dcl=true]\NP)/NP"/>
+          <span id="s0_sp11" child="s0_sp12" pos="None" category="NP" rule="lex"/>
+          <span id="s0_sp12" child="s0_sp13 s0_sp14" pos="None" category="N" rule="fa"/>
+          <span start="5" span="1" pos="JJ" chunk="I-NP" entity="O" id="s0_sp13" surf="popular" base="popular" terminal="t0_5" category="N/N"/>
+          <span start="6" span="1" pos="NN" chunk="I-NP" entity="O" id="s0_sp14" surf="music" base="music" terminal="t0_6" category="N"/>
+          <span start="7" span="1" pos="." chunk="O" entity="O" id="s0_sp15" surf="." base="." terminal="t0_7" category="."/>
+        </ccg>
+        <semantics status="success" root="s0_sp0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp15" sem="exists x.(_few(x) &amp; _great(x) &amp; _tenor(x) &amp; TrueP &amp; exists z1.(_popular(z1) &amp; _music(z1) &amp; TrueP &amp; _sing(x,z1)))"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp9" sem="exists x.(_few(x) &amp; _great(x) &amp; _tenor(x) &amp; TrueP &amp; exists z1.(_popular(z1) &amp; _music(z1) &amp; TrueP &amp; _sing(x,z1)))"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp4" sem="\F2 F3.exists x.(_few(x) &amp; _great(x) &amp; _tenor(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s0_sp3" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s0_sp4" child="s0_sp5 s0_sp6" sem="\x.(_few(x) &amp; _great(x) &amp; _tenor(x))"/>
+          <span id="s0_sp5" sem="\F x.(_few(x) &amp; F(x))" type="_few : Entity -&gt; Prop"/>
+          <span id="s0_sp6" child="s0_sp7 s0_sp8" sem="\x.(_great(x) &amp; _tenor(x))"/>
+          <span id="s0_sp7" sem="\F x.(_great(x) &amp; F(x))" type="_great : Entity -&gt; Prop"/>
+          <span id="s0_sp8" sem="\x._tenor(x)" type="_tenor : Entity -&gt; Prop"/>
+          <span id="s0_sp9" child="s0_sp10 s0_sp11" sem="\Q2.Q2(\w.TrueP,\x.exists z1.(_popular(z1) &amp; _music(z1) &amp; TrueP &amp; _sing(x,z1)))"/>
+          <span id="s0_sp10" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._sing(x,y)))" type="_sing : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s0_sp11" child="s0_sp12" sem="\F1 F2.exists x.(_popular(x) &amp; _music(x) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s0_sp12" child="s0_sp13 s0_sp14" sem="\x.(_popular(x) &amp; _music(x))"/>
+          <span id="s0_sp13" sem="\F x.(_popular(x) &amp; F(x))" type="_popular : Entity -&gt; Prop"/>
+          <span id="s0_sp14" sem="\x._music(x)" type="_music : Entity -&gt; Prop"/>
+          <span id="s0_sp15" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t1_0" surf="Some" base="some"/>
+          <token start="1" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t1_1" surf="great" base="great"/>
+          <token start="2" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t1_2" surf="tenors" base="tenor"/>
+          <token start="3" span="1" pos="IN" chunk="I-PP" entity="O" cat="(NP\NP)/NP" id="t1_3" surf="like" base="like"/>
+          <token start="4" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t1_4" surf="popular" base="popular"/>
+          <token start="5" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t1_5" surf="music" base="music"/>
+          <token start="6" span="1" pos="." chunk="O" entity="O" cat="." id="t1_6" surf="." base="."/>
+        </tokens>
+        <ccg root="s1_sp0" id="s1_ccg0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp13" pos="None" category="NP" rule="rp"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp7" pos="None" category="NP" rule="ba"/>
+          <span id="s1_sp2" child="s1_sp3 s1_sp4" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="O" id="s1_sp3" surf="Some" base="some" terminal="t1_0" category="NP[nb=true]/N"/>
+          <span id="s1_sp4" child="s1_sp5 s1_sp6" pos="None" category="N" rule="fa"/>
+          <span start="1" span="1" pos="JJ" chunk="I-NP" entity="O" id="s1_sp5" surf="great" base="great" terminal="t1_1" category="N/N"/>
+          <span start="2" span="1" pos="NNS" chunk="I-NP" entity="O" id="s1_sp6" surf="tenors" base="tenor" terminal="t1_2" category="N"/>
+          <span id="s1_sp7" child="s1_sp8 s1_sp9" pos="None" category="NP\NP" rule="fa"/>
+          <span start="3" span="1" pos="IN" chunk="I-PP" entity="O" id="s1_sp8" surf="like" base="like" terminal="t1_3" category="(NP\NP)/NP"/>
+          <span id="s1_sp9" child="s1_sp10" pos="None" category="NP" rule="lex"/>
+          <span id="s1_sp10" child="s1_sp11 s1_sp12" pos="None" category="N" rule="fa"/>
+          <span start="4" span="1" pos="JJ" chunk="I-NP" entity="O" id="s1_sp11" surf="popular" base="popular" terminal="t1_4" category="N/N"/>
+          <span start="5" span="1" pos="NN" chunk="I-NP" entity="O" id="s1_sp12" surf="music" base="music" terminal="t1_5" category="N"/>
+          <span start="6" span="1" pos="." chunk="O" entity="O" id="s1_sp13" surf="." base="." terminal="t1_6" category="."/>
+        </ccg>
+        <semantics status="success" root="s1_sp0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp13" sem="\F1 F3.exists x.(_great(x) &amp; _tenor(x) &amp; exists z2.(_popular(z2) &amp; _music(z2) &amp; TrueP &amp; _like(x,z2)) &amp; F1(x) &amp; F3(x))"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp7" sem="\F1 F3.exists x.(_great(x) &amp; _tenor(x) &amp; exists z2.(_popular(z2) &amp; _music(z2) &amp; TrueP &amp; _like(x,z2)) &amp; F1(x) &amp; F3(x))"/>
+          <span id="s1_sp2" child="s1_sp3 s1_sp4" sem="\F2 F3.exists x.(_great(x) &amp; _tenor(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s1_sp3" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s1_sp4" child="s1_sp5 s1_sp6" sem="\x.(_great(x) &amp; _tenor(x))"/>
+          <span id="s1_sp5" sem="\F x.(_great(x) &amp; F(x))" type="_great : Entity -&gt; Prop"/>
+          <span id="s1_sp6" sem="\x._tenor(x)" type="_tenor : Entity -&gt; Prop"/>
+          <span id="s1_sp7" child="s1_sp8 s1_sp9" sem="\Q2 F1.Q2(\x.(exists z2.(_popular(z2) &amp; _music(z2) &amp; TrueP &amp; _like(x,z2)) &amp; F1(x)))"/>
+          <span id="s1_sp8" sem="\Q1 Q2 F1.Q2(\x.(Q1(\w.TrueP,\y._like(x,y)) &amp; F1(x)))" type="_like : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s1_sp9" child="s1_sp10" sem="\F1 F2.exists x.(_popular(x) &amp; _music(x) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s1_sp10" child="s1_sp11 s1_sp12" sem="\x.(_popular(x) &amp; _music(x))"/>
+          <span id="s1_sp11" sem="\F x.(_popular(x) &amp; F(x))" type="_popular : Entity -&gt; Prop"/>
+          <span id="s1_sp12" sem="\x._music(x)" type="_music : Entity -&gt; Prop"/>
+          <span id="s1_sp13" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="EX" chunk="I-NP" entity="O" cat="NP[thr]" id="t2_0" surf="There" base="there"/>
+          <token start="1" span="1" pos="VBP" chunk="I-VP" entity="O" cat="(S[dcl]\NP[thr])/NP" id="t2_1" surf="are" base="be"/>
+          <token start="2" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t2_2" surf="great" base="great"/>
+          <token start="3" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t2_3" surf="tenors" base="tenor"/>
+          <token start="4" span="1" pos="WP" chunk="B-NP" entity="O" cat="(NP\NP)/(S[dcl]\NP)" id="t2_4" surf="who" base="who"/>
+          <token start="5" span="1" pos="VBP" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" id="t2_5" surf="sing" base="sing"/>
+          <token start="6" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t2_6" surf="popular" base="popular"/>
+          <token start="7" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t2_7" surf="music" base="music"/>
+          <token start="8" span="1" pos="." chunk="O" entity="O" cat="." id="t2_8" surf="." base="."/>
+        </tokens>
+        <ccg root="s2_sp0" id="s2_ccg0">
+          <span id="s2_sp0" child="s2_sp1 s2_sp18" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s2_sp1" child="s2_sp2 s2_sp3" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span start="0" span="1" pos="EX" chunk="I-NP" entity="O" id="s2_sp2" surf="There" base="there" terminal="t2_0" category="NP[thr=true]"/>
+          <span id="s2_sp3" child="s2_sp4 s2_sp5" pos="None" category="S[dcl=true]\NP[thr=true]" rule="fa"/>
+          <span start="1" span="1" pos="VBP" chunk="I-VP" entity="O" id="s2_sp4" surf="are" base="be" terminal="t2_1" category="(S[dcl=true]\NP[thr=true])/NP"/>
+          <span id="s2_sp5" child="s2_sp6 s2_sp10" pos="None" category="NP" rule="ba"/>
+          <span id="s2_sp6" child="s2_sp7" pos="None" category="NP" rule="lex"/>
+          <span id="s2_sp7" child="s2_sp8 s2_sp9" pos="None" category="N" rule="fa"/>
+          <span start="2" span="1" pos="JJ" chunk="I-NP" entity="O" id="s2_sp8" surf="great" base="great" terminal="t2_2" category="N/N"/>
+          <span start="3" span="1" pos="NNS" chunk="I-NP" entity="O" id="s2_sp9" surf="tenors" base="tenor" terminal="t2_3" category="N"/>
+          <span id="s2_sp10" child="s2_sp11 s2_sp12" pos="None" category="NP\NP" rule="fa"/>
+          <span start="4" span="1" pos="WP" chunk="B-NP" entity="O" id="s2_sp11" surf="who" base="who" terminal="t2_4" category="(NP\NP)/(S[dcl=true]\NP)"/>
+          <span id="s2_sp12" child="s2_sp13 s2_sp14" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="5" span="1" pos="VBP" chunk="I-VP" entity="O" id="s2_sp13" surf="sing" base="sing" terminal="t2_5" category="(S[dcl=true]\NP)/NP"/>
+          <span id="s2_sp14" child="s2_sp15" pos="None" category="NP" rule="lex"/>
+          <span id="s2_sp15" child="s2_sp16 s2_sp17" pos="None" category="N" rule="fa"/>
+          <span start="6" span="1" pos="JJ" chunk="I-NP" entity="O" id="s2_sp16" surf="popular" base="popular" terminal="t2_6" category="N/N"/>
+          <span start="7" span="1" pos="NN" chunk="I-NP" entity="O" id="s2_sp17" surf="music" base="music" terminal="t2_7" category="N"/>
+          <span start="8" span="1" pos="." chunk="O" entity="O" id="s2_sp18" surf="." base="." terminal="t2_8" category="."/>
+        </ccg>
+        <semantics status="success" root="s2_sp0">
+          <span id="s2_sp0" child="s2_sp1 s2_sp18" sem="exists x z5.(_great(z5) &amp; _tenor(z5) &amp; exists z3.(_popular(z3) &amp; _music(z3) &amp; TrueP &amp; _sing(z5,z3)) &amp; TrueP &amp; (x = z5))"/>
+          <span id="s2_sp1" child="s2_sp2 s2_sp3" sem="exists x z5.(_great(z5) &amp; _tenor(z5) &amp; exists z3.(_popular(z3) &amp; _music(z3) &amp; TrueP &amp; _sing(z5,z3)) &amp; TrueP &amp; (x = z5))"/>
+          <span id="s2_sp2" sem="\F1 F2.exists x.F2(x)"/>
+          <span id="s2_sp3" child="s2_sp4 s2_sp5" sem="\Q2.Q2(\w.TrueP,\x.exists z5.(_great(z5) &amp; _tenor(z5) &amp; exists z3.(_popular(z3) &amp; _music(z3) &amp; TrueP &amp; _sing(z5,z3)) &amp; TrueP &amp; (x = z5)))"/>
+          <span id="s2_sp4" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(x = y)))"/>
+          <span id="s2_sp5" child="s2_sp6 s2_sp10" sem="\F1 F2.exists x.(_great(x) &amp; _tenor(x) &amp; exists z3.(_popular(z3) &amp; _music(z3) &amp; TrueP &amp; _sing(x,z3)) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s2_sp6" child="s2_sp7" sem="\F1 F2.exists x.(_great(x) &amp; _tenor(x) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s2_sp7" child="s2_sp8 s2_sp9" sem="\x.(_great(x) &amp; _tenor(x))"/>
+          <span id="s2_sp8" sem="\F x.(_great(x) &amp; F(x))" type="_great : Entity -&gt; Prop"/>
+          <span id="s2_sp9" sem="\x._tenor(x)" type="_tenor : Entity -&gt; Prop"/>
+          <span id="s2_sp10" child="s2_sp11 s2_sp12" sem="\Q F1.Q(\x.(exists z3.(_popular(z3) &amp; _music(z3) &amp; TrueP &amp; _sing(x,z3)) &amp; F1(x)))"/>
+          <span id="s2_sp11" sem="\V Q F1.Q(\x.(V(\F2 F3.F3(x)) &amp; F1(x)))"/>
+          <span id="s2_sp12" child="s2_sp13 s2_sp14" sem="\Q2.Q2(\w.TrueP,\x.exists z3.(_popular(z3) &amp; _music(z3) &amp; TrueP &amp; _sing(x,z3)))"/>
+          <span id="s2_sp13" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._sing(x,y)))" type="_sing : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s2_sp14" child="s2_sp15" sem="\F1 F2.exists x.(_popular(x) &amp; _music(x) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s2_sp15" child="s2_sp16 s2_sp17" sem="\x.(_popular(x) &amp; _music(x))"/>
+          <span id="s2_sp16" sem="\F x.(_popular(x) &amp; F(x))" type="_popular : Entity -&gt; Prop"/>
+          <span id="s2_sp17" sem="\x._music(x)" type="_music : Entity -&gt; Prop"/>
+          <span id="s2_sp18" sem="\X.X"/>
+        </semantics>
+      </sentence>
+    </sentences>
+  </document>
+</root>

@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <document>
+    <sentences>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="RB" chunk="I-NP" entity="O" cat="(N/N)/(N/N)" id="t0_0" surf="Exactly" base="exactly"/>
+          <token start="1" span="1" pos="CD" chunk="I-NP" entity="O" cat="N/N" id="t0_1" surf="two" base="two"/>
+          <token start="2" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t0_2" surf="lawyers" base="lawyer"/>
+          <token start="3" span="1" pos="CC" chunk="O" entity="O" cat="conj" id="t0_3" surf="and" base="and"/>
+          <token start="4" span="1" pos="CD" chunk="I-NP" entity="O" cat="N/N" id="t0_4" surf="three" base="three"/>
+          <token start="5" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t0_5" surf="accountants" base="accountant"/>
+          <token start="6" span="1" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" id="t0_6" surf="signed" base="sign"/>
+          <token start="7" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t0_7" surf="the" base="the"/>
+          <token start="8" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t0_8" surf="contract" base="contract"/>
+          <token start="9" span="1" pos="." chunk="O" entity="O" cat="." id="t0_9" surf="." base="."/>
+        </tokens>
+        <ccg root="s0_sp0" id="s0_ccg0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp19" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp14" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s0_sp2" child="s0_sp3" pos="None" category="NP" rule="lex"/>
+          <span id="s0_sp3" child="s0_sp4 s0_sp7" pos="None" category="N" rule="fa"/>
+          <span id="s0_sp4" child="s0_sp5 s0_sp6" pos="None" category="N/N" rule="fa"/>
+          <span start="0" span="1" pos="RB" chunk="I-NP" entity="O" id="s0_sp5" surf="Exactly" base="exactly" terminal="t0_0" category="(N/N)/(N/N)"/>
+          <span start="1" span="1" pos="CD" chunk="I-NP" entity="O" id="s0_sp6" surf="two" base="two" terminal="t0_1" category="N/N"/>
+          <span id="s0_sp7" child="s0_sp8 s0_sp9" pos="None" category="N" rule="ba"/>
+          <span start="2" span="1" pos="NNS" chunk="I-NP" entity="O" id="s0_sp8" surf="lawyers" base="lawyer" terminal="t0_2" category="N"/>
+          <span id="s0_sp9" child="s0_sp10 s0_sp11" pos="None" category="N\N" rule="conj"/>
+          <span start="3" span="1" pos="CC" chunk="O" entity="O" id="s0_sp10" surf="and" base="and" terminal="t0_3" category="conj"/>
+          <span id="s0_sp11" child="s0_sp12 s0_sp13" pos="None" category="N" rule="fa"/>
+          <span start="4" span="1" pos="CD" chunk="I-NP" entity="O" id="s0_sp12" surf="three" base="three" terminal="t0_4" category="N/N"/>
+          <span start="5" span="1" pos="NNS" chunk="I-NP" entity="O" id="s0_sp13" surf="accountants" base="accountant" terminal="t0_5" category="N"/>
+          <span id="s0_sp14" child="s0_sp15 s0_sp16" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="6" span="1" pos="VBD" chunk="I-VP" entity="O" id="s0_sp15" surf="signed" base="sign" terminal="t0_6" category="(S[dcl=true]\NP)/NP"/>
+          <span id="s0_sp16" child="s0_sp17 s0_sp18" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="7" span="1" pos="DT" chunk="I-NP" entity="O" id="s0_sp17" surf="the" base="the" terminal="t0_7" category="NP[nb=true]/N"/>
+          <span start="8" span="1" pos="NN" chunk="I-NP" entity="O" id="s0_sp18" surf="contract" base="contract" terminal="t0_8" category="N"/>
+          <span start="9" span="1" pos="." chunk="O" entity="O" id="s0_sp19" surf="." base="." terminal="t0_9" category="."/>
+        </ccg>
+        <semantics status="success" root="s0_sp0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp19" sem="exists x.(_exactly(x) &amp; _two(x) &amp; _three(x) &amp; _accountant(x) &amp; _lawyer(x) &amp; TrueP &amp; exists z1.(_contract(z1) &amp; TrueP &amp; _sign(x,z1)))"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp14" sem="exists x.(_exactly(x) &amp; _two(x) &amp; _three(x) &amp; _accountant(x) &amp; _lawyer(x) &amp; TrueP &amp; exists z1.(_contract(z1) &amp; TrueP &amp; _sign(x,z1)))"/>
+          <span id="s0_sp2" child="s0_sp3" sem="\F1 F2.exists x.(_exactly(x) &amp; _two(x) &amp; _three(x) &amp; _accountant(x) &amp; _lawyer(x) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s0_sp3" child="s0_sp4 s0_sp7" sem="\x.(_exactly(x) &amp; _two(x) &amp; _three(x) &amp; _accountant(x) &amp; _lawyer(x))"/>
+          <span id="s0_sp4" child="s0_sp5 s0_sp6" sem="\F x.(_exactly(x) &amp; _two(x) &amp; F(x))"/>
+          <span id="s0_sp5" sem="\A F x.(_exactly(x) &amp; A(F,x))" type="_exactly : Entity -&gt; Prop"/>
+          <span id="s0_sp6" sem="\F x.(_two(x) &amp; F(x))" type="_two : Entity -&gt; Prop"/>
+          <span id="s0_sp7" child="s0_sp8 s0_sp9" sem="\x.(_three(x) &amp; _accountant(x) &amp; _lawyer(x))"/>
+          <span id="s0_sp8" sem="\x._lawyer(x)" type="_lawyer : Entity -&gt; Prop"/>
+          <span id="s0_sp9" child="s0_sp10 s0_sp11" sem="\F2 x.(_three(x) &amp; _accountant(x) &amp; F2(x))"/>
+          <span id="s0_sp10" sem="_and"/>
+          <span id="s0_sp11" child="s0_sp12 s0_sp13" sem="\x.(_three(x) &amp; _accountant(x))"/>
+          <span id="s0_sp12" sem="\F x.(_three(x) &amp; F(x))" type="_three : Entity -&gt; Prop"/>
+          <span id="s0_sp13" sem="\x._accountant(x)" type="_accountant : Entity -&gt; Prop"/>
+          <span id="s0_sp14" child="s0_sp15 s0_sp16" sem="\Q2.Q2(\w.TrueP,\x.exists z1.(_contract(z1) &amp; TrueP &amp; _sign(x,z1)))"/>
+          <span id="s0_sp15" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._sign(x,y)))" type="_sign : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s0_sp16" child="s0_sp17 s0_sp18" sem="\F2 F3.exists x.(_contract(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s0_sp17" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s0_sp18" sem="\x._contract(x)" type="_contract : Entity -&gt; Prop"/>
+          <span id="s0_sp19" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="CD" chunk="I-NP" entity="O" cat="N/N" id="t1_0" surf="Six" base="six"/>
+          <token start="1" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t1_1" surf="lawyers" base="lawyer"/>
+          <token start="2" span="1" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" id="t1_2" surf="signed" base="sign"/>
+          <token start="3" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t1_3" surf="the" base="the"/>
+          <token start="4" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t1_4" surf="contract" base="contract"/>
+          <token start="5" span="1" pos="." chunk="O" entity="O" cat="." id="t1_5" surf="." base="."/>
+        </tokens>
+        <ccg root="s1_sp0" id="s1_ccg0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp11" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp6" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s1_sp2" child="s1_sp3" pos="None" category="NP" rule="lex"/>
+          <span id="s1_sp3" child="s1_sp4 s1_sp5" pos="None" category="N" rule="fa"/>
+          <span start="0" span="1" pos="CD" chunk="I-NP" entity="O" id="s1_sp4" surf="Six" base="six" terminal="t1_0" category="N/N"/>
+          <span start="1" span="1" pos="NNS" chunk="I-NP" entity="O" id="s1_sp5" surf="lawyers" base="lawyer" terminal="t1_1" category="N"/>
+          <span id="s1_sp6" child="s1_sp7 s1_sp8" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="2" span="1" pos="VBD" chunk="I-VP" entity="O" id="s1_sp7" surf="signed" base="sign" terminal="t1_2" category="(S[dcl=true]\NP)/NP"/>
+          <span id="s1_sp8" child="s1_sp9 s1_sp10" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="3" span="1" pos="DT" chunk="I-NP" entity="O" id="s1_sp9" surf="the" base="the" terminal="t1_3" category="NP[nb=true]/N"/>
+          <span start="4" span="1" pos="NN" chunk="I-NP" entity="O" id="s1_sp10" surf="contract" base="contract" terminal="t1_4" category="N"/>
+          <span start="5" span="1" pos="." chunk="O" entity="O" id="s1_sp11" surf="." base="." terminal="t1_5" category="."/>
+        </ccg>
+        <semantics status="success" root="s1_sp0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp11" sem="exists x.(_six(x) &amp; _lawyer(x) &amp; TrueP &amp; exists z2.(_contract(z2) &amp; TrueP &amp; _sign(x,z2)))"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp6" sem="exists x.(_six(x) &amp; _lawyer(x) &amp; TrueP &amp; exists z2.(_contract(z2) &amp; TrueP &amp; _sign(x,z2)))"/>
+          <span id="s1_sp2" child="s1_sp3" sem="\F1 F2.exists x.(_six(x) &amp; _lawyer(x) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s1_sp3" child="s1_sp4 s1_sp5" sem="\x.(_six(x) &amp; _lawyer(x))"/>
+          <span id="s1_sp4" sem="\F x.(_six(x) &amp; F(x))" type="_six : Entity -&gt; Prop"/>
+          <span id="s1_sp5" sem="\x._lawyer(x)" type="_lawyer : Entity -&gt; Prop"/>
+          <span id="s1_sp6" child="s1_sp7 s1_sp8" sem="\Q2.Q2(\w.TrueP,\x.exists z2.(_contract(z2) &amp; TrueP &amp; _sign(x,z2)))"/>
+          <span id="s1_sp7" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._sign(x,y)))" type="_sign : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s1_sp8" child="s1_sp9 s1_sp10" sem="\F2 F3.exists x.(_contract(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s1_sp9" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s1_sp10" sem="\x._contract(x)" type="_contract : Entity -&gt; Prop"/>
+          <span id="s1_sp11" sem="\X.X"/>
+        </semantics>
+      </sentence>
+    </sentences>
+  </document>
+</root>

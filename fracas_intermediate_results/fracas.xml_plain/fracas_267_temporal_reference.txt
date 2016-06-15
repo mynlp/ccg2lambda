@@ -1,0 +1,4 @@
+Jones revised the contract.
+Smith revised the contract.
+Jones revised the contract before Smith did.
+Smith revised the contract after Jones did.

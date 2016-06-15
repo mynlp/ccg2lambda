@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <document>
+    <sentences>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="CD" chunk="I-NP" entity="O" cat="N" id="t0_0" surf="Two" base="two"/>
+          <token start="1" span="1" pos="IN" chunk="I-PP" entity="O" cat="(NP\NP)/PP" id="t0_1" surf="out" base="out"/>
+          <token start="2" span="1" pos="IN" chunk="B-PP" entity="O" cat="PP/NP" id="t0_2" surf="of" base="of"/>
+          <token start="3" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t0_3" surf="ten" base="ten"/>
+          <token start="4" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t0_4" surf="machines" base="machine"/>
+          <token start="5" span="1" pos="VBP" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[ng]\NP)" id="t0_5" surf="are" base="be"/>
+          <token start="6" span="1" pos="VBG" chunk="I-VP" entity="O" cat="S[ng]\NP" id="t0_6" surf="missing" base="miss"/>
+          <token start="7" span="1" pos="." chunk="O" entity="O" cat="." id="t0_7" surf="." base="."/>
+        </tokens>
+        <ccg root="s0_sp0" id="s0_ccg0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp16" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp13" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp5" pos="None" category="NP" rule="ba"/>
+          <span id="s0_sp3" child="s0_sp4" pos="None" category="NP" rule="lex"/>
+          <span start="0" span="1" pos="CD" chunk="I-NP" entity="O" id="s0_sp4" surf="Two" base="two" terminal="t0_0" category="N"/>
+          <span id="s0_sp5" child="s0_sp6 s0_sp7" pos="None" category="NP\NP" rule="fa"/>
+          <span start="1" span="1" pos="IN" chunk="I-PP" entity="O" id="s0_sp6" surf="out" base="out" terminal="t0_1" category="(NP\NP)/PP"/>
+          <span id="s0_sp7" child="s0_sp8 s0_sp9" pos="None" category="PP" rule="fa"/>
+          <span start="2" span="1" pos="IN" chunk="B-PP" entity="O" id="s0_sp8" surf="of" base="of" terminal="t0_2" category="PP/NP"/>
+          <span id="s0_sp9" child="s0_sp10" pos="None" category="NP" rule="lex"/>
+          <span id="s0_sp10" child="s0_sp11 s0_sp12" pos="None" category="N" rule="fa"/>
+          <span start="3" span="1" pos="JJ" chunk="I-NP" entity="O" id="s0_sp11" surf="ten" base="ten" terminal="t0_3" category="N/N"/>
+          <span start="4" span="1" pos="NNS" chunk="I-NP" entity="O" id="s0_sp12" surf="machines" base="machine" terminal="t0_4" category="N"/>
+          <span id="s0_sp13" child="s0_sp14 s0_sp15" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="5" span="1" pos="VBP" chunk="I-VP" entity="O" id="s0_sp14" surf="are" base="be" terminal="t0_5" category="(S[dcl=true]\NP)/(S[ng=true]\NP)"/>
+          <span start="6" span="1" pos="VBG" chunk="I-VP" entity="O" id="s0_sp15" surf="missing" base="miss" terminal="t0_6" category="S[ng=true]\NP"/>
+          <span start="7" span="1" pos="." chunk="O" entity="O" id="s0_sp16" surf="." base="." terminal="t0_7" category="."/>
+        </ccg>
+        <semantics status="success" root="s0_sp0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp16" sem="_out(\F1 F2.exists x.(_two(x) &amp; F1(x) &amp; F2(x)),\x.exists z1.(_ten(z1) &amp; _machine(z1) &amp; TrueP &amp; _of(x,z1)),\w.TrueP,\x.(_be(x) &amp; Prog(_miss(x))))"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp13" sem="_out(\F1 F2.exists x.(_two(x) &amp; F1(x) &amp; F2(x)),\x.exists z1.(_ten(z1) &amp; _machine(z1) &amp; TrueP &amp; _of(x,z1)),\w.TrueP,\x.(_be(x) &amp; Prog(_miss(x))))"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp5" sem="_out(\F1 F2.exists x.(_two(x) &amp; F1(x) &amp; F2(x)),\x.exists z1.(_ten(z1) &amp; _machine(z1) &amp; TrueP &amp; _of(x,z1)))"/>
+          <span id="s0_sp3" child="s0_sp4" sem="\F1 F2.exists x.(_two(x) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s0_sp4" sem="\x._two(x)" type="_two : Entity -&gt; Prop"/>
+          <span id="s0_sp5" child="s0_sp6 s0_sp7" sem="\x1._out(x1,\x.exists z1.(_ten(z1) &amp; _machine(z1) &amp; TrueP &amp; _of(x,z1)))"/>
+          <span id="s0_sp6" sem="\x0 x1._out(x1,x0)"/>
+          <span id="s0_sp7" child="s0_sp8 s0_sp9" sem="\x.exists z1.(_ten(z1) &amp; _machine(z1) &amp; TrueP &amp; _of(x,z1))"/>
+          <span id="s0_sp8" sem="\Q x.Q(\w.TrueP,\y._of(x,y))" type="_of : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s0_sp9" child="s0_sp10" sem="\F1 F2.exists x.(_ten(x) &amp; _machine(x) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s0_sp10" child="s0_sp11 s0_sp12" sem="\x.(_ten(x) &amp; _machine(x))"/>
+          <span id="s0_sp11" sem="\F x.(_ten(x) &amp; F(x))" type="_ten : Entity -&gt; Prop"/>
+          <span id="s0_sp12" sem="\x._machine(x)" type="_machine : Entity -&gt; Prop"/>
+          <span id="s0_sp13" child="s0_sp14 s0_sp15" sem="\Q.Q(\w.TrueP,\x.(_be(x) &amp; Prog(_miss(x))))"/>
+          <span id="s0_sp14" sem="\V Q.Q(\w.TrueP,\x.(_be(x) &amp; V(\F1 F2.F2(x))))" type="_be : Entity -&gt; Prop"/>
+          <span id="s0_sp15" sem="\Q.Q(\w.TrueP,\x.Prog(_miss(x)))" type="_miss : Entity -&gt; Prop"/>
+          <span id="s0_sp16" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="PRP" chunk="I-NP" entity="O" cat="NP" id="t1_0" surf="They" base="they"/>
+          <token start="1" span="1" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[adj]\NP)" id="t1_1" surf="were" base="be"/>
+          <token start="2" span="1" pos="DT" chunk="O" entity="O" cat="(S[adj]\NP)/(S[adj]\NP)" id="t1_2" surf="all" base="all"/>
+          <token start="3" span="1" pos="RB" chunk="I-ADVP" entity="O" cat="S[adj]\NP" id="t1_3" surf="here" base="here"/>
+          <token start="4" span="1" pos="NN" chunk="I-NP" entity="I-DAT" cat="(S\NP)\(S\NP)" id="t1_4" surf="yesterday" base="yesterday"/>
+          <token start="5" span="1" pos="." chunk="O" entity="O" cat="." id="t1_5" surf="." base="."/>
+        </tokens>
+        <ccg root="s1_sp0" id="s1_ccg0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp10" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp3" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span start="0" span="1" pos="PRP" chunk="I-NP" entity="O" id="s1_sp2" surf="They" base="they" terminal="t1_0" category="NP"/>
+          <span id="s1_sp3" child="s1_sp4 s1_sp9" pos="None" category="S[dcl=true]\NP" rule="ba"/>
+          <span id="s1_sp4" child="s1_sp5 s1_sp6" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="1" span="1" pos="VBD" chunk="I-VP" entity="O" id="s1_sp5" surf="were" base="be" terminal="t1_1" category="(S[dcl=true]\NP)/(S[adj=true]\NP)"/>
+          <span id="s1_sp6" child="s1_sp7 s1_sp8" pos="None" category="S[adj=true]\NP" rule="fa"/>
+          <span start="2" span="1" pos="DT" chunk="O" entity="O" id="s1_sp7" surf="all" base="all" terminal="t1_2" category="(S[adj=true]\NP)/(S[adj=true]\NP)"/>
+          <span start="3" span="1" pos="RB" chunk="I-ADVP" entity="O" id="s1_sp8" surf="here" base="here" terminal="t1_3" category="S[adj=true]\NP"/>
+          <span start="4" span="1" pos="NN" chunk="I-NP" entity="I-DAT" id="s1_sp9" surf="yesterday" base="yesterday" terminal="t1_4" category="(S\NP)\(S\NP)"/>
+          <span start="5" span="1" pos="." chunk="O" entity="O" id="s1_sp10" surf="." base="." terminal="t1_5" category="."/>
+        </ccg>
+        <semantics status="success" root="s1_sp0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp10" sem="exists x.(TrueP &amp; _yesterday(x) &amp; all z4.((z4 = x) -&gt; _here(z4)))"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp3" sem="exists x.(TrueP &amp; _yesterday(x) &amp; all z4.((z4 = x) -&gt; _here(z4)))"/>
+          <span id="s1_sp2" sem="\F1 F2.exists x.(F1(x) &amp; F2(x))"/>
+          <span id="s1_sp3" child="s1_sp4 s1_sp9" sem="\Q.Q(\w.TrueP,\x.(_yesterday(x) &amp; all z4.((z4 = x) -&gt; _here(z4))))"/>
+          <span id="s1_sp4" child="s1_sp5 s1_sp6" sem="\Q.all x.(Q(\w.TrueP,\y.(x = y)) -&gt; _here(x))"/>
+          <span id="s1_sp5" sem="\X.X"/>
+          <span id="s1_sp6" child="s1_sp7 s1_sp8" sem="\Q.all x.(Q(\w.TrueP,\y.(x = y)) -&gt; _here(x))"/>
+          <span id="s1_sp7" sem="\V Q.all x.(Q(\w.TrueP,\y.(x = y)) -&gt; V(\F1 F2.F2(x)))"/>
+          <span id="s1_sp8" sem="\Q.Q(\w.TrueP,\x._here(x))" type="_here : Entity -&gt; Prop"/>
+          <span id="s1_sp9" sem="\V Q.Q(\w.TrueP,\x.(_yesterday(x) &amp; V(\F1 F2.F2(x))))" type="_yesterday : Entity -&gt; Prop"/>
+          <span id="s1_sp10" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="CD" chunk="I-NP" entity="O" cat="N/N" id="t2_0" surf="Ten" base="ten"/>
+          <token start="1" span="1" pos="NNS" chunk="I-NP" entity="O" cat="N" id="t2_1" surf="machines" base="machine"/>
+          <token start="2" span="1" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[adj]\NP)" id="t2_2" surf="were" base="be"/>
+          <token start="3" span="1" pos="RB" chunk="I-ADVP" entity="O" cat="S[adj]\NP" id="t2_3" surf="here" base="here"/>
+          <token start="4" span="1" pos="NN" chunk="I-NP" entity="I-DAT" cat="(S\NP)\(S\NP)" id="t2_4" surf="yesterday" base="yesterday"/>
+          <token start="5" span="1" pos="." chunk="O" entity="O" cat="." id="t2_5" surf="." base="."/>
+        </tokens>
+        <ccg root="s2_sp0" id="s2_ccg0">
+          <span id="s2_sp0" child="s2_sp1 s2_sp11" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s2_sp1" child="s2_sp2 s2_sp6" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s2_sp2" child="s2_sp3" pos="None" category="NP" rule="lex"/>
+          <span id="s2_sp3" child="s2_sp4 s2_sp5" pos="None" category="N" rule="fa"/>
+          <span start="0" span="1" pos="CD" chunk="I-NP" entity="O" id="s2_sp4" surf="Ten" base="ten" terminal="t2_0" category="N/N"/>
+          <span start="1" span="1" pos="NNS" chunk="I-NP" entity="O" id="s2_sp5" surf="machines" base="machine" terminal="t2_1" category="N"/>
+          <span id="s2_sp6" child="s2_sp7 s2_sp10" pos="None" category="S[dcl=true]\NP" rule="ba"/>
+          <span id="s2_sp7" child="s2_sp8 s2_sp9" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="2" span="1" pos="VBD" chunk="I-VP" entity="O" id="s2_sp8" surf="were" base="be" terminal="t2_2" category="(S[dcl=true]\NP)/(S[adj=true]\NP)"/>
+          <span start="3" span="1" pos="RB" chunk="I-ADVP" entity="O" id="s2_sp9" surf="here" base="here" terminal="t2_3" category="S[adj=true]\NP"/>
+          <span start="4" span="1" pos="NN" chunk="I-NP" entity="I-DAT" id="s2_sp10" surf="yesterday" base="yesterday" terminal="t2_4" category="(S\NP)\(S\NP)"/>
+          <span start="5" span="1" pos="." chunk="O" entity="O" id="s2_sp11" surf="." base="." terminal="t2_5" category="."/>
+        </ccg>
+        <semantics status="success" root="s2_sp0">
+          <span id="s2_sp0" child="s2_sp1 s2_sp11" sem="exists x.(_ten(x) &amp; _machine(x) &amp; TrueP &amp; _yesterday(x) &amp; _here(x))"/>
+          <span id="s2_sp1" child="s2_sp2 s2_sp6" sem="exists x.(_ten(x) &amp; _machine(x) &amp; TrueP &amp; _yesterday(x) &amp; _here(x))"/>
+          <span id="s2_sp2" child="s2_sp3" sem="\F1 F2.exists x.(_ten(x) &amp; _machine(x) &amp; F1(x) &amp; F2(x))"/>
+          <span id="s2_sp3" child="s2_sp4 s2_sp5" sem="\x.(_ten(x) &amp; _machine(x))"/>
+          <span id="s2_sp4" sem="\F x.(_ten(x) &amp; F(x))" type="_ten : Entity -&gt; Prop"/>
+          <span id="s2_sp5" sem="\x._machine(x)" type="_machine : Entity -&gt; Prop"/>
+          <span id="s2_sp6" child="s2_sp7 s2_sp10" sem="\Q.Q(\w.TrueP,\x.(_yesterday(x) &amp; _here(x)))"/>
+          <span id="s2_sp7" child="s2_sp8 s2_sp9" sem="\Q.Q(\w.TrueP,\x._here(x))"/>
+          <span id="s2_sp8" sem="\X.X"/>
+          <span id="s2_sp9" sem="\Q.Q(\w.TrueP,\x._here(x))" type="_here : Entity -&gt; Prop"/>
+          <span id="s2_sp10" sem="\V Q.Q(\w.TrueP,\x.(_yesterday(x) &amp; V(\F1 F2.F2(x))))" type="_yesterday : Entity -&gt; Prop"/>
+          <span id="s2_sp11" sem="\X.X"/>
+        </semantics>
+      </sentence>
+    </sentences>
+  </document>
+</root>

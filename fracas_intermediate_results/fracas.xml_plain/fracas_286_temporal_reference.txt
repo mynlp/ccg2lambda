@@ -1,0 +1,2 @@
+Smith wrote a report in two hours.
+Smith spent more than two hours writing the report.

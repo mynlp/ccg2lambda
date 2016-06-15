@@ -1,0 +1,2 @@
+John wrote a report, and Bill said Peter did too.
+Bill said Peter wrote a report.

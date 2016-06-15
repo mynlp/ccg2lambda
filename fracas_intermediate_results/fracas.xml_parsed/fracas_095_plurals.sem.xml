@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <document>
+    <sentences>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="I-ORG" cat="NP[nb]/N" id="t0_0" surf="The" base="the"/>
+          <token start="1" span="1" pos="NNP" chunk="I-NP" entity="I-ORG" cat="N/N" id="t0_1" surf="Ancient" base="ancient"/>
+          <token start="2" span="1" pos="NNPS" chunk="I-NP" entity="I-ORG" cat="N" id="t0_2" surf="Greeks" base="greeks"/>
+          <token start="3" span="1" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[pss]\NP)" id="t0_3" surf="were" base="be"/>
+          <token start="4" span="1" pos="VBN" chunk="I-VP" entity="O" cat="S[pss]\NP" id="t0_4" surf="noted" base="note"/>
+          <token start="5" span="1" pos="NNS" chunk="I-NP" entity="O" cat="(S\NP)\(S\NP)" id="t0_5" surf="philosophers" base="philosopher"/>
+          <token start="6" span="1" pos="." chunk="O" entity="O" cat="." id="t0_6" surf="." base="."/>
+        </tokens>
+        <ccg root="s0_sp0" id="s0_ccg0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp12" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp7" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp4" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="I-ORG" id="s0_sp3" surf="The" base="the" terminal="t0_0" category="NP[nb=true]/N"/>
+          <span id="s0_sp4" child="s0_sp5 s0_sp6" pos="None" category="N" rule="fa"/>
+          <span start="1" span="1" pos="NNP" chunk="I-NP" entity="I-ORG" id="s0_sp5" surf="Ancient" base="ancient" terminal="t0_1" category="N/N"/>
+          <span start="2" span="1" pos="NNPS" chunk="I-NP" entity="I-ORG" id="s0_sp6" surf="Greeks" base="greeks" terminal="t0_2" category="N"/>
+          <span id="s0_sp7" child="s0_sp8 s0_sp9" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="3" span="1" pos="VBD" chunk="I-VP" entity="O" id="s0_sp8" surf="were" base="be" terminal="t0_3" category="(S[dcl=true]\NP)/(S[pss=true]\NP)"/>
+          <span id="s0_sp9" child="s0_sp10 s0_sp11" pos="None" category="S[pss=true]\NP" rule="ba"/>
+          <span start="4" span="1" pos="VBN" chunk="I-VP" entity="O" id="s0_sp10" surf="noted" base="note" terminal="t0_4" category="S[pss=true]\NP"/>
+          <span start="5" span="1" pos="NNS" chunk="I-NP" entity="O" id="s0_sp11" surf="philosophers" base="philosopher" terminal="t0_5" category="(S\NP)\(S\NP)"/>
+          <span start="6" span="1" pos="." chunk="O" entity="O" id="s0_sp12" surf="." base="." terminal="t0_6" category="."/>
+        </ccg>
+        <semantics status="success" root="s0_sp0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp12" sem="all x.((_ancient(x) &amp; _greeks(x)) -&gt; (TrueP -&gt; (_philosopher(x) &amp; _note(x))))"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp7" sem="all x.((_ancient(x) &amp; _greeks(x)) -&gt; (TrueP -&gt; (_philosopher(x) &amp; _note(x))))"/>
+          <span id="s0_sp2" child="s0_sp3 s0_sp4" sem="\F2 F3.all x.((_ancient(x) &amp; _greeks(x)) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s0_sp3" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s0_sp4" child="s0_sp5 s0_sp6" sem="\x.(_ancient(x) &amp; _greeks(x))"/>
+          <span id="s0_sp5" sem="\F x.(_ancient(x) &amp; F(x))" type="_ancient : Entity -&gt; Prop"/>
+          <span id="s0_sp6" sem="\x._greeks(x)" type="_greeks : Entity -&gt; Prop"/>
+          <span id="s0_sp7" child="s0_sp8 s0_sp9" sem="\Q.Q(\w.TrueP,\x.(_philosopher(x) &amp; _note(x)))"/>
+          <span id="s0_sp8" sem="\V Q.Q(\w.TrueP,\x.V(\F1 F2.F2(x)))"/>
+          <span id="s0_sp9" child="s0_sp10 s0_sp11" sem="\Q.Q(\w.TrueP,\x.(_philosopher(x) &amp; _note(x)))"/>
+          <span id="s0_sp10" sem="\Q.Q(\w.TrueP,\x._note(x))" type="_note : Entity -&gt; Prop"/>
+          <span id="s0_sp11" sem="\V Q.Q(\w.TrueP,\x.(_philosopher(x) &amp; V(\F1 F2.F2(x))))" type="_philosopher : Entity -&gt; Prop"/>
+          <span id="s0_sp12" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t1_0" surf="Every" base="every"/>
+          <token start="1" span="1" pos="NNP" chunk="I-NP" entity="I-ORG" cat="N/N" id="t1_1" surf="Ancient" base="ancient"/>
+          <token start="2" span="1" pos="NNP" chunk="I-NP" entity="I-ORG" cat="N" id="t1_2" surf="Greek" base="greek"/>
+          <token start="3" span="1" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" id="t1_3" surf="was" base="be"/>
+          <token start="4" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP[nb]/N" id="t1_4" surf="a" base="a"/>
+          <token start="5" span="1" pos="JJ" chunk="I-NP" entity="O" cat="N/N" id="t1_5" surf="noted" base="noted"/>
+          <token start="6" span="1" pos="NN" chunk="I-NP" entity="O" cat="N" id="t1_6" surf="philosopher" base="philosopher"/>
+          <token start="7" span="1" pos="." chunk="O" entity="O" cat="." id="t1_7" surf="." base="."/>
+        </tokens>
+        <ccg root="s1_sp0" id="s1_ccg0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp14" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp7" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s1_sp2" child="s1_sp3 s1_sp4" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="O" id="s1_sp3" surf="Every" base="every" terminal="t1_0" category="NP[nb=true]/N"/>
+          <span id="s1_sp4" child="s1_sp5 s1_sp6" pos="None" category="N" rule="fa"/>
+          <span start="1" span="1" pos="NNP" chunk="I-NP" entity="I-ORG" id="s1_sp5" surf="Ancient" base="ancient" terminal="t1_1" category="N/N"/>
+          <span start="2" span="1" pos="NNP" chunk="I-NP" entity="I-ORG" id="s1_sp6" surf="Greek" base="greek" terminal="t1_2" category="N"/>
+          <span id="s1_sp7" child="s1_sp8 s1_sp9" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="3" span="1" pos="VBD" chunk="I-VP" entity="O" id="s1_sp8" surf="was" base="be" terminal="t1_3" category="(S[dcl=true]\NP)/NP"/>
+          <span id="s1_sp9" child="s1_sp10 s1_sp11" pos="None" category="NP[nb=true]" rule="fa"/>
+          <span start="4" span="1" pos="DT" chunk="I-NP" entity="O" id="s1_sp10" surf="a" base="a" terminal="t1_4" category="NP[nb=true]/N"/>
+          <span id="s1_sp11" child="s1_sp12 s1_sp13" pos="None" category="N" rule="fa"/>
+          <span start="5" span="1" pos="JJ" chunk="I-NP" entity="O" id="s1_sp12" surf="noted" base="noted" terminal="t1_5" category="N/N"/>
+          <span start="6" span="1" pos="NN" chunk="I-NP" entity="O" id="s1_sp13" surf="philosopher" base="philosopher" terminal="t1_6" category="N"/>
+          <span start="7" span="1" pos="." chunk="O" entity="O" id="s1_sp14" surf="." base="." terminal="t1_7" category="."/>
+        </ccg>
+        <semantics status="success" root="s1_sp0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp14" sem="all x.((_ancient(x) &amp; _greek(x)) -&gt; (TrueP -&gt; exists z3.(_noted(z3) &amp; _philosopher(z3) &amp; TrueP &amp; (x = z3))))"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp7" sem="all x.((_ancient(x) &amp; _greek(x)) -&gt; (TrueP -&gt; exists z3.(_noted(z3) &amp; _philosopher(z3) &amp; TrueP &amp; (x = z3))))"/>
+          <span id="s1_sp2" child="s1_sp3 s1_sp4" sem="\F2 F3.all x.((_ancient(x) &amp; _greek(x)) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s1_sp3" sem="\F1 F2 F3.all x.(F1(x) -&gt; (F2(x) -&gt; F3(x)))"/>
+          <span id="s1_sp4" child="s1_sp5 s1_sp6" sem="\x.(_ancient(x) &amp; _greek(x))"/>
+          <span id="s1_sp5" sem="\F x.(_ancient(x) &amp; F(x))" type="_ancient : Entity -&gt; Prop"/>
+          <span id="s1_sp6" sem="_greek"/>
+          <span id="s1_sp7" child="s1_sp8 s1_sp9" sem="\Q2.Q2(\w.TrueP,\x.exists z3.(_noted(z3) &amp; _philosopher(z3) &amp; TrueP &amp; (x = z3)))"/>
+          <span id="s1_sp8" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y.(x = y)))"/>
+          <span id="s1_sp9" child="s1_sp10 s1_sp11" sem="\F2 F3.exists x.(_noted(x) &amp; _philosopher(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s1_sp10" sem="\F1 F2 F3.exists x.(F1(x) &amp; F2(x) &amp; F3(x))"/>
+          <span id="s1_sp11" child="s1_sp12 s1_sp13" sem="\x.(_noted(x) &amp; _philosopher(x))"/>
+          <span id="s1_sp12" sem="\F x.(_noted(x) &amp; F(x))" type="_noted : Entity -&gt; Prop"/>
+          <span id="s1_sp13" sem="\x._philosopher(x)" type="_philosopher : Entity -&gt; Prop"/>
+          <span id="s1_sp14" sem="\X.X"/>
+        </semantics>
+      </sentence>
+    </sentences>
+  </document>
+</root>

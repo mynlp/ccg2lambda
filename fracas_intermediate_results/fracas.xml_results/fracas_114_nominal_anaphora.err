@@ -1,0 +1,10 @@
+WARNING:root:There is probably a problem in the typecheck resolution of expression _'s(x) with signature {'x': e, "_'s": e}
+WARNING:root:There is probably a problem in the typecheck resolution of expression (_mary(x) & _'s(x)) with signature {"_'s": e, '_mary': <e,t>, 'x': e}
+WARNING:root:There is probably a problem in the typecheck resolution of expression (_mary(x) & _'s(x) & F1(x)) with signature {'F1': <e,t>, "_'s": e, '_mary': <e,t>, 'x': e}
+WARNING:root:There is probably a problem in the typecheck resolution of expression (_mary(x) & _'s(x) & F1(x) & F2(x)) with signature {'F1': <e,t>, 'F2': <e,t>, "_'s": e, '_mary': <e,t>, 'x': e}
+WARNING:root:There is probably a problem in the typecheck resolution of expression exists x.(_mary(x) & _'s(x) & F1(x) & F2(x)) with signature {'F1': <e,t>, 'F2': <e,t>, "_'s": e, '_mary': <e,t>, 'x': e}
+WARNING:root:There is probably a problem in the typecheck resolution of expression \F2.exists x.(_mary(x) & _'s(x) & F1(x) & F2(x)) with signature {'F1': <e,t>, 'F2': <e,t>, "_'s": e, '_mary': <e,t>, 'x': e}
+WARNING:root:There is probably a problem in the typecheck resolution of expression \F1 F2.exists x.(_mary(x) & _'s(x) & F1(x) & F2(x)) with signature {'F1': <e,t>, 'F2': <e,t>, "_'s": e, '_mary': <e,t>, 'x': e}
+WARNING:root:There is probably a problem in the typecheck resolution of expression _workstation(\F1 F2.exists x.(_mary(x) & _'s(x) & F1(x) & F2(x))) with signature {'_workstation': e, 'F1': <e,t>, 'F2': <e,t>, "_'s": e, '_mary': <e,t>, 'x': e}
+WARNING:root:There is probably a problem in the typecheck resolution of expression _workstation(\F1 F2.exists x.(_mary(x) & _'s(x) & F1(x) & F2(x)),\w.TrueP) with signature {'_workstation': e, 'F1': <e,t>, 'F2': <e,t>, "_'s": e, '_mary': <e,t>, 'x': e}
+WARNING:root:There is probably a problem in the typecheck resolution of expression _workstation(\F1 F2.exists x.(_mary(x) & _'s(x) & F1(x) & F2(x)),\w.TrueP,\x._use(x)) with signature {'_use': <e,t>, '_workstation': e, 'F1': <e,t>, 'F2': <e,t>, "_'s": e, '_mary': <e,t>, 'x': e}

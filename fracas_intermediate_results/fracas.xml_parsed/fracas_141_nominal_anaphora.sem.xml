@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <document>
+    <sentences>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="NNP" chunk="I-NP" entity="I-PER" cat="N" id="t0_0" surf="John" base="john"/>
+          <token start="1" span="1" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/S[dcl]" id="t0_1" surf="said" base="say"/>
+          <token start="2" span="1" pos="NNP" chunk="I-NP" entity="I-PER" cat="N" id="t0_2" surf="Bill" base="bill"/>
+          <token start="3" span="1" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[pt]\NP)" id="t0_3" surf="had" base="have"/>
+          <token start="4" span="1" pos="VBN" chunk="I-VP" entity="O" cat="(S[pt]\NP)/NP" id="t0_4" surf="hurt" base="hurt"/>
+          <token start="5" span="1" pos="PRP" chunk="I-NP" entity="O" cat="NP" id="t0_5" surf="himself" base="himself"/>
+          <token start="6" span="1" pos="." chunk="O" entity="O" cat="." id="t0_6" surf="." base="."/>
+        </tokens>
+        <ccg root="s0_sp0" id="s0_ccg0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp14" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp4" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s0_sp2" child="s0_sp3" pos="None" category="NP" rule="lex"/>
+          <span start="0" span="1" pos="NNP" chunk="I-NP" entity="I-PER" id="s0_sp3" surf="John" base="john" terminal="t0_0" category="N"/>
+          <span id="s0_sp4" child="s0_sp5 s0_sp6" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="1" span="1" pos="VBD" chunk="I-VP" entity="O" id="s0_sp5" surf="said" base="say" terminal="t0_1" category="(S[dcl=true]\NP)/S[dcl=true]"/>
+          <span id="s0_sp6" child="s0_sp7 s0_sp9" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s0_sp7" child="s0_sp8" pos="None" category="NP" rule="lex"/>
+          <span start="2" span="1" pos="NNP" chunk="I-NP" entity="I-PER" id="s0_sp8" surf="Bill" base="bill" terminal="t0_2" category="N"/>
+          <span id="s0_sp9" child="s0_sp10 s0_sp11" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="3" span="1" pos="VBD" chunk="I-VP" entity="O" id="s0_sp10" surf="had" base="have" terminal="t0_3" category="(S[dcl=true]\NP)/(S[pt=true]\NP)"/>
+          <span id="s0_sp11" child="s0_sp12 s0_sp13" pos="None" category="S[pt=true]\NP" rule="fa"/>
+          <span start="4" span="1" pos="VBN" chunk="I-VP" entity="O" id="s0_sp12" surf="hurt" base="hurt" terminal="t0_4" category="(S[pt=true]\NP)/NP"/>
+          <span start="5" span="1" pos="PRP" chunk="I-NP" entity="O" id="s0_sp13" surf="himself" base="himself" terminal="t0_5" category="NP"/>
+          <span start="6" span="1" pos="." chunk="O" entity="O" id="s0_sp14" surf="." base="." terminal="t0_6" category="."/>
+        </ccg>
+        <semantics status="success" root="s0_sp0">
+          <span id="s0_sp0" child="s0_sp1 s0_sp14" sem="exists x.((x = _john) &amp; TrueP &amp; _say(_john,exists x.((x = _bill) &amp; TrueP &amp; _have(_bill) &amp; exists z1.(TrueP &amp; _hurt(_bill,z1)))))"/>
+          <span id="s0_sp1" child="s0_sp2 s0_sp4" sem="exists x.((x = _john) &amp; TrueP &amp; _say(_john,exists x.((x = _bill) &amp; TrueP &amp; _have(_bill) &amp; exists z1.(TrueP &amp; _hurt(_bill,z1)))))"/>
+          <span id="s0_sp2" child="s0_sp3" sem="\F1 F2.exists x.((x = _john) &amp; F1(_john) &amp; F2(_john))"/>
+          <span id="s0_sp3" sem="_john"/>
+          <span id="s0_sp4" child="s0_sp5 s0_sp6" sem="\Q.Q(\w.TrueP,\x._say(x,exists x.((x = _bill) &amp; TrueP &amp; _have(_bill) &amp; exists z1.(TrueP &amp; _hurt(_bill,z1)))))"/>
+          <span id="s0_sp5" sem="\S Q.Q(\w.TrueP,\x._say(x,S))" type="_say : Entity -&gt; Prop -&gt; Prop"/>
+          <span id="s0_sp6" child="s0_sp7 s0_sp9" sem="exists x.((x = _bill) &amp; TrueP &amp; _have(_bill) &amp; exists z1.(TrueP &amp; _hurt(_bill,z1)))"/>
+          <span id="s0_sp7" child="s0_sp8" sem="\F1 F2.exists x.((x = _bill) &amp; F1(_bill) &amp; F2(_bill))"/>
+          <span id="s0_sp8" sem="_bill"/>
+          <span id="s0_sp9" child="s0_sp10 s0_sp11" sem="\Q.Q(\w.TrueP,\x.(_have(x) &amp; exists z1.(TrueP &amp; _hurt(x,z1))))"/>
+          <span id="s0_sp10" sem="\V Q.Q(\w.TrueP,\x.(_have(x) &amp; V(\F1 F2.F2(x))))" type="_have : Entity -&gt; Prop"/>
+          <span id="s0_sp11" child="s0_sp12 s0_sp13" sem="\Q2.Q2(\w.TrueP,\x.exists z1.(TrueP &amp; _hurt(x,z1)))"/>
+          <span id="s0_sp12" sem="\Q1 Q2.Q2(\w.TrueP,\x.Q1(\w.TrueP,\y._hurt(x,y)))" type="_hurt : Entity -&gt; Entity -&gt; Prop"/>
+          <span id="s0_sp13" sem="\F1 F2.exists x.(F1(x) &amp; F2(x))"/>
+          <span id="s0_sp14" sem="\X.X"/>
+        </semantics>
+      </sentence>
+      <sentence>
+        <tokens>
+          <token start="0" span="1" pos="DT" chunk="I-NP" entity="O" cat="NP" id="t1_0" surf="Someone" base="someone"/>
+          <token start="1" span="1" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/S[dcl]" id="t1_1" surf="said" base="say"/>
+          <token start="2" span="1" pos="NNP" chunk="I-NP" entity="I-PER" cat="N" id="t1_2" surf="John" base="john"/>
+          <token start="3" span="1" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/(S[pt]\NP)" id="t1_3" surf="had" base="have"/>
+          <token start="4" span="1" pos="VBN" chunk="I-VP" entity="O" cat="(S[pt]\NP)/(S[pss]\NP)" id="t1_4" surf="been" base="be"/>
+          <token start="5" span="1" pos="VBN" chunk="I-VP" entity="O" cat="S[pss]\NP" id="t1_5" surf="hurt" base="hurt"/>
+          <token start="6" span="1" pos="." chunk="O" entity="O" cat="." id="t1_6" surf="." base="."/>
+        </tokens>
+        <ccg root="s1_sp0" id="s1_ccg0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp13" pos="None" category="S[dcl=true]" rule="rp"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp3" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span start="0" span="1" pos="DT" chunk="I-NP" entity="O" id="s1_sp2" surf="Someone" base="someone" terminal="t1_0" category="NP"/>
+          <span id="s1_sp3" child="s1_sp4 s1_sp5" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="1" span="1" pos="VBD" chunk="I-VP" entity="O" id="s1_sp4" surf="said" base="say" terminal="t1_1" category="(S[dcl=true]\NP)/S[dcl=true]"/>
+          <span id="s1_sp5" child="s1_sp6 s1_sp8" pos="None" category="S[dcl=true]" rule="ba"/>
+          <span id="s1_sp6" child="s1_sp7" pos="None" category="NP" rule="lex"/>
+          <span start="2" span="1" pos="NNP" chunk="I-NP" entity="I-PER" id="s1_sp7" surf="John" base="john" terminal="t1_2" category="N"/>
+          <span id="s1_sp8" child="s1_sp9 s1_sp10" pos="None" category="S[dcl=true]\NP" rule="fa"/>
+          <span start="3" span="1" pos="VBD" chunk="I-VP" entity="O" id="s1_sp9" surf="had" base="have" terminal="t1_3" category="(S[dcl=true]\NP)/(S[pt=true]\NP)"/>
+          <span id="s1_sp10" child="s1_sp11 s1_sp12" pos="None" category="S[pt=true]\NP" rule="fa"/>
+          <span start="4" span="1" pos="VBN" chunk="I-VP" entity="O" id="s1_sp11" surf="been" base="be" terminal="t1_4" category="(S[pt=true]\NP)/(S[pss=true]\NP)"/>
+          <span start="5" span="1" pos="VBN" chunk="I-VP" entity="O" id="s1_sp12" surf="hurt" base="hurt" terminal="t1_5" category="S[pss=true]\NP"/>
+          <span start="6" span="1" pos="." chunk="O" entity="O" id="s1_sp13" surf="." base="." terminal="t1_6" category="."/>
+        </ccg>
+        <semantics status="success" root="s1_sp0">
+          <span id="s1_sp0" child="s1_sp1 s1_sp13" sem="exists x.(TrueP &amp; _say(x,exists x.((x = _john) &amp; TrueP &amp; _have(_john) &amp; _hurt(_john))))"/>
+          <span id="s1_sp1" child="s1_sp2 s1_sp3" sem="exists x.(TrueP &amp; _say(x,exists x.((x = _john) &amp; TrueP &amp; _have(_john) &amp; _hurt(_john))))"/>
+          <span id="s1_sp2" sem="\F1 F2.exists x.(F1(x) &amp; F2(x))"/>
+          <span id="s1_sp3" child="s1_sp4 s1_sp5" sem="\Q.Q(\w.TrueP,\x._say(x,exists x.((x = _john) &amp; TrueP &amp; _have(_john) &amp; _hurt(_john))))"/>
+          <span id="s1_sp4" sem="\S Q.Q(\w.TrueP,\x._say(x,S))" type="_say : Entity -&gt; Prop -&gt; Prop"/>
+          <span id="s1_sp5" child="s1_sp6 s1_sp8" sem="exists x.((x = _john) &amp; TrueP &amp; _have(_john) &amp; _hurt(_john))"/>
+          <span id="s1_sp6" child="s1_sp7" sem="\F1 F2.exists x.((x = _john) &amp; F1(_john) &amp; F2(_john))"/>
+          <span id="s1_sp7" sem="_john"/>
+          <span id="s1_sp8" child="s1_sp9 s1_sp10" sem="\Q.Q(\w.TrueP,\x.(_have(x) &amp; _hurt(x)))"/>
+          <span id="s1_sp9" sem="\V Q.Q(\w.TrueP,\x.(_have(x) &amp; V(\F1 F2.F2(x))))" type="_have : Entity -&gt; Prop"/>
+          <span id="s1_sp10" child="s1_sp11 s1_sp12" sem="\Q.Q(\w.TrueP,\x._hurt(x))"/>
+          <span id="s1_sp11" sem="\V Q.Q(\w.TrueP,\x.V(\F1 F2.F2(x)))"/>
+          <span id="s1_sp12" sem="\Q.Q(\w.TrueP,\x._hurt(x))" type="_hurt : Entity -&gt; Prop"/>
+          <span id="s1_sp13" sem="\X.X"/>
+        </semantics>
+      </sentence>
+    </sentences>
+  </document>
+</root>

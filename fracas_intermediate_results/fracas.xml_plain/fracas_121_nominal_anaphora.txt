@@ -1,0 +1,4 @@
+Smith delivered a report to ITEL.
+She also delivered them an invoice.
+And she delivered them a project proposal.
+Smith delivered a report, an invoice and a project proposal to ITEL.

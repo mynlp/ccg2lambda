@@ -1,0 +1,3 @@
+Two out of ten machines are missing.
+They were all here yesterday.
+Ten machines were here yesterday.

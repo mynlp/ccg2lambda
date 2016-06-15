@@ -1,0 +1,3 @@
+Smith took a machine on Tuesday, and Jones took a machine on Wednesday.
+They put them in the lobby.
+Smith and Jones put two machines in the lobby.

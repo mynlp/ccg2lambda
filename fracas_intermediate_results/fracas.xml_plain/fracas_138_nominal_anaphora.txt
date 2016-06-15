@@ -1,0 +1,4 @@
+Every report has a cover page.
+R_95_103 is a report.
+Smith signed the cover page.
+Smith signed the cover page of R_95_103.

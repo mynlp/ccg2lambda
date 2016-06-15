@@ -1,0 +1,4 @@
+Smith was writing a report.
+Jones was writing a report.
+Smith was writing a report before Jones was writing a report.
+Jones was writing a report after Smith was writing a report.

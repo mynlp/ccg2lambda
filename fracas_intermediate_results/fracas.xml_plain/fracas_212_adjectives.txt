@@ -1,0 +1,5 @@
+All mice are small animals.
+All elephants are large animals.
+Mickey is a large mouse.
+Dumbo is a small elephant.
+Dumbo is larger than Mickey.

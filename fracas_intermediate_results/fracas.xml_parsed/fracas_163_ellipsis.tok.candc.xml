@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="candc.xml"?>
+
+<candc>
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="lex" cat="NP">
+    <lf start="0" span="1" word="John" lemma="John" pos="NNP" chunk="I-NP" entity="I-PER" cat="N" />
+   </rule>
+   <rule type="fa" cat="S[dcl]\NP">
+    <lf start="1" span="1" word="had" lemma="have" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+    <rule type="ba" cat="NP">
+     <rule type="fa" cat="NP[nb]">
+      <lf start="2" span="1" word="his" lemma="his" pos="PRP$" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+      <lf start="3" span="1" word="paper" lemma="paper" pos="NN" chunk="I-NP" entity="O" cat="N" />
+     </rule>
+     <rule type="lex" cat="NP\NP">
+      <lf start="4" span="1" word="accepted" lemma="accept" pos="VBD" chunk="I-VP" entity="O" cat="S[dcl]\NP" />
+     </rule>
+    </rule>
+   </rule>
+  </rule>
+  <lf start="5" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+
+<ccg>
+ <rule type="rp" cat="S[dcl]">
+  <rule type="ba" cat="S[dcl]">
+   <rule type="lex" cat="NP">
+    <lf start="0" span="1" word="Bill" lemma="Bill" pos="NNP" chunk="I-NP" entity="O" cat="N" />
+   </rule>
+   <rule type="fa" cat="S[dcl]\NP">
+    <lf start="1" span="1" word="knows" lemma="know" pos="VBZ" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/S[qem]" />
+    <rule type="fa" cat="S[qem]">
+     <lf start="2" span="1" word="why" lemma="why" pos="WRB" chunk="I-ADVP" entity="O" cat="S[qem]/S[dcl]" />
+     <rule type="ba" cat="S[dcl]">
+      <rule type="lex" cat="NP">
+       <lf start="3" span="1" word="John" lemma="John" pos="NNP" chunk="I-NP" entity="I-PER" cat="N" />
+      </rule>
+      <rule type="fa" cat="S[dcl]\NP">
+       <lf start="4" span="1" word="had" lemma="have" pos="VBD" chunk="I-VP" entity="O" cat="(S[dcl]\NP)/NP" />
+       <rule type="ba" cat="NP">
+        <rule type="fa" cat="NP[nb]">
+         <lf start="5" span="1" word="his" lemma="his" pos="PRP$" chunk="I-NP" entity="O" cat="NP[nb]/N" />
+         <lf start="6" span="1" word="paper" lemma="paper" pos="NN" chunk="I-NP" entity="O" cat="N" />
+        </rule>
+        <rule type="lex" cat="NP\NP">
+         <lf start="7" span="1" word="accepted" lemma="accept" pos="VBD" chunk="I-VP" entity="O" cat="S[dcl]\NP" />
+        </rule>
+       </rule>
+      </rule>
+     </rule>
+    </rule>
+   </rule>
+  </rule>
+  <lf start="8" span="1" word="." lemma="." pos="." chunk="O" entity="O" cat="." />
+ </rule>
+</ccg>
+</candc>
