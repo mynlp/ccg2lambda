@@ -122,7 +122,7 @@ pipe it to a theorem prover (Coq) and judge the entailment
 relation, you can run the following command:
 
 ```bash
-python prove.py sentences.sem.xml 2> graphdebug.html
+python prove.py sentences.sem.xml --graph_out graphdebug.html
 ```
 
 That command will output `yes` (entailment relation - the conclusion
