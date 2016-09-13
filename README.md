@@ -215,7 +215,23 @@ You can find our semantic templates in `semantic_templates_en.yaml`. Here are so
 
 # Citing this work
 
-If you use this software or semantic templates for your work, please consider citing it as:
+If you use this software or the semantic templates for your work, please consider citing it as:
+
+* Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. ccg2lambda: A Compositional Semantics System. Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics - System Demonstrations, pages 85–90, Berlin, Germany, August 7-12, 2016. [pdf](https://aclweb.org/anthology/P/P16/P16-4015.pdf)
+
+```
+@InProceedings{pascual-EtAl:2016:ACL-2016-System-Demonstrations,
+  author    = {Mart\'{i}nez-G\'{o}mez, Pascual  Mineshima, Koji  and  Miyao, Yusuke  and  Bekki, Daisuke},
+  title     = {ccg2lambda: A Compositional Semantics System},
+  booktitle = {Proceedings of ACL 2016 System Demonstrations},
+  month     = {August},
+  year      = {2016},
+  address   = {Berlin, Germany},
+  publisher = {Association for Computational Linguistics},
+  pages     = {85--90},
+  url       = {https://aclweb.org/anthology/P/P16/P16-4015.pdf}
+}
+```
 
 * Koji Mineshima, Pascual Martínez-Gómez, Yusuke Miyao, Daisuke Bekki. Higher-order logical inference with compositional semantics. Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing, pages 2055–2061, Lisbon, Portugal, 17-21 September 2015. [pdf](http://www.aclweb.org/anthology/D15-1244)
 
