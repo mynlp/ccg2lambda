@@ -10,7 +10,7 @@ nltk 3, lxml, simplejson and yaml python libraries. I recommend to use a python 
 and install the packages in the virtual environment with `pip`:
 
 ```bash
-git clone git@github.com:mynlp/ccg2lambda.git
+git clone https://github.com/mynlp/ccg2lambda.git
 virtualenv --no-site-packages --distribute -p /usr/bin/python3 py3
 source py3/bin/activate
 pip install lxml simplejson pyyaml -I nltk==3.0.0
