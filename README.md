@@ -13,7 +13,7 @@ and install the packages in the virtual environment with `pip`:
 git clone https://github.com/mynlp/ccg2lambda.git
 virtualenv --no-site-packages --distribute -p /usr/bin/python3 py3
 source py3/bin/activate
-pip install lxml simplejson pyyaml -I nltk==3.0.0
+pip install lxml simplejson pyyaml -I nltk==3.0.5
 ```
 
 You also need to install WordNet:
