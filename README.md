@@ -221,7 +221,7 @@ If you use this software or the semantic templates for your work, please conside
 
 ```
 @InProceedings{pascual-EtAl:2016:ACL-2016-System-Demonstrations,
-  author    = {Mart\'{i}nez-G\'{o}mez, Pascual  Mineshima, Koji  and  Miyao, Yusuke  and  Bekki, Daisuke},
+  author    = {Mart\'{i}nez-G\'{o}mez, Pascual and Mineshima, Koji and Miyao, Yusuke and Bekki, Daisuke},
   title     = {ccg2lambda: A Compositional Semantics System},
   booktitle = {Proceedings of ACL 2016 System Demonstrations},
   month     = {August},
