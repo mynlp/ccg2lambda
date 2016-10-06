@@ -30,7 +30,7 @@ python run_tests.py
 ```
 (all tests should pass, except a few expected failures).
 
-Our system assigns semantics to CCG structures, as obtained by the [C&C parser](http://svn.ask.it.usyd.edu.au/trac/candc). In order to install the C&C parser, you may need to register, download the parser and the models, and follow their [instructions](http://svn.ask.it.usyd.edu.au/trac/candc/wiki/Installation) to set it up. For this software to find the C&C parser, please create a file `candc_location.txt` with the path to the C&C parser:
+Our system assigns semantics to CCG structures, as obtained by the [C&C parser](http://www.cl.cam.ac.uk/~sc609/candc-1.00.html). In order to install the C&C parser, you may need to register, download the parser and the models, and follow their instructions to set it up. For this software to find the C&C parser, please create a file `candc_location.txt` with the path to the C&C parser:
 
 ```bash
 echo "/path/to/candc-1.00/" > candc_location.txt
