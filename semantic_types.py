@@ -215,6 +215,8 @@ def convert_coq_to_nltk_type(coq_type):
             type_ids.append('e')
         elif type_item.startswith('Prop'):
             type_ids.append('t')
+        elif type_item.startswith('Event'):
+            type_ids.append('e')
         elif type_item != '->':
             raise(ValueError('Invalid type name: %s in %s' % (type_item, coq_type)))
     assert len(type_ids) > 0

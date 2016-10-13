@@ -14,28 +14,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# Script to Recognize Textual Entailment of problems in Japanese.
 # This script receives a file with several sentences (one per line), where all
 # sentences are premises except the last one, which is a conclusion. It returns
 # 'yes' (the premises entail the conclusion), 'no' (there is a contradiction) or
 # 'unknown' (none of the former).
 # You can use it as:
 # 
-# ./rte.sh <sentences.txt> <semantic_templates.yaml>
+# ./rte_ja.sh <sentences.txt> <semantic_templates.yaml>
 # 
 # E.g.
-# ./rte.sh sample_en.txt semantic_templates_en.yaml
+# ./rte_ja.sh sample_en.txt semantic_templates_ja.yaml
 #
 # It should return 'yes'.
-# You need to have a file in the current directory named candc_location.txt
-# where you have the absolute directory path to C&C parser.
+# You need to have a file in the current directory named jigg_location.txt
+# where you have the absolute directory path to Jigg parser.
 # Inside the directory pointed by candc_location.txt, there should be
 # a directory called "bin" that contains the binaries of C&C parser
 # and another directory called "models" that contains the models.
 # For example:
-# $ cat candc_location.txt
-#   /home/pasmargo/software/candc/candc-1.00
+# $ cat jigg_location.txt
+#   /home/pasmargo/software/jigg
 
-USAGE="Usage: ./rte.sh <sentences.txt> <semantic_templates.yaml>"
+USAGE="Usage: ./rte_ja.sh <sentences.txt> <semantic_templates.yaml>"
 
 # Check that the number of arguments is correct.
 if [ "$#" -ne 2 ]; then
@@ -63,47 +64,46 @@ fi
 
 # These variables contain the names of the directories where intermediate
 # results will be written.
-plain_dir="en_plain" # tokenized sentences.
-parsed_dir="en_parsed" # parsed sentences into XML or other formats.
-results_dir="en_results" # HTML semantic outputs, proving results, etc.
+plain_dir="plain" # tokenized sentences.
+parsed_dir="parsed" # parsed sentences into XML or other formats.
+results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
 
-# Tokenize text with Penn Treebank tokenizer.
-cat $sentences_fname | \
-  sed -f tokenizer.sed | \
-  sed 's/ _ /_/g' \
-  > ${plain_dir}/${sentences_basename}.tok
-
-# Set a variable with the command to invoke the CCG parser.
-parser_dir=`cat candc_location.txt`
 # Here we check whether the variable is pointing to the right C&C parser directory.
-if [ ! -d "${parser_dir}" ]; then
+parser_dir=`cat jigg_location.txt`
+if [ ! -d "${parser_dir}/jar" ]; then
   echo "Parser directory does not exist. Exit."
   exit 1
 fi
-if [ ! -e "${parser_dir}"/bin/candc ]; then
-  echo "The variable parser_dir might not be pointing to the candc directory. Exit."
+if [ ! -e "${parser_dir}"/jar/ccg-models-*.jar ]; then
+  echo "Japanese CCG models not found. Refer to Jigg instructions to download them."
   exit 1
 fi
-parser_cmd="${parser_dir}/bin/candc \
-    --models ${parser_dir}/models \
-    --candc-printer xml \
-    --input"
+# Set a variable with the command to invoke the CCG parser.
+parser_cmd="java -Xmx4g -cp \"${parser_dir}/jar/*\" jigg.pipeline.Pipeline \
+  -annotators ssplit,kuromoji,ccg \
+  -ccg.kBest 5 -file"
 
 # Syntactic parse the sentences into an XML file in $parsed_dir.
-if [ ! -e "${parsed_dir}/${sentences_basename}.candc.xml" ]; then
+if [ ! -e "${parsed_dir}/${sentences_basename}.jigg.xml" ]; then
   # C&C parse and conversion into transccg format.
-  echo "Syntactic parsing ${plain_dir}/${sentences_basename}.tok"
-  eval $parser_cmd ${plain_dir}/${sentences_basename}.tok \
-    > ${parsed_dir}/${sentences_basename}.candc.xml \
-    2> ${parsed_dir}/${sentences_basename}.log
+  echo "Syntactic parsing ${sentences_fname}"
+  # This will create a file ${sentences_fname}.xml
+  eval $parser_cmd ${sentences_fname} \
+    > ${parsed_dir}/${sentences_basename}.log.std \
+    2> ${parsed_dir}/${sentences_basename}.log.err
+  mv ${sentences_fname}.xml ${parsed_dir}/${sentences_basename}.jigg.xml
 fi
+# TODO: when we move to github:jigg, we need to convert from
+# Jigg to transccg.
 if [ ! -e "${parsed_dir}/${sentences_basename}.xml" ]; then
-  python candc2transccg.py ${parsed_dir}/${sentences_basename}.candc.xml \
-    > ${parsed_dir}/${sentences_basename}.xml
+  cp ${parsed_dir}/${sentences_basename}.jigg.xml ${parsed_dir}/${sentences_basename}.xml
+  # python candc2transccg.py ${parsed_dir}/${sentences_basename}.candc.xml \
+  #   > ${parsed_dir}/${sentences_basename}.xml
 fi
 
 # Semantic parsing the CCG trees in XML.
+# TODO: Enable --gold_tree.
 if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
   echo "Semantic parsing $parsed_dir/${sentences_basename}.xml"
   python semparse.py \
