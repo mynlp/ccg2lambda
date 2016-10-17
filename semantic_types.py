@@ -256,7 +256,7 @@ def build_arbitrary_dynamic_library(ccg_trees):
     """
     dynamic_library = []
     for ccg_tree in ccg_trees:
-        coq_types = simplejson.loads(ccg_tree.attrib.get('coq_type', "[]"))
+        coq_types = ccg_tree.attrib.get('coq_type', "").split(' ||| ')
         dynamic_library.extend(coq_types)
     dynamic_library = sorted(list(set(dynamic_library)))
     return dynamic_library
@@ -276,7 +276,10 @@ def get_predicate_type_from_library(predicate, lib):
 
 def merge_dynamic_libraries(coq_lib, nltk_lib, coq_static_lib_path, doc):
     reserved_predicates = get_reserved_preds_from_coq_static_lib(coq_static_lib_path)
-    required_predicates = set(normalize_token(t) for t in doc.xpath('//token/@base'))
+    # Get base forms, unless the base form is '*', in which case get surf form.
+    base_forms = doc.xpath("//token[not(@base='*')]/@base | //token[@base='*']/@surf")
+    required_predicates = set(normalize_token(t) for t in base_forms)
+    # required_predicates = set(normalize_token(t) for t in doc.xpath('//token/@base'))
     coq_lib_index = {coq_lib_entry.split()[1] : coq_lib_entry \
                        for coq_lib_entry in coq_lib}
     nltk_lib_index = {nltk_lib_entry.split()[1] : nltk_lib_entry \

@@ -64,9 +64,9 @@ fi
 
 # These variables contain the names of the directories where intermediate
 # results will be written.
-plain_dir="plain" # tokenized sentences.
-parsed_dir="parsed" # parsed sentences into XML or other formats.
-results_dir="results" # HTML semantic outputs, proving results, etc.
+plain_dir="ja_plain" # tokenized sentences.
+parsed_dir="ja_parsed" # parsed sentences into XML or other formats.
+results_dir="ja_results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
 
 # Here we check whether the variable is pointing to the right C&C parser directory.
@@ -115,12 +115,11 @@ if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
 fi
 
 # Judge entailment with a theorem prover (Coq, at the moment).
-echo "Judging entailment for $parsed_dir/${sentences_basename}.sem.xml"
-if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
+if [ ! -e "${results_dir}/${sentences_basename}.answer" ]; then
   python prove.py \
     $parsed_dir/${sentences_basename}.sem.xml \
     --graph_out ${results_dir}/${sentences_basename}.html \
     > ${results_dir}/${sentences_basename}.answer \
     2> ${results_dir}/${sentences_basename}.err
 fi
-echo "Judgement: "`cat ${results_dir}/${sentences_basename}.answer`
+echo "Judged entailment for $parsed_dir/${sentences_basename}.sem.xml "`cat ${results_dir}/${sentences_basename}.answer`

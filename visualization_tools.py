@@ -127,7 +127,6 @@ def convert_doc_to_mathml(doc, verbatim_strings = []):
     """
     ccg_trees = [build_ccg_tree(c) for c in doc.xpath('//sentence/ccg[1]')]
     sem_trees = [build_ccg_tree(c) for c in doc.xpath('//semantics')]
-    # from pudb import set_trace; set_trace()
     if not sem_trees:
         sem_trees = [None] * len(ccg_trees)
     tokens = doc.xpath('//tokens')

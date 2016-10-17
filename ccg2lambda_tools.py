@@ -137,10 +137,17 @@ def combine_children_exprs(ccg_tree, tokens, semantic_index):
       'There should be at least two children to combine expressions: {0}'\
       .format(ccg_tree)
     # Assign coq types.
-    coq_types_left  = simplejson.loads(ccg_tree[0].attrib.get('coq_type', "[]"))
-    coq_types_right = simplejson.loads(ccg_tree[1].attrib.get('coq_type', "[]"))
-    coq_types = sorted(coq_types_left + coq_types_right)
-    ccg_tree.set('coq_type', simplejson.dumps(coq_types))
+    coq_types_left  = ccg_tree[0].attrib.get('coq_type', "")
+    coq_types_right = ccg_tree[1].attrib.get('coq_type', "")
+    if coq_types_left and coq_types_right:
+        coq_types = coq_types_left + ' ||| ' + coq_types_right
+    elif coq_types_left:
+        coq_types = coq_types_left 
+    else:
+        coq_types = coq_types_right
+    # coq_types = sorted(coq_types_left + coq_types_right)
+    # ccg_tree.set('coq_type', simplejson.dumps(coq_types))
+    ccg_tree.set('coq_type', coq_types)
     semantics = semantic_index.get_semantic_representation(ccg_tree, tokens)
     if semantics:
         ccg_tree.set('sem', str(semantics))

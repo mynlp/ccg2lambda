@@ -31,6 +31,7 @@ from nltk2coq import normalize_interpretation
 from semantic_types import get_dynamic_library_from_doc
 
 def build_knowledge_axioms(ccg_trees):
+    return ''
     if ccg_trees is None:
         return ''
     axioms = get_lexical_relations(ccg_trees)
@@ -169,7 +170,7 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
       + dynamic_library + '\n' \
       + 'Theorem t1: ' + \
       coq_formulae + \
-      '. nltac. Qed.\" | coqtop'
+      '. Set Firstorder Depth 1. nltac. nltac_set; nltac_final. Set Firstorder Depth 3. nltac_final. Qed.\" | coqtop'
     input_coq_script = substitute_invalid_chars(input_coq_script, 'replacement.txt')
     # print(input_coq_script)
     process = subprocess.Popen(\
