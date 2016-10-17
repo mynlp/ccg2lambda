@@ -117,7 +117,7 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
 def get_sentence_surface_from_tokens(ccg_tokens, attribute = 'surf'):
     return ' '.join([token.get(attribute) for token in ccg_tokens])
 
-def convert_doc_to_mathml(doc, verbatim_strings = []):
+def convert_doc_to_mathml(doc, verbatim_strings = [], use_gold_trees=False):
     """
     This function expects a list of ccg_trees, and a list of tokens
     (as produced by transccg). Then, it converts each pair (ccg_tree, ccg_tokens)
@@ -125,7 +125,14 @@ def convert_doc_to_mathml(doc, verbatim_strings = []):
     verbatim_strings contains a list of strings that should be printed
     verbatim at the end of the HTML document, for debugging.
     """
-    ccg_trees = [build_ccg_tree(c) for c in doc.xpath('//sentence/ccg[1]')]
+    ccg_trees = []
+    if use_gold_trees:
+        for sentence in doc.xpath('//sentence'):
+            gold_tree_index = int(sentence.get('gold_tree', '0'))
+            ccg_trees.append(sentence.xpath('./ccg')[gold_tree_index])
+        ccg_trees = [build_ccg_tree(c) for c in ccg_trees]
+    else:
+        ccg_trees = [build_ccg_tree(c) for c in doc.xpath('//sentence/ccg[1]')]
     sem_trees = [build_ccg_tree(c) for c in doc.xpath('//semantics')]
     if not sem_trees:
         sem_trees = [None] * len(ccg_trees)

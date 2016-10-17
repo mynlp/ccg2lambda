@@ -74,8 +74,13 @@ def main(args = None):
         sem_node = etree.Element('semantics')
         try:
             sem_node.set('status', 'success')
-            sem_node.set('root', sentence.xpath('./ccg/@root')[0])
-            sem_tree = assign_semantics_to_ccg(sentence, semantic_index)
+            tree_index = 1
+            if args.gold_trees:
+                tree_index = int(sentence.get('gold_tree', '0')) + 1
+            sem_tree = assign_semantics_to_ccg(
+                sentence, semantic_index, tree_index)
+            sem_node.set('root',
+                sentence.xpath('./ccg[{0}]/@root'.format(tree_index))[0])
             filter_attributes(sem_tree)
             sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
         except LogicalExpressionException:

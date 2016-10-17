@@ -103,7 +103,6 @@ if [ ! -e "${parsed_dir}/${sentences_basename}.xml" ]; then
 fi
 
 # Semantic parsing the CCG trees in XML.
-# TODO: Enable --gold_tree.
 if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
   echo "Semantic parsing $parsed_dir/${sentences_basename}.xml"
   python semparse.py \
@@ -111,6 +110,7 @@ if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
     $category_templates \
     $parsed_dir/${sentences_basename}.sem.xml \
     --arbi-types \
+    --gold_trees \
     2> $parsed_dir/${sentences_basename}.sem.err
 fi
 
@@ -118,6 +118,7 @@ fi
 if [ ! -e "${results_dir}/${sentences_basename}.answer" ]; then
   python prove.py \
     $parsed_dir/${sentences_basename}.sem.xml \
+    --gold_trees \
     --graph_out ${results_dir}/${sentences_basename}.html \
     > ${results_dir}/${sentences_basename}.answer \
     2> ${results_dir}/${sentences_basename}.err

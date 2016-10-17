@@ -58,7 +58,7 @@ def main(args = None):
     print(inference_result, file=sys.stdout)
 
     if args.graph_out:
-        html_str = convert_doc_to_mathml(doc, coq_scripts)
+        html_str = convert_doc_to_mathml(doc, coq_scripts, args.gold_trees)
         with codecs.open(args.graph_out, 'w', 'utf-8') as fout:
             fout.write(html_str)
 

@@ -67,7 +67,7 @@ def normalize_tokens(tokens):
             token.set('surf', surf_normalized)
     return tokens
 
-def assign_semantics_to_ccg(ccg_xml, semantic_index):
+def assign_semantics_to_ccg(ccg_xml, semantic_index, tree_index=1):
     """
     This is the key function. It builds first an XML tree structure with
     the CCG tree, and then assigns semantics (lambda expressions) to each node
@@ -75,7 +75,11 @@ def assign_semantics_to_ccg(ccg_xml, semantic_index):
     In returns a CCG lxml tree structure with a new 'sem' field that
     contains the semantics at each node.
     """
-    ccg_flat_tree = copy.deepcopy(ccg_xml.find('.//ccg'))
+    # If the use of gold trees is requested, we get the gold tree index
+    # from the XML attribute 'gold_tree'. Note that in xpath, lists are
+    # one-indexed arrays.
+    ccg_flat_tree = copy.deepcopy(
+        ccg_xml.xpath('./ccg[{0}]'.format(tree_index))[0])
     ccg_tree = build_ccg_tree(ccg_flat_tree)
     tokens = copy.deepcopy(ccg_xml.find('.//tokens'))
     tokens = normalize_tokens(tokens)
