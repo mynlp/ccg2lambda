@@ -53,7 +53,7 @@ def main(args = None):
     parser.add_argument("templates")
     parser.add_argument("sem")
     parser.add_argument("--arbi-types", action="store_true", default=False)
-    parser.add_argument("--gold_trees", action="store_true", default=False)
+    parser.add_argument("--gold_trees", action="store_true", default=True)
     args = parser.parse_args()
       
     if not os.path.exists(args.templates):

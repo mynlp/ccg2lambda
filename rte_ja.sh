@@ -45,19 +45,19 @@ if [ "$#" -ne 2 ]; then
   exit 1
 fi
 
-# This variable contains the filename where the category templates are.
-category_templates=$2
-if [ ! -f $category_templates ]; then
-  echo "Error: File with semantic templates does not exist."
-  echo $USAGE
-  exit 1
-fi
-
-# This variable contains the name of the dataset (fracas or jsem).
+# This variable contains the filename of the RTE problem.
 sentences_fname=$1
 sentences_basename=${sentences_fname##*/}
 if [ ! -f $sentences_fname ]; then
   echo "Error: File with plain sentences does not exist."
+  echo $USAGE
+  exit 1
+fi
+
+# This variable contains the filename where the category templates are.
+category_templates=$2
+if [ ! -f $category_templates ]; then
+  echo "Error: File with semantic templates does not exist."
   echo $USAGE
   exit 1
 fi
@@ -110,7 +110,6 @@ if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
     $category_templates \
     $parsed_dir/${sentences_basename}.sem.xml \
     --arbi-types \
-    --gold_trees \
     2> $parsed_dir/${sentences_basename}.sem.err
 fi
 
@@ -118,7 +117,6 @@ fi
 if [ ! -e "${results_dir}/${sentences_basename}.answer" ]; then
   python prove.py \
     $parsed_dir/${sentences_basename}.sem.xml \
-    --gold_trees \
     --graph_out ${results_dir}/${sentences_basename}.html \
     > ${results_dir}/${sentences_basename}.answer \
     2> ${results_dir}/${sentences_basename}.err
