@@ -79,7 +79,7 @@ if [ ! -e "${parser_dir}"/jar/ccg-models-*.jar ]; then
   echo "Japanese CCG models not found. Refer to Jigg instructions to download them."
   exit 1
 fi
-# Set a variable with the command to invoke the CCG parser.
+# Set a variable with the command to invoke the CCG parser for Japanese.
 parser_cmd="java -Xmx4g -cp \"${parser_dir}/jar/*\" jigg.pipeline.Pipeline \
   -annotators ssplit,kuromoji,ccg \
   -ccg.kBest 5 -file"
@@ -115,10 +115,15 @@ fi
 
 # Judge entailment with a theorem prover (Coq, at the moment).
 if [ ! -e "${results_dir}/${sentences_basename}.answer" ]; then
+  start_time=`python -c 'import time; print(time.time())'`
   python prove.py \
     $parsed_dir/${sentences_basename}.sem.xml \
     --graph_out ${results_dir}/${sentences_basename}.html \
     > ${results_dir}/${sentences_basename}.answer \
     2> ${results_dir}/${sentences_basename}.err
+  end_time=`python -c 'import time; print(time.time())'`
+  echo "${end_time} - ${start_time}" | \
+    bc -l | awk '{printf("%.2f\n", $1)}' \
+    > ${results_dir}/${sentences_basename}.time
 fi
 echo "Judged entailment for $parsed_dir/${sentences_basename}.sem.xml "`cat ${results_dir}/${sentences_basename}.answer`

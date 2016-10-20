@@ -45,8 +45,8 @@ def main(args = None):
     args = parser.parse_args()
       
     if not os.path.exists(args.sem):
-        print('File does not exist: {0}'.format(args.sem))
-        parser.print_help()
+        print('File does not exist: {0}'.format(args.sem), file=sys.stderr)
+        parser.print_help(file=sys.stderr)
         sys.exit(1)
     
     logging.basicConfig(level=logging.WARNING)
