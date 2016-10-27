@@ -71,18 +71,20 @@ mkdir -p $plain_dir $parsed_dir $results_dir
 
 # Here we check whether the variable is pointing to the right C&C parser directory.
 parser_dir=`cat jigg_location.txt`
-if [ ! -d "${parser_dir}/jar" ]; then
-  echo "Parser directory does not exist. Exit."
+
+parser_jar=(${parser_dir}/jigg-*[0-9].jar)
+models_jar=(${parser_dir}/jigg-*models.jar)
+if [ ! -e "${parser_jar[0]}" ] || [ ! -e "${models_jar[0]}" ]; then
+  echo "Parser or models are not present."
+  echo "Refer to Jigg instructions to download them. Exit."
   exit 1
 fi
-if [ ! -e "${parser_dir}"/jar/ccg-models-*.jar ]; then
-  echo "Japanese CCG models not found. Refer to Jigg instructions to download them."
-  exit 1
-fi
+
 # Set a variable with the command to invoke the CCG parser for Japanese.
-parser_cmd="java -Xmx4g -cp \"${parser_dir}/jar/*\" jigg.pipeline.Pipeline \
-  -annotators ssplit,kuromoji,ccg \
-  -ccg.kBest 5 -file"
+parser_cmd="java -Xmx4g -cp \"${parser_dir}/*\" jigg.pipeline.Pipeline \
+  -annotators ssplit,kuromoji,jaccg \
+  -jaccg.kBest 5 \
+  -file"
 
 # Syntactic parse the sentences into an XML file in $parsed_dir.
 if [ ! -e "${parsed_dir}/${sentences_basename}.jigg.xml" ]; then
@@ -94,12 +96,10 @@ if [ ! -e "${parsed_dir}/${sentences_basename}.jigg.xml" ]; then
     2> ${parsed_dir}/${sentences_basename}.log.err
   mv ${sentences_fname}.xml ${parsed_dir}/${sentences_basename}.jigg.xml
 fi
-# TODO: when we move to github:jigg, we need to convert from
-# Jigg to transccg.
 if [ ! -e "${parsed_dir}/${sentences_basename}.xml" ]; then
-  cp ${parsed_dir}/${sentences_basename}.jigg.xml ${parsed_dir}/${sentences_basename}.xml
-  # python candc2transccg.py ${parsed_dir}/${sentences_basename}.candc.xml \
-  #   > ${parsed_dir}/${sentences_basename}.xml
+  python jigg2transccg.py \
+    ${parsed_dir}/${sentences_basename}.jigg.xml \
+    > ${parsed_dir}/${sentences_basename}.xml
 fi
 
 # Semantic parsing the CCG trees in XML.

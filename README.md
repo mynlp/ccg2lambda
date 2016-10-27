@@ -217,6 +217,8 @@ You can find our semantic templates in `semantic_templates_en.yaml`. Here are so
 
 If you use this software or the semantic templates for your work, please consider citing it as:
 
+## The system - software for compositional semantics:
+
 * Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. ccg2lambda: A Compositional Semantics System. Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics - System Demonstrations, pages 85–90, Berlin, Germany, August 7-12, 2016. [pdf](https://aclweb.org/anthology/P/P16/P16-4015.pdf)
 
 ```
@@ -233,6 +235,8 @@ If you use this software or the semantic templates for your work, please conside
 }
 ```
 
+## The English semantic model declared as semantic templates:
+
 * Koji Mineshima, Pascual Martínez-Gómez, Yusuke Miyao, Daisuke Bekki. Higher-order logical inference with compositional semantics. Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing, pages 2055–2061, Lisbon, Portugal, 17-21 September 2015. [pdf](http://www.aclweb.org/anthology/D15-1244)
 
 ```
@@ -246,5 +250,21 @@ If you use this software or the semantic templates for your work, please conside
   publisher = {Association for Computational Linguistics},
   pages     = {2055--2061},
   url       = {http://aclweb.org/anthology/D15-1244}
+}
+```
+
+## The Japanese semantic model declared as semantic templates:
+
+* Koji Mineshima, Ribeka Tanaka, Pascual Martínez-Gómez, Yusuke Miyao, Daisuke Bekki. Building compositional semantics and higher-order inference system for wide-coverage Japanese CCG parsers. Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing. Austin, Texas, 1-5 November 2016.
+
+```
+@InProceedings{mineshima-EtAl:2016:EMNLP,
+  author    = {Mineshima, Koji  and  Tanaka, Ribeka  and  Mart\'{i}nez-G\'{o}mez, Pascual  and  Miyao, Yusuke  and  Bekki, Daisuke},
+  title     = {Building compositional semantics and higher-order inference system for wide-coverage Japanese CCG parsers},
+  booktitle = {Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing},
+  month     = {November},
+  year      = {2016},
+  address   = {Austin, Texas},
+  publisher = {Association for Computational Linguistics}
 }
 ```

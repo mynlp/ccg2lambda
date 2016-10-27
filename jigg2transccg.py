@@ -52,7 +52,6 @@ def main(args = None):
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=DESCRIPTION)
     parser.add_argument("jigg_fname", help="Jigg XML filename with CCG trees.")
-    # parser.add_argument("transccg_fname", help="Jigg XML filename with CCG trees.")
     args = parser.parse_args()
       
     if not os.path.exists(args.jigg_fname):
@@ -65,23 +64,9 @@ def main(args = None):
     parser = etree.XMLParser(remove_blank_text=True)
     jigg_doc = etree.parse(args.jigg_fname, parser)
     transccg_doc = jigg2transccg_doc(jigg_doc)
-    # from pudb import set_trace; set_trace()
-
-    # root_xml_str = serialize_tree(transccg_doc)
-    # with codecs.open(args.transccg_fname, 'wb') as fout:
-    #     fout.write(root_xml_str)
-
-    # with codecs.open(args.transccg_fname, 'wb', 'utf-8') as fout:
-    #   transccg_doc.write(fout, pretty_print=True, encoding='utf-8')
-    result = etree.tostring(transccg_doc, encoding='utf-8', pretty_print=True)
+    result = etree.tostring(transccg_doc, encoding='utf-8',
+        xml_declaration=True, pretty_print=True)
     print(result.decode('utf-8'))
-    # print(result)
-
-def serialize_tree(tree):
-    tree_str = etree.tostring(
-        tree, xml_declaration=True, encoding='utf-8', pretty_print=True)
-    return tree_str
-
 
 if __name__ == '__main__':
     main()
