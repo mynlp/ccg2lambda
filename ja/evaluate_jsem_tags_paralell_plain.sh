@@ -21,7 +21,7 @@
 cores=${1:-3}
 
 # Set the semantic templates we want to evaluate:
-templates="semantic_templates_ja_emnlp2016.yaml"
+templates="ja/semantic_templates_ja_emnlp2016.yaml"
 
 ################################################################
 ### extract problems by specified tags
@@ -186,4 +186,4 @@ echo "
 </html>
 " >> $results_dir/main_jsem.html
 
-./accuracy.sh ${results_dir}/main_jsem.html > ${results_dir}/score.txt
+./ja/accuracy.sh ${results_dir}/main_jsem.html > ${results_dir}/score.txt
