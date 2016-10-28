@@ -14,27 +14,27 @@ if [ ! -d ${results_dir} ]; then
 fi
 
 echo "------------GQ section (evaluation: ${mode})"
-./ja/evaluate_jsem_tags_paralell_plain.sh $cores "Generalized Quantifier" entailment -presupposition
+./ja/evaluate_jsem_parallel.sh $cores "Generalized Quantifier" entailment -presupposition
 mv ja_results ${results_dir}/gq_${mode}
 echo "GQ section: Done------------"
 
 echo "------------Plural section (evaluation: ${mode})"
-./ja/evaluate_jsem_tags_paralell_plain.sh $cores "Plural" entailment -presupposition "-nominal anaphora"
+./ja/evaluate_jsem_parallel.sh $cores "Plural" entailment -presupposition "-nominal anaphora"
 mv ja_results ${results_dir}/plural_${mode}
 echo "Plural section: Done------------"
 
 echo "------------Adjective section (evaluation: ${mode})"
-./ja/evaluate_jsem_tags_paralell_plain.sh $cores "Adjective" entailment -presupposition
+./ja/evaluate_jsem_parallel.sh $cores "Adjective" entailment -presupposition
 mv ja_results ${results_dir}/adjective_${mode}
 echo "Adjective section: Done------------"
 
 echo "------------Verb section (evaluation: ${mode})"
-./ja/evaluate_jsem_tags_paralell_plain.sh $cores "Verb" entailment -presupposition
+./ja/evaluate_jsem_parallel.sh $cores "Verb" entailment -presupposition
 mv ja_results ${results_dir}/verb_${mode}
 echo "Verb section: Done------------"
 
 echo "------------Attitude section (evaluation: ${mode})"
-./ja/evaluate_jsem_tags_paralell_plain.sh $cores "Attitude" entailment -presupposition
+./ja/evaluate_jsem_parallel.sh $cores "Attitude" entailment -presupposition
 mv ja_results ${results_dir}/attitude_${mode}
 echo "Attitude section: Done------------"
 
