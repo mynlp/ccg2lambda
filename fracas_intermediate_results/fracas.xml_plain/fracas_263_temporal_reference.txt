@@ -1,3 +1,0 @@
-Smith was present after Jones left.
-Jones left after Anderson was present.
-Smith was present after Anderson was present.

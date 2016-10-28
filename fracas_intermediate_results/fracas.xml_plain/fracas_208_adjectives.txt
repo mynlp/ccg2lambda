@@ -1,3 +1,0 @@
-Mickey is a small animal.
-Dumbo is a large animal.
-Mickey is smaller than Dumbo.

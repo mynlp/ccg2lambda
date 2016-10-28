@@ -1,4 +1,0 @@
-Smith was present.
-Jones was present.
-Smith was present after Jones was present.
-Jones was present before Smith was present.
