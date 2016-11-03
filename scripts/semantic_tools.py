@@ -156,6 +156,13 @@ def substitute_invalid_chars(script, replacement_filename):
             script = script.replace(invalid_char, valid_char)
     return script
 
+_tactics = 'Set Firstorder Depth 1. nltac. Set Firstorder Depth 6. nltac. Qed.'
+try:
+    with open('tactics_coq.txt') as fin:
+        _tactics = fin.read().strip()
+except:
+    pass
+
 # This function receives two arguments. The first one is a list of the logical
 # interpretations of the premises (only one interpretation per premise).
 # The second argument is a string with a single interpretation of the conclusion.
@@ -166,11 +173,15 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
     interpretations = [normalize_interpretation(interp) for interp in interpretations]
     coq_formulae = ' -> '.join(interpretations)
     # Input these formulae to coq and retrieve the results.
-    input_coq_script = 'echo \"Require Export coqlib. \n' \
-      + dynamic_library + '\n' \
-      + 'Theorem t1: ' + \
-      coq_formulae + \
-      '. Set Firstorder Depth 1. nltac. nltac_set; nltac_final. Set Firstorder Depth 3. nltac_final. Qed.\" | coqtop'
+    input_coq_script = ('echo \"Require Export coqlib.\n'
+        '{0}\nTheorem t1: {1}. {2}.\" | coqtop').format(
+        dynamic_library, coq_formulae, _tactics)
+    # input_coq_script = 'echo \"Require Export coqlib. \n' \
+    #   + dynamic_library + '\n' \
+    #   + 'Theorem t1: ' + \
+    #   coq_formulae + \
+    #   '. ' + _tactics + '\" | coqtop'
+    # Set Firstorder Depth 1. nltac. nltac_set; nltac_final. Set Firstorder Depth 3. nltac_final. Qed.\" | coqtop'
     input_coq_script = substitute_invalid_chars(input_coq_script, 'replacement.txt')
     # print(input_coq_script)
     process = subprocess.Popen(\

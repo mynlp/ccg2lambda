@@ -10,6 +10,7 @@ results_dir=$2
 
 cp ja/coqlib_ja.v coqlib.v
 coqc coqlib.v
+cp ja/tactics_coq_ja.txt tactics_coq.txt
 
 mkdir -p ja_{plain,parsed,results}
 ### Extract JSeM problems from XML fail into separate plain files.
