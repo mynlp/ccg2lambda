@@ -18,10 +18,10 @@
 # to nodes of CCG derivations of fracas premises and hypotheses.
 # Please, use it as:
 # 
-# ./evaluate_template.sh <semantic_template.yaml> <dataset>
+# ./en/emnlp2015exp.sh <semantic_template.yaml> <dataset>
 # 
 # E.g.
-# ./evaluate_template.sh semantic_templates_en.yaml fracas.xml
+# ./en/emnlp2015exp.sh semantic_templates_en.yaml fracas.xml
 #
 # You need to have a file in the current directory named candc_location.txt
 # where you have the absolute directory path to C&C parser.
@@ -59,7 +59,7 @@ if [ ! -f $dataset ]; then
 fi
 
 # Set a variable with the command to invoke the CCG parser.
-parser_dir=`cat candc_location.txt`
+parser_dir=`cat en/candc_location.txt`
 parser_cmd="${parser_dir}/bin/candc \
     --models ${parser_dir}/models \
     --candc-printer xml \
