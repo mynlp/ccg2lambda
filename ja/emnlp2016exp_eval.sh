@@ -73,6 +73,3 @@ printf "    Total | %6d | %7s | %5s | %8s | %7s |\n" \
   $total_plain ${total_accuracy} ${total_recall} ${total_precision} ${total_avspeed} \
   >> ${results_dir}/${mode}.results.table
 
-# Create the confusion matrix for all problems
-./create_conf_matrix.sh ${results_dir}/${mode}.all.results >> ${results_dir}/${mode}.results.table
-
