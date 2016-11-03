@@ -215,7 +215,7 @@ You can find our semantic templates in `semantic_templates_en.yaml`. Here are so
 
 # Citing this work
 
-If you use this software or the semantic templates for your work, please consider citing it as:
+If you use this software or the semantic templates for your work, please consider citing it.
 
 ## The system - software for compositional semantics:
 

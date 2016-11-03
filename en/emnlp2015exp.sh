@@ -32,6 +32,10 @@
 # $ cat candc_location.txt
 #   /home/pasmargo/software/candc/candc-1.00
 
+cp en/coqlib_fracas.v coqlib.v
+coqc coqlib.v
+cp en/tactics_coq_fracas.txt tactics_coq.txt
+
 # Check that the number of arguments is correct.
 if [ "$#" -ne 2 ]; then
   echo "Error: Number of arguments invalid".
@@ -77,12 +81,12 @@ echo "Extracting problems from "${dataset}" XML file"
 if [ ! -d "$plain_dir" ]; then
   mkdir -p $plain_dir
 fi
-python extract_entailment_problems.py $dataset $plain_dir
+python en/extract_entailment_problems.py $dataset $plain_dir
 # Tokenize text.
 for f in ${plain_dir}/*.txt; do
   if [ ! -e "${f/.txt/.tok}" ]; then
     cat $f | \
-    perl tokenizer.perl -l en 2>/dev/null | \
+    perl en/tokenizer.perl -l en 2>/dev/null | \
     sed 's/ _ /_/g' > ${f/.txt/.tok}
   fi
 done
@@ -114,7 +118,7 @@ for f in ${plain_dir}/*.tok; do
        > ${parsed_dir}/${base_filename}.candc.xml
   fi
   if [ ! -e "${parsed_dir}/${base_filename/.tok/}.xml" ]; then
-    python candc2transccg.py ${parsed_dir}/${base_filename}.candc.xml \
+    python en/candc2transccg.py ${parsed_dir}/${base_filename}.candc.xml \
       > ${parsed_dir}/${base_filename/.tok/}.xml
   fi
 done
@@ -134,7 +138,7 @@ for f in ${plain_dir}/*.tok; do
   if [ ! -e "$parsed_dir/${base_filename/.tok/.sem.xml}" ]; then
     # Display progress.
     echo -n "."
-    python semparse.py \
+    python scripts/semparse.py \
       $parsed_dir/${base_filename/.tok/.xml} \
       $category_templates \
       $parsed_dir/${base_filename/.tok/.sem.xml} \
@@ -142,9 +146,10 @@ for f in ${plain_dir}/*.tok; do
       2> $parsed_dir/${base_filename/.tok/.sem.err}
   fi
   if [ ! -e "${results_dir}/${base_filename/.tok/.answer}" ]; then
-    python prove.py \
+    python scripts/prove.py \
       $parsed_dir/${base_filename/.tok/.sem.xml} \
     --graph_out ${results_dir}/${base_filename/.tok/.html} \
+    --abduction \
     > ${results_dir}/${base_filename/.tok/.answer} \
     2> ${results_dir}/${base_filename/.tok/.err}
   fi
@@ -209,6 +214,7 @@ rm -f gold.results system.results
 for f in ${plain_dir}/*.tok; do
   base_filename=${f##*/}
   base_filename=${base_filename/.tok/}
+  echo $base_filename
   num_lines=`cat $f | wc -l`
   premises="single"
   if [ "$num_lines" -gt 2 ]; then
@@ -220,4 +226,4 @@ for f in ${plain_dir}/*.tok; do
   echo $base_filename $premises $system_answer >> system.results
 done
 
-python report_results.py gold.results system.results
+python en/report_results.py gold.results system.results
