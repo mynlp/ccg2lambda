@@ -1,6 +1,6 @@
 # Running the RTE pipeline on JSeM.
 
-First you need to download the Jigg CCG parser and its models by simply running in the console:
+If you have not done so already, first you need to download the Jigg CCG parser and its models by simply running in the console:
 
 ```bash
 ./ja/download_dependencies.sh
