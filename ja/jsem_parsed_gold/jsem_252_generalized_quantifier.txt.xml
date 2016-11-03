@@ -1,0 +1,334 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+  <document id="d0">
+    <sentences>
+      <sentence id="s0" gold_tree="4">
+        CDを買うファンは最大でも100人だ。
+        <tokens>
+          <token base="*" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="一般" pos="名詞" surf="CD" id="s0_0"/>
+          <token reading="ヲ" base="を" inflectionForm="*" inflectionType="*" pos3="*" pos2="一般" pos1="格助詞" pos="助詞" surf="を" id="s0_1"/>
+          <token reading="カウ" base="買う" inflectionForm="基本形" inflectionType="五段・ワ行促音便" pos3="*" pos2="*" pos1="自立" pos="動詞" surf="買う" id="s0_2"/>
+          <token reading="ファン" base="ファン" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="一般" pos="名詞" surf="ファン" id="s0_3"/>
+          <token reading="ワ" base="は" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="係助詞" pos="助詞" surf="は" id="s0_4"/>
+          <token reading="サイダイ" base="最大" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="一般" pos="名詞" surf="最大" id="s0_5"/>
+          <token reading="デ" base="で" inflectionForm="*" inflectionType="*" pos3="*" pos2="一般" pos1="格助詞" pos="助詞" surf="で" id="s0_6"/>
+          <token reading="モ" base="も" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="係助詞" pos="助詞" surf="も" id="s0_7"/>
+          <token base="*" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="数" pos="名詞" surf="100" id="s0_8"/>
+          <token reading="ニン" base="人" inflectionForm="*" inflectionType="*" pos3="*" pos2="助数詞" pos1="接尾" pos="名詞" surf="人" id="s0_9"/>
+          <token reading="ダ" base="だ" inflectionForm="基本形" inflectionType="特殊・ダ" pos3="*" pos2="*" pos1="*" pos="助動詞" surf="だ" id="s0_10"/>
+          <token reading="。" base="。" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="句点" pos="記号" surf="。" id="s0_11"/>
+        </tokens>
+        <ccg score="1538.3651723861694" id="s0_ccg0" root="s0_sp0">
+          <span child="s0_sp1 s0_sp23" rule="&lt;" category="S[mod=nm,form=base,fin=t]" end="12" begin="0" id="s0_sp0"/>
+          <span child="s0_sp2 s0_sp12" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="0" id="s0_sp1"/>
+          <span child="s0_sp3 s0_sp11" rule="&lt;" category="S[fin=f]/S[fin=f]" end="5" begin="0" id="s0_sp2"/>
+          <span child="s0_sp4 s0_sp10" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="0" id="s0_sp3"/>
+          <span child="s0_sp5" rule="ADNint" category="NP[case=nc]/NP[case=nc]" end="3" begin="0" id="s0_sp4"/>
+          <span child="s0_sp6 s0_sp9" rule="&lt;" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="3" begin="0" id="s0_sp5"/>
+          <span child="s0_sp7 s0_sp8" rule="&lt;" category="NP[mod=nm,case=o,fin=f]" end="2" begin="0" id="s0_sp6"/>
+          <span terminal="s0_0" category="NP[mod=nm,case=nc,fin=f]" end="1" begin="0" id="s0_sp7"/>
+          <span terminal="s0_1" category="NP[mod=nm,case=o,fin=f]\NP[mod=nm,case=nc,fin=f]" end="2" begin="1" id="s0_sp8"/>
+          <span terminal="s0_2" category="(S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f])\NP[mod=nm,case=o,fin=f]" end="3" begin="2" id="s0_sp9"/>
+          <span terminal="s0_3" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="3" id="s0_sp10"/>
+          <span terminal="s0_4" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="5" begin="4" id="s0_sp11"/>
+          <span child="s0_sp13 s0_sp18" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="5" id="s0_sp12"/>
+          <span child="s0_sp14 s0_sp17" rule="&lt;" category="S[fin=f]/S[fin=f]" end="8" begin="5" id="s0_sp13"/>
+          <span child="s0_sp15 s0_sp16" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="5" id="s0_sp14"/>
+          <span terminal="s0_5" category="NP[mod=nm,case=nc,fin=f]" end="6" begin="5" id="s0_sp15"/>
+          <span terminal="s0_6" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="7" begin="6" id="s0_sp16"/>
+          <span terminal="s0_7" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="8" begin="7" id="s0_sp17"/>
+          <span child="s0_sp19 s0_sp22" rule="&lt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="8" id="s0_sp18"/>
+          <span child="s0_sp20 s0_sp21" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="10" begin="8" id="s0_sp19"/>
+          <span terminal="s0_8" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="8" id="s0_sp20"/>
+          <span terminal="s0_9" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="10" begin="9" id="s0_sp21"/>
+          <span terminal="s0_10" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=nc,fin=f]" end="11" begin="10" id="s0_sp22"/>
+          <span terminal="s0_11" category="S[mod=nm,form=base,fin=t]\S[mod=nm,form=base,fin=f]" end="12" begin="11" id="s0_sp23"/>
+        </ccg>
+        <ccg score="1529.5151433944702" id="s0_ccg1" root="s0_sp24">
+          <span child="s0_sp25 s0_sp47" rule="&lt;" category="S[mod=nm,form=base,fin=t]" end="12" begin="0" id="s0_sp24"/>
+          <span child="s0_sp26 s0_sp36" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="0" id="s0_sp25"/>
+          <span child="s0_sp27 s0_sp35" rule="&lt;" category="S[fin=f]/S[fin=f]" end="5" begin="0" id="s0_sp26"/>
+          <span child="s0_sp28 s0_sp34" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="0" id="s0_sp27"/>
+          <span child="s0_sp29" rule="ADNext" category="NP[case=nc]/NP[case=nc]" end="3" begin="0" id="s0_sp28"/>
+          <span child="s0_sp30 s0_sp33" rule="&lt;" category="S[mod=adn,form=base,fin=f]" end="3" begin="0" id="s0_sp29"/>
+          <span child="s0_sp31 s0_sp32" rule="&lt;" category="NP[mod=nm,case=o,fin=f]" end="2" begin="0" id="s0_sp30"/>
+          <span terminal="s0_0" category="NP[mod=nm,case=nc,fin=f]" end="1" begin="0" id="s0_sp31"/>
+          <span terminal="s0_1" category="NP[mod=nm,case=o,fin=f]\NP[mod=nm,case=nc,fin=f]" end="2" begin="1" id="s0_sp32"/>
+          <span terminal="s0_2" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=o,fin=f]" end="3" begin="2" id="s0_sp33"/>
+          <span terminal="s0_3" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="3" id="s0_sp34"/>
+          <span terminal="s0_4" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="5" begin="4" id="s0_sp35"/>
+          <span child="s0_sp37 s0_sp42" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="5" id="s0_sp36"/>
+          <span child="s0_sp38 s0_sp41" rule="&lt;" category="S[fin=f]/S[fin=f]" end="8" begin="5" id="s0_sp37"/>
+          <span child="s0_sp39 s0_sp40" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="5" id="s0_sp38"/>
+          <span terminal="s0_5" category="NP[mod=nm,case=nc,fin=f]" end="6" begin="5" id="s0_sp39"/>
+          <span terminal="s0_6" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="7" begin="6" id="s0_sp40"/>
+          <span terminal="s0_7" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="8" begin="7" id="s0_sp41"/>
+          <span child="s0_sp43 s0_sp46" rule="&lt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="8" id="s0_sp42"/>
+          <span child="s0_sp44 s0_sp45" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="10" begin="8" id="s0_sp43"/>
+          <span terminal="s0_8" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="8" id="s0_sp44"/>
+          <span terminal="s0_9" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="10" begin="9" id="s0_sp45"/>
+          <span terminal="s0_10" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=nc,fin=f]" end="11" begin="10" id="s0_sp46"/>
+          <span terminal="s0_11" category="S[mod=nm,form=base,fin=t]\S[mod=nm,form=base,fin=f]" end="12" begin="11" id="s0_sp47"/>
+        </ccg>
+        <ccg score="1491.0774354934692" id="s0_ccg2" root="s0_sp48">
+          <span child="s0_sp49 s0_sp71" rule="&lt;" category="S[mod=nm,form=base,fin=t]" end="12" begin="0" id="s0_sp48"/>
+          <span child="s0_sp50 s0_sp66" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="0" id="s0_sp49"/>
+          <span child="s0_sp51 s0_sp65" rule="&lt;" category="S[fin=f]/S[fin=f]" end="8" begin="0" id="s0_sp50"/>
+          <span child="s0_sp52 s0_sp64" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="0" id="s0_sp51"/>
+          <span child="s0_sp53 s0_sp63" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="6" begin="0" id="s0_sp52"/>
+          <span child="s0_sp54 s0_sp62" rule="&lt;" category="NP[fin=f]/NP[fin=f]" end="5" begin="0" id="s0_sp53"/>
+          <span child="s0_sp55 s0_sp61" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="0" id="s0_sp54"/>
+          <span child="s0_sp56" rule="ADNint" category="NP[case=nc]/NP[case=nc]" end="3" begin="0" id="s0_sp55"/>
+          <span child="s0_sp57 s0_sp60" rule="&lt;" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="3" begin="0" id="s0_sp56"/>
+          <span child="s0_sp58 s0_sp59" rule="&lt;" category="NP[mod=nm,case=o,fin=f]" end="2" begin="0" id="s0_sp57"/>
+          <span terminal="s0_0" category="NP[mod=nm,case=nc,fin=f]" end="1" begin="0" id="s0_sp58"/>
+          <span terminal="s0_1" category="NP[mod=nm,case=o,fin=f]\NP[mod=nm,case=nc,fin=f]" end="2" begin="1" id="s0_sp59"/>
+          <span terminal="s0_2" category="(S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f])\NP[mod=nm,case=o,fin=f]" end="3" begin="2" id="s0_sp60"/>
+          <span terminal="s0_3" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="3" id="s0_sp61"/>
+          <span terminal="s0_4" category="(NP[fin=f]/NP[fin=f])\NP[mod=nm,case=nc,fin=f]" end="5" begin="4" id="s0_sp62"/>
+          <span terminal="s0_5" category="NP[mod=nm,case=nc,fin=f]" end="6" begin="5" id="s0_sp63"/>
+          <span terminal="s0_6" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="7" begin="6" id="s0_sp64"/>
+          <span terminal="s0_7" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="8" begin="7" id="s0_sp65"/>
+          <span child="s0_sp67 s0_sp70" rule="&lt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="8" id="s0_sp66"/>
+          <span child="s0_sp68 s0_sp69" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="10" begin="8" id="s0_sp67"/>
+          <span terminal="s0_8" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="8" id="s0_sp68"/>
+          <span terminal="s0_9" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="10" begin="9" id="s0_sp69"/>
+          <span terminal="s0_10" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=nc,fin=f]" end="11" begin="10" id="s0_sp70"/>
+          <span terminal="s0_11" category="S[mod=nm,form=base,fin=t]\S[mod=nm,form=base,fin=f]" end="12" begin="11" id="s0_sp71"/>
+        </ccg>
+        <ccg score="1482.22740650177" id="s0_ccg3" root="s0_sp72">
+          <span child="s0_sp73 s0_sp95" rule="&lt;" category="S[mod=nm,form=base,fin=t]" end="12" begin="0" id="s0_sp72"/>
+          <span child="s0_sp74 s0_sp90" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="0" id="s0_sp73"/>
+          <span child="s0_sp75 s0_sp89" rule="&lt;" category="S[fin=f]/S[fin=f]" end="8" begin="0" id="s0_sp74"/>
+          <span child="s0_sp76 s0_sp88" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="0" id="s0_sp75"/>
+          <span child="s0_sp77 s0_sp87" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="6" begin="0" id="s0_sp76"/>
+          <span child="s0_sp78 s0_sp86" rule="&lt;" category="NP[fin=f]/NP[fin=f]" end="5" begin="0" id="s0_sp77"/>
+          <span child="s0_sp79 s0_sp85" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="0" id="s0_sp78"/>
+          <span child="s0_sp80" rule="ADNext" category="NP[case=nc]/NP[case=nc]" end="3" begin="0" id="s0_sp79"/>
+          <span child="s0_sp81 s0_sp84" rule="&lt;" category="S[mod=adn,form=base,fin=f]" end="3" begin="0" id="s0_sp80"/>
+          <span child="s0_sp82 s0_sp83" rule="&lt;" category="NP[mod=nm,case=o,fin=f]" end="2" begin="0" id="s0_sp81"/>
+          <span terminal="s0_0" category="NP[mod=nm,case=nc,fin=f]" end="1" begin="0" id="s0_sp82"/>
+          <span terminal="s0_1" category="NP[mod=nm,case=o,fin=f]\NP[mod=nm,case=nc,fin=f]" end="2" begin="1" id="s0_sp83"/>
+          <span terminal="s0_2" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=o,fin=f]" end="3" begin="2" id="s0_sp84"/>
+          <span terminal="s0_3" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="3" id="s0_sp85"/>
+          <span terminal="s0_4" category="(NP[fin=f]/NP[fin=f])\NP[mod=nm,case=nc,fin=f]" end="5" begin="4" id="s0_sp86"/>
+          <span terminal="s0_5" category="NP[mod=nm,case=nc,fin=f]" end="6" begin="5" id="s0_sp87"/>
+          <span terminal="s0_6" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="7" begin="6" id="s0_sp88"/>
+          <span terminal="s0_7" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="8" begin="7" id="s0_sp89"/>
+          <span child="s0_sp91 s0_sp94" rule="&lt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="8" id="s0_sp90"/>
+          <span child="s0_sp92 s0_sp93" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="10" begin="8" id="s0_sp91"/>
+          <span terminal="s0_8" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="8" id="s0_sp92"/>
+          <span terminal="s0_9" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="10" begin="9" id="s0_sp93"/>
+          <span terminal="s0_10" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=nc,fin=f]" end="11" begin="10" id="s0_sp94"/>
+          <span terminal="s0_11" category="S[mod=nm,form=base,fin=t]\S[mod=nm,form=base,fin=f]" end="12" begin="11" id="s0_sp95"/>
+        </ccg>
+        <ccg score="1426.83731174469" id="s0_ccg4" root="s0_sp96">
+          <span child="s0_sp97 s0_sp119" rule="&lt;" category="S[mod=nm,form=base,fin=t]" end="12" begin="0" id="s0_sp96"/>
+          <span child="s0_sp98 s0_sp108" rule="&lt;" category="S[mod=nm,form=base,fin=f]" end="11" begin="0" id="s0_sp97"/>
+          <span child="s0_sp99 s0_sp107" rule="&lt;" category="NP[mod=nm,case=ga,fin=f]" end="5" begin="0" id="s0_sp98"/>
+          <span child="s0_sp100 s0_sp106" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="0" id="s0_sp99"/>
+          <span child="s0_sp101" rule="ADNint" category="NP[case=nc]/NP[case=nc]" end="3" begin="0" id="s0_sp100"/>
+          <span child="s0_sp102 s0_sp105" rule="&lt;" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="3" begin="0" id="s0_sp101"/>
+          <span child="s0_sp103 s0_sp104" rule="&lt;" category="NP[mod=nm,case=o,fin=f]" end="2" begin="0" id="s0_sp102"/>
+          <span terminal="s0_0" category="NP[mod=nm,case=nc,fin=f]" end="1" begin="0" id="s0_sp103"/>
+          <span terminal="s0_1" category="NP[mod=nm,case=o,fin=f]\NP[mod=nm,case=nc,fin=f]" end="2" begin="1" id="s0_sp104"/>
+          <span terminal="s0_2" category="(S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f])\NP[mod=nm,case=o,fin=f]" end="3" begin="2" id="s0_sp105"/>
+          <span terminal="s0_3" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="3" id="s0_sp106"/>
+          <span terminal="s0_4" category="NP[mod=nm,case=ga,fin=f]\NP[mod=nm,case=nc,fin=f]" end="5" begin="4" id="s0_sp107"/>
+          <span child="s0_sp109 s0_sp114" rule="&gt;Bx1" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="11" begin="5" id="s0_sp108"/>
+          <span child="s0_sp110 s0_sp113" rule="&lt;" category="S[fin=f]/S[fin=f]" end="8" begin="5" id="s0_sp109"/>
+          <span child="s0_sp111 s0_sp112" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="5" id="s0_sp110"/>
+          <span terminal="s0_5" category="NP[mod=nm,case=nc,fin=f]" end="6" begin="5" id="s0_sp111"/>
+          <span terminal="s0_6" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="7" begin="6" id="s0_sp112"/>
+          <span terminal="s0_7" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="8" begin="7" id="s0_sp113"/>
+          <span child="s0_sp115 s0_sp118" rule="&lt;" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="11" begin="8" id="s0_sp114"/>
+          <span child="s0_sp116 s0_sp117" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="10" begin="8" id="s0_sp115"/>
+          <span terminal="s0_8" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="8" id="s0_sp116"/>
+          <span terminal="s0_9" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="10" begin="9" id="s0_sp117"/>
+          <span terminal="s0_10" category="(S[mod=nm,form=base,fin=f]\NP[mod=nm,case=ga,fin=f])\NP[mod=nm,case=nc,fin=f]" end="11" begin="10" id="s0_sp118"/>
+          <span terminal="s0_11" category="S[mod=nm,form=base,fin=t]\S[mod=nm,form=base,fin=f]" end="12" begin="11" id="s0_sp119"/>
+        </ccg>
+      </sentence>
+      <sentence id="s1" gold_tree="4">
+        発売初日にCDを買うファンは最大でも100人だ。
+        <tokens>
+          <token reading="ハツバイ" base="発売" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="サ変接続" pos="名詞" surf="発売" id="s1_0"/>
+          <token reading="ショニチ" base="初日" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="一般" pos="名詞" surf="初日" id="s1_1"/>
+          <token reading="ニ" base="に" inflectionForm="*" inflectionType="*" pos3="*" pos2="一般" pos1="格助詞" pos="助詞" surf="に" id="s1_2"/>
+          <token base="*" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="一般" pos="名詞" surf="CD" id="s1_3"/>
+          <token reading="ヲ" base="を" inflectionForm="*" inflectionType="*" pos3="*" pos2="一般" pos1="格助詞" pos="助詞" surf="を" id="s1_4"/>
+          <token reading="カウ" base="買う" inflectionForm="基本形" inflectionType="五段・ワ行促音便" pos3="*" pos2="*" pos1="自立" pos="動詞" surf="買う" id="s1_5"/>
+          <token reading="ファン" base="ファン" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="一般" pos="名詞" surf="ファン" id="s1_6"/>
+          <token reading="ワ" base="は" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="係助詞" pos="助詞" surf="は" id="s1_7"/>
+          <token reading="サイダイ" base="最大" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="一般" pos="名詞" surf="最大" id="s1_8"/>
+          <token reading="デ" base="で" inflectionForm="*" inflectionType="*" pos3="*" pos2="一般" pos1="格助詞" pos="助詞" surf="で" id="s1_9"/>
+          <token reading="モ" base="も" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="係助詞" pos="助詞" surf="も" id="s1_10"/>
+          <token base="*" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="数" pos="名詞" surf="100" id="s1_11"/>
+          <token reading="ニン" base="人" inflectionForm="*" inflectionType="*" pos3="*" pos2="助数詞" pos1="接尾" pos="名詞" surf="人" id="s1_12"/>
+          <token reading="ダ" base="だ" inflectionForm="基本形" inflectionType="特殊・ダ" pos3="*" pos2="*" pos1="*" pos="助動詞" surf="だ" id="s1_13"/>
+          <token reading="。" base="。" inflectionForm="*" inflectionType="*" pos3="*" pos2="*" pos1="句点" pos="記号" surf="。" id="s1_14"/>
+        </tokens>
+        <ccg score="2027.497879743576" id="s1_ccg0" root="s1_sp0">
+          <span child="s1_sp1 s1_sp29" rule="&lt;" category="S[mod=nm,form=base,fin=t]" end="15" begin="0" id="s1_sp0"/>
+          <span child="s1_sp2 s1_sp18" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="0" id="s1_sp1"/>
+          <span child="s1_sp3 s1_sp17" rule="&lt;" category="S[fin=f]/S[fin=f]" end="8" begin="0" id="s1_sp2"/>
+          <span child="s1_sp4 s1_sp16" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="0" id="s1_sp3"/>
+          <span child="s1_sp5" rule="ADNext" category="NP[case=nc]/NP[case=nc]" end="6" begin="0" id="s1_sp4"/>
+          <span child="s1_sp6 s1_sp11" rule="&gt;" category="S[mod=adn,form=base,fin=f]" end="6" begin="0" id="s1_sp5"/>
+          <span child="s1_sp7 s1_sp10" rule="&lt;" category="S[fin=f]/S[fin=f]" end="3" begin="0" id="s1_sp6"/>
+          <span child="s1_sp8 s1_sp9" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="2" begin="0" id="s1_sp7"/>
+          <span terminal="s1_0" category="NP[fin=f]/NP[fin=f]" end="1" begin="0" id="s1_sp8"/>
+          <span terminal="s1_1" category="NP[mod=nm,case=nc,fin=f]" end="2" begin="1" id="s1_sp9"/>
+          <span terminal="s1_2" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="3" begin="2" id="s1_sp10"/>
+          <span child="s1_sp12 s1_sp15" rule="&lt;" category="S[mod=adn,form=base,fin=f]" end="6" begin="3" id="s1_sp11"/>
+          <span child="s1_sp13 s1_sp14" rule="&lt;" category="NP[mod=nm,case=o,fin=f]" end="5" begin="3" id="s1_sp12"/>
+          <span terminal="s1_3" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="3" id="s1_sp13"/>
+          <span terminal="s1_4" category="NP[mod=nm,case=o,fin=f]\NP[mod=nm,case=nc,fin=f]" end="5" begin="4" id="s1_sp14"/>
+          <span terminal="s1_5" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=o,fin=f]" end="6" begin="5" id="s1_sp15"/>
+          <span terminal="s1_6" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="6" id="s1_sp16"/>
+          <span terminal="s1_7" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="8" begin="7" id="s1_sp17"/>
+          <span child="s1_sp19 s1_sp24" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="8" id="s1_sp18"/>
+          <span child="s1_sp20 s1_sp23" rule="&lt;" category="S[fin=f]/S[fin=f]" end="11" begin="8" id="s1_sp19"/>
+          <span child="s1_sp21 s1_sp22" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="10" begin="8" id="s1_sp20"/>
+          <span terminal="s1_8" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="8" id="s1_sp21"/>
+          <span terminal="s1_9" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="10" begin="9" id="s1_sp22"/>
+          <span terminal="s1_10" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="11" begin="10" id="s1_sp23"/>
+          <span child="s1_sp25 s1_sp28" rule="&lt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="11" id="s1_sp24"/>
+          <span child="s1_sp26 s1_sp27" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="13" begin="11" id="s1_sp25"/>
+          <span terminal="s1_11" category="NP[mod=nm,case=nc,fin=f]" end="12" begin="11" id="s1_sp26"/>
+          <span terminal="s1_12" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="13" begin="12" id="s1_sp27"/>
+          <span terminal="s1_13" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=nc,fin=f]" end="14" begin="13" id="s1_sp28"/>
+          <span terminal="s1_14" category="S[mod=nm,form=base,fin=t]\S[mod=nm,form=base,fin=f]" end="15" begin="14" id="s1_sp29"/>
+        </ccg>
+        <ccg score="1980.2101428508759" id="s1_ccg1" root="s1_sp30">
+          <span child="s1_sp31 s1_sp59" rule="&lt;" category="S[mod=nm,form=base,fin=t]" end="15" begin="0" id="s1_sp30"/>
+          <span child="s1_sp32 s1_sp54" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="0" id="s1_sp31"/>
+          <span child="s1_sp33 s1_sp53" rule="&lt;" category="S[fin=f]/S[fin=f]" end="11" begin="0" id="s1_sp32"/>
+          <span child="s1_sp34 s1_sp52" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="10" begin="0" id="s1_sp33"/>
+          <span child="s1_sp35 s1_sp51" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="0" id="s1_sp34"/>
+          <span child="s1_sp36 s1_sp50" rule="&lt;" category="NP[fin=f]/NP[fin=f]" end="8" begin="0" id="s1_sp35"/>
+          <span child="s1_sp37 s1_sp49" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="0" id="s1_sp36"/>
+          <span child="s1_sp38" rule="ADNext" category="NP[case=nc]/NP[case=nc]" end="6" begin="0" id="s1_sp37"/>
+          <span child="s1_sp39 s1_sp44" rule="&gt;" category="S[mod=adn,form=base,fin=f]" end="6" begin="0" id="s1_sp38"/>
+          <span child="s1_sp40 s1_sp43" rule="&lt;" category="S[fin=f]/S[fin=f]" end="3" begin="0" id="s1_sp39"/>
+          <span child="s1_sp41 s1_sp42" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="2" begin="0" id="s1_sp40"/>
+          <span terminal="s1_0" category="NP[fin=f]/NP[fin=f]" end="1" begin="0" id="s1_sp41"/>
+          <span terminal="s1_1" category="NP[mod=nm,case=nc,fin=f]" end="2" begin="1" id="s1_sp42"/>
+          <span terminal="s1_2" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="3" begin="2" id="s1_sp43"/>
+          <span child="s1_sp45 s1_sp48" rule="&lt;" category="S[mod=adn,form=base,fin=f]" end="6" begin="3" id="s1_sp44"/>
+          <span child="s1_sp46 s1_sp47" rule="&lt;" category="NP[mod=nm,case=o,fin=f]" end="5" begin="3" id="s1_sp45"/>
+          <span terminal="s1_3" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="3" id="s1_sp46"/>
+          <span terminal="s1_4" category="NP[mod=nm,case=o,fin=f]\NP[mod=nm,case=nc,fin=f]" end="5" begin="4" id="s1_sp47"/>
+          <span terminal="s1_5" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=o,fin=f]" end="6" begin="5" id="s1_sp48"/>
+          <span terminal="s1_6" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="6" id="s1_sp49"/>
+          <span terminal="s1_7" category="(NP[fin=f]/NP[fin=f])\NP[mod=nm,case=nc,fin=f]" end="8" begin="7" id="s1_sp50"/>
+          <span terminal="s1_8" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="8" id="s1_sp51"/>
+          <span terminal="s1_9" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="10" begin="9" id="s1_sp52"/>
+          <span terminal="s1_10" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="11" begin="10" id="s1_sp53"/>
+          <span child="s1_sp55 s1_sp58" rule="&lt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="11" id="s1_sp54"/>
+          <span child="s1_sp56 s1_sp57" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="13" begin="11" id="s1_sp55"/>
+          <span terminal="s1_11" category="NP[mod=nm,case=nc,fin=f]" end="12" begin="11" id="s1_sp56"/>
+          <span terminal="s1_12" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="13" begin="12" id="s1_sp57"/>
+          <span terminal="s1_13" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=nc,fin=f]" end="14" begin="13" id="s1_sp58"/>
+          <span terminal="s1_14" category="S[mod=nm,form=base,fin=t]\S[mod=nm,form=base,fin=f]" end="15" begin="14" id="s1_sp59"/>
+        </ccg>
+        <ccg score="1970.0981109142303" id="s1_ccg2" root="s1_sp60">
+          <span child="s1_sp61 s1_sp89" rule="&lt;" category="S[mod=nm,form=base,fin=t]" end="15" begin="0" id="s1_sp60"/>
+          <span child="s1_sp62 s1_sp78" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="0" id="s1_sp61"/>
+          <span child="s1_sp63 s1_sp77" rule="&lt;" category="S[fin=f]/S[fin=f]" end="8" begin="0" id="s1_sp62"/>
+          <span child="s1_sp64 s1_sp76" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="0" id="s1_sp63"/>
+          <span child="s1_sp65" rule="ADNint" category="NP[case=nc]/NP[case=nc]" end="6" begin="0" id="s1_sp64"/>
+          <span child="s1_sp66 s1_sp71" rule="&gt;Bx1" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="6" begin="0" id="s1_sp65"/>
+          <span child="s1_sp67 s1_sp70" rule="&lt;" category="S[fin=f]/S[fin=f]" end="3" begin="0" id="s1_sp66"/>
+          <span child="s1_sp68 s1_sp69" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="2" begin="0" id="s1_sp67"/>
+          <span terminal="s1_0" category="NP[fin=f]/NP[fin=f]" end="1" begin="0" id="s1_sp68"/>
+          <span terminal="s1_1" category="NP[mod=nm,case=nc,fin=f]" end="2" begin="1" id="s1_sp69"/>
+          <span terminal="s1_2" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="3" begin="2" id="s1_sp70"/>
+          <span child="s1_sp72 s1_sp75" rule="&lt;" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="6" begin="3" id="s1_sp71"/>
+          <span child="s1_sp73 s1_sp74" rule="&lt;" category="NP[mod=nm,case=o,fin=f]" end="5" begin="3" id="s1_sp72"/>
+          <span terminal="s1_3" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="3" id="s1_sp73"/>
+          <span terminal="s1_4" category="NP[mod=nm,case=o,fin=f]\NP[mod=nm,case=nc,fin=f]" end="5" begin="4" id="s1_sp74"/>
+          <span terminal="s1_5" category="(S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f])\NP[mod=nm,case=o,fin=f]" end="6" begin="5" id="s1_sp75"/>
+          <span terminal="s1_6" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="6" id="s1_sp76"/>
+          <span terminal="s1_7" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="8" begin="7" id="s1_sp77"/>
+          <span child="s1_sp79 s1_sp84" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="8" id="s1_sp78"/>
+          <span child="s1_sp80 s1_sp83" rule="&lt;" category="S[fin=f]/S[fin=f]" end="11" begin="8" id="s1_sp79"/>
+          <span child="s1_sp81 s1_sp82" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="10" begin="8" id="s1_sp80"/>
+          <span terminal="s1_8" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="8" id="s1_sp81"/>
+          <span terminal="s1_9" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="10" begin="9" id="s1_sp82"/>
+          <span terminal="s1_10" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="11" begin="10" id="s1_sp83"/>
+          <span child="s1_sp85 s1_sp88" rule="&lt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="11" id="s1_sp84"/>
+          <span child="s1_sp86 s1_sp87" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="13" begin="11" id="s1_sp85"/>
+          <span terminal="s1_11" category="NP[mod=nm,case=nc,fin=f]" end="12" begin="11" id="s1_sp86"/>
+          <span terminal="s1_12" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="13" begin="12" id="s1_sp87"/>
+          <span terminal="s1_13" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=nc,fin=f]" end="14" begin="13" id="s1_sp88"/>
+          <span terminal="s1_14" category="S[mod=nm,form=base,fin=t]\S[mod=nm,form=base,fin=f]" end="15" begin="14" id="s1_sp89"/>
+        </ccg>
+        <ccg score="1922.8103740215302" id="s1_ccg3" root="s1_sp90">
+          <span child="s1_sp91 s1_sp119" rule="&lt;" category="S[mod=nm,form=base,fin=t]" end="15" begin="0" id="s1_sp90"/>
+          <span child="s1_sp92 s1_sp114" rule="&gt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="0" id="s1_sp91"/>
+          <span child="s1_sp93 s1_sp113" rule="&lt;" category="S[fin=f]/S[fin=f]" end="11" begin="0" id="s1_sp92"/>
+          <span child="s1_sp94 s1_sp112" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="10" begin="0" id="s1_sp93"/>
+          <span child="s1_sp95 s1_sp111" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="0" id="s1_sp94"/>
+          <span child="s1_sp96 s1_sp110" rule="&lt;" category="NP[fin=f]/NP[fin=f]" end="8" begin="0" id="s1_sp95"/>
+          <span child="s1_sp97 s1_sp109" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="0" id="s1_sp96"/>
+          <span child="s1_sp98" rule="ADNint" category="NP[case=nc]/NP[case=nc]" end="6" begin="0" id="s1_sp97"/>
+          <span child="s1_sp99 s1_sp104" rule="&gt;Bx1" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="6" begin="0" id="s1_sp98"/>
+          <span child="s1_sp100 s1_sp103" rule="&lt;" category="S[fin=f]/S[fin=f]" end="3" begin="0" id="s1_sp99"/>
+          <span child="s1_sp101 s1_sp102" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="2" begin="0" id="s1_sp100"/>
+          <span terminal="s1_0" category="NP[fin=f]/NP[fin=f]" end="1" begin="0" id="s1_sp101"/>
+          <span terminal="s1_1" category="NP[mod=nm,case=nc,fin=f]" end="2" begin="1" id="s1_sp102"/>
+          <span terminal="s1_2" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="3" begin="2" id="s1_sp103"/>
+          <span child="s1_sp105 s1_sp108" rule="&lt;" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="6" begin="3" id="s1_sp104"/>
+          <span child="s1_sp106 s1_sp107" rule="&lt;" category="NP[mod=nm,case=o,fin=f]" end="5" begin="3" id="s1_sp105"/>
+          <span terminal="s1_3" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="3" id="s1_sp106"/>
+          <span terminal="s1_4" category="NP[mod=nm,case=o,fin=f]\NP[mod=nm,case=nc,fin=f]" end="5" begin="4" id="s1_sp107"/>
+          <span terminal="s1_5" category="(S[mod=adn,form=base,fin=f]\NP[mod=nm,case=ga,fin=f])\NP[mod=nm,case=o,fin=f]" end="6" begin="5" id="s1_sp108"/>
+          <span terminal="s1_6" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="6" id="s1_sp109"/>
+          <span terminal="s1_7" category="(NP[fin=f]/NP[fin=f])\NP[mod=nm,case=nc,fin=f]" end="8" begin="7" id="s1_sp110"/>
+          <span terminal="s1_8" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="8" id="s1_sp111"/>
+          <span terminal="s1_9" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="10" begin="9" id="s1_sp112"/>
+          <span terminal="s1_10" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="11" begin="10" id="s1_sp113"/>
+          <span child="s1_sp115 s1_sp118" rule="&lt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="11" id="s1_sp114"/>
+          <span child="s1_sp116 s1_sp117" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="13" begin="11" id="s1_sp115"/>
+          <span terminal="s1_11" category="NP[mod=nm,case=nc,fin=f]" end="12" begin="11" id="s1_sp116"/>
+          <span terminal="s1_12" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="13" begin="12" id="s1_sp117"/>
+          <span terminal="s1_13" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=nc,fin=f]" end="14" begin="13" id="s1_sp118"/>
+          <span terminal="s1_14" category="S[mod=nm,form=base,fin=t]\S[mod=nm,form=base,fin=f]" end="15" begin="14" id="s1_sp119"/>
+        </ccg>
+        <ccg score="1915.9700191020966" id="s1_ccg4" root="s1_sp120">
+          <span child="s1_sp121 s1_sp149" rule="&lt;" category="S[mod=nm,form=base,fin=t]" end="15" begin="0" id="s1_sp120"/>
+          <span child="s1_sp122 s1_sp138" rule="&lt;" category="S[mod=nm,form=base,fin=f]" end="14" begin="0" id="s1_sp121"/>
+          <span child="s1_sp123 s1_sp137" rule="&lt;" category="NP[mod=nm,case=ga,fin=f]" end="8" begin="0" id="s1_sp122"/>
+          <span child="s1_sp124 s1_sp136" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="0" id="s1_sp123"/>
+          <span child="s1_sp125" rule="ADNext" category="NP[case=nc]/NP[case=nc]" end="6" begin="0" id="s1_sp124"/>
+          <span child="s1_sp126 s1_sp131" rule="&gt;" category="S[mod=adn,form=base,fin=f]" end="6" begin="0" id="s1_sp125"/>
+          <span child="s1_sp127 s1_sp130" rule="&lt;" category="S[fin=f]/S[fin=f]" end="3" begin="0" id="s1_sp126"/>
+          <span child="s1_sp128 s1_sp129" rule="&gt;" category="NP[mod=nm,case=nc,fin=f]" end="2" begin="0" id="s1_sp127"/>
+          <span terminal="s1_0" category="NP[fin=f]/NP[fin=f]" end="1" begin="0" id="s1_sp128"/>
+          <span terminal="s1_1" category="NP[mod=nm,case=nc,fin=f]" end="2" begin="1" id="s1_sp129"/>
+          <span terminal="s1_2" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="3" begin="2" id="s1_sp130"/>
+          <span child="s1_sp132 s1_sp135" rule="&lt;" category="S[mod=adn,form=base,fin=f]" end="6" begin="3" id="s1_sp131"/>
+          <span child="s1_sp133 s1_sp134" rule="&lt;" category="NP[mod=nm,case=o,fin=f]" end="5" begin="3" id="s1_sp132"/>
+          <span terminal="s1_3" category="NP[mod=nm,case=nc,fin=f]" end="4" begin="3" id="s1_sp133"/>
+          <span terminal="s1_4" category="NP[mod=nm,case=o,fin=f]\NP[mod=nm,case=nc,fin=f]" end="5" begin="4" id="s1_sp134"/>
+          <span terminal="s1_5" category="S[mod=adn,form=base,fin=f]\NP[mod=nm,case=o,fin=f]" end="6" begin="5" id="s1_sp135"/>
+          <span terminal="s1_6" category="NP[mod=nm,case=nc,fin=f]" end="7" begin="6" id="s1_sp136"/>
+          <span terminal="s1_7" category="NP[mod=nm,case=ga,fin=f]\NP[mod=nm,case=nc,fin=f]" end="8" begin="7" id="s1_sp137"/>
+          <span child="s1_sp139 s1_sp144" rule="&gt;Bx1" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="14" begin="8" id="s1_sp138"/>
+          <span child="s1_sp140 s1_sp143" rule="&lt;" category="S[fin=f]/S[fin=f]" end="11" begin="8" id="s1_sp139"/>
+          <span child="s1_sp141 s1_sp142" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="10" begin="8" id="s1_sp140"/>
+          <span terminal="s1_8" category="NP[mod=nm,case=nc,fin=f]" end="9" begin="8" id="s1_sp141"/>
+          <span terminal="s1_9" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="10" begin="9" id="s1_sp142"/>
+          <span terminal="s1_10" category="(S[fin=f]/S[fin=f])\NP[mod=nm,case=nc,fin=f]" end="11" begin="10" id="s1_sp143"/>
+          <span child="s1_sp145 s1_sp148" rule="&lt;" category="S[mod=nm,form=base,fin=f]\NP[mod=nm,case=ga,fin=f]" end="14" begin="11" id="s1_sp144"/>
+          <span child="s1_sp146 s1_sp147" rule="&lt;" category="NP[mod=nm,case=nc,fin=f]" end="13" begin="11" id="s1_sp145"/>
+          <span terminal="s1_11" category="NP[mod=nm,case=nc,fin=f]" end="12" begin="11" id="s1_sp146"/>
+          <span terminal="s1_12" category="NP[mod=nm,case=nc,fin=f]\NP[mod=nm,case=nc,fin=f]" end="13" begin="12" id="s1_sp147"/>
+          <span terminal="s1_13" category="(S[mod=nm,form=base,fin=f]\NP[mod=nm,case=ga,fin=f])\NP[mod=nm,case=nc,fin=f]" end="14" begin="13" id="s1_sp148"/>
+          <span terminal="s1_14" category="S[mod=nm,form=base,fin=t]\S[mod=nm,form=base,fin=f]" end="15" begin="14" id="s1_sp149"/>
+        </ccg>
+      </sentence>
+    </sentences>
+  </document>
+</root>

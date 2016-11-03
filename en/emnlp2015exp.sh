@@ -214,7 +214,6 @@ rm -f gold.results system.results
 for f in ${plain_dir}/*.tok; do
   base_filename=${f##*/}
   base_filename=${base_filename/.tok/}
-  echo $base_filename
   num_lines=`cat $f | wc -l`
   premises="single"
   if [ "$num_lines" -gt 2 ]; then
