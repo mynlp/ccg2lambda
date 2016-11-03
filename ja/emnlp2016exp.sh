@@ -29,7 +29,7 @@ rm -rf ja_parsed_plain
 cp -r ja_parsed ja_parsed_plain
 rm ja_parsed/*.sem.*
 # Copying gold parse trees onto the ja_parse directory
-cp ja_parsed_gold/*.xml ja_parsed/
+cp ja/jsem_parsed_gold/*.xml ja_parsed/
 ./ja/emnlp2016exp_set.sh $cores $results_dir gold
 ./ja/emnlp2016exp_eval.sh $results_dir gold
 # Restore the plain parsed files
