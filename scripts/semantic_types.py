@@ -247,6 +247,13 @@ def convert_coq_signatures_to_nltk(coq_sig):
         nltk_sig.update(nltk_type)
     return nltk_sig
 
+def get_coq_types(xml_node):
+    types = xml_node.get('coq_type', None)
+    if types is None or types == "":
+        return []
+    types = types.split(' ||| ')
+    return types
+
 def build_arbitrary_dynamic_library(ccg_trees):
     """
     Given a list of CCG trees whose root nodes are annotated with an
@@ -256,7 +263,7 @@ def build_arbitrary_dynamic_library(ccg_trees):
     """
     dynamic_library = []
     for ccg_tree in ccg_trees:
-        coq_types = ccg_tree.attrib.get('coq_type', "").split(' ||| ')
+        coq_types = get_coq_types(ccg_tree)
         dynamic_library.extend(coq_types)
     dynamic_library = sorted(list(set(dynamic_library)))
     return dynamic_library

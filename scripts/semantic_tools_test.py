@@ -30,7 +30,7 @@ from nltk2coq import normalize_interpretation
 from semantic_index import SemanticRule, SemanticIndex
 from semantic_tools import resolve_prefix_to_infix_operations
 from semantic_types import (build_dynamic_library, convert_coq_signatures_to_nltk,
-    convert_coq_to_nltk_type, merge_dynamic_libraries)
+    convert_coq_to_nltk_type, merge_dynamic_libraries, get_coq_types)
 
 class LexicalRelationsTestCase(unittest.TestCase):
     def test_no_relation(self):
@@ -243,8 +243,8 @@ class build_arbitrary_dynamic_libraryTestCase(unittest.TestCase):
     """
         sentence = etree.fromstring(sentence_str)
         ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
-        coq_types = ccg_tree.get('coq_type')
-        expected_coq_types = '["Parameter _base1 : Entity -> Prop."]'
+        coq_types = get_coq_types(ccg_tree)
+        expected_coq_types = ["Parameter _base1 : Entity -> Prop."]
         self.assertEqual(expected_coq_types, coq_types)
 
     def test_lexical_binary_two_types(self):
@@ -268,9 +268,9 @@ class build_arbitrary_dynamic_libraryTestCase(unittest.TestCase):
     """
         sentence = etree.fromstring(sentence_str)
         ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
-        coq_types = ccg_tree.get('coq_type')
-        expected_coq_types = '["Parameter _base1 : Entity -> Prop.",' \
-                           + ' "Parameter _base2 : Entity -> Prop -> Prop."]'
+        coq_types = get_coq_types(ccg_tree)
+        expected_coq_types = ["Parameter _base1 : Entity -> Prop.",
+                              "Parameter _base2 : Entity -> Prop -> Prop."]
         self.assertEqual(expected_coq_types, coq_types)
 
     def test_lexical_binary_one_type(self):
@@ -294,8 +294,8 @@ class build_arbitrary_dynamic_libraryTestCase(unittest.TestCase):
     """
         sentence = etree.fromstring(sentence_str)
         ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
-        coq_types = ccg_tree.get('coq_type')
-        expected_coq_types = '["Parameter _base2 : Entity -> Prop."]'
+        coq_types = get_coq_types(ccg_tree)
+        expected_coq_types = ["Parameter _base2 : Entity -> Prop."]
         self.assertEqual(expected_coq_types, coq_types)
 
 class ArbiAutoTypesTestCase(unittest.TestCase):
@@ -320,7 +320,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
     """
         sentence = etree.fromstring(sentence_str)
         ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
-        coq_lib = simplejson.loads(ccg_tree.get('coq_type'))
+        coq_lib = get_coq_types(ccg_tree)
         expected_coq_lib = ["Parameter _base2 : Entity -> Prop."]
         self.assertEqual(expected_coq_lib, coq_lib)
         expression = [ccg_tree.get('sem')]
@@ -352,7 +352,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
     """
         sentence = etree.fromstring(sentence_str)
         ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
-        coq_lib = simplejson.loads(ccg_tree.get('coq_type'))
+        coq_lib = get_coq_types(ccg_tree)
         expected_coq_lib = []
         self.assertEqual(expected_coq_lib, coq_lib)
         expression = [ccg_tree.get('sem')]
@@ -384,7 +384,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
     """
         sentence = etree.fromstring(sentence_str)
         ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
-        coq_lib = simplejson.loads(ccg_tree.get('coq_type'))
+        coq_lib = get_coq_types(ccg_tree)
         expected_coq_lib = []
         self.assertEqual(expected_coq_lib, coq_lib)
         expression = [ccg_tree.get('sem')]
@@ -416,7 +416,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
     """
         sentence = etree.fromstring(sentence_str)
         ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
-        coq_lib = simplejson.loads(ccg_tree.get('coq_type'))
+        coq_lib = get_coq_types(ccg_tree)
         expected_coq_lib = ['Parameter _base2 : Prop -> Entity -> Prop.']
         self.assertEqual(expected_coq_lib, coq_lib)
         expression = [ccg_tree.get('sem')]
@@ -448,7 +448,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
     """
         sentence = etree.fromstring(sentence_str)
         ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
-        coq_lib = simplejson.loads(ccg_tree.get('coq_type'))
+        coq_lib = get_coq_types(ccg_tree)
         expected_coq_lib = ['Parameter _base1 : Entity -> Prop -> Prop.',
                             'Parameter _base2 : Prop -> Entity -> Prop.']
         self.assertEqual(expected_coq_lib, coq_lib)
