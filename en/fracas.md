@@ -10,7 +10,7 @@ You can evaluate the end-to-end system performance of a certain list of semantic
 fracas by doing:
 
 ```bash
-./evaluate_template.sh semantic_templates_en_emnlp2015.yaml fracas.xml
+./en/emnlp2015exp.sh en/semantic_templates_en_emnlp2015.yaml fracas.xml
 ```
 
 This script will:

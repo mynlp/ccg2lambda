@@ -2,7 +2,7 @@
 
 # This is a script to do evaluation for NLP2016.
 #
-# ./nlp2016exp.sh <cores> <result_dir>
+# ./ja/emnlp2016exp.sh <cores> <result_dir>
 #
 
 cores=${1:-3}
