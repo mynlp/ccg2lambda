@@ -31,7 +31,6 @@ from nltk2coq import normalize_interpretation
 from semantic_types import get_dynamic_library_from_doc
 
 def build_knowledge_axioms(ccg_trees):
-    return ''
     if ccg_trees is None:
         return ''
     axioms = get_lexical_relations(ccg_trees)
@@ -96,7 +95,7 @@ def get_formulas_from_doc(doc):
     formulas = [f for f in formulas if f is not None]
     return formulas
 
-def prove_doc(doc):
+def prove_doc(doc, abduction=False):
     """
     Retrieve from trees the logical formulas and the types
     (dynamic library).
@@ -109,7 +108,11 @@ def prove_doc(doc):
         return 'unknown', coq_scripts
     dynamic_library_str = get_dynamic_library_from_doc(doc, formulas)
 
-    knowledge_axioms = build_knowledge_axioms(doc.xpath('//ccg'))
+    if abduction:
+        knowledge_axioms = build_knowledge_axioms(doc.xpath('//ccg'))
+    else:
+        knowledge_axioms = ""
+  
     dynamic_library_str += '\n\n' + knowledge_axioms
     premises, conclusion = formulas[:-1], formulas[-1]
     inference_result, coq_script = \

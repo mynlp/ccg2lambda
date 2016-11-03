@@ -54,7 +54,7 @@ def main(args = None):
     parser = etree.XMLParser(remove_blank_text=True)
     doc = etree.parse(args.sem, parser)
 
-    inference_result, coq_scripts = prove_doc(doc)
+    inference_result, coq_scripts = prove_doc(doc, args.abduction)
     print(inference_result, file=sys.stdout)
 
     if args.graph_out:
