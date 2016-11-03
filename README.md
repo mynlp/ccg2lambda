@@ -30,13 +30,7 @@ python run_tests.py
 ```
 (all tests should pass, except a few expected failures).
 
-Our system assigns semantics to CCG structures, as obtained by the [C&C parser](http://www.cl.cam.ac.uk/~sc609/candc-1.00.html). In order to install the C&C parser, you may need to register, download the parser and the models, and follow their instructions to set it up. For this software to find the C&C parser, please create a file `candc_location.txt` with the path to the C&C parser:
-
-```bash
-echo "/path/to/candc-1.00/" > candc_location.txt
-```
-
-Finally, please install the [Coq Proof Assistant](https://coq.inria.fr/) that we use for automated reasoning. In Ubuntu, you can install it by:
+You also need to install the [Coq Proof Assistant](https://coq.inria.fr/) that we use for automated reasoning. In Ubuntu, you can install it by:
 
 ```bash
 sudo apt-get install coq
@@ -47,6 +41,26 @@ Then, compile the coq library that contains the axioms:
 ```bash
 coqc coqlib.v
 ```
+
+Our system assigns semantics to CCG structures. At the moment, we support C&C for English, and Jigg for Japanese.
+
+### Installing [C&C parser](http://www.cl.cam.ac.uk/~sc609/candc-1.00.html) (for English)
+
+In order to install the C&C parser, you may need to register, download the parser and the models, and follow their instructions to set it up. For ccg2lambda to find the C&C parser, please create a file `candc_location.txt` with the path to the C&C parser:
+
+```bash
+echo "/path/to/candc-1.00/" > candc_location.txt
+```
+
+### Installing [Jigg parser](https://github.com/mynlp/jigg) (for Japanese)
+
+Simply do:
+
+```bash
+./ja/download_dependencies.sh
+```
+
+The command above will download Jigg, its models, and create the file `jigg_location.txt` where the path to Jigg is specified. That is all.
 
 ## Using the Semantic Parser
 
