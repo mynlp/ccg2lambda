@@ -1,6 +1,8 @@
 # Running the RTE pipeline on FraCas.
 
-First, you need to download the copy of [FraCaS provided by MacCartney and Manning (2007)](http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml):
+First, ensure that you have downloaded C&C parser and wrote its location in the file `candc_location.txt`.
+
+Second, you need to download the copy of [FraCaS provided by MacCartney and Manning (2007)](http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml):
 
 ```bash
 $ wget http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml
