@@ -26,7 +26,7 @@ To ensure that all software is working as expected, you can run the tests:
 
 ```bash
 cd ccg2lambda/
-python run_tests.py
+python scripts/run_tests.py
 ```
 (all tests should pass, except a few expected failures).
 
