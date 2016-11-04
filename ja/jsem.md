@@ -47,3 +47,6 @@ adjective |     65 |   .6769 | .6190 |    .7222 |    1.43 |
 ```
 
 You can see the parsing results in HTML form per section in the newly created `ja_emnlp2016` directory.
+
+If you want to see the results but do not want to run the experiments, you can
+uncompress the tgz file in `ja/ja_emnlp2016_results.tgz` and explore the directories and files within.
