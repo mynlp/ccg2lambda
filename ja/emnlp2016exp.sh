@@ -17,7 +17,7 @@ mkdir -p ja_{plain,parsed,results}
 # A list of jsem problems with tags ("jsem_problem_list") is created.
 rm -f jsem_problems_list
 cp ja/jsem.xml .
-python extract_jsem_problems_ribe.py jsem.xml ja_plain
+python extract_jsem_problems.py jsem.xml ja_plain
 
 ### Plain results ###
 ./ja/emnlp2016exp_set.sh $cores $results_dir plain
