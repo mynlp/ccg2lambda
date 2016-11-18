@@ -25,7 +25,7 @@ from nltk import Tree
 from nltk.sem.logic import (typecheck, read_type, ConstantExpression,
   AbstractVariableExpression, InconsistentTypeHierarchyException)
 
-from knowledge import get_lexical_relations, get_tokens_from_ccg_tree
+from knowledge import get_lexical_relations, get_tokens_from_xml_node
 from logic_parser import lexpr
 from nltk2coq import normalize_interpretation
 from normalization import normalize_token
@@ -284,7 +284,7 @@ def get_predicate_type_from_library(predicate, lib):
 def merge_dynamic_libraries(coq_lib, nltk_lib, coq_static_lib_path, doc):
     reserved_predicates = get_reserved_preds_from_coq_static_lib(coq_static_lib_path)
     # Get base forms, unless the base form is '*', in which case get surf form.
-    base_forms = doc.xpath("//token[not(@base='*')]/@base | //token[@base='*']/@surf")
+    base_forms = get_tokens_from_xml_node(doc)
     required_predicates = set(normalize_token(t) for t in base_forms)
     # required_predicates = set(normalize_token(t) for t in doc.xpath('//token/@base'))
     coq_lib_index = {coq_lib_entry.split()[1] : coq_lib_entry \

@@ -21,11 +21,38 @@ import logging
 import re
 
 from linguistic_tools import linguistic_relationship
+from linguistic_tools import get_wordnet_cascade
 from normalization import denormalize_token, normalize_token
 
-def get_tokens_from_ccg_tree(ccg_xml_tree):
-    tokens = [denormalize_token(t) for t in ccg_xml_tree.xpath('//token/@base')]
+def get_tokens_from_xml_node(node):
+    tokens = node.xpath("//token[not(@base='*')]/@base | //token[@base='*']/@surf")
     return tokens
+
+# def get_tokens_from_ccg_tree(ccg_xml_tree):
+#     tokens = [denormalize_token(t) for t in ccg_xml_tree.xpath('//token/@base')]
+#     return tokens
+
+def FindLinguisticRelations(relation, relations_to_pairs, pred_args=None):
+  """
+  Return the necessary parameters to build axioms. These parameters
+  will come in a list of tuples, where each tuple is:
+  (relation, pred1, pred2, longest_args, pred1_args, pred2_args)
+  """
+  if pred_args is None:
+    pred_args = defaultdict(lambda: ['x'])
+  ling_relations = relations_to_pairs[relation]
+  relations = []
+  if not ling_relations:
+    return relations
+  for t1, t2 in ling_relations:
+    t1_args = pred_args.get('_' + t1, None)
+    t2_args = pred_args.get('_' + t2, None)
+    if t1_args is None or t2_args is None:
+      continue
+    longest_args = t1_args if len(t1_args) >= len(t2_args) else t2_args
+    relations.append(
+      (relation, t1, t2, longest_args, t1_args, t2_args))
+  return relations
 
 def create_antonym_axioms(relations_to_pairs):
     """
@@ -47,7 +74,7 @@ def create_antonym_axioms(relations_to_pairs):
 def get_lexical_relations(doc):
     # Get tokens from all CCG trees and de-normalize them.
     # (e.g. remove the preceding underscore).
-    tokens = doc.xpath('//token/@base')
+    tokens = get_tokens_from_xml_node(doc)
     # For every token pair, extract linguistic relationships.
     relations_to_pairs = defaultdict(list)
     token_pairs = list(itertools.product(tokens, tokens))
@@ -67,41 +94,6 @@ def get_lexical_relations(doc):
     # Return the axioms as a list.
     axioms = list(itertools.chain(*[antonym_axioms]))
     return list(set(axioms))
-
-
-
-
-
-
-def GetTokensFromCCGTree(ccg_xml_tree):
-  tokens_node = ccg_xml_tree.find('.//tokens')
-  tokens = [token.get('base') for token in tokens_node]
-  for i in range(len(tokens)):
-    tokens[i] = re.sub(r'DOT', r'.', tokens[i])
-    tokens[i] = re.sub(r'COMMA', r',', tokens[i])
-    if tokens[i].startswith('_'):
-      tokens[i] = tokens[i][1:]
-  return tokens
-
-def FindLinguisticRelations(relation, relations_to_pairs, pred_args=None):
-  """
-  Return the necessary parameters to build axioms. These parameters
-  will come in a list of tuples, where each tuple is:
-  (relation, pred1, pred2, longest_args, pred1_args, pred2_args)
-  """
-  if pred_args is None:
-    pred_args = defaultdict(lambda: ['x'])
-  ling_relations = relations_to_pairs[relation]
-  relations = []
-  if not ling_relations:
-    return relations
-  for t1, t2 in ling_relations:
-    t1_args = pred_args[t1]
-    t2_args = pred_args[t2]
-    longest_args = t1_args if len(t1_args) >= len(t2_args) else t2_args
-    relations.append(
-      (relation, t1, t2, longest_args, t1_args, t2_args))
-  return relations
 
 def CreateAntonymAxioms(relations_to_pairs, pred_args=None):
   """
@@ -217,28 +209,31 @@ def GetLexicalRelationsFromPreds(premise_preds, conclusion_pred, pred_args=None)
   axioms = antonym_axioms + synonym_axioms + hypernym_axioms + hyponym_axioms
   return list(set(axioms))
 
-def GetLexicalRelations(ccg_xml_trees):
-  # from pudb import set_trace; set_trace()
-  # Get tokens from all CCG trees and de-normalize tokens
-  # (e.g. remove the preceding underscore).
-  tokens = list(chain(*[GetTokensFromCCGTree(ccg) for ccg in ccg_xml_trees]))
-  # For every token pair, extract linguistic relationships.
-  relations_to_pairs = defaultdict(list)
-  token_pairs = list(product(tokens, tokens))
-  for i, (t1, t2) in enumerate(token_pairs):
-    if t1 == t2:
-      continue
-    # Exclude symmetrical relationships.
-    if (t2, t1) in token_pairs[:i]:
-      continue
-    relations = LinguisticRelationship(t1, t2)
-    for relation in relations:
-      relations_to_pairs[relation].append((t1, t2))
-  # For every linguistic relationship, check if 'antonym' is present.
-  # If it is present, then create an entry named:
-  # Axiom ax_relation_token1_token2 : forall x, _token1 x -> _token2 x -> False.
-  antonym_axioms = CreateAntonymAxioms(relations_to_pairs)
-  # Return the axioms as a list.
-  axioms = list(chain(*[antonym_axioms]))
-  # axioms = list(chain(*[antonym_axioms, synonym_axioms, hypernym_axioms, hyponym_axioms]))
-  return axioms
+# def GetLexicalRelations(ccg_xml_trees):
+#   # from pudb import set_trace; set_trace()
+#   # Get tokens from all CCG trees and de-normalize tokens
+#   # (e.g. remove the preceding underscore).
+#   # TODO: if this function is used, then the GetTokensFromCCGTree
+#   # needs to be changed to use get_tokens_from_xml_node
+#   tokens = list(chain(*[GetTokensFromCCGTree(ccg) for ccg in ccg_xml_trees]))
+#   tokens = get_tokens_from_list(chain(*[GetTokensFromCCGTree(ccg) for ccg in ccg_xml_trees]))
+#   # For every token pair, extract linguistic relationships.
+#   relations_to_pairs = defaultdict(list)
+#   token_pairs = list(product(tokens, tokens))
+#   for i, (t1, t2) in enumerate(token_pairs):
+#     if t1 == t2:
+#       continue
+#     # Exclude symmetrical relationships.
+#     if (t2, t1) in token_pairs[:i]:
+#       continue
+#     relations = LinguisticRelationship(t1, t2)
+#     for relation in relations:
+#       relations_to_pairs[relation].append((t1, t2))
+#   # For every linguistic relationship, check if 'antonym' is present.
+#   # If it is present, then create an entry named:
+#   # Axiom ax_relation_token1_token2 : forall x, _token1 x -> _token2 x -> False.
+#   antonym_axioms = CreateAntonymAxioms(relations_to_pairs)
+#   # Return the axioms as a list.
+#   axioms = list(chain(*[antonym_axioms]))
+#   # axioms = list(chain(*[antonym_axioms, synonym_axioms, hypernym_axioms, hyponym_axioms]))
+#   return axioms

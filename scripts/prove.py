@@ -56,7 +56,6 @@ def main(args = None):
     if args.abduction:
         abduction = create_abduction_mechanism(args.abduction)
 
-
     parser = etree.XMLParser(remove_blank_text=True)
     doc = etree.parse(args.sem, parser)
 
