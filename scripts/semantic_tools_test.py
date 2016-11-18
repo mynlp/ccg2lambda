@@ -32,143 +32,6 @@ from semantic_tools import resolve_prefix_to_infix_operations
 from semantic_types import (build_dynamic_library, convert_coq_signatures_to_nltk,
     convert_coq_to_nltk_type, merge_dynamic_libraries, get_coq_types)
 
-class LexicalRelationsTestCase(unittest.TestCase):
-    def test_no_relation(self):
-        sentence_1_str = r"""
-      <sentence id="s1">
-        <tokens>
-          <token base="_base1" pos="pos1" surf="surf1" id="t1_1"/>
-          <token base="_base2" pos="pos2" surf="surf2" id="t1_2"/>
-        </tokens>
-        <ccg root="sp1-3">
-          <span terminal="t1_1" category="cat1" end="2" begin="1" id="sp1-1"/>
-          <span terminal="t1_2" category="cat2" end="3" begin="2" id="sp1-2"/>
-          <span child="sp1-1 sp1-2" rule="lex" category="NP" end="3" begin="1" id="sp1-3"/>
-        </ccg>
-      </sentence>
-    """
-        sentence_2_str = r"""
-      <sentence id="s2">
-        <tokens>
-          <token base="_base3" pos="pos1" surf="surf1" id="t1_1"/>
-          <token base="_base4" pos="pos2" surf="surf2" id="t1_2"/>
-        </tokens>
-        <ccg root="sp1-3">
-          <span terminal="t1_1" category="cat1" end="2" begin="1" id="sp1-1"/>
-          <span terminal="t1_2" category="cat2" end="3" begin="2" id="sp1-2"/>
-          <span child="sp1-1 sp1-2" rule="lex" category="NP" end="3" begin="1" id="sp1-3"/>
-        </ccg>
-      </sentence>
-    """
-        ccg_xml_trees = [etree.fromstring(sentence_1_str),
-                         etree.fromstring(sentence_2_str)]
-        relations = get_lexical_relations(ccg_xml_trees)
-        expected_relations = []
-        self.assertEqual(expected_relations, relations)
-
-    def test_antonym_relation(self):
-        sentence_1_str = r"""
-      <sentence id="s1">
-        <tokens>
-          <token base="large" pos="pos1" surf="surf1" id="t1_1"/>
-          <token base="animal" pos="pos2" surf="surf2" id="t1_2"/>
-        </tokens>
-        <ccg root="sp1-3">
-          <span terminal="t1_1" category="cat1" end="2" begin="1" id="sp1-1"/>
-          <span terminal="t1_2" category="cat2" end="3" begin="2" id="sp1-2"/>
-          <span child="sp1-1 sp1-2" rule="lex" category="NP" end="3" begin="1" id="sp1-3"/>
-        </ccg>
-      </sentence>
-    """
-        sentence_2_str = r"""
-      <sentence id="s2">
-        <tokens>
-          <token base="small" pos="pos1" surf="surf1" id="t1_1"/>
-          <token base="animal" pos="pos2" surf="surf2" id="t1_2"/>
-        </tokens>
-        <ccg root="sp1-3">
-          <span terminal="t1_1" category="cat1" end="2" begin="1" id="sp1-1"/>
-          <span terminal="t1_2" category="cat2" end="3" begin="2" id="sp1-2"/>
-          <span child="sp1-1 sp1-2" rule="lex" category="NP" end="3" begin="1" id="sp1-3"/>
-        </ccg>
-      </sentence>
-    """
-        ccg_xml_trees = [etree.fromstring(sentence_1_str),
-                         etree.fromstring(sentence_2_str)]
-        relations = get_lexical_relations(ccg_xml_trees)
-        expected_relations = \
-          ['Axiom ax_antonym_large_small : forall x, _large x -> _small x -> False.']
-        self.assertEqual(expected_relations, relations)
-
-    def test_antonym_relationBaseUnderscore(self):
-        sentence_1_str = r"""
-      <sentence id="s1">
-        <tokens>
-          <token base="_large" pos="pos1" surf="surf1" id="t1_1"/>
-          <token base="_animal" pos="pos2" surf="surf2" id="t1_2"/>
-        </tokens>
-        <ccg root="sp1-3">
-          <span terminal="t1_1" category="cat1" end="2" begin="1" id="sp1-1"/>
-          <span terminal="t1_2" category="cat2" end="3" begin="2" id="sp1-2"/>
-          <span child="sp1-1 sp1-2" rule="lex" category="NP" end="3" begin="1" id="sp1-3"/>
-        </ccg>
-      </sentence>
-    """
-        sentence_2_str = r"""
-      <sentence id="s2">
-        <tokens>
-          <token base="_small" pos="pos1" surf="surf1" id="t1_1"/>
-          <token base="_animal" pos="pos2" surf="surf2" id="t1_2"/>
-        </tokens>
-        <ccg root="sp1-3">
-          <span terminal="t1_1" category="cat1" end="2" begin="1" id="sp1-1"/>
-          <span terminal="t1_2" category="cat2" end="3" begin="2" id="sp1-2"/>
-          <span child="sp1-1 sp1-2" rule="lex" category="NP" end="3" begin="1" id="sp1-3"/>
-        </ccg>
-      </sentence>
-    """
-        ccg_xml_trees = [etree.fromstring(sentence_1_str),
-                         etree.fromstring(sentence_2_str)]
-        relations = get_lexical_relations(ccg_xml_trees)
-        expected_relations = \
-          ['Axiom ax_antonym_large_small : forall x, _large x -> _small x -> False.']
-        self.assertEqual(expected_relations, relations)
-
-    def test_antonym_relations2(self):
-        sentence_1_str = r"""
-      <sentence id="s1">
-        <tokens>
-          <token base="_large" pos="pos1" surf="surf1" id="t1_1"/>
-          <token base="_big" pos="pos2" surf="surf2" id="t1_2"/>
-        </tokens>
-        <ccg root="sp1-3">
-          <span terminal="t1_1" category="cat1" end="2" begin="1" id="sp1-1"/>
-          <span terminal="t1_2" category="cat2" end="3" begin="2" id="sp1-2"/>
-          <span child="sp1-1 sp1-2" rule="lex" category="NP" end="3" begin="1" id="sp1-3"/>
-        </ccg>
-      </sentence>
-    """
-        sentence_2_str = r"""
-      <sentence id="s2">
-        <tokens>
-          <token base="_small" pos="pos1" surf="surf1" id="t1_1"/>
-          <token base="_animal" pos="pos2" surf="surf2" id="t1_2"/>
-        </tokens>
-        <ccg root="sp1-3">
-          <span terminal="t1_1" category="cat1" end="2" begin="1" id="sp1-1"/>
-          <span terminal="t1_2" category="cat2" end="3" begin="2" id="sp1-2"/>
-          <span child="sp1-1 sp1-2" rule="lex" category="NP" end="3" begin="1" id="sp1-3"/>
-        </ccg>
-      </sentence>
-    """
-        ccg_xml_trees = [etree.fromstring(sentence_1_str),
-                         etree.fromstring(sentence_2_str)]
-        relations = get_lexical_relations(ccg_xml_trees)
-        expected_relations = \
-          ['Axiom ax_antonym_large_small : forall x, _large x -> _small x -> False.',
-           'Axiom ax_antonym_big_small : forall x, _big x -> _small x -> False.']
-        self.assertEqual(expected_relations, relations)
-
 class resolve_prefix_to_infix_operationsTestCase(unittest.TestCase):
     def test_entity_no_concat(self):
         expr_str = str(lexpr(r'ion'))
@@ -853,10 +716,9 @@ if __name__ == '__main__':
     suite2  = unittest.TestLoader().loadTestsFromTestCase(build_dynamic_libraryTestCase)
     suite3  = unittest.TestLoader().loadTestsFromTestCase(resolve_prefix_to_infix_operationsTestCase)
     suite4  = unittest.TestLoader().loadTestsFromTestCase(Nltk2coqTestCase)
-    suite5  = unittest.TestLoader().loadTestsFromTestCase(LexicalRelationsTestCase)
-    suite6  = unittest.TestLoader().loadTestsFromTestCase(Coq2NLTKTypesTestCase)
-    suite7  = unittest.TestLoader().loadTestsFromTestCase(Coq2NLTKSignaturesTestCase)
-    suite8  = unittest.TestLoader().loadTestsFromTestCase(ArbiAutoTypesTestCase)
+    suite5  = unittest.TestLoader().loadTestsFromTestCase(Coq2NLTKTypesTestCase)
+    suite6  = unittest.TestLoader().loadTestsFromTestCase(Coq2NLTKSignaturesTestCase)
+    suite7  = unittest.TestLoader().loadTestsFromTestCase(ArbiAutoTypesTestCase)
     suites  = unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6,
-                                  suite7, suite8])
+                                  suite7])
     unittest.TextTestRunner(verbosity=2).run(suites)

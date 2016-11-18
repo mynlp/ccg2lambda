@@ -30,10 +30,10 @@ from logic_parser import lexpr
 from nltk2coq import normalize_interpretation
 from semantic_types import get_dynamic_library_from_doc
 
-def build_knowledge_axioms(ccg_trees):
-    if ccg_trees is None:
+def build_knowledge_axioms(doc):
+    if not doc:
         return ''
-    axioms = get_lexical_relations(ccg_trees)
+    axioms = get_lexical_relations(doc)
     axioms_str = ""
     for axiom in axioms:
         axioms_str += axiom + '\n'
@@ -41,44 +41,6 @@ def build_knowledge_axioms(ccg_trees):
         axioms_str += 'Hint Resolve {0}.\n'.format(axiom_name)
     axioms_str += '\n'
     return axioms_str
-
-def prove_from_ccg(logical_interpretations, ccg_trees = None, ccg_xml_trees = None):
-    best_interpretations = \
-      [str(interpretation) for interpretation in logical_interpretations]
-    best_interpretations = \
-      [resolve_prefix_to_infix_operations(interp) for interp in best_interpretations]
-    premise_interpretations = best_interpretations[0:-1]
-    conclusion = best_interpretations[-1]
-    if ccg_trees != None:
-        dynamic_library_coq = build_arbitrary_dynamic_library(ccg_trees)
-        nltk_sig = convert_coq_signatures_to_nltk(dynamic_library_coq)
-        dynamic_library_nltk = build_dynamic_library(logical_interpretations, nltk_sig)
-        dynamic_library = merge_dynamic_libraries(
-          coq_lib=dynamic_library_coq,
-          nltk_lib=dynamic_library_nltk,
-          coq_static_lib_path='coqlib.v', # Useful to get reserved predicates.
-          ccg_xml_trees=ccg_xml_trees) # Useful to get full list of tokens for which we need to specify types.
-    else:
-        dynamic_library = build_dynamic_library(logical_interpretations)
-    dynamic_library_str = '\n'.join(dynamic_library)
-    knowledge_axioms = build_knowledge_axioms(ccg_xml_trees)
-    dynamic_library_str += '\n\n' + knowledge_axioms
-    coq_scripts = []
-    inference_result, coq_script = \
-      prove_statements(premise_interpretations, conclusion, dynamic_library_str)
-    coq_scripts.append(coq_script)
-    if inference_result:
-        inference_result_str = 'yes'
-    else:
-        negated_conclusion = negate_conclusion(conclusion)
-        inference_result, coq_script = \
-          prove_statements(premise_interpretations, negated_conclusion, dynamic_library_str)
-        coq_scripts.append(coq_script)
-        if inference_result:
-            inference_result_str = 'no'
-        else:
-            inference_result_str = 'unknown'
-    return inference_result_str, coq_scripts
 
 def get_formulas_from_doc(doc):
     """
@@ -95,7 +57,7 @@ def get_formulas_from_doc(doc):
     formulas = [f for f in formulas if f is not None]
     return formulas
 
-def prove_doc(doc, abduction=False):
+def prove_doc(doc, abduction=None):
     """
     Retrieve from trees the logical formulas and the types
     (dynamic library).
@@ -108,15 +70,9 @@ def prove_doc(doc, abduction=False):
         return 'unknown', coq_scripts
     dynamic_library_str = get_dynamic_library_from_doc(doc, formulas)
 
-    if abduction:
-        knowledge_axioms = build_knowledge_axioms(doc.xpath('//ccg'))
-    else:
-        knowledge_axioms = ""
-  
-    dynamic_library_str += '\n\n' + knowledge_axioms
     premises, conclusion = formulas[:-1], formulas[-1]
     inference_result, coq_script = \
-      prove_statements(premises, conclusion, dynamic_library_str)
+        prove_statements(premises, conclusion, dynamic_library_str)
     coq_scripts.append(coq_script)
     if inference_result:
         inference_result_str = 'yes'
@@ -129,6 +85,9 @@ def prove_doc(doc, abduction=False):
             inference_result_str = 'no'
         else:
             inference_result_str = 'unknown'
+    if abduction and inference_result_str == 'unknown':
+        inference_result_str, abduction_scripts = abduction.attempt(coq_scripts)
+        coq_scripts.extend(abduction_scripts)
     return inference_result_str, coq_scripts
 
 # Check whether the string "is defined" appears in the output of coq.
@@ -179,12 +138,6 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
     input_coq_script = ('echo \"Require Export coqlib.\n'
         '{0}\nTheorem t1: {1}. {2}.\" | coqtop').format(
         dynamic_library, coq_formulae, _tactics)
-    # input_coq_script = 'echo \"Require Export coqlib. \n' \
-    #   + dynamic_library + '\n' \
-    #   + 'Theorem t1: ' + \
-    #   coq_formulae + \
-    #   '. ' + _tactics + '\" | coqtop'
-    # Set Firstorder Depth 1. nltac. nltac_set; nltac_final. Set Firstorder Depth 3. nltac_final. Qed.\" | coqtop'
     input_coq_script = substitute_invalid_chars(input_coq_script, 'replacement.txt')
     # print(input_coq_script)
     process = subprocess.Popen(\

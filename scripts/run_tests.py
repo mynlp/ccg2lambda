@@ -19,9 +19,10 @@ import unittest
 
 from ccg2lambda_tools_test import (TypeRaiseTestCase, AssignSemanticsToCCGTestCase,
   AssignSemanticsToCCGWithFeatsTestCase, get_attributes_from_ccg_node_recursivelyTestCase)
+from knowledge_test import LexicalRelationsTestCase
 from semantic_tools_test import (build_arbitrary_dynamic_libraryTestCase,
   build_dynamic_libraryTestCase, resolve_prefix_to_infix_operationsTestCase,
-  Nltk2coqTestCase, LexicalRelationsTestCase, Coq2NLTKTypesTestCase,
+  Nltk2coqTestCase, Coq2NLTKTypesTestCase,
   Coq2NLTKSignaturesTestCase, ArbiAutoTypesTestCase)
 
 if __name__ == '__main__':
