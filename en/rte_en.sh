@@ -24,7 +24,7 @@
 # ./rte_en.sh <sentences.txt> <semantic_templates.yaml>
 # 
 # E.g.
-# ./rte_en.sh sample_en.txt semantic_templates_en.yaml
+# ./rte_en.sh en/sample_en.txt en/semantic_templates_en.yaml
 #
 # It should return 'yes'.
 # You need to have a file in the current directory named candc_location.txt
@@ -71,7 +71,7 @@ mkdir -p $plain_dir $parsed_dir $results_dir
 
 # Tokenize text with Penn Treebank tokenizer.
 cat $sentences_fname | \
-  sed -f tokenizer.sed | \
+  sed -f en/tokenizer.sed | \
   sed 's/ _ /_/g' \
   > ${plain_dir}/${sentences_basename}.tok
 
@@ -100,14 +100,14 @@ if [ ! -e "${parsed_dir}/${sentences_basename}.candc.xml" ]; then
     2> ${parsed_dir}/${sentences_basename}.log
 fi
 if [ ! -e "${parsed_dir}/${sentences_basename}.xml" ]; then
-  python candc2transccg.py ${parsed_dir}/${sentences_basename}.candc.xml \
+  python en/candc2transccg.py ${parsed_dir}/${sentences_basename}.candc.xml \
     > ${parsed_dir}/${sentences_basename}.xml
 fi
 
 # Semantic parsing the CCG trees in XML.
 if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
   echo "Semantic parsing $parsed_dir/${sentences_basename}.xml"
-  python semparse.py \
+  python scripts/semparse.py \
     $parsed_dir/${sentences_basename}.xml \
     $category_templates \
     $parsed_dir/${sentences_basename}.sem.xml \
@@ -118,7 +118,7 @@ fi
 # Judge entailment with a theorem prover (Coq, at the moment).
 echo "Judging entailment for $parsed_dir/${sentences_basename}.sem.xml"
 if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
-  python prove.py \
+  python scripts/prove.py \
     $parsed_dir/${sentences_basename}.sem.xml \
     --graph_out ${results_dir}/${sentences_basename}.html \
     > ${results_dir}/${sentences_basename}.answer \
