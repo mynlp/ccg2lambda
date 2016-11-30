@@ -47,64 +47,7 @@ class SemanticIndex(object):
                 relevant_rules.append(rule)
         return relevant_rules
 
-    def get_semantic_representation_(self, ccg_tree, tokens):
-        if ccg_tree.get('category') == 'NPNP':
-            from pudb import set_trace; set_trace()
-        rule_pattern = make_rule_pattern_from_ccg_node(ccg_tree, tokens)
-        # Obtain the semantic template.
-        relevant_rules = self.get_relevant_rules(rule_pattern)
-        if not relevant_rules and len(ccg_tree) == 2:
-            return None
-        elif not relevant_rules:
-            semantic_template = build_default_template(rule_pattern, ccg_tree)
-            semantic_rule = None
-        else:
-            semantic_rule = relevant_rules.pop()
-            semantic_template = semantic_rule.semantics
-        # Apply template to relevant (current, child or children) CCG node(s).
-        if len(ccg_tree) == 0:
-            base = rule_pattern.attributes.get('base')
-            surf = rule_pattern.attributes.get('surf')
-            assert base and surf, 'The current CCG node should contain attributes ' \
-              + '"base" and "surf". CCG node: {0}\nrule_pattern attributes: {1}'\
-              .format(etree.tostring(ccg_tree, pretty_print=True),
-                      rule_pattern.attributes)
-            predicate_string = base if base != '*' else surf
-            predicate = lexpr(predicate_string)
-            semantics = semantic_template(predicate).simplify()
-            # Assign coq types.
-            if semantic_rule != None and 'coq_type' in semantic_rule.attributes:
-                coq_types = semantic_rule.attributes['coq_type']
-                ccg_tree.set('coq_type',
-                  'Parameter {0} : {1}.'.format(predicate_string, coq_types))
-            else:
-                ccg_tree.set('coq_type', "")
-        elif len(ccg_tree) == 1:
-            predicate = lexpr(ccg_tree[0].get('sem'))
-            semantics = semantic_template(predicate).simplify()
-            # Assign coq types.
-            ccg_tree.set('coq_type', ccg_tree[0].attrib.get('coq_type', ""))
-        else:
-            predicate_left  = lexpr(ccg_tree[0].get('sem'))
-            predicate_right = lexpr(ccg_tree[1].get('sem'))
-            semantics = semantic_template(predicate_left).simplify()
-            semantics = semantics(predicate_right).simplify()
-            # Assign coq types.
-            coq_types_left  = ccg_tree[0].attrib.get('coq_type', "")
-            coq_types_right = ccg_tree[1].attrib.get('coq_type', "")
-            if coq_types_left and coq_types_right:
-                coq_types = coq_types_left + ' ||| ' + coq_types_right
-            elif coq_types_left:
-                coq_types = coq_types_left
-            else:
-                coq_types = coq_types_right
-            # coq_types = sorted(coq_types_left + coq_types_right)
-            ccg_tree.set('coq_type', coq_types)
-        return semantics
-
     def get_semantic_representation(self, ccg_tree, tokens):
-        # if ccg_tree.get('category') == 'NPNP':
-        #     from pudb import set_trace; set_trace()
         rule_pattern = make_rule_pattern_from_ccg_node(ccg_tree, tokens)
         # Obtain the semantic template.
         relevant_rules = self.get_relevant_rules(rule_pattern)
