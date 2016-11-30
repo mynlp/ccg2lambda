@@ -179,14 +179,7 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
     input_coq_script = ('echo \"Require Export coqlib.\n'
         '{0}\nTheorem t1: {1}. {2}.\" | coqtop').format(
         dynamic_library, coq_formulae, _tactics)
-    # input_coq_script = 'echo \"Require Export coqlib. \n' \
-    #   + dynamic_library + '\n' \
-    #   + 'Theorem t1: ' + \
-    #   coq_formulae + \
-    #   '. ' + _tactics + '\" | coqtop'
-    # Set Firstorder Depth 1. nltac. nltac_set; nltac_final. Set Firstorder Depth 3. nltac_final. Qed.\" | coqtop'
     input_coq_script = substitute_invalid_chars(input_coq_script, 'replacement.txt')
-    # print(input_coq_script)
     process = subprocess.Popen(\
       input_coq_script, \
       shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

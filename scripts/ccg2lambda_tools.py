@@ -149,13 +149,12 @@ def combine_children_exprs(ccg_tree, tokens, semantic_index):
         coq_types = coq_types_left 
     else:
         coq_types = coq_types_right
-    # coq_types = sorted(coq_types_left + coq_types_right)
-    # ccg_tree.set('coq_type', simplejson.dumps(coq_types))
     ccg_tree.set('coq_type', coq_types)
     semantics = semantic_index.get_semantic_representation(ccg_tree, tokens)
     if semantics:
         ccg_tree.set('sem', str(semantics))
         return None
+    # Back-off mechanism in case no semantic templates are available:
     if is_forward_operation(ccg_tree):
         function_index, argument_index = 0, 1
     else:
@@ -180,8 +179,6 @@ def assign_semantics(ccg_tree, semantic_index, tokens):
     Visit recursively the CCG tree in depth-first order, assigning lambda expressions
     (semantics) to each node.
     """
-    # if ccg_tree.get('id') == 's0_sp19':
-    #   from pudb import set_trace; set_trace()
     category = ccg_tree.attrib['category']
     if len(ccg_tree) == 0:
         semantics = semantic_index.get_semantic_representation(ccg_tree, tokens)
