@@ -75,7 +75,8 @@ mkdir -p $plain_dir $parsed_dir $results_dir
 # Tokenize text with Penn Treebank tokenizer.
 cat $sentences_fname | \
   sed -f en/tokenizer.sed | \
-  sed 's/ _ /_/g' \
+  sed 's/ _ /_/g' | \
+  sed 's/[[:space:]]*$//' \
   > ${plain_dir}/${sentences_basename}.tok
 
 # Check whether the parser variables point to correct directories.
