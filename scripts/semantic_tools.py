@@ -159,7 +159,7 @@ def substitute_invalid_chars(script, replacement_filename):
             script = script.replace(invalid_char, valid_char)
     return script
 
-_tactics = 'Set Firstorder Depth 1. nltac. Set Firstorder Depth 6. nltac. Qed.'
+_tactics = 'Set Firstorder Depth 1. nltac. Set Firstorder Depth 6. nltac. Qed'
 try:
     with open('tactics_coq.txt') as fin:
         _tactics = fin.read().strip()
