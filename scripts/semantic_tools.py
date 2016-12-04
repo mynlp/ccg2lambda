@@ -118,7 +118,7 @@ def substitute_invalid_chars(script, replacement_filename):
             script = script.replace(invalid_char, valid_char)
     return script
 
-_tactics = 'Set Firstorder Depth 1. nltac. Set Firstorder Depth 6. nltac. Qed.'
+_tactics = 'Set Firstorder Depth 1. nltac. Set Firstorder Depth 6. nltac. Qed'
 try:
     with open('tactics_coq.txt') as fin:
         _tactics = fin.read().strip()
@@ -139,7 +139,6 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
         '{0}\nTheorem t1: {1}. {2}.\" | coqtop').format(
         dynamic_library, coq_formulae, _tactics)
     input_coq_script = substitute_invalid_chars(input_coq_script, 'replacement.txt')
-    # print(input_coq_script)
     process = subprocess.Popen(\
       input_coq_script, \
       shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

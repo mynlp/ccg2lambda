@@ -24,6 +24,7 @@ from semantic_tools_test import (build_arbitrary_dynamic_libraryTestCase,
   build_dynamic_libraryTestCase, resolve_prefix_to_infix_operationsTestCase,
   Nltk2coqTestCase, Coq2NLTKTypesTestCase,
   Coq2NLTKSignaturesTestCase, ArbiAutoTypesTestCase)
+from semantic_index_test import GetSemanticRepresentationTestCase
 
 if __name__ == '__main__':
     suite1  = unittest.TestLoader().loadTestsFromTestCase(AssignSemanticsToCCGTestCase)
@@ -38,6 +39,8 @@ if __name__ == '__main__':
     suite10 = unittest.TestLoader().loadTestsFromTestCase(Coq2NLTKSignaturesTestCase)
     suite11 = unittest.TestLoader().loadTestsFromTestCase(ArbiAutoTypesTestCase)
     suite12 = unittest.TestLoader().loadTestsFromTestCase(get_attributes_from_ccg_node_recursivelyTestCase)
+    suite13 = unittest.TestLoader().loadTestsFromTestCase(GetSemanticRepresentationTestCase)
     suites  = unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6,
-                                  suite7, suite8, suite9, suite10, suite11, suite12])
+                                  suite7, suite8, suite9, suite10, suite11, suite12,
+                                  suite13])
     unittest.TextTestRunner(verbosity=2).run(suites)

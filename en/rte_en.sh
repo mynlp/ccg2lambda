@@ -100,14 +100,14 @@ if [ ! -e "${parsed_dir}/${sentences_basename}.candc.xml" ]; then
     2> ${parsed_dir}/${sentences_basename}.log
 fi
 if [ ! -e "${parsed_dir}/${sentences_basename}.xml" ]; then
-  python candc2transccg.py ${parsed_dir}/${sentences_basename}.candc.xml \
+  python en/candc2transccg.py ${parsed_dir}/${sentences_basename}.candc.xml \
     > ${parsed_dir}/${sentences_basename}.xml
 fi
 
 # Semantic parsing the CCG trees in XML.
 if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
   echo "Semantic parsing $parsed_dir/${sentences_basename}.xml"
-  python semparse.py \
+  python scripts/semparse.py \
     $parsed_dir/${sentences_basename}.xml \
     $category_templates \
     $parsed_dir/${sentences_basename}.sem.xml \
@@ -118,7 +118,7 @@ fi
 # Judge entailment with a theorem prover (Coq, at the moment).
 echo "Judging entailment for $parsed_dir/${sentences_basename}.sem.xml"
 if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
-  python prove.py \
+  python scripts/prove.py \
     $parsed_dir/${sentences_basename}.sem.xml \
     --graph_out ${results_dir}/${sentences_basename}.html \
     --abduction \

@@ -53,6 +53,7 @@ class SemanticRule(object):
         self_attr_names = set(self.attributes.keys())
         other_attr_names = set(other.attributes.keys())
         attribute_names = self_attr_names.union(other_attr_names)
+        attribute_names = self.remove_control_attribute_names(attribute_names)
         for attribute_name in attribute_names:
             self_attr_value = self.attributes.get(attribute_name)
             other_attr_value = other.attributes.get(attribute_name)
@@ -61,6 +62,10 @@ class SemanticRule(object):
         if not wildcard_match(attribute_names, self.attributes, other.attributes):
             return False
         return True
+
+    def remove_control_attribute_names(self, attribute_names):
+        control_attrs = ['var_paths']
+        return [a for a in attribute_names if a not in control_attrs]
 
     def is_terminal_rule(self):
         if 'rule' in self.attributes:

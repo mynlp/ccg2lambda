@@ -20,6 +20,7 @@ import simplejson
 import yaml
 
 from category import Category
+from etree_utils import get_node_at_path
 from logic_parser import lexpr
 from normalization import normalize_token
 from semantic_rule import SemanticRule
@@ -82,21 +83,18 @@ class SemanticIndex(object):
             # Assign coq types.
             ccg_tree.set('coq_type', ccg_tree[0].attrib.get('coq_type', ""))
         else:
-            predicate_left  = lexpr(ccg_tree[0].get('sem'))
-            predicate_right = lexpr(ccg_tree[1].get('sem'))
-            semantics = semantic_template(predicate_left).simplify()
-            semantics = semantics(predicate_right).simplify()
-            # Assign coq types.
-            coq_types_left  = ccg_tree[0].attrib.get('coq_type', "")
-            coq_types_right = ccg_tree[1].attrib.get('coq_type', "")
-            if coq_types_left and coq_types_right:
-                coq_types = coq_types_left + ' ||| ' + coq_types_right
-            elif coq_types_left:
-                coq_types = coq_types_left
-            else:
-                coq_types = coq_types_right
-            # coq_types = sorted(coq_types_left + coq_types_right)
-            ccg_tree.set('coq_type', coq_types)
+            var_paths = semantic_rule.attributes.get('var_paths', [[0], [1]])
+            semantics = semantic_template
+            coq_types_list = []
+            for path in var_paths:
+                child_node = get_node_at_path(ccg_tree, path)
+                child_semantics = lexpr(child_node.get('sem'))
+                semantics = semantics(child_semantics).simplify()
+                child_coq_types = child_node.get('coq_type', None)
+                if child_coq_types is not None and child_coq_types != "":
+                    coq_types_list.append(child_coq_types)
+            if coq_types_list:
+                ccg_tree.set('coq_type', ' ||| '.join(coq_types_list))
         return semantics
 
 def get_attributes_from_ccg_node_recursively(ccg_tree, tokens):
