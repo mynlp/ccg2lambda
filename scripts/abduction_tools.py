@@ -9,7 +9,19 @@ import subprocess
 from nltk import Tree
 
 from knowledge import GetLexicalRelationsFromPreds
-# from knowledge import GetApproxRelationsFromPreds
+
+class AxiomsWordnet(object):
+    """
+    Create axioms using relations in WordNet.
+    """
+    def __init__(self):
+        pass
+
+    def attempt(self, coq_scripts):
+        return TryAbductions(coq_scripts)
+
+def create_abduction_mechanism(options):
+    return AxiomsWordnet()
 
 # Check whether the string "is defined" appears in the output of coq.
 # In that case, we return True. Otherwise, we return False.

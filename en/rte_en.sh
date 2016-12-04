@@ -24,7 +24,7 @@
 # ./rte_en.sh <sentences.txt> <semantic_templates.yaml>
 # 
 # E.g.
-# ./rte_en.sh sample_en.txt semantic_templates_en.yaml
+# ./rte_en.sh en/sample_en.txt en/semantic_templates_en.yaml
 #
 # It should return 'yes'.
 # You need to have a file in the current directory named candc_location.txt
@@ -71,7 +71,7 @@ mkdir -p $plain_dir $parsed_dir $results_dir
 
 # Tokenize text with Penn Treebank tokenizer.
 cat $sentences_fname | \
-  sed -f tokenizer.sed | \
+  sed -f en/tokenizer.sed | \
   sed 's/ _ /_/g' \
   > ${plain_dir}/${sentences_basename}.tok
 
@@ -121,6 +121,7 @@ if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
   python prove.py \
     $parsed_dir/${sentences_basename}.sem.xml \
     --graph_out ${results_dir}/${sentences_basename}.html \
+    --abduction \
     > ${results_dir}/${sentences_basename}.answer \
     2> ${results_dir}/${sentences_basename}.err
 fi
