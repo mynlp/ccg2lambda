@@ -14,6 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import json
 from nltk.corpus import wordnet as wn
 
 # Obtain lemmas of synonyms.
@@ -235,6 +236,20 @@ def is_derivation(word1, word2):
     # that are derivations of word1.
     return (word2 in [l[0] for l in lemma_pos])
 
+# Load VerbOcean dictionary.
+try:
+    with open('en/verbocean.json', 'r') as fin:
+        verbocean = json.load(fin)
+except:
+    verbocean = {}
+
+# Query the verbocean dictionary and return a (possibly empty)
+# set of relations between two verbs.
+def get_verbocean_relations(verb1, verb2):
+    if verb1 in verbocean and verb2 in verbocean[verb1]:
+        return set(verbocean[verb1][verb2])
+    return set()
+
 # Find linguistic relationship between two words.
 # Remaining relationships that I would like to implement:
 # linguistic_relationship('man', 'men') would return 'plural'.
@@ -274,6 +289,8 @@ def linguistic_relationship(word1, word2):
         ling_relations.append('entailed')
     if is_derivation(word1, word2):
         ling_relations.append('derivation')
+    # Typical types of verbocean relations are "happens-before" or "stronger-than"
+    ling_relations.extend(get_verbocean_relations(base_word1, base_word2))
     return ling_relations
 
 def get_wordnet_cascade(ling_relations):
