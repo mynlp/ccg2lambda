@@ -186,15 +186,16 @@ function select_answer() {
 if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
   start_time=`python -c 'import time; print(time.time())'`
   for parser in "candc" "easyccg"; do
-    echo -n "Judging entailment for $parsed_dir/${sentences_basename}.${parser}.sem.xml "
     if [ ! -e "${results_dir}/${sentences_basename}.${parser}.answer" ]; then
       timeout 100 python scripts/prove.py \
         $parsed_dir/${sentences_basename}.${parser}.sem.xml \
         --graph_out ${results_dir}/${sentences_basename}.${parser}.html \
+        --abduction \
         > ${results_dir}/${sentences_basename}.${parser}.answer \
         2> ${results_dir}/${sentences_basename}.${parser}.err
     fi
-    cat ${results_dir}/${sentences_basename}.${parser}.answer
+    rte_answer=`cat ${results_dir}/${sentences_basename}.${parser}.answer`
+    echo "Judged entailment for $parsed_dir/${sentences_basename}.${parser}.sem.xml $rte_answer"
   done
   proof_end_time=`python -c 'import time; print(time.time())'`
   proving_time=`echo "${proof_end_time} - ${start_time}" | bc -l | \
@@ -204,5 +205,5 @@ if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
     ${results_dir}/${sentences_basename}.candc.answer \
     ${results_dir}/${sentences_basename}.easyccg.answer
 fi
-echo "Judging entailment for $parsed_dir/${sentences_basename}.sem.xml "`cat ${results_dir}/${sentences_basename}.answer`
+echo "Judged entailment for $parsed_dir/${sentences_basename}.sem.xml "`cat ${results_dir}/${sentences_basename}.answer`
 

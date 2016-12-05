@@ -264,6 +264,8 @@ def linguistic_relationship(word1, word2):
         ling_relations.append('hyponym')
     if is_hyponym(base_word1, base_word2):
         ling_relations.append('hypernym')
+    if is_similar(base_word1, base_word2):
+        ling_relations.append('similar')
     if is_holonym(base_word1, base_word2):
         ling_relations.append('holonym')
     if is_meronym(base_word1, base_word2):
