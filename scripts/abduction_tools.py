@@ -9,6 +9,8 @@ import subprocess
 from nltk import Tree
 
 from knowledge import GetLexicalRelationsFromPreds
+from semantic_tools import is_theorem_defined
+from tactics import get_tactics
 
 class AxiomsWordnet(object):
     """
@@ -18,6 +20,7 @@ class AxiomsWordnet(object):
         pass
 
     def attempt(self, coq_scripts):
+        # from pudb import set_trace; set_trace()
         return TryAbductions(coq_scripts)
 
 def create_abduction_mechanism(options):
@@ -253,19 +256,15 @@ def filter_wrong_axioms(axioms, coq_script):
 
 def TryAbduction(coq_script, previous_axioms=set(), expected='yes'):
   new_coq_script = InsertAxiomsInCoqScript(previous_axioms, coq_script)
-  # coq_script_debug = new_coq_script.replace('nltac', 'repeat nltac_base')
-  # Set Firstorder Depth 1. nltac. Set Firstorder Depth 6. nltac
-  # coq_script_debug = new_coq_script.replace('nltac', 'Set Firstorder Depth 1. repeat nltac_base. try substitution')
-  coq_script_debug = new_coq_script.replace(
-    'Set Firstorder Depth 1. try solve [nltac_set; nltac_final]. nltac. Set Firstorder Depth 1. nltac_final',
-    'repeat nltac_base. try substitution')
-  # coq_script_debug = new_coq_script.replace(
-  #   'nltac. Set Firstorder Depth 6. nltac',
-  #   'repeat nltac_base. try substitution')
+  current_tactics = get_tactics()
+  debug_tactics = 'repeat nltac_base. try substitution. Qed'
+  coq_script_debug = new_coq_script.replace(current_tactics, debug_tactics)
   process = Popen(\
     coq_script_debug, \
     shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   output_lines = [line.decode('utf-8').strip() for line in process.stdout.readlines()]
+  if is_theorem_defined(l.split() for l in output_lines):
+      return expected, [new_coq_script], previous_axioms
   premise_lines = GetPremiseLines(output_lines)
   conclusion = GetConclusionLine(output_lines)
   if not premise_lines or not conclusion:

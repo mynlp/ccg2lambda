@@ -225,6 +225,7 @@ def GetApproxRelationsFromPreds(premise_preds, conclusion_pred, threshold=0.8):
   return axioms
 
 def GetLexicalRelationsFromPreds(premise_preds, conclusion_pred, pred_args=None):
+  # from pudb import set_trace; set_trace()
   src_preds = [denormalize_token(p) for p in premise_preds]
   trg_pred = denormalize_token(conclusion_pred)
 
@@ -235,14 +236,14 @@ def GetLexicalRelationsFromPreds(premise_preds, conclusion_pred, pred_args=None)
        src_pred in '_False' or \
        src_pred in '_True':
       continue
-    relations = LinguisticRelationship(src_pred, trg_pred)
-    src_pred_norm = normalize_token(src_pred)
-    trg_pred_norm = normalize_token(trg_pred)
+    relations = linguistic_relationship(src_pred, trg_pred)
+    # src_pred_norm = normalize_token(src_pred)
+    # trg_pred_norm = normalize_token(trg_pred)
     # Choose only the highest-priority wordnet relation.
     relation = get_wordnet_cascade(relations)
     relations = [relation] if relation is not None else []
     for relation in relations:
-      relations_to_pairs[relation].append((src_pred_norm, trg_pred_norm))
+      relations_to_pairs[relation].append((src_pred, trg_pred))
 
   # antonym_axioms = CreateAntonymAxioms(relations_to_pairs, pred_args)
   # TODO: add pred_args into the axiom creation.
@@ -252,7 +253,7 @@ def GetLexicalRelationsFromPreds(premise_preds, conclusion_pred, pred_args=None)
   similar_axioms = create_entail_axioms(relations_to_pairs, 'similar')
   inflection_axioms = create_entail_axioms(relations_to_pairs, 'inflection')
   derivation_axioms = create_entail_axioms(relations_to_pairs, 'derivation')
-  hyponym_axioms = create_hyponym_axioms(relations_to_pairs)
+  hyponym_axioms = create_reventail_axioms(relations_to_pairs)
   axioms = antonym_axioms + synonym_axioms + hypernym_axioms + hyponym_axioms \
          + similar_axioms + inflection_axioms + derivation_axioms
   return list(set(axioms))

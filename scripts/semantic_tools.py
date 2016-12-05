@@ -25,10 +25,11 @@ from nltk import Tree
 from nltk.sem.logic import (typecheck, read_type, ConstantExpression,
   AbstractVariableExpression, InconsistentTypeHierarchyException)
 
-from knowledge import get_lexical_relations, get_tokens_from_ccg_tree
+from knowledge import get_lexical_relations
 from logic_parser import lexpr
 from nltk2coq import normalize_interpretation
 from semantic_types import get_dynamic_library_from_doc
+from tactics import get_tactics
 
 def build_knowledge_axioms(doc):
     if not doc:
@@ -118,13 +119,6 @@ def substitute_invalid_chars(script, replacement_filename):
             script = script.replace(invalid_char, valid_char)
     return script
 
-_tactics = 'Set Firstorder Depth 1. nltac. Set Firstorder Depth 6. nltac. Qed'
-try:
-    with open('tactics_coq.txt') as fin:
-        _tactics = fin.read().strip()
-except:
-    pass
-
 # This function receives two arguments. The first one is a list of the logical
 # interpretations of the premises (only one interpretation per premise).
 # The second argument is a string with a single interpretation of the conclusion.
@@ -135,9 +129,10 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
     interpretations = [normalize_interpretation(interp) for interp in interpretations]
     coq_formulae = ' -> '.join(interpretations)
     # Input these formulae to coq and retrieve the results.
+    tactics = get_tactics()
     input_coq_script = ('echo \"Require Export coqlib.\n'
         '{0}\nTheorem t1: {1}. {2}.\" | coqtop').format(
-        dynamic_library, coq_formulae, _tactics)
+        dynamic_library, coq_formulae, tactics)
     input_coq_script = substitute_invalid_chars(input_coq_script, 'replacement.txt')
     process = subprocess.Popen(\
       input_coq_script, \
