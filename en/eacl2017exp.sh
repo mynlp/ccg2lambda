@@ -77,7 +77,7 @@ train_lines_per_split=`python -c "from math import ceil; print(int(ceil(float(${
 test_lines_per_split=`python -c "from math import ceil; print(int(ceil(float(${ntest})/${cores})))"`
 trial_lines_per_split=`python -c "from math import ceil; print(int(ceil(float(${ntrial})/${cores})))"`
 
-rm ${plain_dir}/sick_{train,test,trial}.files_??
+rm -f ${plain_dir}/sick_{train,test,trial}.files_??
 split -l $train_lines_per_split ${plain_dir}/sick_train.files ${plain_dir}/sick_train.files_
 split -l $test_lines_per_split ${plain_dir}/sick_test.files ${plain_dir}/sick_test.files_
 split -l $trial_lines_per_split ${plain_dir}/sick_trial.files ${plain_dir}/sick_trial.files_
@@ -101,7 +101,7 @@ correct=0
 for f in ${plain_dir}/sick_${dataset}_*.answer; do
   let total++
   base_filename=${f##*/}
-  sys_filename=${results_dir}/${base_filename}
+  sys_filename=${results_dir}/${base_filename/.answer/.txt.answer}
   gold_answer=`head -1 $f`
   if [ ! -e ${sys_filename} ]; then
     sys_answer="unknown"
@@ -152,10 +152,10 @@ white_color="rgb(255,255,255)"
 gray_color="rgb(136,136,136)"
 for gold_filename in `ls -v ${plain_dir}/sick_${dataset}_*.answer`; do
   base_filename=${gold_filename##*/} # this line obtains the filename, without the directory path.
-  system_filename=${results_dir}/${base_filename/.txt/.answer}
+  system_filename=${results_dir}/${base_filename/.answer/.txt.answer}
   gold_answer=`cat $gold_filename`
   system_answer=`cat $system_filename`
-  time_filename=${results_dir}/${base_filename/.answer/.time}
+  time_filename=${results_dir}/${base_filename/.answer/.txt.time}
   proving_time=`cat $time_filename`
   total_proving_time=`echo "$total_proving_time + $proving_time" | bc -l`
   total_number=$((total_number + 1))
