@@ -126,6 +126,7 @@ def candc_to_transccg(ccg_tree, sentence_number):
     ccg_tree.set('id', 's' + str(sentence_number) + '_ccg0')
     # Assign an ID to every node, in depth order.
     ccg_root = ccg_tree[0]
+    ccg_root.set('root', 'true')
     assign_ids_to_nodes(ccg_root, sentence_number)
     assign_child_info(ccg_root, sentence_number, tokens_node)
     # Rename attributes.
