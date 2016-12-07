@@ -85,6 +85,7 @@ split -l $trial_lines_per_split ${plain_dir}/sick_trial.files ${plain_dir}/sick_
 # Copy a coq static library and compile it.
 cp en/coqlib_sick.v coqlib.v
 coqc coqlib.v
+cp en/tactics_coq_sick.txt tactics_coq.txt
 
 # Run pipeline for each entailment problem.
 for ff in ${plain_dir}/sick_${dataset}.files_??; do
