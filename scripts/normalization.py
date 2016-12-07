@@ -30,6 +30,7 @@ def normalize_token(token):
     normalized = re.sub(r'\)', '_RIGHTB', normalized)
     normalized = re.sub(r'^-$', '_HYPHEN', normalized)
     normalized = re.sub(r'^&$', '_AMPERSAND', normalized)
+    normalized = re.sub(r'-', '_dash_', normalized)
     if not normalized.startswith('_'):
         normalized = '_' + normalized
     return normalized
@@ -45,5 +46,6 @@ def denormalize_token(token):
     denormalized = re.sub('_RIGHTB', r'\)', denormalized)
     denormalized = re.sub('_HYPHEN', r'^-$', denormalized)
     denormalized = re.sub('_AMPERSAND', r'^&$', denormalized)
+    denormalized = re.sub('_dash_', r'-', denormalized)
     denormalized = denormalized.lstrip('_')
     return denormalized
