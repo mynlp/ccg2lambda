@@ -80,7 +80,8 @@ def prove_doc(doc, abduction=None):
         else:
             inference_result_str = 'unknown'
     if abduction and inference_result_str == 'unknown':
-        inference_result_str, abduction_scripts = abduction.attempt(coq_scripts)
+        inference_result_str, abduction_scripts = \
+            abduction.attempt(coq_scripts, doc)
         coq_scripts.extend(abduction_scripts)
     return inference_result_str, coq_scripts
 

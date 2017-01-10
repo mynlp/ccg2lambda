@@ -12,20 +12,6 @@ from knowledge import GetLexicalRelationsFromPreds
 from semantic_tools import is_theorem_defined
 from tactics import get_tactics
 
-class AxiomsWordnet(object):
-    """
-    Create axioms using relations in WordNet.
-    """
-    def __init__(self):
-        pass
-
-    def attempt(self, coq_scripts):
-        # from pudb import set_trace; set_trace()
-        return TryAbductions(coq_scripts)
-
-def create_abduction_mechanism(options):
-    return AxiomsWordnet()
-
 # Check whether the string "is defined" appears in the output of coq.
 # In that case, we return True. Otherwise, we return False.
 def IsTheoremDefined(output_lines):

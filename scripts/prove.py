@@ -25,7 +25,6 @@ import os
 import sys
 import textwrap
 
-from abduction_tools import create_abduction_mechanism
 from semantic_tools import prove_doc
 from visualization_tools import convert_doc_to_mathml
 
@@ -54,7 +53,8 @@ def main(args = None):
     
     abduction = None
     if args.abduction:
-        abduction = create_abduction_mechanism(args.abduction)
+        from abduction_naive import AxiomsWordnet
+        abduction = AxiomsWordnet()
 
     parser = etree.XMLParser(remove_blank_text=True)
     doc = etree.parse(args.sem, parser)
