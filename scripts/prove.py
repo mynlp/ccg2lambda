@@ -53,7 +53,7 @@ def main(args = None):
     
     abduction = None
     if args.abduction:
-        from abduction_naive import AxiomsWordnet
+        from abduction_spsa import AxiomsWordnet
         abduction = AxiomsWordnet()
 
     parser = etree.XMLParser(remove_blank_text=True)
