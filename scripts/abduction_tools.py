@@ -3,6 +3,7 @@
 
 import codecs
 import logging
+import re
 from subprocess import call, Popen
 import subprocess
 
@@ -11,7 +12,7 @@ from nltk import Tree
 from knowledge import GetLexicalRelationsFromPreds
 from semantic_tools import is_theorem_defined
 from tactics import get_tactics
-from tree_tools import tree_or_string
+from tree_tools import tree_or_string, TreeContains
 
 # Check whether the string "is defined" appears in the output of coq.
 # In that case, we return True. Otherwise, we return False.
@@ -80,7 +81,7 @@ def GetConclusionLine(coq_output_lines):
     return None
   return coq_output_lines[line_index_last_conclusion_sep + 1]
 
-def GetPremisesThatMatchConclusionArgs(premises, conclusion):
+def GetPremisesThatMatchConclusionArgs_(premises, conclusion):
   """
   Returns premises where the predicates have at least one argument
   in common with the conclusion.
@@ -95,22 +96,26 @@ def GetPremisesThatMatchConclusionArgs(premises, conclusion):
                   '\nPremise args: ' + str(premise_args))
     if premise_args.intersection(conclusion_args):
       candidate_premises.append(premise)
-  # logging.debug('candidates: ' + str(candidate_premises))
   return candidate_premises
 
-def GetPremisesThatMatchConclusionArgs_(premises, conclusion):
+def GetPremisesThatMatchConclusionArgs(premises, conclusion):
   """
-  Returns premises where the predicates have exactly the same
-  arguments as in the conclusion.
+  Returns premises where the predicates have at least one argument
+  in common with the conclusion.
   """
-  conclusion_terms = conclusion.split()
   candidate_premises = []
-  for premise in premises:
-    premise_terms = premise.split()[2:]
-    logging.debug(premise_terms)
-    if len(premise_terms) == len(conclusion_terms) and \
-       premise_terms[1:] == conclusion_terms[1:]:
-      candidate_premises.append(premise)
+  conclusion = re.sub(r'\?([0-9]+)', r'?x\1', conclusion)
+  conclusion_args = get_tree_pred_args(conclusion, is_conclusion=True)
+  if conclusion_args is None:
+    return candidate_premises
+  for premise_line in premises:
+    # Convert anonymous variables of the form ?345 into ?x345.
+    premise_line = re.sub(r'\?([0-9]+)', r'?x\1', premise_line)
+    premise_args = get_tree_pred_args(premise_line)
+    logging.debug('Conclusion args: ' + str(conclusion_args) + \
+                  '\nPremise args: ' + str(premise_args))
+    if TreeContains(premise_args, conclusion_args):
+      candidate_premises.append(premise_line)
   return candidate_premises
 
 def MakeAxiomsFromPremisesAndConclusion(premises, conclusion):
