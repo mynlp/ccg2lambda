@@ -11,6 +11,7 @@ from nltk import Tree
 from knowledge import GetLexicalRelationsFromPreds
 from semantic_tools import is_theorem_defined
 from tactics import get_tactics
+from tree_tools import tree_or_string
 
 # Check whether the string "is defined" appears in the output of coq.
 # In that case, we return True. Otherwise, we return False.
@@ -119,6 +120,24 @@ def MakeAxiomsFromPremisesAndConclusion(premises, conclusion):
   pred_args = GetPredicateArguments(premises, conclusion)
   axioms = MakeAxiomsFromPreds(premise_preds, conclusion_pred, pred_args)
   return axioms
+
+def get_tree_pred_args(line, is_conclusion=False):
+  """
+  Given the string representation of a premise, where each premise is:
+    pX : predicate1 (arg1 arg2 arg3)
+    pY : predicate2 arg1
+  or the conclusion, which is of the form:
+    predicate3 (arg2 arg4)
+  returns a tree or a string with the arguments of the predicate.
+  """
+  tree_args = None
+  if not is_conclusion:
+    tree_args = tree_or_string('(' + ' '.join(line.split()[2:]) + ')')
+  else:
+    tree_args = tree_or_string('(' + line + ')')
+  if len(tree_args) < 1:
+    return None
+  return tree_args[0]
 
 def GetPredicateArguments(premises, conclusion):
   """
