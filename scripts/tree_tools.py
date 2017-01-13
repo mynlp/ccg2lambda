@@ -27,6 +27,8 @@ def IsString(variable):
 def get_top(tr):
     """Given a thing that might be a tree or maybe a terminal string, return
     the 'top' of it -- either the node of a tree, or just the string itself."""
+    if tr is None:
+      return None
     return (tr if IsString(tr) else tr.label())
 
 
@@ -37,6 +39,9 @@ def TreeContains(tree, subtree):
   # Subtree is a variable, and matches everything.
   subtree_top = get_top(subtree)
   tree_top = get_top(tree)
+  if tree_top is None or subtree_top is None:
+    return False
+
   if subtree_top.startswith('?x') and not tree_is_inst_nltk:
     # Get type of the variable.
     var_type = '|'.join(subtree_top.split('|')[1:])

@@ -81,6 +81,7 @@ def GetConclusionLine(coq_output_lines):
     return None
   return coq_output_lines[line_index_last_conclusion_sep + 1]
 
+# This function was used for EACL 2017.
 def GetPremisesThatMatchConclusionArgs_(premises, conclusion):
   """
   Returns premises where the predicates have at least one argument
@@ -126,6 +127,13 @@ def MakeAxiomsFromPremisesAndConclusion(premises, conclusion):
   axioms = MakeAxiomsFromPreds(premise_preds, conclusion_pred, pred_args)
   return axioms
 
+def parse_coq_line(coq_line):
+  try:
+    tree_args = tree_or_string('(' + coq_line + ')')
+  except ValueError:
+    tree_args = None
+  return tree_args
+
 def get_tree_pred_args(line, is_conclusion=False):
   """
   Given the string representation of a premise, where each premise is:
@@ -137,10 +145,10 @@ def get_tree_pred_args(line, is_conclusion=False):
   """
   tree_args = None
   if not is_conclusion:
-    tree_args = tree_or_string('(' + ' '.join(line.split()[2:]) + ')')
+    tree_args = parse_coq_line(' '.join(line.split()[2:]))
   else:
-    tree_args = tree_or_string('(' + line + ')')
-  if len(tree_args) < 1:
+    tree_args = parse_coq_line(line)
+  if tree_args is None or len(tree_args) < 1:
     return None
   return tree_args[0]
 
