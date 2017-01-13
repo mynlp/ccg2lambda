@@ -18,6 +18,7 @@
 import unittest
 
 from abduction_tools_test import GetTreePredArgsTestCase
+from abduction_tools_test import GetPremisesThatMatchConclusionArgsTestCase
 from ccg2lambda_tools_test import (TypeRaiseTestCase, AssignSemanticsToCCGTestCase,
   AssignSemanticsToCCGWithFeatsTestCase, get_attributes_from_ccg_node_recursivelyTestCase)
 from knowledge_test import LexicalRelationsTestCase
@@ -42,6 +43,7 @@ if __name__ == '__main__':
     suite12 = unittest.TestLoader().loadTestsFromTestCase(get_attributes_from_ccg_node_recursivelyTestCase)
     suite13 = unittest.TestLoader().loadTestsFromTestCase(GetSemanticRepresentationTestCase)
     suite14 = unittest.TestLoader().loadTestsFromTestCase(GetTreePredArgsTestCase)
+    suite15 = unittest.TestLoader().loadTestsFromTestCase(GetPremisesThatMatchConclusionArgsTestCase)
     suites  = unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6,
                                   suite7, suite8, suite9, suite10, suite11, suite12,
                                   suite13, suite14])
