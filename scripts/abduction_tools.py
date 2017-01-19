@@ -1,15 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 
 import codecs
+from collections import OrderedDict
+import json
 import logging
 import re
 from subprocess import call, Popen
 import subprocess
+import sys
 
 from nltk import Tree
 
 from knowledge import GetLexicalRelationsFromPreds
+from normalization import denormalize_token
 from semantic_tools import is_theorem_defined
 from tactics import get_tactics
 from tree_tools import tree_or_string, TreeContains
@@ -119,12 +124,38 @@ def GetPremisesThatMatchConclusionArgs(premises, conclusion):
       candidate_premises.append(premise_line)
   return candidate_premises
 
+def make_failure_log(conclusion_pred, premise_preds, conclusion, premises):
+  """
+  Produces a dictionary with the following structure:
+  {"unproved sub-goal" : "sub-goal_predicate",
+   "matching premises" : ["premise1", "premise2", ...],
+   "raw sub-goal" : "conclusion",
+   "raw premises" : ["raw premise1", "raw premise2", ...]}
+  Raw sub-goal and raw premises are the coq lines with the premise
+  internal name and its predicates. E.g.
+  H : premise (Acc x1)
+  Note that this function is not capable of returning all unproved
+  sub-goals in coq's stack. We only return the top unproved sub-goal.
+  """
+  failure_log = OrderedDict()
+  conclusion_base = denormalize_token(conclusion_pred)
+  failure_log["unproved sub-goal"] = conclusion_base
+  premises_base = [denormalize_token(p) for p in premise_preds]
+  failure_log["matching premises"] = premises_base
+  failure_log["raw sub-goal"] = conclusion
+  failure_log["raw premises"] = premises
+  return failure_log
+
 def MakeAxiomsFromPremisesAndConclusion(premises, conclusion):
   matching_premises = GetPremisesThatMatchConclusionArgs(premises, conclusion)
   premise_preds = [premise.split()[2] for premise in matching_premises]
   conclusion_pred = conclusion.split()[0]
   pred_args = GetPredicateArguments(premises, conclusion)
   axioms = MakeAxiomsFromPreds(premise_preds, conclusion_pred, pred_args)
+  if not axioms and 'False' not in conclusion_pred:
+    failure_log = make_failure_log(
+      conclusion_pred, premise_preds, conclusion, premises)
+    print(json.dumps(failure_log), file=sys.stderr)
   return axioms
 
 def parse_coq_line(coq_line):
@@ -299,33 +330,3 @@ def TryAbduction(coq_script, previous_axioms=set(), expected='yes'):
   inference_result_str = expected if IsTheoremDefined(output_lines) else 'unknown'
   return inference_result_str, [new_coq_script], axioms
 
-def main(args = None):
-  finput_filename = 'abduction/test1.out'
-  finput = codecs.open(finput_filename, 'r', 'utf-8')
-  lines = [line.strip() for line in finput.readlines()]
-  finput.close()
-  
-  print('Is incomplete proof: {0}'.format(IsIncompleteProof(lines)))
-  
-  print('Premises:')
-  premise_lines = GetPremiseLines(lines)
-  for premise_line in premise_lines:
-    print(premise_line)
-  
-  print('Conclusion:')
-  conclusion = GetConclusionLine(lines)
-  print(conclusion)
-  
-  matching_premises = GetPremisesThatMatchConclusionArgs(premise_lines, conclusion)
-  print('Matching premises:')
-  for premise in matching_premises:
-    print(premise)
-  
-  axioms = MakeAxiomsFromPremisesAndConclusion(premise_lines, conclusion)
-  print('Axioms:')
-  for axiom in axioms:
-    print(axiom)
-  
-if __name__ == '__main__':
-  main()
-  
