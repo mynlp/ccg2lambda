@@ -108,7 +108,7 @@ def get_fracas_problems(contents):
             premises = get_premises_from_node(node)
             hypothesis = get_hypothesis_from_node(node)
             sentences = premises + [hypothesis]
-            sentences = [escape_reserved_chars(s) for s in sentences]
+            # sentences = [escape_reserved_chars(s) for s in sentences]
             problem = FracasProblem(problem_id, current_section, sentences, answer)
             problems.append(problem)
     return problems
