@@ -124,7 +124,8 @@ def GetPremisesThatMatchConclusionArgs(premises, conclusion):
       candidate_premises.append(premise_line)
   return candidate_premises
 
-def make_failure_log(conclusion_pred, premise_preds, conclusion, premises):
+def make_failure_log(conclusion_pred, premise_preds, conclusion, premises,
+    coq_output_lines=None):
   """
   Produces a dictionary with the following structure:
   {"unproved sub-goal" : "sub-goal_predicate",
@@ -144,9 +145,73 @@ def make_failure_log(conclusion_pred, premise_preds, conclusion, premises):
   failure_log["matching premises"] = premises_base
   failure_log["raw sub-goal"] = conclusion
   failure_log["raw premises"] = premises
+  premise_preds = []
+  for p in premises:
+    try:
+      pred = p.split()[2]
+    except:
+      continue
+    if pred.startswith('_'):
+      premise_preds.append(denormalize_token(pred))
+  failure_log["all premises"] = premise_preds
+  failure_log["other sub-goals"] = get_subgoals_from_coq_output(
+    coq_output_lines, premises)
   return failure_log
 
-def MakeAxiomsFromPremisesAndConclusion(premises, conclusion):
+def get_subgoals_from_coq_output(coq_output_lines, premises):
+  """
+  When the proving is halted due to unprovable sub-goals,
+  Coq produces an output similar to this:
+
+  2 subgoals
+  
+    H1 : True
+    H4 : True
+    x1 : Event
+    H6 : True
+    H3 : _play x1
+    H : _two (Subj x1)
+    H2 : _man (Subj x1)
+    H0 : _table (Acc x1)
+    H5 : _tennis (Acc x1)
+    ============================
+     _ping (Acc x1)
+
+  subgoal 2 is:
+    _pong (Acc x1)
+
+  This function returns the remaining sub-goals ("_pong" in this example).
+  """
+  subgoals = []
+  subgoal_index = -1
+  for line in coq_output_lines:
+    if line.strip() == '':
+      continue
+    line_tokens = line.split()
+    if subgoal_index > 0:
+      subgoal_line = line
+      subgoal_tokens = subgoal_line.split()
+      subgoal_pred = subgoal_tokens[0]
+      if subgoal_index in [s['index'] for s in subgoals]:
+        # This sub-goal has already appeared and is recorded.
+        subgoal_index = -1
+        continue
+      subgoal = {
+        'predicate' : denormalize_token(line_tokens[0]),
+        'index' : subgoal_index,
+        'raw' : subgoal_line}
+      matching_premises = GetPremisesThatMatchConclusionArgs(premises, subgoal_line)
+      subgoal['matching raw premises'] = matching_premises
+      premise_preds = [
+        denormalize_token(premise.split()[2]) for premise in matching_premises]
+      subgoal['matching premises'] = premise_preds
+      subgoals.append(subgoal)
+      subgoal_index = -1
+    if len(line_tokens) >= 3 and line_tokens[0] == 'subgoal' and line_tokens[2] == 'is:':
+      subgoal_index = int(line_tokens[1])
+  return subgoals
+
+def MakeAxiomsFromPremisesAndConclusion(premises, conclusion, coq_output_lines=None):
   matching_premises = GetPremisesThatMatchConclusionArgs(premises, conclusion)
   premise_preds = [premise.split()[2] for premise in matching_premises]
   conclusion_pred = conclusion.split()[0]
@@ -154,7 +219,7 @@ def MakeAxiomsFromPremisesAndConclusion(premises, conclusion):
   axioms = MakeAxiomsFromPreds(premise_preds, conclusion_pred, pred_args)
   if not axioms and 'False' not in conclusion_pred:
     failure_log = make_failure_log(
-      conclusion_pred, premise_preds, conclusion, premises)
+      conclusion_pred, premise_preds, conclusion, premises, coq_output_lines)
     print(json.dumps(failure_log), file=sys.stderr)
   return axioms
 
@@ -319,7 +384,7 @@ def TryAbduction(coq_script, previous_axioms=set(), expected='yes'):
   if not premise_lines or not conclusion:
     return 'unknown', [], previous_axioms
   matching_premises = GetPremisesThatMatchConclusionArgs(premise_lines, conclusion)
-  axioms = MakeAxiomsFromPremisesAndConclusion(premise_lines, conclusion)
+  axioms = MakeAxiomsFromPremisesAndConclusion(premise_lines, conclusion, output_lines)
   axioms = filter_wrong_axioms(axioms, coq_script)
   axioms = axioms.union(previous_axioms)
   new_coq_script = InsertAxiomsInCoqScript(axioms, coq_script)
