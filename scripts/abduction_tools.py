@@ -156,7 +156,23 @@ def make_failure_log(conclusion_pred, premise_preds, conclusion, premises,
   failure_log["all premises"] = premise_preds
   failure_log["other sub-goals"] = get_subgoals_from_coq_output(
     coq_output_lines, premises)
+  failure_log["type error"] = has_type_error(coq_output_lines)
+  failure_log["open formula"] = has_open_formula(coq_output_lines)
   return failure_log
+
+def has_type_error(coq_output_lines):
+  for line in coq_output_lines:
+    if 'has type' in line and 'while it is expected to have type' in line:
+      return 'yes'
+  return 'no'
+
+def has_open_formula(coq_output_lines):
+  for line in coq_output_lines:
+    if 'The type of this term is a product while it is expected to be' in line:
+      return 'yes'
+    if '(fun F' in line:
+      return 'yes'
+  return 'no'
 
 def get_subgoals_from_coq_output(coq_output_lines, premises):
   """
@@ -217,7 +233,8 @@ def MakeAxiomsFromPremisesAndConclusion(premises, conclusion, coq_output_lines=N
   conclusion_pred = conclusion.split()[0]
   pred_args = GetPredicateArguments(premises, conclusion)
   axioms = MakeAxiomsFromPreds(premise_preds, conclusion_pred, pred_args)
-  if not axioms and 'False' not in conclusion_pred:
+  # print('Has axioms: {0}'.format(axioms), file=sys.stderr)
+  if not axioms:
     failure_log = make_failure_log(
       conclusion_pred, premise_preds, conclusion, premises, coq_output_lines)
     print(json.dumps(failure_log), file=sys.stderr)
@@ -382,6 +399,9 @@ def TryAbduction(coq_script, previous_axioms=set(), expected='yes'):
   premise_lines = GetPremiseLines(output_lines)
   conclusion = GetConclusionLine(output_lines)
   if not premise_lines or not conclusion:
+    failure_log = {"type error" : has_type_error(output_lines),
+                   "open formula" : has_open_formula(output_lines)}
+    print(json.dumps(failure_log), file=sys.stderr)
     return 'unknown', [], previous_axioms
   matching_premises = GetPremisesThatMatchConclusionArgs(premise_lines, conclusion)
   axioms = MakeAxiomsFromPremisesAndConclusion(premise_lines, conclusion, output_lines)
