@@ -17,17 +17,15 @@
 import codecs
 import logging
 import re
-import simplejson
-import string
-import subprocess
 
-from nltk import Tree
-from nltk.sem.logic import (typecheck, read_type, ConstantExpression,
-  AbstractVariableExpression, InconsistentTypeHierarchyException)
+from nltk.sem.logic import read_type
+from nltk.sem.logic import ConstantExpression
+from nltk.sem.logic import AbstractVariableExpression
+from nltk.sem.logic import InconsistentTypeHierarchyException
+from nltk.sem.logic import Variable
 
-from knowledge import get_lexical_relations, get_tokens_from_xml_node
+from knowledge import get_tokens_from_xml_node
 from logic_parser import lexpr
-from nltk2coq import normalize_interpretation
 from normalization import normalize_token
 
 def linearize_type(pred_type):
@@ -145,7 +143,7 @@ def get_dynamic_library_from_doc(doc, formulas):
     types = set(doc.xpath('//semantics//@type'))
     coq_lib = ['Parameter {0}.'.format(t) for t in types]
     nltk_sig = convert_coq_signatures_to_nltk(coq_lib)
-    coq_lib_augmented = build_dynamic_library(formulas, nltk_sig)
+    coq_lib_augmented, formulas = build_dynamic_library(formulas, nltk_sig)
     # coq_static_lib_path is useful to get reserved predicates.
     # ccg_xml_trees is useful to get full list of tokens
     # for which we need to specify types.
@@ -155,7 +153,7 @@ def get_dynamic_library_from_doc(doc, formulas):
         coq_static_lib_path='coqlib.v', 
         doc=doc)
     dynamic_library_str = '\n'.join(dynamic_library)
-    return dynamic_library_str
+    return dynamic_library_str, formulas
 
 def build_library_entry(predicate, pred_type):
     """
@@ -186,13 +184,40 @@ def build_dynamic_library(exprs, coq_types = {}):
         else:
             exprs_logic.append(expr)
     signatures = [resolve_types(e) for e in exprs_logic]
-    signature = combine_signatures(signatures)
+    signature, exprs = combine_signatures_or_rename_preds(signatures, exprs_logic)
     signature = remove_reserved_predicates(signature)
     dynamic_library = []
     for predicate, pred_type in signature.items():
         library_entry = build_library_entry(predicate, pred_type)
         dynamic_library.append(library_entry)
-    return list(set(dynamic_library))
+    return list(set(dynamic_library)), exprs
+
+def combine_signatures_or_rename_preds(signatures, exprs):
+    """
+    `signatures` is a list of dictionaries. Each dictionary has key-value
+      pairs where key is a predicate name, and value is a type object.
+    `exprs` are logical formula objects.
+    This function return a single signature dictionary with merged signatures.
+    If there is a predicate for which there are differing types, then the
+    predicate is renamed and each version is associated to a different type
+    in the signature dictionary. The target predicate is also renamed in
+    the logical expressions.
+    """
+    assert len(signatures) == len(exprs)
+    signatures_merged = {}
+    exprs_new = []
+    for i, (signature, expr) in enumerate(zip(signatures, exprs)):
+        expr_new = expr
+        for pred, typ in signature.items():
+            if pred not in signatures_merged:
+                signatures_merged[pred] = typ
+            else:
+                if typ != signatures_merged[pred]:
+                    pred_new = pred + '_' + str(i)
+                    signatures_merged[pred_new] = typ
+                    expr_new = expr.replace(Variable(pred), lexpr(pred_new))
+        exprs_new.append(expr_new)
+    return signatures_merged, exprs_new
 
 def convert_coq_to_nltk_type(coq_type):
     """

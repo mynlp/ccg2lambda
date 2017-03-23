@@ -27,6 +27,7 @@ from semantic_tools_test import (build_arbitrary_dynamic_libraryTestCase,
   Nltk2coqTestCase, Coq2NLTKTypesTestCase,
   Coq2NLTKSignaturesTestCase, ArbiAutoTypesTestCase)
 from semantic_index_test import GetSemanticRepresentationTestCase
+from semantic_types_test import combine_signatures_or_rename_predsTestCase
 
 if __name__ == '__main__':
     suite1  = unittest.TestLoader().loadTestsFromTestCase(AssignSemanticsToCCGTestCase)
@@ -44,7 +45,8 @@ if __name__ == '__main__':
     suite13 = unittest.TestLoader().loadTestsFromTestCase(GetSemanticRepresentationTestCase)
     suite14 = unittest.TestLoader().loadTestsFromTestCase(GetTreePredArgsTestCase)
     suite15 = unittest.TestLoader().loadTestsFromTestCase(GetPremisesThatMatchConclusionArgsTestCase)
+    suite16 = unittest.TestLoader().loadTestsFromTestCase(combine_signatures_or_rename_predsTestCase)
     suites  = unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6,
                                   suite7, suite8, suite9, suite10, suite11, suite12,
-                                  suite13, suite14])
+                                  suite13, suite14, suite15, suite16])
     unittest.TextTestRunner(verbosity=2).run(suites)

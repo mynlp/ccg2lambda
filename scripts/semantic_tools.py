@@ -62,7 +62,7 @@ def prove_doc(doc, abduction=None):
     formulas = get_formulas_from_doc(doc)
     if not formulas:
         return 'unknown', coq_scripts
-    dynamic_library_str = get_dynamic_library_from_doc(doc, formulas)
+    dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, formulas)
 
     premises, conclusion = formulas[:-1], formulas[-1]
     inference_result, coq_script = \

@@ -188,7 +188,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         self.assertEqual(expected_coq_lib, coq_lib)
         expression = [ccg_tree.get('sem')]
         coq_sig =  convert_coq_signatures_to_nltk(coq_lib)
-        nltk_lib = build_dynamic_library(expression, coq_sig)
+        nltk_lib, _ = build_dynamic_library(expression, coq_sig)
         lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop."]
@@ -220,7 +220,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         self.assertEqual(expected_coq_lib, coq_lib)
         expression = [ccg_tree.get('sem')]
         coq_sig =  convert_coq_signatures_to_nltk(coq_lib)
-        nltk_lib = build_dynamic_library(expression, coq_sig)
+        nltk_lib, _ = build_dynamic_library(expression, coq_sig)
         lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop."]
@@ -252,7 +252,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         self.assertEqual(expected_coq_lib, coq_lib)
         expression = [ccg_tree.get('sem')]
         coq_sig =  convert_coq_signatures_to_nltk(coq_lib)
-        nltk_lib = build_dynamic_library(expression, coq_sig)
+        nltk_lib, _ = build_dynamic_library(expression, coq_sig)
         lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Entity -> Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop."]
@@ -284,7 +284,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         self.assertEqual(expected_coq_lib, coq_lib)
         expression = [ccg_tree.get('sem')]
         coq_sig =  convert_coq_signatures_to_nltk(coq_lib)
-        nltk_lib = build_dynamic_library(expression, coq_sig)
+        nltk_lib, _ = build_dynamic_library(expression, coq_sig)
         lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Prop -> Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop."]
@@ -317,7 +317,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         self.assertEqual(expected_coq_lib, coq_lib)
         expression = [ccg_tree.get('sem')]
         coq_sig =  convert_coq_signatures_to_nltk(coq_lib)
-        nltk_lib = build_dynamic_library(expression, coq_sig)
+        nltk_lib, _ = build_dynamic_library(expression, coq_sig)
         lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Prop -> Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop -> Prop."]
@@ -384,14 +384,14 @@ class Coq2NLTKTypesTestCase(unittest.TestCase):
 class build_dynamic_libraryTestCase(unittest.TestCase):
     def test_entity(self):
         exprs = [lexpr('Python')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter Python : Entity.']
         self.assertEqual(expected_dynamic_library, dynamic_library)
 
     def test_predicate1_argument1(self):
         exprs = [lexpr('language(Python)')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter Python : Entity.',
            'Parameter language : Entity -> Prop.']
@@ -401,7 +401,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_predicate1_argument2(self):
         exprs = [lexpr('language(Python, Scala)')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter Python : Entity.',
            'Parameter Scala : Entity.',
@@ -412,7 +412,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_predicate2_argument1_and_2(self):
         exprs = [lexpr('AND(language(Python, Scala), nice(Python))')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter nice : Entity -> Prop.',
            'Parameter Python : Entity.',
@@ -424,7 +424,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_predicate2_argument1_and_2Exprs2(self):
         exprs = [lexpr('language(Python, Scala)'), lexpr('nice(Python)')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter nice : Entity -> Prop.',
            'Parameter Python : Entity.',
@@ -436,7 +436,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_pred1_prop_prop(self):
         exprs = [lexpr('nice(language(Python, Scala))')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter nice : Prop -> Prop.',
            'Parameter Python : Entity.',
@@ -449,7 +449,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
     def test_pred2_prop_prop(self):
         exprs = [lexpr('nice(language(Python, Scala))'),
                  lexpr('fun(language(Python, Scala))')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter nice : Prop -> Prop.',
            'Parameter fun : Prop -> Prop.',
@@ -462,7 +462,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_exists(self):
         exprs = [lexpr('exists x.P(x)')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Prop.',
            'Parameter x : Entity.']
@@ -472,7 +472,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_exist(self):
         exprs = [lexpr('exist x.P(x)')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Prop.',
            'Parameter x : Entity.']
@@ -482,7 +482,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda1exists1(self):
         exprs = [lexpr('\P.exist x.P(x)')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Prop.',
            'Parameter x : Entity.']
@@ -492,7 +492,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda2exists1(self):
         exprs = [lexpr('\P y.exist x.P(x, y)')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Entity -> Prop.',
            'Parameter x : Entity.',
@@ -503,7 +503,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda3exists1(self):
         exprs = [lexpr('\P y.\T.exist x.T(P(x, y))')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Entity -> Prop.',
            'Parameter T : Prop -> Prop.',
@@ -515,7 +515,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda3exists2(self):
         exprs = [lexpr('\P y.\T.exist x.exists z.T(P(x, y), z)')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Entity -> Prop.',
            'Parameter T : Prop -> Entity -> Prop.',
@@ -528,7 +528,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda3exists2All1(self):
         exprs = [lexpr('\P y.\T.all w.exist x.exists z.T(P(x, y), z, w)')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Entity -> Prop.',
            'Parameter T : Prop -> Entity -> Entity -> Prop.',
@@ -542,7 +542,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda3exists2All1Mixed(self):
         exprs = [lexpr('\P y.\T.all w.exists z.T(exist x.P(x, y), z, w)')]
-        dynamic_library = build_dynamic_library(exprs)
+        dynamic_library, _ = build_dynamic_library(exprs)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Entity -> Prop.',
            'Parameter T : Prop -> Entity -> Entity -> Prop.',
