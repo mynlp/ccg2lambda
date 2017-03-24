@@ -137,4 +137,4 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
 # Given a string reprsenting the logical interpretation of the conclusion,
 # it returns a string with the negated conclusion.
 def negate_conclusion(conclusion):
-    return '~(' + conclusion + ')'
+    return - conclusion
