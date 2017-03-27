@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 
-import codecs
 from collections import OrderedDict
 import json
 import logging
 import re
-from subprocess import call, Popen
+from subprocess import Popen
 import subprocess
 import sys
 
@@ -17,7 +16,7 @@ from knowledge import get_lexical_relations_from_preds
 from normalization import denormalize_token
 from semantic_tools import is_theorem_defined
 from tactics import get_tactics
-from tree_tools import tree_or_string, TreeContains
+from tree_tools import tree_or_string, tree_contains
 
 # Check whether the string "is defined" appears in the output of coq.
 # In that case, we return True. Otherwise, we return False.
@@ -101,7 +100,7 @@ def get_premises_that_match_conclusion_args(premises, conclusion):
     premise_args = get_tree_pred_args(premise_line)
     logging.debug('Conclusion args: ' + str(conclusion_args) + \
                   '\nPremise args: ' + str(premise_args))
-    if TreeContains(premise_args, conclusion_args):
+    if tree_contains(premise_args, conclusion_args):
       candidate_premises.append(premise_line)
   return candidate_premises
 

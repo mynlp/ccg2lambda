@@ -32,7 +32,7 @@ def get_top(tr):
     return (tr if IsString(tr) else tr.label())
 
 
-def TreeContains(tree, subtree):
+def tree_contains(tree, subtree):
   tree_is_inst_nltk = isinstance(tree, NLTKTree)
   subtree_is_inst_nltk = isinstance(subtree, NLTKTree)
 
@@ -70,7 +70,7 @@ def TreeContains(tree, subtree):
   # Both are trees, and their subtrees are equal.
   for i, src_branch in enumerate(tree):
     trg_branch = subtree[i]
-    if not TreeContains(src_branch, trg_branch):
+    if not tree_contains(src_branch, trg_branch):
       return False
   return True
 
