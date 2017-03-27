@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from abduction_tools import TryAbductions
+from abduction_tools import try_abductions
 
 class AxiomsWordnet(object):
     """
@@ -11,5 +11,5 @@ class AxiomsWordnet(object):
         pass
 
     def attempt(self, coq_scripts, context=None):
-        return TryAbductions(coq_scripts)
+        return try_abductions(coq_scripts)
 

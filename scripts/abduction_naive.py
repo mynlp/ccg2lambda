@@ -4,8 +4,8 @@
 from subprocess import Popen
 import subprocess
 
-from abduction_tools import InsertAxiomsInCoqScript
-from knowledge import get_tokens_from_xml_node, GetLexicalRelationsFromPreds
+from abduction_tools import insert_axioms_in_coq_script
+from knowledge import get_tokens_from_xml_node, get_lexical_relations_from_preds
 from semantic_tools import is_theorem_defined
 
 class AxiomsWordnet(object):
@@ -31,7 +31,7 @@ def TryNaiveAbduction(coq_scripts, doc):
     axioms = set()
 
     for c_token in conclusion_tokens:
-        p_axioms = GetLexicalRelationsFromPreds(premise_tokens, c_token)
+        p_axioms = get_lexical_relations_from_preds(premise_tokens, c_token)
         axioms.update(p_axioms)
     if not axioms:
         return 'unknown', coq_scripts
@@ -47,7 +47,7 @@ def TryNaiveAbduction(coq_scripts, doc):
     return 'unknown', coq_scripts
     
 def run_theorem(axioms, proof_script, expected='yes'):
-    augmented_script = InsertAxiomsInCoqScript(axioms, proof_script)
+    augmented_script = insert_axioms_in_coq_script(axioms, proof_script)
     process = Popen(augmented_script, shell=True, stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT)
     output_lines = [

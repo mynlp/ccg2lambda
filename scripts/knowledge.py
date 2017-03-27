@@ -224,7 +224,7 @@ def GetApproxRelationsFromPreds(premise_preds, conclusion_pred, threshold=0.8):
             .format('approx', best_pred, trg_pred)]
   return axioms
 
-def GetLexicalRelationsFromPreds(premise_preds, conclusion_pred, pred_args=None):
+def get_lexical_relations_from_preds(premise_preds, conclusion_pred, pred_args=None):
   # from pudb import set_trace; set_trace()
   src_preds = [denormalize_token(p) for p in premise_preds]
   trg_pred = denormalize_token(conclusion_pred)
