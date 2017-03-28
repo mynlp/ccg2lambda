@@ -21,9 +21,12 @@ from linguistic_tools import linguistic_relationship
 from linguistic_tools import get_wordnet_cascade
 from normalization import denormalize_token, normalize_token
 
+
 def get_tokens_from_xml_node(node):
-    tokens = node.xpath("//token[not(@base='*')]/@base | //token[@base='*']/@surf")
+    tokens = node.xpath(
+        "//token[not(@base='*')]/@base | //token[@base='*']/@surf")
     return tokens
+
 
 def get_lexical_relations(doc):
     # Get tokens from all CCG trees and de-normalize them.
@@ -43,11 +46,13 @@ def get_lexical_relations(doc):
             relations_to_pairs[relation].append((t1, t2))
     # For every linguistic relationship, check if 'antonym' is present.
     # If it is present, then create an entry named:
-    # Axiom ax_relation_token1_token2 : forall x, _token1 x -> _token2 x -> False.
+    # Axiom ax_relation_token1_token2 : forall x, _token1 x -> _token2 x ->
+    # False.
     antonym_axioms = create_antonym_axioms(relations_to_pairs)
     # Return the axioms as a list.
     axioms = list(itertools.chain(*[antonym_axioms]))
     return list(set(axioms))
+
 
 def create_antonym_axioms(relations_to_pairs):
     """
@@ -66,6 +71,7 @@ def create_antonym_axioms(relations_to_pairs):
         axioms.append(axiom)
     return axioms
 
+
 def create_entail_axioms(relations_to_pairs, relation='synonym'):
     """
     For every linguistic relationship, check if 'relation' is present.
@@ -81,6 +87,7 @@ def create_entail_axioms(relations_to_pairs, relation='synonym'):
                 .format(relation, t1, t2)
         axioms.append(axiom)
     return axioms
+
 
 def create_reventail_axioms(relations_to_pairs, relation='hyponym'):
     """
@@ -99,33 +106,33 @@ def create_reventail_axioms(relations_to_pairs, relation='hyponym'):
         axioms.append(axiom)
     return axioms
 
+
 def get_lexical_relations_from_preds(premise_preds, conclusion_pred, pred_args=None):
-  src_preds = [denormalize_token(p) for p in premise_preds]
-  trg_pred = denormalize_token(conclusion_pred)
+    src_preds = [denormalize_token(p) for p in premise_preds]
+    trg_pred = denormalize_token(conclusion_pred)
 
-  relations_to_pairs = defaultdict(list)
+    relations_to_pairs = defaultdict(list)
 
-  for src_pred in src_preds:
-    if src_pred == trg_pred or \
-       src_pred in '_False' or \
-       src_pred in '_True':
-      continue
-    relations = linguistic_relationship(src_pred, trg_pred)
-    # Choose only the highest-priority wordnet relation.
-    relation = get_wordnet_cascade(relations)
-    relations = [relation] if relation is not None else []
-    for relation in relations:
-      relations_to_pairs[relation].append((src_pred, trg_pred))
+    for src_pred in src_preds:
+        if src_pred == trg_pred or \
+           src_pred in '_False' or \
+           src_pred in '_True':
+            continue
+        relations = linguistic_relationship(src_pred, trg_pred)
+        # Choose only the highest-priority wordnet relation.
+        relation = get_wordnet_cascade(relations)
+        relations = [relation] if relation is not None else []
+        for relation in relations:
+            relations_to_pairs[relation].append((src_pred, trg_pred))
 
-  # TODO: add pred_args into the axiom creation.
-  antonym_axioms = create_antonym_axioms(relations_to_pairs)
-  synonym_axioms = create_entail_axioms(relations_to_pairs, 'synonym')
-  hypernym_axioms = create_entail_axioms(relations_to_pairs, 'hypernym')
-  similar_axioms = create_entail_axioms(relations_to_pairs, 'similar')
-  inflection_axioms = create_entail_axioms(relations_to_pairs, 'inflection')
-  derivation_axioms = create_entail_axioms(relations_to_pairs, 'derivation')
-  hyponym_axioms = create_reventail_axioms(relations_to_pairs)
-  axioms = antonym_axioms + synonym_axioms + hypernym_axioms + hyponym_axioms \
-         + similar_axioms + inflection_axioms + derivation_axioms
-  return list(set(axioms))
-
+    # TODO: add pred_args into the axiom creation.
+    antonym_axioms = create_antonym_axioms(relations_to_pairs)
+    synonym_axioms = create_entail_axioms(relations_to_pairs, 'synonym')
+    hypernym_axioms = create_entail_axioms(relations_to_pairs, 'hypernym')
+    similar_axioms = create_entail_axioms(relations_to_pairs, 'similar')
+    inflection_axioms = create_entail_axioms(relations_to_pairs, 'inflection')
+    derivation_axioms = create_entail_axioms(relations_to_pairs, 'derivation')
+    hyponym_axioms = create_reventail_axioms(relations_to_pairs)
+    axioms = antonym_axioms + synonym_axioms + hypernym_axioms + hyponym_axioms \
+        + similar_axioms + inflection_axioms + derivation_axioms
+    return list(set(axioms))
