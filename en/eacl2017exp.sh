@@ -23,7 +23,7 @@
 # ./en/eacl2017exp.sh 10 train en/semantic_templates_en_event.yaml
 #
 
-sick=SICK.semeval.txt
+sick=en/SICK.semeval.txt
 
 # How many processes in parallel you want to run.
 # The maximum number should be inferior to the number of cores in your machine.
@@ -53,14 +53,14 @@ awk -F'\t' -v tdir=${plain_dir} \
     sub(/\.$/,"",$3);
     premise=$2;
     conclusion=$3;
-    if($4 == "CONTRADICTION"){
+    if($5 == "CONTRADICTION"){
       judgement="no";
-    } else if ($4 == "ENTAILMENT") {
+    } else if ($5 == "ENTAILMENT") {
       judgement="yes";
-    } else if ($4 == "NEUTRAL") {
+    } else if ($5 == "NEUTRAL") {
       judgement="unknown";
     }
-    set=$12;
+    set=$NF;
     printf "%s.\n%s.\n", premise, conclusion > tdir"/sick_"tolower(set)"_"pair_id".txt";
     printf "%s\n", judgement > tdir"/sick_"tolower(set)"_"pair_id".answer";
    }'
