@@ -40,7 +40,10 @@ def main(args = None):
     parser.add_argument("sem", help="XML input filename with semantics")
     parser.add_argument("--graph_out", nargs='?', type=str, default="",
         help="HTML graphical output filename.")
-    parser.add_argument("--abduction", action="store_true", default=False)
+    # parser.add_argument("--abduction", action="store_true", default=False)
+    parser.add_argument("--abduction", nargs='?', type=str, default="no",
+        choices=["no", "naive", "spsa"],
+        help="Activate on-demand axiom injection (default: no axiom injection).")
     parser.add_argument("--gold_trees", action="store_true", default=False)
     args = parser.parse_args()
 
@@ -52,8 +55,11 @@ def main(args = None):
         sys.exit(1)
     
     abduction = None
-    if args.abduction:
+    if args.abduction == "spsa":
         from abduction_spsa import AxiomsWordnet
+        abduction = AxiomsWordnet()
+    elif args.abduction == "naive":
+        from abduction_naive import AxiomsWordnet
         abduction = AxiomsWordnet()
 
     parser = etree.XMLParser(remove_blank_text=True)
