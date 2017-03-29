@@ -40,21 +40,32 @@ def main(args = None):
     parser.add_argument("sem", help="XML input filename with semantics")
     parser.add_argument("--graph_out", nargs='?', type=str, default="",
         help="HTML graphical output filename.")
-    parser.add_argument("--abduction", action="store_true", default=False)
+    # parser.add_argument("--abduction", action="store_true", default=False)
+    parser.add_argument("--abduction", nargs='?', type=str, default="no",
+        choices=["no", "naive", "spsa"],
+        help="Activate on-demand axiom injection (default: no axiom injection).")
     parser.add_argument("--gold_trees", action="store_true", default=False)
     args = parser.parse_args()
+
+    logging.basicConfig(level=logging.WARNING)
       
     if not os.path.exists(args.sem):
         print('File does not exist: {0}'.format(args.sem), file=sys.stderr)
         parser.print_help(file=sys.stderr)
         sys.exit(1)
     
-    logging.basicConfig(level=logging.WARNING)
+    abduction = None
+    if args.abduction == "spsa":
+        from abduction_spsa import AxiomsWordnet
+        abduction = AxiomsWordnet()
+    elif args.abduction == "naive":
+        from abduction_naive import AxiomsWordnet
+        abduction = AxiomsWordnet()
 
     parser = etree.XMLParser(remove_blank_text=True)
     doc = etree.parse(args.sem, parser)
 
-    inference_result, coq_scripts = prove_doc(doc, args.abduction)
+    inference_result, coq_scripts = prove_doc(doc, abduction)
     print(inference_result, file=sys.stdout)
 
     if args.graph_out:

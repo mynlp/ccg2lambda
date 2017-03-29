@@ -173,14 +173,15 @@ You should be able to see something like this:
 
 ## Reproducibility
 
-If you wish to reproduce our results reported in EMNLP 2015 or EMNLP 2016, please follow the instructions below:
+If you wish to reproduce our reported results, please follow the instructions below:
 
 * [Experiments on FraCaS at EMNLP 2015](en/fracas.md)
 * [Experiments on JSeM at EMNLP 2016](ja/jsem.md)
+* [Experiments on SICK at EACL 2017](en/sick.md)
 
 ## Interpreting (and writing your own) semantic templates.
 
-You can find our semantic templates in `semantic_templates_en.yaml`. Here are some notes:
+You can find one of our semantic templates in `en/semantic_templates_en.yaml`. Here are some notes:
 
 1. Each Yaml block is a rule. If the rule matches the attributes of a CCG node, then the semantic template specified by "semantics" is applied. It is possible to write an arbitrary set of field names and their values. For example, you could specify the "category" of the CCG node and the surface "surf" form of a word (in case the CCG node is a leaf). Only the "category" field and the "semantics" field are compulsory.
 2. If you underspecify the characteristics of a CCG node, the semantic rule will match more general CCG nodes. It is also possible to underspecify the features of syntactic categories.
@@ -213,6 +214,22 @@ If you use this software or the semantic templates for your work, please conside
   publisher = {Association for Computational Linguistics},
   pages     = {85--90},
   url       = {https://aclweb.org/anthology/P/P16/P16-4015.pdf}
+}
+```
+
+* Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. On-demand Injection of Lexical Knowledge for Recognising Textual Entailment. Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics, Valencia, Germany, April 3-7, 2017.
+
+## A mechanism to inject axioms on-demand:
+
+```
+@InProceedings{pascual-EtAl:2017:EACL,
+  author    = {Mart\'{i}nez-G\'{o}mez, Pascual and Mineshima, Koji and Miyao, Yusuke and Bekki, Daisuke},
+  title     = {On-demand Injection of Lexical Knowledge for Recognising Textual Entailment},
+  booktitle = {Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics},
+  month     = {April},
+  year      = {2017},
+  address   = {Valencia, Spain},
+  publisher = {Association for Computational Linguistics},
 }
 ```
 

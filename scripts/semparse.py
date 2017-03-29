@@ -83,8 +83,9 @@ def main(args = None):
                 sentence.xpath('./ccg[{0}]/@root'.format(tree_index))[0])
             filter_attributes(sem_tree)
             sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
-        except LogicalExpressionException:
+        except LogicalExpressionException as e:
             sem_node.set('status', 'failed')
+            logging.error('An error occurred: {0}'.format(e))
         sentence.append(sem_node)
 
     root_xml_str = serialize_tree(root)

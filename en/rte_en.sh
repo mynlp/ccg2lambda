@@ -121,6 +121,7 @@ if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
   python scripts/prove.py \
     $parsed_dir/${sentences_basename}.sem.xml \
     --graph_out ${results_dir}/${sentences_basename}.html \
+    --abduction \
     > ${results_dir}/${sentences_basename}.answer \
     2> ${results_dir}/${sentences_basename}.err
 fi

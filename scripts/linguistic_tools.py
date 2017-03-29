@@ -14,6 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import json
 from nltk.corpus import wordnet as wn
 
 # Obtain lemmas of synonyms.
@@ -23,8 +24,9 @@ def obtain_synonyms(word):
 
 # Obtain lemmas of hypernyms.
 def obtain_hypernyms(word):
+    hyper = lambda s: s.hypernyms()
     return set([lemma for synonym in wn.synsets(word) \
-                        for hypernym in synonym.hypernyms() \
+                        for hypernym in synonym.closure(hyper) \
                           for lemma in hypernym.lemma_names()])
 
 # Obtain lemmas of hyponyms.
@@ -113,13 +115,21 @@ def is_synonym(word1, word2):
 # such meaning is in the list of synonyms (synset) of word1. E.g.
 # is_hypernym('European', 'Swede') returns True.
 def is_hypernym(word1, word2):
+    hyper = lambda s: s.hypernyms()
     synsets_word1 = wn.synsets(word1)
     synsets_word2 = wn.synsets(word2)
     for synonym in synsets_word2:
-        for hypernym in synonym.hypernyms():
+        for hypernym in synonym.closure(hyper):
             if hypernym in synsets_word1:
                 return True
     return False
+
+# Adjective similarity. E.g. big <-> huge.
+def is_similar(word1, word2):
+    synsets_word1 = wn.synsets(word1)
+    synsets_word2 = wn.synsets(word2)
+    similar_word1 = set(similar for s in synsets_word1 for similar in s.similar_tos())
+    return True if len(similar_word1.intersection(synsets_word2)) > 0 else False
 
 # Check whether word1 is a hyponym of word2, by computing whether
 # word2 is a hypernym of word1. E.g.
@@ -226,6 +236,20 @@ def is_derivation(word1, word2):
     # that are derivations of word1.
     return (word2 in [l[0] for l in lemma_pos])
 
+# Load VerbOcean dictionary.
+try:
+    with open('en/verbocean.json', 'r') as fin:
+        verbocean = json.load(fin)
+except:
+    verbocean = {}
+
+# Query the verbocean dictionary and return a (possibly empty)
+# set of relations between two verbs.
+def get_verbocean_relations(verb1, verb2):
+    if verb1 in verbocean and verb2 in verbocean[verb1]:
+        return set(verbocean[verb1][verb2])
+    return set()
+
 # Find linguistic relationship between two words.
 # Remaining relationships that I would like to implement:
 # linguistic_relationship('man', 'men') would return 'plural'.
@@ -255,6 +279,8 @@ def linguistic_relationship(word1, word2):
         ling_relations.append('hyponym')
     if is_hyponym(base_word1, base_word2):
         ling_relations.append('hypernym')
+    if is_similar(base_word1, base_word2):
+        ling_relations.append('similar')
     if is_holonym(base_word1, base_word2):
         ling_relations.append('holonym')
     if is_meronym(base_word1, base_word2):
@@ -265,4 +291,40 @@ def linguistic_relationship(word1, word2):
         ling_relations.append('entailed')
     if is_derivation(word1, word2):
         ling_relations.append('derivation')
+    # Typical types of verbocean relations are "happens-before" or "stronger-than"
+    ling_relations.extend(get_verbocean_relations(base_word1, base_word2))
     return ling_relations
+
+def get_wordnet_cascade(ling_relations):
+  """
+  Receives a list of linguistic relations (strings),
+  and returns one of those linguistic relations with highest priority:
+  copy > inflection > derivation > synonym > antonym >
+  hypernym > hyponym > sister > cousin > None.
+  """
+  relation = None
+  if 'copy' in ling_relations:
+    relation = 'copy'
+  elif 'inflection' in ling_relations:
+    relation = 'inflection'
+  elif 'derivation' in ling_relations:
+    relation = 'derivation'
+  elif 'synonym' in ling_relations:
+    relation = 'synonym'
+  elif 'antonym' in ling_relations:
+    relation = 'antonym'
+  elif 'hypernym' in ling_relations:
+    relation = 'hypernym'
+  elif 'similar' in ling_relations:
+    relation = 'similar'
+  elif 'hyponym' in ling_relations:
+    relation = 'hyponym'
+  elif any(lr.startswith('sister') for lr in ling_relations):
+    sister_rels = [lr for lr in ling_relations if lr.startswith('sister')]
+    assert sister_rels
+    relation = sister_rels[0]
+  elif any(lr.startswith('cousin') for lr in ling_relations):
+    cousin_rels = [lr for lr in ling_relations if lr.startswith('cousin')]
+    assert cousin_rels
+    relation = cousin_rels[0]
+  return relation

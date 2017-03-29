@@ -138,6 +138,8 @@ def candc_to_transccg(ccg_tree, sentence_number):
     spans = flatten_and_rename_nodes(ccg_root)
     for child_span in spans:
         ccg_tree.append(child_span)
+        if child_span.get('id').endswith('sp0'):
+            child_span.set('root', 'true')
     sentence_node = etree.Element('sentence')
     sentence_node.append(tokens_node)
     sentence_node.append(ccg_tree)
