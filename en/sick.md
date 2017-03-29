@@ -52,4 +52,12 @@ gold |      no| 3| 500| 177| 40| 720
 ----------------------------------------------------------------
 ```
 
+If you want to see the results (syntactic/semantic parses, entailment judgements and HTML
+visualizations) but do not wish to run the software, you can uncompress the file
+`en/sick_intermediate_results.tgz` by doing:
 
+```bash
+tar xvzf en/sick_intermediate_results.tgz
+```
+
+which will create the `plain/`, `parsed/` and `results/` directories.
