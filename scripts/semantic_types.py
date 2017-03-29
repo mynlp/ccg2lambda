@@ -155,7 +155,7 @@ def get_dynamic_library_from_doc(doc, formulas):
     for semantics_node in semantics_nodes:
       types = set(semantics_node.xpath('./span/@type'))
       types_sets.append(types)
-    # types = set(doc.xpath('//semantics//@type'))
+    # from pudb import set_trace; set_trace()
     coq_libs = [['Parameter {0}.'.format(t) for t in types] for types in types_sets]
     nltk_sigs_arbi = [convert_coq_signatures_to_nltk(coq_lib) for coq_lib in coq_libs]
     formulas = parse_exprs_if_str(formulas)
@@ -164,7 +164,6 @@ def get_dynamic_library_from_doc(doc, formulas):
     # coq_static_lib_path is useful to get reserved predicates.
     # ccg_xml_trees is useful to get full list of tokens
     # for which we need to specify types.
-    # from pudb import set_trace; set_trace()
     dynamic_library = merge_dynamic_libraries(
         nltk_sig_arbi,
         nltk_sig_auto,
@@ -200,7 +199,7 @@ def parse_exprs_if_str(exprs):
             exprs_logic.append(expr)
     return exprs_logic
 
-def build_dynamic_library(exprs, coq_types = {}):
+def build_dynamic_library(exprs, preferred_signature=None):
     """
     Create a dynamic library with types of objects that appear in coq formulae.
     Optionally, it may receive partially specified signatures for objects
@@ -209,12 +208,13 @@ def build_dynamic_library(exprs, coq_types = {}):
     # If expressions are strings, convert them into logic formulae.
     exprs_logic = parse_exprs_if_str(exprs)
     signatures = [resolve_types(e) for e in exprs_logic]
-    signature, exprs = combine_signatures_or_rename_preds(signatures, exprs_logic)
+    signature, exprs = combine_signatures_or_rename_preds(
+        signatures, exprs_logic, preferred_signature)
     signature = remove_reserved_predicates(signature)
     return signature, exprs
     # return list(set(dynamic_library)), exprs
 
-def combine_signatures_or_rename_preds(signatures, exprs):
+def combine_signatures_or_rename_preds(signatures, exprs, preferred_sig=None):
     """
     `signatures` is a list of dictionaries. Each dictionary has key-value
       pairs where key is a predicate name, and value is a type object.
@@ -231,6 +231,8 @@ def combine_signatures_or_rename_preds(signatures, exprs):
     for i, (signature, expr) in enumerate(zip(signatures, exprs)):
         expr_new = expr
         for pred, typ in signature.items():
+            if preferred_sig is not None and pred in preferred_sig:
+                continue
             if pred not in signatures_merged:
                 signatures_merged[pred] = typ
             else:
