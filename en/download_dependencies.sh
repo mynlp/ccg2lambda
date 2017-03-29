@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd en/
+
 # Download SICK dataset (SemEval version)
 wget http://alt.qcri.org/semeval2014/task1/data/uploads/sick_test_annotated.zip
 wget http://alt.qcri.org/semeval2014/task1/data/uploads/sick_train.zip
@@ -16,3 +18,5 @@ done | sort -g -k1,1 >> SICK.semeval.txt
 # Download VerbOcean
 wget http://www.patrickpantel.com/download/data/verbocean/verbocean.unrefined.2004-05-20.txt.gz -P en/
 python en/verbocean_to_json.py en/verbocean.unrefined.2004-05-20.txt.gz en/verbocean.json
+
+cd ..
