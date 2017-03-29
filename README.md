@@ -177,6 +177,7 @@ If you wish to reproduce our results reported in EMNLP 2015 or EMNLP 2016, pleas
 
 * [Experiments on FraCaS at EMNLP 2015](en/fracas.md)
 * [Experiments on JSeM at EMNLP 2016](ja/jsem.md)
+* [Experiments on SICK at EACL 2017](en/sick.md)
 
 ## Interpreting (and writing your own) semantic templates.
 
