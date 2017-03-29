@@ -19,11 +19,12 @@ the test split of SICK by doing:
 ./en/eacl2017exp.sh 10 test en/semantic_templates_en_event.yaml
 ```
 
-This script will coordinate the tokenization, syntactic parsing (with C&C and EasyCCG), semantic parsing
-and theorem proving (with Coq). Syntactic and semantic parsing results will be written in `parsed`
-directory. Entailment judgements and an HTML graphical representation of semantic composition (and
-constructed theorem) will be written in `results` directory. You can see a summary of performance
-by doing:
+This script will coordinate the tokenization, syntactic parsing (with C&C and
+EasyCCG), semantic parsing and theorem proving (with Coq) using 10 processes.
+Syntactic and semantic parsing results will be written in `parsed` directory.
+Entailment judgements and an HTML graphical representation of semantic
+composition (and constructed theorem) will be written in `results` directory.
+You can see a summary of performance by doing:
 
 ```bash
 cat results/score.txt
