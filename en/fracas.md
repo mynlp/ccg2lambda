@@ -5,7 +5,7 @@ First, ensure that you have downloaded C&C parser and wrote its location in the 
 Second, you need to download the copy of [FraCaS provided by MacCartney and Manning (2007)](http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml):
 
 ```bash
-$ wget http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml
+$ wget --no-check-certificate http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml
 ```
 
 You can evaluate the end-to-end system performance of a certain list of semantic templates on
