@@ -88,14 +88,14 @@ in the text file using C&C and convert its XML format into Jigg's XML format:
 ```bash
 cat sentences.txt | perl tokenizer.perl -l en 2>/dev/null > sentences.tok
 /path/to/candc-1.00/bin/candc --models /path/to/candc-1.00/models --candc-printer xml --input sentences.tok > sentences.candc.xml
-python candc2transccg.py sentences.candc.xml > sentences.xml
+python en/candc2transccg.py sentences.candc.xml > sentences.xml
 ```
 
 Then, we are ready to obtain the semantic representations by using semantic
 templates and the CCG derivations obtained above:
 
 ```bash
-python semparse.py sentences.xml semantic_templates_en_emnlp2015.yaml sentences.sem.xml
+python scripts/semparse.py sentences.xml en/semantic_templates_en_emnlp2015.yaml sentences.sem.xml
 ```
 
 The semantic representations are in the `sentences.sem.xml` file,
@@ -136,7 +136,7 @@ pipe it to a theorem prover (Coq) and judge the entailment
 relation, you can run the following command:
 
 ```bash
-python prove.py sentences.sem.xml --graph_out graphdebug.html
+python scripts/prove.py sentences.sem.xml --graph_out graphdebug.html
 ```
 
 That command will output `yes` (entailment relation - the conclusion
@@ -163,7 +163,7 @@ For example, to visualize the CCG trees only (without
 semantic representations):
 
 ```bash
-python visualize.py sentences.xml > sentences.html
+python scripts/visualize.py sentences.xml > sentences.html
 ```
 
 and then open the file `sentences.html` with your favourite web browser.
