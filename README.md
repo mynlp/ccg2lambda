@@ -86,7 +86,7 @@ First we need to obtain the CCG derivations (parse trees) of the sentences
 in the text file using C&C and convert its XML format into Jigg's XML format:
 
 ```bash
-cat sentences.txt | perl tokenizer.perl -l en 2>/dev/null > sentences.tok
+cat sentences.txt | sed -f en/tokenizer.sed > sentences.tok
 /path/to/candc-1.00/bin/candc --models /path/to/candc-1.00/models --candc-printer xml --input sentences.tok > sentences.candc.xml
 python en/candc2transccg.py sentences.candc.xml > sentences.xml
 ```
