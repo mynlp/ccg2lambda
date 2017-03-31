@@ -390,7 +390,7 @@
 
 - category: (S[dcl=true]\NP)/(S[to=true]\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.V(\F1 F2.E(x,F2(x))))
-  base: manage
+  base: manage1
 
 - category: (S[dcl=true]\NP)/(S[to=true]\NP)
   semantics: \E V Q. Q(\w.TrueP, \x.V(\F1 F2.E(x,F2(x))))
@@ -422,7 +422,7 @@
 
 - category: (S\NP)/S[em=true]
   semantics: \E S Q. Q(\w.TrueP, \x.E(x,S))
-  base: manage
+  base: manage1
 
 - category: (S\NP)/S[em=true]
   semantics: \E S Q. Q(\w.TrueP, \x.E(x,S))
@@ -496,7 +496,7 @@
 
 - category: N/N
   semantics: \E F x. E(F(x))
-  surf: former
+  surf: former1
 
 - category: (S[adj=true]\NP)/S[em=true]
   semantics: \E S Q. Q(\w.TrueP, \x.E(x,S))
