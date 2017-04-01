@@ -53,11 +53,11 @@ awk -F'\t' -v tdir=${plain_dir} \
     sub(/\.$/,"",$3);
     premise=$2;
     conclusion=$3;
-    if($5 == "CONTRADICTION"){
+    if($4 == "CONTRADICTION"){
       judgement="no";
-    } else if ($5 == "ENTAILMENT") {
+    } else if ($4 == "ENTAILMENT") {
       judgement="yes";
-    } else if ($5 == "NEUTRAL") {
+    } else if ($4 == "NEUTRAL") {
       judgement="unknown";
     }
     set=$NF;
@@ -177,7 +177,7 @@ for gold_filename in `ls -v ${plain_dir}/sick_${dataset}_*.answer`; do
   fi
   echo '
 <tr>
-  <td><a style="background-color:'$color';" href="'${base_filename/.answer/.html}'">'${base_filename/.answer/}'</a></td>
+  <td><a style="background-color:'$color';" href="'${base_filename/.answer/.txt.html}'">'${base_filename/.answer/}'</a></td>
   <td>'$gold_answer'</td>
   <td>'$system_answer'</td>
   <td>'$proving_time's</td>
