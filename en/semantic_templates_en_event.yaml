@@ -42,20 +42,6 @@
 # PP         \e.E(e) : Event -> Prop
 
 
-########## Sentence final operation ############
-
-- category: S[dcl=true]
-  rule: ba
-  semantics: \L R. R(L,\e.TrueP)
-  child_any_category: NP
-  root: "true"
-
-- category: S[dcl=true]
-  rule: fa
-  semantics: \L R. L(R,\e.TrueP)
-  child_any_category: NP
-  root: "true"
-
 ############### Unary lexical rule #################
 
 ## existential type-raising from N to NP
@@ -384,6 +370,44 @@
 - category: S/S
   rule: rtc
   semantics: \L R S. S
+
+
+########## Sentence final operation ############
+
+- category: S
+  rule: rp
+  semantics: \L R. L(\e.TrueP)
+  root: "true"
+
+- category: S
+  rule: lp
+  semantics: \L R. R(\e.TrueP)
+  root: "true"
+
+- category: S
+  rule: ba
+  semantics: \L R. R(L,\e.TrueP)
+  root: "true"
+
+- category: S
+  rule: fa
+  semantics: \L R. L(R,\e.TrueP)
+  root: "true"
+
+- category: NP
+  rule: rp
+  semantics: \L R. L(\x.TrueP,\x.TrueP)
+  root: "true"
+
+- category: NP
+  rule: fa
+  semantics: \L R. L(R,\x.TrueP,\x.TrueP)
+  root: "true"
+
+- category: NP
+  rule: ba
+  semantics: \L R. R(L,\x.TrueP,\x.TrueP)
+  root: "true"
 
 
 ############### Semantic Templates  #################
