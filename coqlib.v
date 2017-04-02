@@ -26,32 +26,6 @@ Parameter Deg : Event -> Entity.
 (* for underspecified terms *)
 Parameter ArgOf : Entity -> Entity -> Prop.
 
-(*
-Parameter Acc : Event -> Entity -> Prop.
-Parameter AccI : Event -> Prop -> Prop.
-Parameter Dat : Event -> Entity -> Prop.
-Parameter Attr : Event -> Entity -> Prop.
-*)
-
-(* prepossition *)
-(*
-Parameter inNP : Entity -> Entity -> Prop.
-Parameter atNP : Entity -> Entity -> Prop.
-Parameter onNP : Entity -> Entity -> Prop.
-Parameter fromNP : Entity -> Entity -> Prop.
-Parameter forNP : Entity -> Entity -> Prop.
-Parameter overNP : Entity -> Entity -> Prop.
-Parameter intoNP : Entity -> Entity -> Prop.
-Parameter ontoNP : Entity -> Entity -> Prop.
-Parameter aboveNP : Entity -> Entity -> Prop.
-Parameter belowNP : Entity -> Entity -> Prop.
-Parameter acrossNP : Entity -> Entity -> Prop.
-Parameter byNP : Entity -> Entity -> Prop.
-Parameter behindNP : Entity -> Entity -> Prop.
-Parameter insideNP : Entity -> Entity -> Prop.
-Parameter outsideNP : Entity -> Entity -> Prop.
-*)
-
 Parameter _in_front_of : Event -> Entity -> Prop.
 
 (* Generalized quantifiers *)
@@ -200,25 +174,6 @@ Ltac substitution :=
       => try resolve_unique_role; try rewrite H1 in *; subst
   end.
 
-(*
-Ltac eqlem_sub :=
-  match goal with
-    | [ H1: ?A ?t, H2: forall x, _ -> @?C x |- _ ]
-     => match type of H2 with context[ A ]
-         => assert(C t); try (apply H2); clear H2
-    end
-  end.
-*)
-
-(*
-Ltac eqlem_last :=
-  match goal with
-    | [ H1: _ -> ?B |- _ ]
-         => assert(B); try (apply H1); clear H1
-  end.
-(* bak 1-2-21 *)
-*)
-
 Ltac exchange :=
   match goal with
     | [H1 : forall x, _, H2 : forall x, _ |- _]
@@ -244,14 +199,6 @@ Ltac solve_false :=
   end.
 
 (* Main tactics *)
-
-(*
-Ltac eintro :=
-  match goal with
-   [ H : ?A ?t |- exists x, @?B x /\ _ ]
-    => exists t
-  end.
-*)
 
 Ltac nltac_init :=
   try(intuition;
@@ -282,13 +229,7 @@ Ltac nltac_set :=
           try repeat substitution;
           try exchange_equality;
           try repeat substitution;  
-          (* try apply_ent; *)
           try eqlem_sub).
-
-(*
-Ltac nltac_set :=
-  repeat (nltac_init; try apply_ent; try eqlem_sub).
-*)
 
 Ltac nltac_set_exch :=
   repeat (nltac_init;
@@ -300,14 +241,8 @@ Ltac nltac_set_exch :=
 Ltac nltac_final :=
   try solve [repeat nltac_base | clear_pred; repeat nltac_base].
 
-(* at least one event exists *)
 Axiom urevent : Event.
 Ltac ap_event := try apply urevent.
-
-Ltac nltac_final' :=
-  try solve
-    [repeat nltac_base; ap_event |
-     clear_pred; repeat nltac_base; ap_event].
 
 Ltac solve_gq :=
   match goal with
@@ -328,23 +263,4 @@ Ltac solve_gq :=
 Ltac nltac :=
   try solve
     [nltac_set; nltac_final].
-
-(*
-Ltac nltac :=
-  try solve
-    [nltac_set; nltac_final |
-     nltac_set_exch; nltac_final |
-     nltac_init; solve_gq |
-     nltac_set; try nltac_axiom; solve [nltac_final | nltac_set; nltac_final]].
-*)
-
-(* For BAK:
-Ltac nltac :=
-  try solve
-    [nltac_set; nltac_final |
-     nltac_set1; nltac_final |
-     nltac_init; solve_gq |
-     nltac_init; try nltac_axiom; repeat nltac_base
-    ].
-*)
 
