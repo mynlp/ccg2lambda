@@ -41,6 +41,7 @@ Parameter WH : Prop -> Prop.
 (* Auxiliary operators *)
 Parameter ArgOf : Entity -> Entity -> Prop.
 Parameter Rel : Entity -> Entity -> Prop.
+Parameter Mod : Entity -> Event -> Prop.
 Parameter this : (Entity -> Prop) -> Entity.
 Parameter that : (Entity -> Prop) -> Entity.
 Parameter _in_front_of : Event -> Entity -> Prop.
