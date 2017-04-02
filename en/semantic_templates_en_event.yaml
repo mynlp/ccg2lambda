@@ -285,6 +285,7 @@
 - category: S
   rule: rp
   semantics: \L R. L
+  child0_surf: ","
 
 - category: NP
   rule: rp
