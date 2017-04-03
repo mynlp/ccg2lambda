@@ -653,7 +653,7 @@ Ltac solve_gq2 :=
 
 
 (* JSeM *)
-Ltac nltac :=
+Ltac nltac_jsem :=
   try solve
     [nltac_prove |
      nltac_init; (solve_gq1 || solve_gq2) |
@@ -674,14 +674,13 @@ Ltac nltac_fracas :=
      nltac_init; solve_gq
     ].
 
-(*
 Ltac nltac :=
   try solve
     [nltac_set; nltac_final |
      nltac_set_exch; nltac_final |
      nltac_init; solve_gq |
-     nltac_set; try nltac_axiom; solve [nltac_final | nltac_set; nltac_final]].
-*)
+     nltac_set; try nltac_axiom; solve [nltac_final | nltac_set; nltac_final]
+    ].
 
 (* For BAK:
 Ltac nltac :=
