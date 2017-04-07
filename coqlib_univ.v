@@ -681,14 +681,3 @@ Ltac nltac :=
      nltac_init; solve_gq |
      nltac_set; try nltac_axiom; solve [nltac_final | nltac_set; nltac_final]
     ].
-
-(* For BAK:
-Ltac nltac :=
-  try solve
-    [nltac_set; nltac_final |
-     nltac_set1; nltac_final |
-     nltac_init; solve_gq |
-     nltac_init; try nltac_axiom; repeat nltac_base
-    ].
-*)
-

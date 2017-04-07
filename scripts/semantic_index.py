@@ -170,7 +170,9 @@ def build_default_template(rule_pattern, ccg_tree):
     if not variable_names:
         template_string = r'\P.P'
     else:
-        template_string =  r'\P ' + ' '.join(variable_names) \
-                          + '.P(' + ', '.join(reversed(variable_names)) + ')'
+        template_string = r'\E O.O'
+        print(category.types)
+        # template_string =  r'\P ' + ' '.join(variable_names) \
+        #                   + '.P(' + ', '.join(reversed(variable_names)) + ')'
     template = lexpr(template_string)
     return template
