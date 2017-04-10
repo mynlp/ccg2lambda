@@ -73,11 +73,3 @@ printf "     | unknown| %7d | %7d | %7d | %7d | %7d \n" $unk_yes $unk_no $unk_un
 printf "     |   total| %7d | %7d | %7d | %7d | %7d \n" $yes_system_total $no_system_total $unk_system_total $noanswer $total_number
 printf "\b----------------------------------------------------------------\n"
 
-# rm base_results.txt
-
-
-
-
-
-
-
