@@ -217,19 +217,21 @@ If you use this software or the semantic templates for your work, please conside
 }
 ```
 
-* Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. On-demand Injection of Lexical Knowledge for Recognising Textual Entailment. Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics, Valencia, Germany, April 3-7, 2017.
+* Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. On-demand Injection of Lexical Knowledge for Recognising Textual Entailment. Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics, pages 710-720, Valencia, Spain, 3-7 April, 2017. [pdf](http://www.aclweb.org/anthology/E17-1067)
 
 ## A mechanism to inject axioms on-demand:
 
 ```
-@InProceedings{pascual-EtAl:2017:EACL,
-  author    = {Mart\'{i}nez-G\'{o}mez, Pascual and Mineshima, Koji and Miyao, Yusuke and Bekki, Daisuke},
+@InProceedings{martinezgomez-EtAl:2017:EACLlong,
+  author    = {Mart\'{i}nez-G\'{o}mez, Pascual  and  Mineshima, Koji  and  Miyao, Yusuke  and  Bekki, Daisuke},
   title     = {On-demand Injection of Lexical Knowledge for Recognising Textual Entailment},
-  booktitle = {Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics},
+  booktitle = {Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics: Volume 1, Long Papers},
   month     = {April},
   year      = {2017},
   address   = {Valencia, Spain},
   publisher = {Association for Computational Linguistics},
+  pages     = {710--720},
+  url       = {http://www.aclweb.org/anthology/E17-1067}
 }
 ```
 
