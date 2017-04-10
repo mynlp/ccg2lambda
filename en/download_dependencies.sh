@@ -15,8 +15,9 @@ for dsplit in {train,trial,test}; do
   tail -n +2 SICK_${dsplit}.txt | awk -v dsplit=${dsplit} '{print $0"\t"toupper(dsplit);}'
 done | sort -g -k1,1 >> SICK.semeval.txt
 
+cd ..
+
 # Download VerbOcean
 wget http://www.patrickpantel.com/download/data/verbocean/verbocean.unrefined.2004-05-20.txt.gz -P en/
 python en/verbocean_to_json.py en/verbocean.unrefined.2004-05-20.txt.gz en/verbocean.json
 
-cd ..
