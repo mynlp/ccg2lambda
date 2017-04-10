@@ -33,22 +33,22 @@ cat results/score.txt
 and you should see something similar to this:
 
 ```
-Correct parsing: .9776 (4817/4927)
-Accuracy: .8313 (4096/4927)
-Recall: .6269
-Precision: .9681
-F1 score: .7610
+Correct parsing: 0.9748 (4803/4927)
+Accuracy: 0.8313 (4096/4927)
+Recall: 0.6265
+Precision: 0.9688
+F1 score: 0.7608
 Gold_correct_total: 2134
-System_answer_total: 1382
-System_correct_total: 1338
+System_answer_total: 1380
+System_correct_total: 1337
 ----------------------------------------------------------------
                             system                              
-     |        |      yes|       no|  unknown|    error|    total
+     |        |     yes |      no | unknown |   error |   total 
 ----------------------------------------------------------------
-     |     yes| 838| 6| 567| 3| 1414
-gold |      no| 3| 500| 177| 40| 720
-     | unknown| 22| 13| 2691| 67| 2793
-     |   total| 863| 519| 3435| 110| 4927
+     |     yes|     838 |       6 |     565 |       5 |    1414 
+gold |      no|       3 |     499 |     176 |      42 |     720 
+     | unknown|      22 |      12 |    2682 |      77 |    2793 
+     |   total|     863 |     517 |    3423 |     124 |    4927 
 ----------------------------------------------------------------
 ```
 
