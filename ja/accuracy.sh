@@ -55,23 +55,23 @@ recall=`echo "scale=4; $system_correct_answer / $gold_yes_no" | bc -l`
 precision=`echo "scale=4; $system_correct_answer / $system_yes_no" | bc -l`
 fone=`echo "scale=4; 2 * (($precision * $recall) / ($precision + $recall))" | bc -l`
 
-echo -e "Correct parsing: "${noerror}" ("$correct_parsing"/"$total_number")\n"\
-"Accuracy: "${accuracy}" ("$correct_answer"/"$total_number")\n"\
-"Recall: ${recall}\n"\
-"Precision: ${precision}\n"\
-"F1 score: ${fone}\n"\
-"Gold_correct_total: ${gold_yes_no}\n"\
-"System_answer_total: ${system_yes_no}\n"\
-"System_correct_total: ${system_correct_answer}\n"\
-"----------------------------------------------------------------\n"\
-"                            system                              \n"\
-"     |        |      yes|       no|  unknown|    error|    total\n"\
-"----------------------------------------------------------------\n"\
-"     |     yes| $yes_yes| $yes_no| $yes_unk| $yes_error| $yes_gold_total\n"\
-"gold |      no| $no_yes| $no_no| $no_unk| $no_error| $no_gold_total\n"\
-"     | unknown| $unk_yes| $unk_no| $unk_unk| $unk_error| $unk_gold_total\n"\
-"     |   total| $yes_system_total| $no_system_total| $unk_system_total| $noanswer| $total_number\n"\
-"----------------------------------------------------------------"
+printf "Correct parsing: %.4f (%d/%d)\n" ${noerror} $correct_parsing $total_number
+printf "Accuracy: %.4f (%d/%d)\n" ${accuracy} $correct_answer $total_number
+printf "Recall: %.4f\n" ${recall}
+printf "Precision: %.4f\n" ${precision}
+printf "F1 score: %.4f\n" ${fone}
+printf "Gold_correct_total: %d\n" ${gold_yes_no}
+printf "System_answer_total: %d\n" ${system_yes_no}
+printf "System_correct_total: %d\n" ${system_correct_answer}
+printf "\b----------------------------------------------------------------\n"
+printf "                            system                              \n"
+printf "     |        |     yes |      no | unknown |   error |   total \n"
+printf "\b----------------------------------------------------------------\n"
+printf "     |     yes| %7d | %7d | %7d | %7d | %7d \n" $yes_yes $yes_no $yes_unk $yes_error $yes_gold_total
+printf "gold |      no| %7d | %7d | %7d | %7d | %7d \n" $no_yes $no_no $no_unk $no_error $no_gold_total
+printf "     | unknown| %7d | %7d | %7d | %7d | %7d \n" $unk_yes $unk_no $unk_unk $unk_error $unk_gold_total
+printf "     |   total| %7d | %7d | %7d | %7d | %7d \n" $yes_system_total $no_system_total $unk_system_total $noanswer $total_number
+printf "\b----------------------------------------------------------------\n"
 
 # rm base_results.txt
 
