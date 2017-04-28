@@ -46,10 +46,10 @@ Our system assigns semantics to CCG structures. At the moment, we support C&C fo
 
 ### Installing [C&C parser](http://www.cl.cam.ac.uk/~sc609/candc-1.00.html) (for English)
 
-In order to install the C&C parser, you may need to register, download the parser and the models, and follow their instructions to set it up. For ccg2lambda to find the C&C parser, please create a file `candc_location.txt` with the path to the C&C parser:
+In order to install the C&C parser, you may need to register, download the parser and the models, and follow their instructions to set it up. For ccg2lambda to find the C&C parser, please create a file `en/candc_location.txt` with the path to the C&C parser:
 
 ```bash
-echo "/path/to/candc-1.00/" > candc_location.txt
+echo "/path/to/candc-1.00/" > en/candc_location.txt
 ```
 
 ### Installing [Jigg parser](https://github.com/mynlp/jigg) (for Japanese)
@@ -60,7 +60,7 @@ Simply do:
 ./ja/download_dependencies.sh
 ```
 
-The command above will download Jigg, its models, and create the file `jigg_location.txt` where the path to Jigg is specified. That is all.
+The command above will download Jigg, its models, and create the file `ja/jigg_location.txt` where the path to Jigg is specified. That is all.
 
 ## Using the Semantic Parser
 
