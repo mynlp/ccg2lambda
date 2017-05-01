@@ -27,13 +27,13 @@
 # ./rte_en.sh en/sample_en.txt en/semantic_templates_en.yaml
 #
 # It should return 'yes'.
-# You need to have a file in the current directory named candc_location.txt
+# You need to have a file in the en/ directory named candc_location.txt
 # where you have the absolute directory path to C&C parser.
 # Inside the directory pointed by candc_location.txt, there should be
 # a directory called "bin" that contains the binaries of C&C parser
 # and another directory called "models" that contains the models.
 # For example:
-# $ cat candc_location.txt
+# $ cat en/candc_location.txt
 #   /home/pasmargo/software/candc/candc-1.00
 
 USAGE="Usage: ./rte_en.sh <sentences.txt> <semantic_templates.yaml>"
@@ -76,7 +76,7 @@ cat $sentences_fname | \
   > ${plain_dir}/${sentences_basename}.tok
 
 # Here we check whether the variable is pointing to the right C&C parser directory.
-parser_dir=`cat candc_location.txt`
+parser_dir=`cat en/candc_location.txt`
 if [ ! -d "${parser_dir}" ]; then
   echo "Parser directory does not exist. Exit."
   exit 1
