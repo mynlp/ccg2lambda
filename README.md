@@ -11,6 +11,7 @@ and install the packages in the virtual environment with `pip`:
 
 ```bash
 git clone https://github.com/mynlp/ccg2lambda.git
+cd ccg2lambda
 virtualenv --no-site-packages --distribute -p /usr/bin/python3 py3
 source py3/bin/activate
 pip install lxml simplejson pyyaml -I nltk==3.0.5
@@ -25,7 +26,6 @@ python -c "import nltk; nltk.download('wordnet')"
 To ensure that all software is working as expected, you can run the tests:
 
 ```bash
-cd ccg2lambda/
 python scripts/run_tests.py
 ```
 (all tests should pass, except a few expected failures).
@@ -217,9 +217,9 @@ If you use this software or the semantic templates for your work, please conside
 }
 ```
 
-* Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. On-demand Injection of Lexical Knowledge for Recognising Textual Entailment. Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics, pages 710-720, Valencia, Spain, 3-7 April, 2017. [pdf](http://www.aclweb.org/anthology/E17-1067)
-
 ## A mechanism to inject axioms on-demand:
+
+* Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. On-demand Injection of Lexical Knowledge for Recognising Textual Entailment. Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics, pages 710-720, Valencia, Spain, 3-7 April, 2017. [pdf](http://www.aclweb.org/anthology/E17-1067)
 
 ```
 @InProceedings{martinezgomez-EtAl:2017:EACLlong,
