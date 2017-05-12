@@ -212,7 +212,6 @@ def build_dynamic_library(exprs, preferred_signature=None):
         signatures, exprs_logic, preferred_signature)
     signature = remove_reserved_predicates(signature)
     return signature, exprs
-    # return list(set(dynamic_library)), exprs
 
 def combine_signatures_or_rename_preds(signatures, exprs, preferred_sig=None):
     """
@@ -239,7 +238,7 @@ def combine_signatures_or_rename_preds(signatures, exprs, preferred_sig=None):
                 if typ != signatures_merged[pred]:
                     pred_new = pred + '_' + str(i)
                     signatures_merged[pred_new] = typ
-                    expr_new = expr.replace(Variable(pred), lexpr(pred_new))
+                    expr_new = expr_new.replace(Variable(pred), lexpr(pred_new))
         exprs_new.append(expr_new)
     return signatures_merged, exprs_new
 
