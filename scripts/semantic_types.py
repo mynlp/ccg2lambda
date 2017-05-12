@@ -18,6 +18,7 @@ import codecs
 import logging
 import re
 
+from nltk import Tree
 from nltk.compat import string_types
 from nltk.sem.logic import ENTITY_TYPE
 from nltk.sem.logic import TRUTH_TYPE
@@ -27,11 +28,13 @@ from nltk.sem.logic import AbstractVariableExpression
 from nltk.sem.logic import ComplexType
 from nltk.sem.logic import ConstantExpression
 from nltk.sem.logic import InconsistentTypeHierarchyException
+from nltk.sem.logic import LogicalExpressionException
 from nltk.sem.logic import Variable
 
 from knowledge import get_tokens_from_xml_node
 from logic_parser import lexpr
 from normalization import normalize_token
+from tree_tools import tree_or_string
 
 def linearize_type(pred_type):
     linearized_type = []
@@ -256,6 +259,50 @@ def convert_coq_to_nltk_type(coq_type):
     assert parameter == 'Parameter' and colon == ':'
     # This list contains something like ['Entity', '->', 'Prop', '->', 'Prop'...]
     type_sig = coq_type_list[3:]
+    nltk_type_str = ' '.join(type_sig).rstrip('.').replace(
+        '->', ' ').replace(
+        'Entity', 'e').replace(
+        'Prop', 't').replace(
+        'Event', 'v')
+    if not nltk_type_str.startswith('(') or not nltk_type_str.endswith('('):
+        nltk_type_str = '(' + nltk_type_str + ')'
+    # Add pre-terminals (necessary for NLTK, if we convert to CNF).
+    nltk_type_str = re.sub(r'([evt])', r'(N \1)', nltk_type_str)
+    nltk_type_tree = tree_or_string(nltk_type_str)
+    nltk_type_tree.chomsky_normal_form(factor='right')
+    nltk_type_str = remove_labels_and_unaries(nltk_type_tree).replace(
+        '( ', '(').replace(
+        '(', '<').replace(
+        ')', '>').replace(
+        ' ', ',')
+    if len(type_sig) == 1:
+        nltk_type_str = nltk_type_str.strip('<>')
+    return {surface : read_type(nltk_type_str)}
+
+def remove_labels_and_unaries(tree):
+    assert isinstance(tree, Tree)
+    leaf_treepos = tree.treepositions(order='leaves')
+    for p in tree.treepositions():
+        if p not in leaf_treepos and p != ():
+            tree[p].set_label('')
+            if len(tree[p]) == 1:
+                tree[p] = tree[p][0]
+    return str(tree)
+
+def convert_coq_to_nltk_type_(coq_type):
+    """
+    Given a coq_type specification such as:
+      Parameter _love : Entity -> Entity -> Prop.
+    return the equivalent NLTK type specification:
+      {'_love' : read_type('<e, <e, t>>')}
+    """
+    assert isinstance(coq_type, str)
+    coq_type_list = coq_type.split()
+    assert len(coq_type_list) >= 4, 'Wrong coq_type format: %s' % coq_type
+    parameter, surface, colon = coq_type_list[:3]
+    assert parameter == 'Parameter' and colon == ':'
+    # This list contains something like ['Entity', '->', 'Prop', '->', 'Prop'...]
+    type_sig = coq_type_list[3:]
     type_ids = []
     for i, type_item in enumerate(type_sig):
         assert (i % 2 == 1) == (type_item == '->')
@@ -303,7 +350,8 @@ def read_type(type_string):
     elif type_string[0] == "%s" % ANY_TYPE:
         return ANY_TYPE
     else:
-        raise LogicalExpressionException("Unexpected character: '%s'." % type_string[0])
+        message="Unexpected character: '%s'." % type_string[0]
+        raise ValueError(message)
 
 def convert_coq_signatures_to_nltk(coq_sig):
     """

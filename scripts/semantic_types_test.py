@@ -338,41 +338,54 @@ class Coq2NLTKTypesTestCase(unittest.TestCase):
         expected_nltk_type = {'base' : read_type('t')}
         self.assertEqual(expected_nltk_type, nltk_type)
 
+    def test_event(self):
+        coq_type = 'Parameter base : Event.'
+        nltk_type = convert_coq_to_nltk_type(coq_type)
+        expected_nltk_type = {'base' : read_type('v')}
+        self.assertEqual(expected_nltk_type, nltk_type)
+
     def test_wrong_type(self):
         coq_type = 'Parameter base : YYY.'
         self.assertRaises(ValueError, convert_coq_to_nltk_type, coq_type)
 
-    def test_entityproperty(self):
+    def test_entity_property(self):
         coq_type = 'Parameter base : Entity -> Prop.'
         nltk_type = convert_coq_to_nltk_type(coq_type)
         expected_nltk_type = {'base' : read_type('<e,t>')}
         self.assertEqual(expected_nltk_type, nltk_type)
 
-    def test_entityentityproperty(self):
+    def test_entity_entity_property(self):
         coq_type = 'Parameter base : Entity -> Entity -> Prop.'
         nltk_type = convert_coq_to_nltk_type(coq_type)
         expected_nltk_type = {'base' : read_type('<e,<e,t>>')}
         self.assertEqual(expected_nltk_type, nltk_type)
 
-    def test_entitypropertyproperty(self):
+    def test_entity_property_property(self):
         coq_type = 'Parameter base : Entity -> Prop -> Prop.'
         nltk_type = convert_coq_to_nltk_type(coq_type)
         expected_nltk_type = {'base' : read_type('<e,<t,t>>')}
         self.assertEqual(expected_nltk_type, nltk_type)
 
-    @unittest.expectedFailure
-    def test_entitypropertyAndproperty(self):
+    def test_entity_property_and_property(self):
         coq_type = 'Parameter base : (Entity -> Prop) -> Prop.'
+        # from pudb import set_trace; set_trace()
         nltk_type = convert_coq_to_nltk_type(coq_type)
         expected_nltk_type = {'base' : read_type('<<e,t>,t>>')}
         self.assertEqual(expected_nltk_type, nltk_type)
 
-    @unittest.expectedFailure
-    def test_entitypropertyAndpropertyentity(self):
-        coq_type = 'Parameter base : (Entity -> Prop) -> Prop.'
+    def test_entity_property_and_property_entity(self):
+        coq_type = 'Parameter base : (Entity -> Prop) -> (Prop -> Entity).'
         nltk_type = convert_coq_to_nltk_type(coq_type)
         expected_nltk_type = {'base' : read_type('<<e,t>,<t,e>>')}
         self.assertEqual(expected_nltk_type, nltk_type)
+
+    def test_event_and_entity_property(self):
+        coq_type = 'Parameter base : Event -> (Entity -> Prop).'
+        nltk_type = convert_coq_to_nltk_type(coq_type)
+        expected_nltk_type = {'base' : read_type('<v,<e,t>>')}
+        self.assertEqual(expected_nltk_type, nltk_type)
+
+# TODO: also test the reverse operation.
 
 class build_dynamic_libraryTestCase(unittest.TestCase):
     def test_entity(self):
