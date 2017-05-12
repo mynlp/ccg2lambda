@@ -277,7 +277,6 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig = convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib, _ = build_dynamic_library(expression, coq_sig)
-        # from pudb import set_trace; set_trace()
         lib = merge_dynamic_libraries(coq_sig, nltk_lib, './coqlib.v', sentence)
         expected_lib = ["Parameter _base2 : Prop -> (Entity -> Prop).",
                         "Parameter _base1 : Entity -> Prop."]
@@ -368,7 +367,6 @@ class Coq2NLTKTypesTestCase(unittest.TestCase):
 
     def test_entity_property_and_property(self):
         coq_type = 'Parameter base : (Entity -> Prop) -> Prop.'
-        # from pudb import set_trace; set_trace()
         nltk_type = convert_coq_to_nltk_type(coq_type)
         expected_nltk_type = {'base' : read_type('<<e,t>,t>>')}
         self.assertEqual(expected_nltk_type, nltk_type)
@@ -384,8 +382,6 @@ class Coq2NLTKTypesTestCase(unittest.TestCase):
         nltk_type = convert_coq_to_nltk_type(coq_type)
         expected_nltk_type = {'base' : read_type('<v,<e,t>>')}
         self.assertEqual(expected_nltk_type, nltk_type)
-
-# TODO: also test the reverse operation.
 
 class build_dynamic_libraryTestCase(unittest.TestCase):
     def test_entity(self):
