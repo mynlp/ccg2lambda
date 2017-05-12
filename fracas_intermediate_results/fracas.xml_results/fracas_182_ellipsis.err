@@ -1,4 +1,0 @@
-WARNING:root:There is probably a problem in the typecheck resolution of expression _'(\x._company(x)) with signature {"_'": e, '_company': <e,t>, 'x': e}
-WARNING:root:There is probably a problem in the typecheck resolution of expression _'(\x._company(x),\F1 F2.exists x.((x = _jones) & F1(_jones) & F2(_jones))) with signature {"_'": e, 'F2': <e,t>, '_jones': e, 'x': e, '_company': <e,t>, 'F1': <e,t>}
-WARNING:root:There is probably a problem in the typecheck resolution of expression _'(\x._company(x),\F1 F2.exists x.((x = _jones) & F1(_jones) & F2(_jones)),\w.TrueP) with signature {"_'": e, 'F2': <e,t>, '_jones': e, 'x': e, '_company': <e,t>, 'F1': <e,t>}
-WARNING:root:There is probably a problem in the typecheck resolution of expression _'(\x._company(x),\F1 F2.exists x.((x = _jones) & F1(_jones) & F2(_jones)),\w.TrueP,\y._represent(_jones,y)) with signature {"_'": e, 'F2': <e,t>, '_jones': e, 'x': e, '_company': <e,t>, 'y': e, 'F1': <e,t>, '_represent': <e,<e,t>>}

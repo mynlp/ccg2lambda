@@ -1,3 +1,0 @@
-WARNING:root:There is probably a problem in the typecheck resolution of expression _'t(x) with signature {"_'t": e, 'x': e}
-WARNING:root:There is probably a problem in the typecheck resolution of expression (_bill(x) & _didn(x) & _'t(x)) with signature {'x': e, "_'t": e, '_bill': <e,t>, '_didn': <e,t>}
-WARNING:root:There is probably a problem in the typecheck resolution of expression \x.(_bill(x) & _didn(x) & _'t(x)) with signature {'x': e, "_'t": e, '_bill': <e,t>, '_didn': <e,t>}

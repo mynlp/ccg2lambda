@@ -1,3 +1,0 @@
-John owns a car.
-Bill owns one too.
-There is a car that John and Bill own.

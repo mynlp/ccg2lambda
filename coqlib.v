@@ -5,8 +5,6 @@ Parameter Event : Type.
 Parameter Rel : Entity -> Entity -> Prop.
 Parameter Mod : Entity -> Event -> Prop.
 Parameter Prog : Prop -> Prop.
-Parameter two : Entity -> Prop.
-Parameter _people : Entity -> Prop.
 Parameter this : (Entity -> Prop) -> Entity.
 Parameter that : (Entity -> Prop) -> Entity.
 
@@ -20,66 +18,20 @@ Parameter Future : Event -> Prop.
 Parameter Poss : Event -> Prop.
 Parameter NonPoss : Event -> Prop.
 
-(* Proposition marker and Question Marker *)
+(* Proposition marker and question marker *)
 Parameter Content : Entity -> (((Event -> Prop) -> Event -> Prop) -> Prop) -> Prop.
-(* Parameter Comp : Prop -> (((Event -> Prop) -> Event -> Prop) -> Prop) -> Prop. *)
-(* Parameter Comp : Prop -> Prop -> Prop. *)
 Parameter WH : Prop -> Prop.
 
 (* Thematic roles *)
 Parameter Subj : Event -> Entity.
 Parameter Top : Event -> Entity.
+Parameter Nom : Event -> Entity.
 Parameter Acc : Event -> Entity.
 Parameter AccI : Event -> Prop -> Prop.
 Parameter AccE : Event -> Event.
 Parameter Dat : Event -> Entity.
 Parameter Attr : Event -> Entity.
 Parameter Deg : Event -> Entity.
-
-(*
-Parameter Acc : Event -> Entity -> Prop.
-Parameter AccI : Event -> Prop -> Prop.
-Parameter Dat : Event -> Entity -> Prop.
-Parameter Attr : Event -> Entity -> Prop.
-*)
-
-(* prepossition *)
-Parameter inNP : Entity -> Entity -> Prop.
-Parameter atNP : Entity -> Entity -> Prop.
-Parameter onNP : Entity -> Entity -> Prop.
-Parameter fromNP : Entity -> Entity -> Prop.
-Parameter forNP : Entity -> Entity -> Prop.
-Parameter overNP : Entity -> Entity -> Prop.
-Parameter intoNP : Entity -> Entity -> Prop.
-Parameter ontoNP : Entity -> Entity -> Prop.
-Parameter aboveNP : Entity -> Entity -> Prop.
-Parameter belowNP : Entity -> Entity -> Prop.
-Parameter acrossNP : Entity -> Entity -> Prop.
-Parameter byNP : Entity -> Entity -> Prop.
-Parameter behindNP : Entity -> Entity -> Prop.
-Parameter insideNP : Entity -> Entity -> Prop.
-Parameter outsideNP : Entity -> Entity -> Prop.
-
-(*
-Parameter inVP : Event -> Entity -> Prop.
-Parameter atVP : Event -> Entity -> Prop.
-Parameter onVP : Event -> Entity -> Prop.
-Parameter fromVP : Event -> Entity -> Prop.
-Parameter forVP : Event -> Entity -> Prop.
-Parameter overVP : Event -> Entity -> Prop.
-Parameter intoVP : Event -> Entity -> Prop.
-Parameter ontoVP : Event -> Entity -> Prop.
-Parameter aboveVP : Event -> Entity -> Prop.
-Parameter belowVP : Event -> Entity -> Prop.
-Parameter acrossVP : Event -> Entity -> Prop.
-Parameter byVP : Event -> Entity -> Prop.
-Parameter behindVP : Event -> Entity -> Prop.
-Parameter insideVP : Event -> Entity -> Prop.
-Parameter outsideVP : Event -> Entity -> Prop.
-*)
-
-
-(* Generalized quantifiers *)
 
 (* Binary quantifiers *)
 Parameter Most : (Entity -> Prop) -> (Entity -> Prop) -> Prop.
@@ -100,70 +52,57 @@ Axiom most_rightup :
    ((Most F G) ->
    (forall x, G x -> H x) -> (Most F H)).
 
-(* Hint Resolve most_ex_import most_consv most_rightup. *)
-
 (* Unary quantifiers *)
 Parameter Few : (Entity -> Prop) -> Prop.
-
-(* Notation "'few' x , P" := (Few (fun x => P)) *)
-(*    (at level 30, x ident, right associativity) : type_scope. *)
 
 Axiom few_down : 
   forall (F G: Entity -> Prop),
    Few F -> (forall x, G x -> F x) -> Few G.
 
-
 (* Veridical predicates *)
-
 Parameter _たしか : Event -> Prop.
 Axiom factive_たしか1 : forall (v : Event) (P : ((Event -> Prop) -> Event -> Prop) -> Prop),
-  _たしか v -> Content (Top v) P -> P (fun I => I).
+  _たしか v -> Content (Nom v) P -> P (fun I => I).
 Axiom factive_たしか2 : forall v : Event, forall P : Prop,
   _たしか v -> AccI v P ->  P.
 Ltac solve_たしか :=
  match goal with
-   | [H1 : _たしか ?e, H2 : Content (Top ?e) _ |- _] => try apply factive_たしか1 with (v:=e) in H2
+   | [H1 : _たしか ?e, H2 : Content (Nom ?e) _ |- _] => try apply factive_たしか1 with (v:=e) in H2
    | [H1 : _たしか ?e, H2 : AccI ?e _ |- _] => try apply factive_たしか2 with (v := e) in H2
  end.
 
 Parameter _本当 : Entity -> Prop.
 Axiom factive_本当 : forall v : Event, forall P : Prop,
-  _本当 (Top v) -> AccI v P -> P.
+  _本当 (Nom v) -> AccI v P -> P.
 Ltac solve_本当 :=
  match goal with
-   H1 : _本当 (Top ?e), H2 : AccI ?e _ |- _
+   H1 : _本当 (Nom ?e), H2 : AccI ?e _ |- _
      => try apply factive_本当 with (v := e) in H2
  end.
 
-
 (* Anti-veridical predicates *)
-
 Parameter _嘘 : Entity -> Prop.
 Axiom factive_嘘 : forall v : Event, forall P : Prop,
-  _嘘 (Top v) -> AccI v P -> ~P.
+  _嘘 (Nom v) -> AccI v P -> ~P.
 
 Ltac solve_嘘 :=
  match goal with
-   H1 : _嘘 (Top ?e), H2 : AccI ?e _ |- _
+   H1 : _嘘 (Nom ?e), H2 : AccI ?e _ |- _
      => try apply factive_嘘 with (v := e) in H2
  end.
 
-(* jsem-786 *)
 Axiom anti_factive_NonPoss1 : forall (v : Event) (P : ((Event -> Prop) -> Event -> Prop) -> Prop),
-  NonPoss v -> Content (Top v) P -> ~ (P (fun I => I)).
+  NonPoss v -> Content (Nom v) P -> ~ (P (fun I => I)).
 Axiom anti_factive_NonPoss2 : forall v : Event, forall P : Prop,
   NonPoss v -> AccI v P -> ~P.
 
 Ltac solve_Poss :=
  match goal with
-   | [H1 : NonPoss ?e, H2 : Content (Top ?e) _ |- _] => try apply anti_factive_NonPoss1 with (v:=e) in H2
+   | [H1 : NonPoss ?e, H2 : Content (Nom ?e) _ |- _] => try apply anti_factive_NonPoss1 with (v:=e) in H2
    | [H1 : NonPoss ?e, H2 : AccI ?e _ |- _] => try apply anti_factive_NonPoss2 with (v := e) in H2
  end.
 
-
 (* Attitude verbs *)
-
-(* jsem-778 *)
 Parameter _疑う : Event -> Prop.
 Parameter _思う : Event -> Prop.
 Axiom pos_疑う_思う : forall (v : Event) (P : Prop), (_疑う v -> AccI v P -> _思う v /\ AccI v P).
@@ -178,23 +117,17 @@ Ltac solve_疑う_思う :=
    | [H1 : _疑う ?e, H2 : AccI ?e _ |- _] => try apply pos_疑う_思う with (v := e) in H2
  end.
 
-
 (* Implicative verbs *)
-
-(* jsem-753 *)
 Parameter _成功 : Event -> Prop.
 Axiom implicative_成功 : forall (v : Event) (x : Entity) (P : ((Event -> Prop) -> Event -> Prop) -> Prop),
-  _成功 v -> Top v = x -> Past v -> Content (Dat v) P -> P (fun J : Event -> Prop => fun e : Event => J e /\ Top e = x /\ Past e).
+  _成功 v -> Nom v = x -> Past v -> Content (Dat v) P -> P (fun J : Event -> Prop => fun e : Event => J e /\ Nom e = x /\ Past e).
 Ltac solve_成功 :=
  match goal with
-   | [H1 : _成功 ?e, H2 : Top ?e = ?t, H3 : Past ?e, H4 : Content (Dat ?e) _ |- _]
+   | [H1 : _成功 ?e, H2 : Nom ?e = ?t, H3 : Past ?e, H4 : Content (Dat ?e) _ |- _]
      => apply implicative_成功 with (v:=e)(x:=t) in H4
  end.
 
-
 (* Perceptual verbs *)
-
-(* jsem-761 *)
 Parameter _見る : Event -> Prop.
 Axiom factive_見る : forall (v : Event) (P : ((Event -> Prop) -> Event -> Prop) -> Prop),
   _見る v -> Past v -> Content (Acc v) P -> P (fun J : Event -> Prop => fun e : Event => J e /\ Past e).
@@ -204,7 +137,6 @@ Ltac solve_factive_見る :=
      => apply factive_見る with (v:=e) in H3
  end.
 
-(* jsem-763 *)
 Axiom closure_見る : forall (v: Event) (P P': ((Event -> Prop) -> Event -> Prop) -> Prop),
   _見る v -> Content (Acc v) P -> (P (fun I => I) -> P' (fun I => I)) -> Content (Acc v) P'.
 Ltac solve_closure_見る :=
@@ -229,9 +161,6 @@ Ltac solve_closure_聞く :=
    | [H1 : _聞く ?e, H2 : Content (Acc ?e) ?A |- Content (Acc ?e) ?B ]
      => apply closure_聞く with (v:=e)(P:=A)(P':=B)
  end.
-
-
-(* Adjectives *)
 
 (* privative adjectives *)
 Parameter _former : (Entity -> Prop) -> Entity -> Prop.
@@ -280,7 +209,7 @@ Ltac solve_anti_veridical_損ねる :=
 (* antonyms *)
 Parameter _大きな : Entity -> Prop.
 Parameter _小さな : Entity -> Prop.
-Axiom antonym_大きな_小さな : forall x, _大きな x -> _小さな x -> False.
+Axiom antonym_大きな_小さな : forall x : Entity, _大きな x -> _小さな x -> False.
 Ltac solve_antonym_大きな_小さな :=
   match goal with
     H1 : _大きな _, H2 : _小さな ?t |- False
@@ -289,16 +218,16 @@ Ltac solve_antonym_大きな_小さな :=
 
 Parameter _おいしい : Event -> Prop.
 Parameter _まずい : Event -> Prop.
-Axiom antonym_おいしい_まずい : forall x, _おいしい x -> _まずい x -> False.
+Axiom antonym_おいしい_まずい : forall v : Event, _おいしい v -> _まずい v -> False.
 Ltac solve_antonym_おいしい_まずい :=
   match goal with
-    H1 : _おいしい _, H2 : _まずい ?t |- False
-  => try apply antonym_おいしい_まずい with (x := t)
+    H1 : _おいしい _, H2 : _まずい ?e |- False
+  => try apply antonym_おいしい_まずい with (v := e)
   end.
 
 Parameter _開く : Event -> Prop.
 Parameter _閉まる : Event -> Prop.
-Axiom antonym_開く_閉まる : forall v, _開く v -> _閉まる v -> False.
+Axiom antonym_開く_閉まる : forall v : Event, _開く v -> _閉まる v -> False.
 Ltac solve_antonym_開く_閉まる :=
   match goal with
     H1 : _開く ?e, H2 : _閉まる ?e |- _ 
@@ -306,29 +235,25 @@ Ltac solve_antonym_開く_閉まる :=
   end.
 
 (* causatives and benefactives *)
-
-(* jsem-722,723 *)
 Parameter _せる : Event -> Prop.
 Parameter _もらう : Event -> Prop.
 
 Axiom causative1 : forall v : Event, forall x : Entity,
-  _せる v -> Dat v = x -> Top v = x.
+  _せる v -> Dat v = x -> Nom v = x.
 Axiom causative2 : forall v : Event, forall x : Entity,
-  _せる v -> Acc v = x -> Top v = x.
+  _せる v -> Acc v = x -> Nom v = x.
 Hint Resolve causative1 causative2.
 
 Axiom benefactive : forall v : Event, forall x : Entity,
-  _もらう v -> Dat v = x -> Top v = x.
+  _もらう v -> Dat v = x -> Nom v = x.
 Hint Resolve benefactive.
 
 
 (* Causative alternation *)
-
-(* jsem-727 *)
 Parameter _破く : Event -> Prop.
 Parameter _破れる : Event -> Prop.
 Axiom causative_破く_破れる : forall v : Event,
-  _破く v -> _破れる v /\ Top v = Acc v.
+  _破く v -> _破れる v /\ Nom v = Acc v.
 
 Ltac solve_causative_破く_破れる :=
   match goal with
@@ -336,10 +261,9 @@ Ltac solve_causative_破く_破れる :=
      => apply causative_破く_破れる with (v := e) in H1
   end.
 
-(* jsem-728 *)
 Parameter _閉める : Event -> Prop.
 Axiom causative_閉める_閉まる : forall v : Event,
-  _閉める v -> _閉まる v /\ Top v = Acc v.
+  _閉める v -> _閉まる v /\ Nom v = Acc v.
 
 Ltac solve_causative_閉める_閉まる :=
   match goal with
@@ -364,10 +288,10 @@ Ltac eqlem_sub :=
     end
   end.
 
-Axiom unique_role : forall v1 v2 : Event, Top v1 = Top v2 -> v1 = v2.
+Axiom unique_role : forall v1 v2 : Event, Nom v1 = Nom v2 -> v1 = v2.
 Ltac resolve_unique_role :=
   match goal with 
-    H : Top ?v1 = Top ?v2 |- _
+    H : Nom ?v1 = Nom ?v2 |- _
     => repeat apply unique_role in H
   end.
 
@@ -378,25 +302,6 @@ Ltac substitution :=
     | [H1 : ?t = _ |- _ ]
       => try resolve_unique_role; try rewrite H1 in *; subst
   end.
-
-(*
-Ltac eqlem_sub :=
-  match goal with
-    | [ H1: ?A ?t, H2: forall x, _ -> @?C x |- _ ]
-     => match type of H2 with context[ A ]
-         => assert(C t); try (apply H2); clear H2
-    end
-  end.
-*)
-
-(*
-Ltac eqlem_last :=
-  match goal with
-    | [ H1: _ -> ?B |- _ ]
-         => assert(B); try (apply H1); clear H1
-  end.
-(* bak 1-2-21 *)
-*)
 
 Ltac exchange :=
   match goal with
@@ -423,14 +328,6 @@ Ltac solve_false :=
   end.
 
 (* Main tactics *)
-
-(*
-Ltac eintro :=
-  match goal with
-   [ H : ?A ?t |- exists x, @?B x /\ _ ]
-    => exists t
-  end.
-*)
 
 Ltac nltac_init :=
   try(intuition;
@@ -472,26 +369,6 @@ Ltac nltac_closure_axiom :=
     solve_closure_wouldbe
    ].
 
-(*
-Ltac nltac_set' :=
-  repeat (nltac_init; try resolve_unique_role; try apply_ent; try eqlem_sub).
-Ltac solve_gq' :=
-  match goal with
-    H : Most _ _ |- _
-    => let H0 := fresh in
-       try solve [         
-          pose (H0 := H); eapply most_ex_import in H0;
-            try (nltac_set'; nltac_final) |
-          pose (H0 := H); eapply most_consv in H0;
-            eapply most_rightup in H0;
-            try (nltac_set'; nltac_final) |
-          pose (H0 := H); eapply most_consv in H0;
-            try (nltac_set'; nltac_final) |
-          pose (H0 := H); eapply most_rightup in H0;
-            try (nltac_set'; nltac_final) ]
-  end.
-*)
-
 Ltac nltac_set :=
   repeat (nltac_init;
           try repeat substitution;
@@ -500,14 +377,6 @@ Ltac nltac_set :=
           (* try apply_ent; *)
           try eqlem_sub).
 
-(*
-Ltac nltac_set :=
-  repeat (nltac_init;
-          try repeat substitution;
-          try apply_ent;
-          try eqlem_sub).
-*)
-
 Ltac nltac_set_exch :=
   repeat (nltac_init;
           try repeat substitution;
@@ -515,33 +384,8 @@ Ltac nltac_set_exch :=
           try exchange;
           try eqlem_sub).
 
-(*
-Ltac nltac_set :=
-  repeat (nltac_init; try repeat resolve_unique_role; try apply_ent; try eqlem_sub).
-
-Ltac nltac_set_exch :=
-  repeat (nltac_init; try repeat resolve_unique_role; try apply_ent; try exchange; try eqlem_sub).
-*)
-
-(*
-Ltac nltac_set1 :=
-  repeat (nltac_init; try apply_ent; try eqlem_last).
-*)
-
 Ltac nltac_final :=
   try solve [repeat nltac_base | clear_pred; repeat nltac_base].
-
-(* at least one event exists *)
-
-(* Axiom urevent : Event. *)
-(* Ltac ap_event := try apply urevent. *)
-
-(*
-Ltac nltac_final' :=
-  try solve
-    [repeat nltac_base; ap_event |
-     clear_pred; repeat nltac_base; ap_event].
-*)
 
 Ltac nltac_prove :=
   try solve [nltac_set; nltac_final | nltac_set_exch; nltac_final].
@@ -565,33 +409,6 @@ Ltac solve_gq2 :=
           pose (H0 := H); eapply few_down in H0; nltac_prove ]
   end.
 
-(*
-Ltac solve_gq1 :=
-  match goal with
-    H : Most _ _ |- _
-    => let H0 := fresh in
-       try solve [         
-          pose (H0 := H); eapply most_ex_import in H0;
-            try (nltac_set; nltac_final) |
-          pose (H0 := H); eapply most_consv in H0;
-            eapply most_rightup;
-            try (nltac_set; nltac_final) |
-          pose (H0 := H); eapply most_consv in H0;
-            try (nltac_set; nltac_final) |
-          pose (H0 := H); eapply most_rightup in H0;
-            try (nltac_set; nltac_final) ]
-  end.
-
-Ltac solve_gq2 :=
-  match goal with
-    H : Few _ |- _
-    => let H0 := fresh in
-       try solve [         
-          pose (H0 := H); eapply few_down in H0;
-            try (nltac_set; nltac_final) ]
-  end.
-*)
-
 Ltac nltac :=
   try solve
     [nltac_prove |
@@ -599,47 +416,3 @@ Ltac nltac :=
      nltac_set; try nltac_axiom; solve [nltac_final | nltac_prove] |
      nltac_set; nltac_base; try nltac_closure_axiom; solve [nltac_final | nltac_prove]
     ].
-
-(*
-Ltac nltac :=
-  try solve
-    [nltac_set; nltac_final |
-     nltac_set_exch; nltac_final |
-     nltac_init; (solve_gq1 || solve_gq2) |
-     nltac_set; try nltac_axiom; solve [nltac_final | nltac_set; nltac_final] |
-     nltac_set; nltac_base; try nltac_closure_axiom; solve [nltac_final | nltac_set; nltac_final]
-    ].
-*)
-
-(* jsem-753 nltac_set; try nltac_axiom; nltac_set; nltac_final *)
-(* jsem-758 nltac_set; try nltac_axiom; nltac_final *)
-
-(*
-Ltac nltac :=
-  try solve
-    [nltac_set; nltac_final |
-     nltac_init; (solve_gq1 || solve_gq2) |
-     nltac_init; try nltac_axiom; repeat nltac_base
-    ].
-*)
-
-(*
-Ltac nltac :=
-  try solve
-    [nltac_set; nltac_final |
-     nltac_set_exch; nltac_final |
-     nltac_init; solve_gq1 |
-     nltac_init; solve_gq2 |
-     nltac_init; try nltac_axiom; repeat nltac_base
-    ].
-*)
-
-(* For BAK:
-Ltac nltac :=
-  try solve
-    [nltac_set; nltac_final |
-     nltac_set1; nltac_final |
-     nltac_init; solve_gq |
-     nltac_init; try nltac_axiom; repeat nltac_base
-    ].
-*)

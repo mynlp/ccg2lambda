@@ -1,3 +1,0 @@
-Smith left after Jones left.
-Jones left after Anderson left.
-Smith left after Anderson left.

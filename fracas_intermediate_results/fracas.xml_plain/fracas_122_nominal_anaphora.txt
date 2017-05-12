@@ -1,3 +1,0 @@
-Every committee has a chairman.
-He is appointed its members.
-Every committee has a chairman appointed by members of the committee.

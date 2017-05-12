@@ -1,2 +1,0 @@
-Either Smith, Jones or Anderson signed the contract.
-Jones signed the contract.

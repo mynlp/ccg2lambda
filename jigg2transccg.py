@@ -66,6 +66,7 @@ def main(args = None):
     transccg_doc = jigg2transccg_doc(jigg_doc)
     result = etree.tostring(transccg_doc, encoding='utf-8',
         xml_declaration=True, pretty_print=True)
+    # print(result)
     print(result.decode('utf-8'))
 
 if __name__ == '__main__':

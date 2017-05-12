@@ -11,6 +11,7 @@ and install the packages in the virtual environment with `pip`:
 
 ```bash
 git clone https://github.com/mynlp/ccg2lambda.git
+cd ccg2lambda
 virtualenv --no-site-packages --distribute -p /usr/bin/python3 py3
 source py3/bin/activate
 pip install lxml simplejson pyyaml -I nltk==3.0.5
@@ -25,18 +26,11 @@ python -c "import nltk; nltk.download('wordnet')"
 To ensure that all software is working as expected, you can run the tests:
 
 ```bash
-cd ccg2lambda/
-python run_tests.py
+python scripts/run_tests.py
 ```
 (all tests should pass, except a few expected failures).
 
-Our system assigns semantics to CCG structures, as obtained by the [C&C parser](http://www.cl.cam.ac.uk/~sc609/candc-1.00.html). In order to install the C&C parser, you may need to register, download the parser and the models, and follow their instructions to set it up. For this software to find the C&C parser, please create a file `candc_location.txt` with the path to the C&C parser:
-
-```bash
-echo "/path/to/candc-1.00/" > candc_location.txt
-```
-
-Finally, please install the [Coq Proof Assistant](https://coq.inria.fr/) that we use for automated reasoning. In Ubuntu, you can install it by:
+You also need to install the [Coq Proof Assistant](https://coq.inria.fr/) that we use for automated reasoning. In Ubuntu, you can install it by:
 
 ```bash
 sudo apt-get install coq
@@ -47,6 +41,26 @@ Then, compile the coq library that contains the axioms:
 ```bash
 coqc coqlib.v
 ```
+
+Our system assigns semantics to CCG structures. At the moment, we support C&C for English, and Jigg for Japanese.
+
+### Installing [C&C parser](http://www.cl.cam.ac.uk/~sc609/candc-1.00.html) (for English)
+
+In order to install the C&C parser, you may need to register, download the parser and the models, and follow their instructions to set it up. For ccg2lambda to find the C&C parser, please create a file `en/candc_location.txt` with the path to the C&C parser:
+
+```bash
+echo "/path/to/candc-1.00/" > en/candc_location.txt
+```
+
+### Installing [Jigg parser](https://github.com/mynlp/jigg) (for Japanese)
+
+Simply do:
+
+```bash
+./ja/download_dependencies.sh
+```
+
+The command above will download Jigg, its models, and create the file `ja/jigg_location.txt` where the path to Jigg is specified. That is all.
 
 ## Using the Semantic Parser
 
@@ -72,16 +86,16 @@ First we need to obtain the CCG derivations (parse trees) of the sentences
 in the text file using C&C and convert its XML format into Jigg's XML format:
 
 ```bash
-cat sentences.txt | perl tokenizer.perl -l en 2>/dev/null > sentences.tok
+cat sentences.txt | sed -f en/tokenizer.sed > sentences.tok
 /path/to/candc-1.00/bin/candc --models /path/to/candc-1.00/models --candc-printer xml --input sentences.tok > sentences.candc.xml
-python candc2transccg.py sentences.candc.xml > sentences.xml
+python en/candc2transccg.py sentences.candc.xml > sentences.xml
 ```
 
 Then, we are ready to obtain the semantic representations by using semantic
 templates and the CCG derivations obtained above:
 
 ```bash
-python semparse.py sentences.xml semantic_templates_en_emnlp2015.yaml sentences.sem.xml
+python scripts/semparse.py sentences.xml en/semantic_templates_en_emnlp2015.yaml sentences.sem.xml
 ```
 
 The semantic representations are in the `sentences.sem.xml` file,
@@ -122,7 +136,7 @@ pipe it to a theorem prover (Coq) and judge the entailment
 relation, you can run the following command:
 
 ```bash
-python prove.py sentences.sem.xml --graph_out graphdebug.html
+python scripts/prove.py sentences.sem.xml --graph_out graphdebug.html
 ```
 
 That command will output `yes` (entailment relation - the conclusion
@@ -149,7 +163,7 @@ For example, to visualize the CCG trees only (without
 semantic representations):
 
 ```bash
-python visualize.py sentences.xml > sentences.html
+python scripts/visualize.py sentences.xml > sentences.html
 ```
 
 and then open the file `sentences.html` with your favourite web browser.
@@ -157,49 +171,17 @@ You should be able to see something like this:
 
 ![alt text](./doc/images/ccg_html.png "Visualization of CCG trees (without semantic representations)")
 
-## Running the RTE pipeline on FraCas.
+## Reproducibility
 
-First, you need to download the copy of [FraCaS provided by MacCartney and Manning (2007)](http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml):
+If you wish to reproduce our reported results, please follow the instructions below:
 
-```bash
-$ wget http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml
-```
-
-You can evaluate the end-to-end system performance of a certain list of semantic templates on
-fracas by doing:
-
-```bash
-./evaluate_template.sh semantic_templates_en_emnlp2015.yaml fracas.xml
-```
-
-This script will:
-
-1. Extract the plain text corresponding to the hypotheses and conclusions of all fracas problems. These hypotheses and conclusions are stored in a different file for each fracas problem, under the directory `fracas.xml_plain`. The gold entailment judgment is stored in files `fracas.xml_plain/*.answer`.
-2. Parse the hypotheses and conclusions using C&C parser, and save them under the directory `fracas.xml_parsed`.
-3. Compose the semantics of each hypothesis and conclusion, and attempt inference using coq. Graphical HTML results of the composition are stored in `fracas.xml_results/*.html` directory together with the entailment judgment of the system (`fracas.xml_results/*.answer`).
-A file `fracas.xml_results/main.html` is created listing all links to the graphical representation of each fracas problem. The background of each link has different colors (they do not relate to the computation of accuracies below).
-  1. Green if the system's entailment decision coincides with the gold entailment decision.
-  2. White if the system's entailment decision is either "unknown" or "undefined".
-  3. Red if the system's entailment decision is not "unknown" and does not coincide with the gold entailment judgment.
-  4. Gray if the system's entailment decision is unknown (or empty, if there was any pipeline error).
-4. Compute accuracies per section as a three-way classification (yes, no, unknown) and print them to the console. E.g.:
-
-```bash
-                              all premi.          single           multi
-generalized_quantifiers   |      0.78      |      0.82      |      0.73     
-plurals                   |      0.67      |      0.67      |      0.67     
-adjectives                |      0.68      |      0.87      |      0.29     
-comparatives              |      0.48      |      0.62      |      0.33     
-attitudes                 |      0.77      |      0.78      |      0.75     
-verbs                     |      0.62      |      0.62      |      ----     
-total                     |      0.69      |      0.75      |      0.58     
-```
-
-This script will not overwrite the directories with CCG-parsed sentences or entailment judgments, if present. If you would like any directory to be re-built, then you can remove it or rename it, and re-run the pipeline.
+* [Experiments on FraCaS at EMNLP 2015](en/fracas.md)
+* [Experiments on JSeM at EMNLP 2016](ja/jsem.md)
+* [Experiments on SICK at EACL 2017](en/sick.md)
 
 ## Interpreting (and writing your own) semantic templates.
 
-You can find our semantic templates in `semantic_templates_en.yaml`. Here are some notes:
+You can find one of our semantic templates in `en/semantic_templates_en.yaml`. Here are some notes:
 
 1. Each Yaml block is a rule. If the rule matches the attributes of a CCG node, then the semantic template specified by "semantics" is applied. It is possible to write an arbitrary set of field names and their values. For example, you could specify the "category" of the CCG node and the surface "surf" form of a word (in case the CCG node is a leaf). Only the "category" field and the "semantics" field are compulsory.
 2. If you underspecify the characteristics of a CCG node, the semantic rule will match more general CCG nodes. It is also possible to underspecify the features of syntactic categories.
@@ -215,7 +197,7 @@ You can find our semantic templates in `semantic_templates_en.yaml`. Here are so
 
 # Citing this work
 
-If you use this software or the semantic templates for your work, please consider citing it as:
+If you use this software or the semantic templates for your work, please consider citing it.
 
 ## The system - software for compositional semantics:
 
@@ -232,6 +214,24 @@ If you use this software or the semantic templates for your work, please conside
   publisher = {Association for Computational Linguistics},
   pages     = {85--90},
   url       = {https://aclweb.org/anthology/P/P16/P16-4015.pdf}
+}
+```
+
+## A mechanism to inject axioms on-demand:
+
+* Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. On-demand Injection of Lexical Knowledge for Recognising Textual Entailment. Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics, pages 710-720, Valencia, Spain, 3-7 April, 2017. [pdf](http://www.aclweb.org/anthology/E17-1067)
+
+```
+@InProceedings{martinezgomez-EtAl:2017:EACLlong,
+  author    = {Mart\'{i}nez-G\'{o}mez, Pascual  and  Mineshima, Koji  and  Miyao, Yusuke  and  Bekki, Daisuke},
+  title     = {On-demand Injection of Lexical Knowledge for Recognising Textual Entailment},
+  booktitle = {Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics: Volume 1, Long Papers},
+  month     = {April},
+  year      = {2017},
+  address   = {Valencia, Spain},
+  publisher = {Association for Computational Linguistics},
+  pages     = {710--720},
+  url       = {http://www.aclweb.org/anthology/E17-1067}
 }
 ```
 
@@ -255,16 +255,21 @@ If you use this software or the semantic templates for your work, please conside
 
 ## The Japanese semantic model declared as semantic templates:
 
-* Koji Mineshima, Ribeka Tanaka, Pascual Martínez-Gómez, Yusuke Miyao, Daisuke Bekki. Building compositional semantics and higher-order inference system for wide-coverage Japanese CCG parsers. Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing. Austin, Texas, 1-5 November 2016.
+* Koji Mineshima, Ribeka Tanaka, Pascual Martínez-Gómez, Yusuke Miyao, Daisuke Bekki. Building compositional semantics and higher-order inference system for wide-coverage Japanese CCG parsers. Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing, pages 2236-2242, Austin, Texas, 1-5 November 2016. [pdf](http://aclweb.org/anthology/D16-1242)
 
 ```
-@InProceedings{mineshima-EtAl:2016:EMNLP,
-  author    = {Mineshima, Koji  and  Tanaka, Ribeka  and  Mart\'{i}nez-G\'{o}mez, Pascual  and  Miyao, Yusuke  and  Bekki, Daisuke},
-  title     = {Building compositional semantics and higher-order inference system for wide-coverage Japanese CCG parsers},
-  booktitle = {Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing},
-  month     = {November},
-  year      = {2016},
-  address   = {Austin, Texas},
-  publisher = {Association for Computational Linguistics}
+@InProceedings{D16-1242,
+  author = 	"Mineshima, Koji
+		and Tanaka, Ribeka
+		and Mart{\'i}nez-G{\'o}mez, Pascual
+		and Miyao, Yusuke
+		and Bekki, Daisuke",
+  title = 	"Building compositional semantics and higher-order inference system for a wide-coverage {J}apanese {CCG} parser",
+  booktitle = 	"Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing",
+  year = 	"2016",
+  publisher = 	"Association for Computational Linguistics",
+  pages = 	"2236--2242",
+  location = 	"Austin, Texas",
+  url = 	"http://aclweb.org/anthology/D16-1242"
 }
 ```

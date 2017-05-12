@@ -1,2 +1,0 @@
-WARNING:root:There is probably a problem in the typecheck resolution of expression (_pc_6082(x) & TrueP & _fast(x) & exists z2.(_itel_xz(z2) & TrueP & _as(x,z2)) & _as(x)) with signature {'_fast': <e,t>, '_pc_6082': <e,t>, 'z2': e, '_itel_xz': <e,t>, 'x': e}
-WARNING:root:There is probably a problem in the typecheck resolution of expression exists x.(_pc_6082(x) & TrueP & _fast(x) & exists z2.(_itel_xz(z2) & TrueP & _as(x,z2)) & _as(x)) with signature {'_fast': <e,t>, '_itel_xz': <e,t>, 'x': e, '_pc_6082': <e,t>, 'z2': e}
