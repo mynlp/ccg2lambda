@@ -97,7 +97,7 @@ function parse_candc() {
   ${candc_dir}/bin/candc \
       --models ${candc_dir}/models \
       --candc-printer xml \
-      --input $parser_cmd ${plain_dir}/${base_fname}.tok \
+      --input ${plain_dir}/${base_fname}.tok \
     2> ${parsed_dir}/${base_fname}.log \
      > ${parsed_dir}/${base_fname}.candc.xml
   python en/candc2transccg.py ${parsed_dir}/${base_fname}.candc.xml \
@@ -127,6 +127,30 @@ function parse_easyccg() {
     ${parsed_dir}/${base_fname}.easyccg \
     ${parsed_dir}/${base_fname}.easyccg.jigg.xml \
     2> ${parsed_dir}/${base_fname}.xml.log
+}
+
+function parse_easysrl() {
+  # Parse using EasySRL.
+  base_fname=$1
+  cat ${plain_dir}/${base_fname}.tok | \
+  ${candc_dir}/bin/pos \
+    --model ${candc_dir}/models/pos \
+    2>/dev/null | \
+  ${candc_dir}/bin/ner \
+    -model ${candc_dir}/models/ner \
+    -ofmt "%w|%p|%n \n" \
+    2>/dev/null | \
+  java -jar ${easysrl_dir}/easysrl.jar \
+    --model ${easysrl_dir}/model \
+    -o extended \
+    -i POSandNERtagged \
+    --nbest 1 \
+    > ${parsed_dir}/${base_fname}.easysrl \
+    2> ${parsed_dir}/${base_fname}.easysrl.log
+  python en/easyccg2jigg.py \
+    ${parsed_dir}/${base_fname}.easysrl \
+    ${parsed_dir}/${base_fname}.easysrl.jigg.xml \
+    2> ${parsed_dir}/${base_fname}.easysrl.xml.log
 }
 
 if [ ! -e ${parsed_dir}/${sentences_basename}.xml ]; then
