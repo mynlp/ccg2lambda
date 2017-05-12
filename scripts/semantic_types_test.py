@@ -246,7 +246,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         coq_sig = convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib, _ = build_dynamic_library(expression, coq_sig)
         lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
-        expected_lib = ["Parameter _base2 : Entity -> Entity -> Prop.",
+        expected_lib = ["Parameter _base2 : Entity -> (Entity -> Prop).",
                         "Parameter _base1 : Entity -> Prop."]
         self.assertCountEqual(expected_lib, lib)
 
@@ -279,7 +279,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         nltk_lib, _ = build_dynamic_library(expression, coq_sig)
         # from pudb import set_trace; set_trace()
         lib = merge_dynamic_libraries(coq_sig, nltk_lib, './coqlib.v', sentence)
-        expected_lib = ["Parameter _base2 : Prop -> Entity -> Prop.",
+        expected_lib = ["Parameter _base2 : Prop -> (Entity -> Prop).",
                         "Parameter _base1 : Entity -> Prop."]
         self.assertCountEqual(expected_lib, lib)
 
@@ -312,8 +312,8 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         coq_sig = convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib, _ = build_dynamic_library(expression, coq_sig)
         lib = merge_dynamic_libraries(coq_sig, nltk_lib, './coqlib.v', sentence)
-        expected_lib = ["Parameter _base2 : Prop -> Entity -> Prop.",
-                        "Parameter _base1 : Entity -> Prop -> Prop."]
+        expected_lib = ["Parameter _base2 : Prop -> (Entity -> Prop).",
+                        "Parameter _base1 : Entity -> (Prop -> Prop)."]
         self.assertCountEqual(expected_lib, lib)
 
 class Coq2NLTKSignaturesTestCase(unittest.TestCase):
@@ -414,7 +414,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
         expected_dynamic_library = \
           ['Parameter Python : Entity.',
            'Parameter Scala : Entity.',
-           'Parameter language : Entity -> Entity -> Prop.']
+           'Parameter language : Entity -> (Entity -> Prop).']
         for item in dynamic_library:
             self.assertIn(item, expected_dynamic_library)
         self.assertEqual(len(expected_dynamic_library), len(dynamic_library))
@@ -427,7 +427,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
           ['Parameter nice : Entity -> Prop.',
            'Parameter Python : Entity.',
            'Parameter Scala : Entity.',
-           'Parameter language : Entity -> Entity -> Prop.']
+           'Parameter language : Entity -> (Entity -> Prop).']
         for item in dynamic_library:
             self.assertIn(item, expected_dynamic_library)
         self.assertEqual(len(expected_dynamic_library), len(dynamic_library))
@@ -440,7 +440,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
           ['Parameter nice : Entity -> Prop.',
            'Parameter Python : Entity.',
            'Parameter Scala : Entity.',
-           'Parameter language : Entity -> Entity -> Prop.']
+           'Parameter language : Entity -> (Entity -> Prop).']
         for item in dynamic_library:
             self.assertIn(item, expected_dynamic_library)
         self.assertEqual(len(expected_dynamic_library), len(dynamic_library))
@@ -453,7 +453,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
           ['Parameter nice : Prop -> Prop.',
            'Parameter Python : Entity.',
            'Parameter Scala : Entity.',
-           'Parameter language : Entity -> Entity -> Prop.']
+           'Parameter language : Entity -> (Entity -> Prop).']
         for item in dynamic_library:
             self.assertIn(item, expected_dynamic_library)
         self.assertEqual(len(expected_dynamic_library), len(dynamic_library))
@@ -468,7 +468,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
            'Parameter fun : Prop -> Prop.',
            'Parameter Python : Entity.',
            'Parameter Scala : Entity.',
-           'Parameter language : Entity -> Entity -> Prop.']
+           'Parameter language : Entity -> (Entity -> Prop).']
         for item in dynamic_library:
             self.assertIn(item, expected_dynamic_library)
         self.assertEqual(len(expected_dynamic_library), len(dynamic_library))
@@ -511,7 +511,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
         dynamic_library, _ = build_dynamic_library(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
-          ['Parameter P : Entity -> Entity -> Prop.',
+          ['Parameter P : Entity -> (Entity -> Prop).',
            'Parameter x : Entity.',
            'Parameter y : Entity.']
         for item in dynamic_library:
@@ -523,7 +523,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
         dynamic_library, _ = build_dynamic_library(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
-          ['Parameter P : Entity -> Entity -> Prop.',
+          ['Parameter P : Entity -> (Entity -> Prop).',
            'Parameter T : Prop -> Prop.',
            'Parameter x : Entity.',
            'Parameter y : Entity.']
@@ -536,8 +536,8 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
         dynamic_library, _ = build_dynamic_library(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
-          ['Parameter P : Entity -> Entity -> Prop.',
-           'Parameter T : Prop -> Entity -> Prop.',
+          ['Parameter P : Entity -> (Entity -> Prop).',
+           'Parameter T : Prop -> (Entity -> Prop).',
            'Parameter x : Entity.',
            'Parameter y : Entity.',
            'Parameter z : Entity.']
@@ -550,8 +550,8 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
         dynamic_library, _ = build_dynamic_library(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
-          ['Parameter P : Entity -> Entity -> Prop.',
-           'Parameter T : Prop -> Entity -> Entity -> Prop.',
+          ['Parameter P : Entity -> (Entity -> Prop).',
+           'Parameter T : Prop -> (Entity -> (Entity -> Prop)).',
            'Parameter w : Entity.',
            'Parameter x : Entity.',
            'Parameter y : Entity.',
@@ -565,8 +565,8 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
         dynamic_library, _ = build_dynamic_library(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
-          ['Parameter P : Entity -> Entity -> Prop.',
-           'Parameter T : Prop -> Entity -> Entity -> Prop.',
+          ['Parameter P : Entity -> (Entity -> Prop).',
+           'Parameter T : Prop -> (Entity -> (Entity -> Prop)).',
            'Parameter w : Entity.',
            'Parameter x : Entity.',
            'Parameter y : Entity.',

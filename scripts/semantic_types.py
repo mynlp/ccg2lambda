@@ -182,6 +182,29 @@ def build_library_entry(predicate, pred_type):
     It returns a string of the form
     "Parameter pred : Entity -> Prop."
     """
+    type_str = str(pred_type).replace(
+        '<', '(').replace(
+        '>', ')').replace(
+        ',', ' -> ').replace(
+        't', 'Prop').replace(
+        'e', 'Entity').replace(
+        'v', 'Event')
+    if type_str.endswith(')'):
+       type_str = type_str[1:-1]
+    library_entry = 'Parameter ' \
+                  + predicate \
+                  + ' : ' \
+                  + type_str \
+                  + '.'
+    return library_entry
+
+def build_library_entry_(predicate, pred_type):
+    """
+    Creates a library entry out of a pair (predicate, pred_type),
+    where pred_type is a tree such as <e, t> or <e, <e, t>>, etc.
+    It returns a string of the form
+    "Parameter pred : Entity -> Prop."
+    """
     linearized_type = linearize_type(pred_type)
     library_entry = 'Parameter ' \
                   + predicate \
