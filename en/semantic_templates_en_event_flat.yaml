@@ -1,0 +1,1834 @@
+#
+#  Copyright 2017 Koji Mineshima
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+
+##### Semantic templates for English #####
+
+## Basic logical form:
+##
+## Type T ::= Entity | Event | Prop | T1 -> T2
+## 
+## Variables    Type
+## x,y,z,x1,x2  Entity, E
+## e,e1,e2      Event, Ev
+## F,G,F1,F2    E -> Prop
+## K,K1,K2      Ev -> Prop
+## Q,Q1,Q2      (E -> Prop) -> (E -> Prop) -> Prop (= NP*)
+## S,S1,S2      (Ev -> Prop) -> Prop (= S*)
+## V1           ((E -> Prop) -> (E -> Prop) -> Prop) -> (Ev -> Prop) -> Prop (= NP* -> S*)
+## V2           ((E -> Prop) -> (E -> Prop) -> Prop) -> ((E -> Prop) -> (E -> Prop) -> Prop) -> (Ev -> Prop) -> Prop (= NP* -> NP* -> S*)
+## E            expression (surface form)
+
+# Cat      Term : Type
+# S        \K. exists e.(E(e) & K(e)) : (Ev -> Prop) -> Prop (= S*)
+# N        \x. E(x)
+# NP       \F1 F2. exists x.(E(x) & F1(x) & F2(x)) : (E -> Prop) -> (E -> Prop) -> Prop (= NP*)
+# S\NP     \Q K. exists e. Q(\x.TrueP, \x.exists e.(E(e) & (Top(e) = x) & K(e))) : NP* -> S*
+# S\NP\NP  \Q1 Q2 K. exists e. Q2(\y.TrueP, \y.Q1(\x.TrueP, \x.exists e.(E(e) & (Top(e) = x) & (Acc(e) = y) & K(e)))) : NP* -> NP* -> S*
+# S/S      \S K. S(\e.(E(e) & K(e))) : S* -> S*
+# NP/NP    \Q F1 F2. Q(\x.(E(x) & F1(x)), F2) : NP* -> NP*
+# PP       \e.E(e) : Event -> Prop
+
+
+############### Unary lexical rule #################
+
+## existential type-raising from N to NP
+- category: NP
+  rule: lex
+  semantics: \E F1 F2. exists x. (E(x) & F1(x) & F2(x))
+
+## Unary rule for negative NPs
+- category: NP
+  rule: lex
+  semantics: \C F1 F2. -exists x. (C(x) & F1(x) & F2(x))
+  child_any_base: few
+
+## Unary rule for proportional NPs
+# - category: NP
+#   rule: lex
+#   semantics: \C. C
+#   child_any_base: most
+
+# ## existential type-raising for proper nouns from N to NP
+# - category: NP
+#   rule: lex
+#   semantics: \E F1 F2. (F1(E) & F2(E))
+#   # semantics: \E F1 F2. exists x. ((x = E) & F1(E) & F2(E))
+#   child0_pos: NNP
+
+# - category: NP
+#   rule: lex
+#   semantics: \E F1 F2. exists x. ((x = E) & F1(E) & F2(E))
+#   child0_pos: CD
+
+- category: NP
+  rule: lex
+  semantics: \E F1 F2. exists x. ((x = E) & F1(E) & F2(E))
+  child_any_pos: NNP
+  child_any_base: either
+
+# S[to]\NP => N\N
+- category: N\N
+  rule: lex
+  semantics: \V F x. (V(\G1 G2.G2(x), \e.TrueP) & F(x))
+
+## S[ng]\NP => NP
+- category: NP
+  rule: lex
+  semantics: \V F1 F2. exists x. (V(\G1 G2.G2(x), \e.TrueP) & F1(x) & F2(x))
+  child0_category: S[ng=true]\NP
+
+## S[pss,adj,ng]\NP => NP\NP; S[dcl]/NP => NP\NP
+- category: NP\NP
+  rule: lex
+  semantics: \V Q F1 F2. Q(\x.(V(\G1 G2.G2(x), \e.TrueP) & F1(x)), F2)
+  child0_category: S\NP
+
+- category: NP\NP
+  rule: lex
+  semantics: \V Q F1 F2. Q(\x.(V(\G1 G2.G2(x), \e.TrueP) & F1(x)), F2)
+  child0_category: S/NP
+
+## (S\NP)/NP => NP\NP
+- category: NP\NP
+  rule: lex
+  semantics: \V2 Q F1 F2. Q(\x.(exists y.V2(\G1 G2.G2(y),\G1 G2.G2(x),\e.TrueP) & F1(x)), F2)
+  child0_category: (S\NP)/NP
+
+## NP => NP/(NP\NP)
+- category: NP/(NP\NP)
+  rule: lex
+  semantics: \Q M F1 F2. Q(\x.(M(\G1 G2.G1(x),F1,\y.TrueP)), F2)
+
+## S ==> S\S
+- category: S\S
+  rule: lex
+  semantics: \S1 S2 K. (S1(K) & S2(K))
+
+## S\NP ==> S/S
+- category: S/S
+  rule: lex
+  semantics: \V S K. S(\e.(exists x.(V(\G1 G2.G2(x), \e.TrueP) & (Dat(e) = x)) & K(e)))
+  child0_category: S\NP
+
+## S ==> NP\NP
+- category: NP\NP
+  rule: lex
+  semantics: \S Q F1 F2. (S(\e.TrueP) & Q(F1,F2))
+  child0_category: S
+
+## S\NP ==> (S\NP)\(S\NP)
+- category: (S\NP)\(S\NP)
+  rule: lex
+  semantics: \V2 V1 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
+
+## S\NP ==> (S\NP)/(S\NP)
+- category: (S\NP)/(S\NP)
+  rule: lex
+  semantics: \V2 V1 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
+
+## S\NP ==> (S/NP)\(S/NP)
+- category: (S/NP)\(S/NP)
+  rule: lex
+  semantics: \V2 V1 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
+
+## S\NP ==> (S/NP)/(S/NP)
+- category: (S/NP)/(S/NP)
+  rule: lex
+  semantics: \V2 V1 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
+
+## S[ng]\NP => (S\NP)\(S\NP)
+- category: (S\NP)\(S\NP)
+  rule: lex
+  semantics: \V1 V2 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),\e.TrueP) & V2(\F1 F2.F2(x),K)))
+  child0_category: S[ng=true]\NP
+
+## NP => S/(S\NP)
+- category: S/(S\NP)
+  rule: tr
+  semantics: \Q V K. V(Q,K)
+
+## NP => S/(S/NP)
+- category: S/(S/NP)
+  rule: tr
+  semantics: \Q V K. V(Q,K)
+
+## PP => (S[X=true]\NP)\((S[X=true]\NP)/PP)
+- category: (S\NP)\((S\NP)/PP)
+  rule: tr
+  semantics: \K1 M Q K2. M(K1, Q, K2)
+
+## S\NP => (S\NP)\((S\NP)/(S\NP))
+- category: (S\NP)\((S\NP)/(S\NP))
+  rule: tr
+  semantics: \V M Q K. M(V,Q,K)
+
+## NP => (S\NP)\((S\NP)/NP)
+- category: (S\NP)\((S\NP)/NP)
+  rule: tr
+  semantics: \Q1 V2 Q2 K. V2(Q2,Q1,K)
+
+
+##### Binary lexical rules #####
+
+## universal interpretattion of plural definite descriptions
+# - category: NP
+#   rule: fa
+#   semantics: \L F1 F2 F3. forall x. (F1(x) -> (F2(x) -> F3(x)))
+#   child0_surf: the
+#   child_any_pos: NNPS
+
+## Conjunction
+
+- category: S\S
+  rule: conj
+  semantics: \L S2 S1 K. (S1(K) & S2(K))
+
+- category: (S/S)/(S/S)
+  rule: conj
+  semantics: \L M2 M1 S K. M1(M2(S),K)
+
+- category: (S/S)\(S/S)
+  rule: conj
+  semantics: \L M2 M1 S K. M1(M2(S),K)
+
+- category: NP\NP
+  rule: conj
+  semantics: \L Q2 Q1 F1 F2. (Q1(F1,F2) & Q2(F1,F2))
+
+- category: N\N
+  rule: conj
+  semantics: \L F1 F2 x. (F1(x) & F2(x))
+
+- category: PP\PP
+  rule: conj
+  semantics: \L F1 F2 x. (F1(x) & F2(x))
+
+- category: (S\NP)\(S\NP)
+  rule: conj
+  # semantics: \L V2 V1 Q K. (V1(Q,K) & V2(Q,K))
+  semantics: \L V2 V1 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
+
+- category: (S\NP)/(S\NP)
+  rule: conj
+  semantics: \L V2 V1 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
+
+- category: (S/NP)\(S/NP)
+  rule: conj
+  semantics: \L V2 V1 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
+
+- category: (S/NP)/(S/NP)
+  rule: conj
+  semantics: \L V2 V1 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
+
+- category: (N/N)\(N/N)
+  rule: conj
+  semantics: \L M1 M2 F x. M1(M2(F),x)
+
+- category: (N/N)/(N/N)
+  rule: conj
+  semantics: \L M1 M2 F x. M1(M2(F),x)
+
+- category: (N\N)\(N\N)
+  rule: conj
+  semantics: \L M1 M2 F x. M1(M2(F),x)
+
+- category: (N/PP)\(N/PP)
+  rule: conj
+  semantics: \L M1 M2 F e. M1(M2(F),e)
+
+- category: (NP\NP)\(NP\NP)
+  rule: conj
+  semantics: \L M2 M1 Q F1 F2. (M1(Q,F1,F2) & M2(Q,F1,F2))
+
+- category: (NP/N)\(NP/N)
+  rule: conj
+  semantics: \L D2 D1 F G1 G2. (D1(F,G1,G2) & D2(F,G1,G2))
+
+- category: ((S\NP)/NP)\((S\NP)/NP)
+  rule: conj
+  semantics: \L V2 V1 Q1 Q2 K. Q2(\x.TrueP,\x.Q1(\y.TrueP,\y.(V1(\F1 F2.F2(y),\F1 F2.F2(x),K) & V2(\F1 F2.F2(y),\F1 F2.F2(x),K))))
+
+- category: ((S\NP)\(S\NP))\((S\NP)\(S\NP))
+  rule: conj
+  semantics: \L M2 M1 V Q K. (M1(V,Q,K) & M2(V,Q,K))
+
+- category: (((S\NP)\(S\NP))/NP)\(((S\NP)\(S\NP))/NP)
+  rule: conj
+  semantics: \L M2 M1 Q1 V Q2 K. (M1(Q1,V,Q2,K) & M2(Q1,V,Q2,K))
+
+- category: ((S\NP)\((S\NP)/NP))\((S\NP)\((S\NP)/NP))
+  rule: conj
+  semantics: \L M1 M2 V2 Q K. (M1(V2,Q,K) & M2(V2,Q,K))
+
+- category: NP\NP
+  rule: conj
+  semantics: \L Q. Q
+  child0_surf: ","
+  child1_category: NP\NP
+
+- category: PP\PP
+  rule: conj
+  semantics: \L F. F
+  child0_surf: ","
+  child1_category: PP\PP
+
+- category: S\S
+  rule: conj
+  semantics: \L S. S
+  child0_surf: ","
+  child1_category: S\S
+
+- category: (S/S)\(S/S)
+  rule: conj
+  semantics: \L S. S
+  child0_surf: ","
+  child1_category: (S/S)\(S/S)
+
+- category: (S/S)/(S/S)
+  rule: conj
+  semantics: \L S. S
+  child0_surf: ","
+  child1_category: (S/S)/(S/S)
+
+- category: (S\NP)\(S\NP)
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: (S\NP)\(S\NP)
+
+- category: ((S\NP)\(S\NP))\((S\NP)\(S\NP))
+  rule: conj
+  semantics: \L R. R
+  child1_category: ((S\NP)\(S\NP))\((S\NP)\(S\NP))
+
+## Disjunction
+
+- category: S\S
+  rule: conj
+  semantics: \L S2 S1 K. (S1(K) | S2(K))
+  child0_surf: or
+
+- category: NP\NP
+  rule: conj
+  semantics: \L Q2 Q1 F1 F2. (Q1(F1, F2) | Q2(F1, F2))
+  child0_surf: or
+
+- category: NP\NP
+  rule: conj
+  semantics: \L Q1 Q2 F1 F2. (Q2(F1, F2) | Q1(F1, F2))
+  child0_surf: ","
+  child_any_surf: or
+
+- category: N/N
+  rule: conj
+  semantics: \L F2 F1 x. (F1(x) | F2(x))
+  child0_surf: or
+
+- category: N\N
+  rule: conj
+  semantics: \L F2 F1 x. (F1(x) | F2(x))
+  child0_surf: or
+
+- category: (S\NP)\(S\NP)
+  rule: conj
+  semantics: \L V2 V1 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),K) | V2(\F1 F2.F2(x),K)))
+  child0_surf: or
+
+- category: (N/N)\(N/N)
+  rule: conj
+  semantics: \L M2 M1 F x. (M1(F,x) | M2(F,x))
+  child0_surf: or
+
+- category: (N/N)/(N/N)
+  rule: conj
+  semantics: \L M1 M2 F x. M1(M2(F),x)
+  child0_surf: or
+
+- category: PP\PP
+  rule: conj
+  semantics: \L K2 K1 e. (K1(e) | K2(e))
+  child0_surf: or
+
+
+## Rules for commas
+
+# lp
+- category: S
+  rule: lp
+  semantics: \L R. R
+
+- category: S\S
+  rule: lp
+  semantics: \L R. R
+
+- category: S/S
+  rule: lp
+  semantics: \L R. R
+
+- category: NP
+  rule: lp
+  semantics: \L R. R
+
+- category: N
+  rule: lp
+  semantics: \L R. R
+
+- category: S\NP
+  rule: lp
+  semantics: \L R. R
+
+- category: (S\NP)/(S\NP)
+  rule: lp
+  semantics: \L R. R
+  child1_category: (S\NP)/(S\NP)
+
+- category: (S\NP)\(S\NP)
+  rule: lp
+  semantics: \L V2 V1 Q K. Q(\x.TrueP, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
+  child1_category: S\NP
+
+- category: NP\NP
+  rule: lp
+  semantics: \L Q2 Q1 F1 F2. (Q1(F1,F2) & Q2(F1,F2))
+  child1_category: NP
+
+- category: NP\NP
+  rule: lp
+  semantics: \L R. R
+  child1_category: NP\NP  
+
+- category: NP/NP
+  rule: lp
+  semantics: \L R. R
+
+- category: N/N
+  rule: lp
+  semantics: \L R. R
+
+- category: N\N
+  rule: lp
+  semantics: \L R. R
+
+- category: (NP\NP)\(NP\NP)
+  rule: lp
+  semantics: \L R. R
+
+- category: NP
+  rule: lp
+  semantics: \L R. R
+  child0_category: LQU
+
+- category: N
+  rule: lp
+  semantics: \L R. R
+  child0_category: LQU
+
+# rp
+- category: S
+  rule: rp
+  semantics: \L R. L
+  # child0_surf: ","
+
+- category: NP
+  rule: rp
+  semantics: \L R. L
+
+- category: N
+  rule: rp
+  semantics: \L R. L
+
+- category: PP
+  rule: rp
+  semantics: \L R. L
+
+- category: S\NP
+  rule: rp
+  semantics: \L R. L
+
+- category: S/S
+  rule: rp
+  semantics: \L R. L
+
+- category: NP\NP
+  rule: rp
+  semantics: \L R. L
+
+- category: NP/NP
+  rule: rp
+  semantics: \L R. L
+
+- category: N/PP
+  rule: rp
+  semantics: \L R. L
+
+- category: PP/NP
+  rule: rp
+  semantics: \L R. L
+
+- category: (S\NP)/NP
+  rule: rp
+  semantics: \L R. L
+
+- category: N
+  rule: rp
+  semantics: \L R. L
+  child1_category: RQU
+
+# # sententce final particle
+# - category: S
+#   rule: rp
+#   semantics: \S D. S(\e.TrueP)
+# #   child1_category: "."
+
+# "," NP => (S\NP)\(S\NP)
+- category: (S\NP)\(S\NP)
+  rule: ltc
+  semantics: \L Q1 V Q2 K. (Q1(\x.TrueP, \x.TrueP) & Q2(\x.TrueP, \x.(V(\F1 F2.F2(x),K))))
+
+# rtc 
+# NP "," => S/S
+- category: S/S
+  rule: rtc
+  semantics: \L R S. S
+
+# S/S "," => (S\NP)/(S\NP)
+- category: (S\NP)/(S\NP)
+  rule: rtc
+  semantics: \L R V Q K. L(V(Q),K)
+
+- category: N
+  rule: funny
+  semantics: \L R. R
+  child0_surf: and
+
+# gbx
+# ((S\NP)/S)/(S\NP) and (S\NP)\(S\NP) ==> ((S\NP)/S)/(S\NP)
+- category: ((S\NP)/S)/(S\NP)
+  rule: gbx
+  semantics: \L R V. L(R(V))
+
+# ((S\NP)/(S\NP))/(S\NP) and (S\NP)\(S\NP) ==> ((S\NP)/S)/(S\NP)
+- category: ((S\NP)/(S\NP))/(S\NP)
+  rule: gbx
+  semantics: \L R V. L(R(V))
+
+# ((S\NP)/NP)\((S\NP)/NP) and (S\NP)\(S\NP) ==> ((S\NP)/NP)\((S\NP)/NP)
+- category: ((S\NP)/NP)\((S\NP)/NP)
+  rule: gbx
+  semantics: \L R V2 Q1 Q2 K. L(V2,Q1,Q2,\e.(R(\K1 K2.K2(e),\w.TrueP,\w.TrueP) & K(e)))
+
+## NP and NP => NP
+- category: NP
+  rule: appo
+  semantics: \Q1 Q2 F1 F2. Q1(\x.(Q2(\y.TrueP,\y.(x = y)) & F1(x)),F2)
+
+
+########## Sentence final operation ###########
+
+- category: S
+  rule: rp
+  semantics: \L R. L(\e.TrueP)
+  root: "true"
+
+- category: S
+  rule: lp
+  semantics: \L R. R(\e.TrueP)
+  root: "true"
+
+- category: S
+  rule: ba
+  semantics: \L R. R(L,\e.TrueP)
+  root: "true"
+
+- category: S
+  rule: fa
+  semantics: \L R. L(R,\e.TrueP)
+  root: "true"
+
+- category: NP
+  rule: rp
+  semantics: \L R. L(\x.TrueP,\x.TrueP)
+  root: "true"
+
+- category: NP
+  rule: fa
+  semantics: \L R. L(R,\x.TrueP,\x.TrueP)
+  child_any_category: NP
+  root: "true"
+
+- category: NP
+  rule: ba
+  semantics: \L R. R(L,\x.TrueP,\x.TrueP)
+  child_any_category: NP
+  root: "true"
+
+- category: S/NP
+  rule: rp
+  semantics: \L R. R(\F1 F2.exists x.F2(x),\e.TrueP)
+  root: "true"
+
+## STS
+- category: S/NP
+  rule: fc
+  semantics: \L R. exists x. L(R(\F1 F2.F2(x)),\e.TrueP)
+  child0_category: S/(S\NP)
+  child1_category: (S\NP)/NP
+  root: "true"
+
+## STS
+- category: S\NP
+  rule: fa
+  semantics: \L R. L(R,\F1 F2.exists x.F2(x),\e.TrueP)
+  root: "true"
+
+## STS
+- category: S\NP
+  rule: rp
+  semantics: \L R. L(\F1 F2.exists x.F2(x),\e.TrueP)
+  root: "true"
+
+- category: S/S
+  rule: fa
+  semantics: \L R. L(R,\K.exists e.K(e),\e.TrueP)
+  root: "true"
+
+# - category: S
+#   rule: rp
+#   semantics: \L R. L
+#   child1_surf: "?"
+
+
+############### Semantic Templates  ###############
+
+##### Templates for NPs #####
+
+## Common nouns
+- category: N
+  semantics: \E x. E(x)
+  coq_type: Entity -> Prop
+
+# ## Proper nouns
+# - category: N
+#   semantics: \E. E
+#   pos: NNP
+
+# ## Number words
+# - category: N
+#   semantics: \E. E
+#   pos: CD
+
+## default existential interpretation
+- category: NP
+  semantics: \E F1 F2. exists x. (E(x) & F1(x) & F2(x))
+  coq_type: Entity -> Prop
+
+## Pronouns
+- category: NP
+  semantics: \E F1 F2. exists x. ((x = E) & F1(x) & F2(x))
+  pos: PRP
+
+- category: NP\NP
+  semantics: \E Q F1 F2. Q(\x.(E(x) & F1(x)), F2)
+  coq_type: Entity -> Prop
+
+- category: (NP\NP)/(NP\NP) 
+  semantics: \E M Q F1 F2. Q(\x.(E(x) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2)
+  coq_type: Entity -> Prop
+
+- category: (NP/NP)/(NP/NP) 
+  semantics: \E M Q F1 F2. Q(\x.(E(x) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2)
+  coq_type: Entity -> Prop
+
+- category: (NP\NP)\(NP\NP) 
+  semantics: \E M Q F1 F2. Q(\x.(E(x) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2)
+  coq_type: Entity -> Prop
+
+- category: (NP/NP)\(NP/NP) 
+  semantics: \E M Q F1 F2. Q(\x.(E(x) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2)
+  coq_type: Entity -> Prop
+
+- category: ((NP\NP)/(NP\NP))/NP
+  semantics: \E Q1 M Q2 F1 F2. Q2(\y.TrueP,\y.Q1(\x.(E(x,y) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2))
+  coq_type: Entity -> Entity -> Prop
+
+- category: ((NP/NP)/(NP/NP))/NP
+  semantics: \E Q1 M Q2 F1 F2. Q2(\y.TrueP,\y.Q1(\x.(E(x,y) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2))
+  coq_type: Entity -> Entity -> Prop
+
+- category: ((NP\NP)\(NP\NP))/NP
+  semantics: \E Q1 M Q2 F1 F2. Q2(\y.TrueP,\y.Q1(\x.(E(x,y) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2))
+  coq_type: Entity -> Entity -> Prop
+
+- category: ((NP/NP)\(NP/NP))/NP
+  semantics: \E Q1 M Q2 F1 F2. Q2(\y.TrueP,\y.Q1(\x.(E(x,y) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2))
+  coq_type: Entity -> Entity -> Prop
+
+
+##### Templates for Determiners #####
+
+## default existential interpretation
+- category: NP/N
+  semantics: \E F1 F2 F3. exists x. (F1(x) & F2(x) & F3(x))
+
+
+##### Templates for Adverbs #####
+
+- category: (N/N)/(N/N) 
+  semantics: \E A F x. (E(x) & A(F,x))
+  coq_type: Entity -> Prop
+
+- category: (S\NP)\(S\NP)
+  semantics: \E V Q K. V(Q, \e.(E(e) & K(e)))
+  coq_type: Event -> Prop
+
+- category: (S\NP)/(S\NP)
+  semantics: \E V Q K. V(Q, \e.(E(e) & K(e)))
+  coq_type: Event -> Prop
+
+- category: S/S
+  semantics: \E S K. S(\e.(E(e) & K(e)))
+  coq_type: Event -> Prop
+
+- category: S\S
+  semantics: \E S K. S(\e.(E(e) & K(e)))
+  coq_type: Event -> Prop
+
+- category: (S/S)/NP
+  semantics: \E Q S K. S(\e.(Q(\x.TrueP, \x.E(e,x)) & K(e)))
+  coq_type: Event -> Entity -> Prop
+
+- category: (S\S)/NP
+  semantics: \E Q S K. S(\e.(Q(\x.TrueP, \x.E(e,x)) & K(e)))
+  coq_type: Event -> Entity -> Prop
+
+- category: (S/S)\NP
+  semantics: \E Q S K. S(\e.(Q(\x.TrueP, \x.E(e,x)) & K(e)))
+  coq_type: Event -> Entity -> Prop
+
+- category: (S/S)/(S/S)
+  semantics: \E M S K1. S(\e.((E(e) & M(\K2.K2(e),\e.TrueP)) & K1(e)))
+  coq_type: Event -> Prop
+
+- category: ((S/S)/(S/S))/NP
+  semantics: \E Q M S K1. S(\e.Q(\x.TrueP, \x.(E(e,x) & M(\K2.K2(e),\e.TrueP) & K1(e))))
+
+- category: (S/S)/(S\NP)
+  semantics: \E V S K. S(\e.(E(e) & exists x. V(\F1 F2.F2(x), \w.(Subj(w) = Subj(e))) & K(e)))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)\(S\NP))/((S\NP)\(S\NP))
+  semantics: \E A V Q K. Q(\x.TrueP, \x.(A(V,\F1 F2.(F2(x) & E(x)),K)))
+  coq_type: Entity -> Prop
+
+- category: ((S\NP)\(S\NP))\((S\NP)\(S\NP))
+  semantics: \E A V Q K. Q(\x.TrueP, \x.(A(V,\F1 F2.(F2(x) & E(x)),K)))
+  coq_type: Entity -> Prop
+
+- category: ((S\NP)/(S\NP))/((S\NP)/(S\NP))
+  semantics: \E A V Q K. Q(\x.TrueP, \x.(A(V,\F1 F2.(F2(x) & E(x)),K)))
+  coq_type: Entity -> Prop
+
+- category: ((S\NP)/(S\NP))\((S\NP)/(S\NP))
+  semantics: \E A V Q K. Q(\x.TrueP, \x.(A(V,\F1 F2.(F2(x) & E(x)),K)))
+  coq_type: Entity -> Prop
+
+- category: ((S\NP)/(S\NP))\(S\NP)
+  semantics: \E V1 V2 Q K. Q(\x.TrueP, \x.(V2(\F1 F2.F2(x),K) & V1(\F1 F2.F2(x),\e.TrueP)))
+
+- category: (((S\NP)\(S\NP))\((S\NP)\(S\NP)))/(S\NP)
+  semantics: \E V1 A V2 Q K. Q(\x.TrueP, \x.(A(V2,\F1 F2.(F2(x) & E(x)),K) & V1(\F1 F2.F2(x), \e.TrueP)))
+
+
+##### Templates for Modifiers #####
+
+- category: N/N
+  semantics: \E F x. (F(x) & E(x))
+  coq_type: Entity -> Prop
+
+- category: N/N
+  semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
+  coq_type: Event -> Prop
+  pos: JJ
+
+- category: N/N
+  semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
+  coq_type: Event -> Prop
+  pos: JJR
+
+- category: N/N
+  semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
+  coq_type: Event -> Prop
+  pos: JJS
+
+- category: N/N
+  semantics: \E F x. exists e.(E(e) & (Acc(e) = x) & F(x))
+  coq_type: Event -> Prop
+  pos: VBN
+
+- category: N\N
+  semantics: \E F x. (F(x) & E(x))
+  coq_type: Entity -> Prop
+
+- category: N\N
+  semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
+  coq_type: Event -> Prop
+  pos: JJ
+
+- category: N\N
+  semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
+  coq_type: Event -> Prop
+  pos: JJR
+
+- category: N\N
+  semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
+  coq_type: Event -> Prop
+  pos: JJS
+
+- category: N\N
+  semantics: \E F x. exists e.(E(e) & (Acc(e) = x) & F(x))
+  coq_type: Event -> Prop
+  pos: VBN
+
+- category: NP/NP
+  semantics: \E Q F1 F2. Q(\x.(E(x) & F1(x)),F2)
+  coq_type: Entity -> Prop
+
+- category: (N/N)\NP
+  semantics: \E Q F x. Q(\y.TrueP, \y.(E(x,y) & F(x)))
+  coq_type: Entity -> Entity -> Prop
+
+- category: (N/N)/NP
+  semantics: \E Q F x. Q(\y.TrueP, \y.(E(x,y) & F(x)))
+  coq_type: Entity -> Entity -> Prop
+
+- category: (NP\NP)/N
+  semantics: \E F Q F1 F2. Q(\x.(F(x) & F1(x)),F2)
+
+- category: (NP\NP)/PP
+  semantics: \E K Q F1 F2. Q(\x.exists e.(E(e,x) & K(e) & F1(x)),F2)
+  coq_type: Event -> Entity -> Prop
+
+- category: (N\N)/PP
+  semantics: \E K F x. exists e. (E(e,x) & K(e) & F(x))
+  coq_type: Event -> Entity -> Prop
+
+- category: (N\N)/N
+  semantics: \E F G x. (F(x) & G(x))
+
+- category: (N/N)/N
+  semantics: \E F G x. (F(x) & G(x))
+
+- category: (N\N)\N
+  semantics: \E F G x. (F(x) & G(x))
+
+- category: (N\N)/N
+  semantics: \E F G x. (F(x) & G(x))
+
+- category: ((N/N)\(N/N))/(N/N)
+  semantics: \E M1 M2 F x. (M1(\x.TrueP,x) & M2(\x.TrueP,x) & F(x))
+
+- category: ((N/N)/(N/N))\((N/N)/(N/N))
+  semantics: \E A M F x. A(M,\x.(F(x) & E(x)),x)
+  coq_type: Entity -> Prop
+
+- category: ((S\NP)\(S\NP))/N
+  semantics: \E F V Q K. Q(\x.TrueP, \x.(E(x) & V(\F1 F2.F2(x), K) & F(x)))
+  coq_type: Entity -> Prop
+
+- category: ((S/NP)\(S/NP))/N
+  semantics: \E F V Q K. Q(\x.TrueP, \x.(E(x) & V(\F1 F2.F2(x), K) & F(x)))
+  coq_type: Entity -> Prop
+
+- category: ((S\NP)/(S\NP))/N
+  semantics: \E F V Q K. Q(\x.TrueP, \x.(E(x) & V(\F1 F2.F2(x), K) & F(x)))
+  coq_type: Entity -> Prop
+
+- category: ((S/NP)/(S/NP))/N
+  semantics: \E F V Q K. Q(\x.TrueP, \x.(E(x) & V(\F1 F2.F2(x), K) & F(x)))
+  coq_type: Entity -> Prop
+
+
+##### Templates for Preposition #####
+
+## nominal modifiers
+- category: (NP\NP)/NP
+  semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.TrueP, \y.exists e.(E(e,y) & (Subj(e) = x) & F1(x)))), F2)
+  coq_type: Event -> Entity -> Prop
+  # semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.TrueP, \y.exists e.(E(e) & (Subj(e) = x) & (Dat(e) = y) & F1(x)))), F2)
+  # coq_type: Event -> Prop
+  # semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.TrueP, \y.(x = y)) & F1(x)), F2)
+
+- category: (NP/NP)/NP
+  semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.TrueP, \y.exists e.(E(e,y) & (Subj(e) = x) & F1(x)))), F2)
+  coq_type: Event -> Entity -> Prop
+
+- category: (NP\NP)\NP
+  semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.TrueP, \y.exists e.(E(e,y) & (Subj(e) = x) & F1(x)))), F2)
+  coq_type: Event -> Entity -> Prop
+
+- category: (NP\NP)/NP
+  semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.TrueP, \y.exists e.(E(e,y) & (Subj(e) = x) & F1(x)))), F2)
+  coq_type: Event -> Entity -> Prop
+
+- category: (NP\NP)/NP
+  semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.TrueP, \y.(x = y)) & F1(x)), F2)
+  surf: of
+
+- category: (NP\NP)/NP
+  semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.TrueP, \y.(x = y)) & F1(x)), F2)
+  surf: for
+
+- category: ((NP\NP)\(NP\NP))/NP
+  semantics: \E Q1 M Q2 F1 F2. Q2(\y.TrueP,\y.Q1(\x.((x = y) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2))
+  surf: of
+
+- category: PP/NP
+  semantics: \E Q e. Q(\x.TrueP, \x.E(e,x))
+  coq_type: Event -> Entity -> Prop
+
+- category: PP/PP
+  semantics: \E K e1. exists e2. (K(e2) & E(e2,e1))
+  coq_type: Event -> Event -> Prop
+
+- category: (PP\PP)/NP
+  semantics: \E Q K e. Q(\x.TrueP, \x.(E(e,x) & K(e)))
+  coq_type: Event -> Event -> Prop
+
+- category: PP/S
+  semantics: \E S e. (E(e) & S(\e.TrueP))
+  coq_type: Event -> Prop
+
+- category: PP/(S\NP)
+  semantics: \E V e1. exists x. V(\F1 F2.F2(x),\e.TrueP)
+
+- category: (NP\NP)/S
+  semantics: \E S Q F1 F2. (Q(F1,F2) & S(\e.TrueP))
+
+- category: ((S\NP)\(S\NP))/PP
+  semantics: \E K1 V Q K2. Q(\x.TrueP, \x.(V(\F1 F2.F2(x), \e.(E(e) & K1(e) & K2(e)))))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/(S\NP))/PP
+  semantics: \E K1 V Q K2. Q(\x.TrueP, \x.(V(\F1 F2.F2(x), \e.(E(e) & K1(e) & K2(e)))))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)\(S\NP))/NP
+  semantics: \E Q1 V Q2 K. V(Q2, \e.Q1(\x.TrueP, \x.(E(e,x) & K(e))))
+  coq_type: Event -> Entity -> Prop
+
+- category: ((S\NP)\(S\NP))\NP
+  semantics: \E Q1 V Q2 K. V(Q2, \e.Q1(\x.TrueP, \x.(E(e,x) & K(e))))
+  coq_type: Event -> Entity -> Prop
+
+- category: (((S\NP)\(S\NP))\NP)/NP
+  semantics: \E Q1 Q2 V Q3 K. V(Q3, \e.Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.(E(e,y) & (Acc(e) = x) & K(e)))))
+  coq_type: Event -> Entity -> Prop
+
+- category: (((S\NP)\(S\NP))\NP)/S
+  semantics: \E S Q1 V Q2 K. V(Q2, \e1.Q1(\x.TrueP, \x.S(\e2.(E(e2,e1) & (Acc(e2) = x) & K(e1)))))
+  coq_type: Event -> Event -> Prop
+
+- category: ((S[adj=true]\NP)\(S[adj=true]\NP))/NP
+  semantics: \E Q1 V Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.(V(\F1 F2.F2(x), \w.TrueP) & E(x,y))))
+  coq_type: Entity -> Entity -> Prop
+
+- category: ((S\NP)\(S\NP))/(S\NP)
+  semantics: \E V1 V2 Q K. Q(\x.TrueP, \x.V1(\F1 F2.(V2(\G1 G2.G2(x), \e.TrueP) & F2(x)), K))
+
+- category: (((S\NP)\(S\NP))/(S\NP))/NP
+  semantics: \E Q1 V1 V2 Q2 K. Q2(\x.TrueP, \x.V1(\F1 F2.(V2(\G1 G2.G2(x), \e.TrueP) & F2(x)), K))
+
+- category: (((S\NP)/(S\NP))/(S\NP))/NP
+  semantics: \E Q1 V1 V2 Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.((Subj(e) = x) & (Acc(e) = y) & V1(\F1 F2.F2(y),\w.TrueP) & V2(\F1 F2.F2(y),\w.TrueP) & K(e))))
+
+- category: (((S\NP)\(S\NP))/(S\NP))/N
+  semantics: \E F V1 V2 Q K. Q(\x.TrueP, \x.(F(x) & V1(\F1 F2.(V2(\G1 G2.G2(x), \e.TrueP) & F2(x)), K)))
+
+- category: (NP\NP)/(S\NP)
+  semantics: \E V Q F1 F2. Q(\x.V(\G1 G2.(G2(x) & F1(x)), \e.TrueP), F2)
+
+- category: (NP/NP)/(S\NP)
+  semantics: \E V Q F1 F2. Q(\x.V(\G1 G2.(G2(x) & F1(x)), \e.TrueP), F2)
+
+- category: (NP/NP)\(S\NP)
+  semantics: \E V Q F1 F2. Q(\x.V(\G1 G2.(G2(x) & F1(x)), \e.TrueP), F2)
+
+- category: (N/N)/(S\NP)
+  semantics: \E V F x. (V(\G1 G2.G2(x), \e.TrueP) & F(x))
+
+- category: (PP/PP)/(PP/PP)
+  semantics: \E X. X
+
+- category: ((N/N)/(N/N))\(S\NP)
+  semantics: \E V M F x. (V(\G1 G2. G2(x), \e.TrueP) & M(F,x))
+
+- category: ((N/N)/(N/N))/(S\NP)
+  semantics: \E V M F x. (V(\G1 G2. G2(x), \e.TrueP) & M(F,x))
+
+- category: ((N/N)/(N/N))/NP
+  semantics: \E Q A F x. Q(\x.TrueP, \x. (E(x) & A(F,x)))
+  coq_type: Entity -> Prop
+
+- category: ((N/N)\(N/N))/NP
+  semantics: \E Q A F x. Q(\x.TrueP, \x. (E(x) & A(F,x)))
+  coq_type: Entity -> Prop
+
+- category: (((S\NP)\(S\NP))/((S\NP)\(S\NP)))/NP 
+  semantics: \E Q1 M V Q2 K. M(V,Q2,\e.(Q1(\x.TrueP,\x.(E(e,x) & K(e)))))
+  coq_type: Event -> Entity -> Prop
+
+- category: (((S\NP)\(S\NP))\((S\NP)\(S\NP)))/NP
+  semantics: \E Q1 M V Q2 K. M(V,Q2,\e.(Q1(\x.TrueP,\x.(E(e,x) & K(e)))))
+  coq_type: Event -> Entity -> Prop
+
+- category: (((S\NP)\(S\NP))\((S\NP)\(S\NP)))/S
+  semantics: \E S X. X
+
+- category: ((NP\NP)/(NP\NP))/((NP\NP)/(NP\NP))
+  semantics: \E X. X
+
+### DEFAULT TEST ###
+- category: ((NP\NP)\NP)/NP
+  semantics: \E Q1 Q2 Q3 F1 F2. Q3(\x.(Q2(\y.TrueP,\y.((x = y) & Q1(\z.TrueP,\z.(E(y,z))))) & F1(x)),F2)
+  coq_type: Entity -> Entity -> Prop
+
+- category: (S/S)/N
+  semantics: \E F S K. S(\e.(E(e) & F(e) & K(e)))
+  coq_type: Event -> Prop
+
+- category: (S/S)/PP
+  semantics: \E F S K. S(\e.(E(e) & F(e) & K(e)))
+  coq_type: Event -> Prop
+
+
+##### Templates for Verb phrases #####
+
+## intransitive verbs
+- category: S\NP
+  semantics: \E Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & K(e)))
+  coq_type: Event -> Prop
+
+- category: S/NP
+  semantics: \E Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & K(e)))
+  coq_type: Event -> Prop
+
+## transitive verbs
+- category: (S\NP)/NP
+  semantics: \E Q1 Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K(e))))
+  coq_type: Event -> Prop
+
+- category: (S/NP)/NP
+  semantics: \E Q1 Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K(e))))
+  coq_type: Event -> Prop
+
+## perceptual verbs
+- category: ((S\NP)/(S\NP))/NP
+  semantics: \E Q1 V Q2 K. Q2(\x.TrueP, \x.exists e1.(E(e1) & (Subj(e1) = x) & V(Q1,\e2.(AccE(e1) = e2)) & K(e1)))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/PP)/NP
+  semantics: \E Q1 K1 Q2 K2. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K1(e) & K2(e))))
+  coq_type: Event -> Prop
+
+- category: (S[pss=true]\NP)/(PP/NP)
+  semantics: \E M Q K. Q(\x.TrueP, \x.exists e.(E(e) & M(\F1 F2.F2(x),e) & K(e)))
+  coq_type: Event -> Prop
+
+## control verbs
+- category: (S\NP)/(S[to=true]\NP)
+  semantics: \E V Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e, V(\F1 F2.F2(x),\e.TrueP)) & K(e)))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/(S[to=true]\NP))/NP
+  semantics: \E Q1 V Q2 K. Q2(\x.TrueP, \x.exists e1.(E(e1) & (Subj(e1) = x) & AccI(e1, V(Q1,\e2.TrueP)) & K(e1)))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/(S[ng=true]\NP))/NP
+  semantics: \E Q1 V Q2 K. Q2(\x.TrueP, \x.exists e1.(E(e1) & (Subj(e1) = x) & V(Q1,\e2.(AccE(e1) = e2)) & K(e1)))
+  coq_type: Event -> Prop
+
+## ditransitive verbs
+- category: ((S\NP)/NP)/NP
+  semantics: \E Q1 Q2 Q3 K. Q3(\x1.TrueP, \x1.Q2(\x2.TrueP, \x2.Q1(\x3.TrueP, \x3.exists e.(E(e) & (Subj(e) = x1) & (Acc(e) = x3) & (Dat(e) = x2) & K(e)))))
+  coq_type: Event -> Prop
+
+- category: (S\NP)/PP
+  semantics: \E F Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & F(e) & K(e)))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/NP)/PP
+  semantics: \E K1 Q1 Q2 K1. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K1(e) & K2(e))))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)\NP)/PP
+  semantics: \E K1 Q1 Q2 K1. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K1(e) & K2(e))))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/PP)/PP
+  semantics: \E F1 F2 Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & F1(e) & F2(e) & K(e)))
+  coq_type: Event -> Prop
+
+## attitude verbs
+- category: (S\NP)/S
+  semantics: \E S Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,S(\w.TrueP)) & K(e)))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/NP)/(S\NP)
+  semantics: \E V Q1 Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.(E(e) & (Subj(e) = x) & AccI(e,V(\F1 F2.F2(y),\w.TrueP)) & K(e))))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)\NP)/(S\NP)
+  semantics: \E V Q1 Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.(E(e) & (Subj(e) = x) & AccI(e,V(\F1 F2.F2(y),\w.TrueP)) & K(e))))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/S)/NP
+  semantics: \E Q1 S Q2 K. Q1(\y.TrueP, \y.Q2(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,S(\w.TrueP)) & (Dat(e) = y) & K(e))))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/S)/PP
+  semantics: \E F S Q K. Q(\x.TrueP, \x.exists e. (E(e) & F(e) & (Subj(e) = x) & AccI(e,S(\w.TrueP)) & K(e)))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/S)/(S\NP)
+  semantics: \E V S Q K. Q(\x.TrueP, \x.exists e. (E(e) & V(\F1 F2.F2(x),\w.TrueP) & (Subj(e) = x) & AccI(e,S(\w.TrueP)) & K(e)))
+  coq_type: Event -> Prop
+
+- category: ((S\S)\NP)/NP
+  semantics: \E Q1 Q2 S K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e. (E(e) & (Subj(e) = x) & AccI(e,S(\w.TrueP)) & (Dat(e) = y) & K(e))))
+  coq_type: Event -> Prop
+
+### DEFAULT TEST ###
+- category: (((S\NP)/S)/(S\NP))/NP
+  semantics: \E Q1 V S Q2 K. Q2(\x.TrueP, \x.exists e. (E(e) & (Subj(e) = x) & AccI(e,S(\w.TrueP)) & K(e)))
+  coq_type: Event -> Prop
+
+- category: (S\S)\NP
+  semantics: \E Q S K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,S(\w.TrueP)) & K(e)))
+  coq_type: Event -> Prop
+
+- category: (S\NP)/S[qem=true]
+  semantics: \E S Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,S(\w.TrueP)) & K(e)))
+  coq_type: Event -> Prop
+
+
+##### Templates for relative clauses #####
+
+- category: (NP\NP)/(S\NP)
+  semantics: \E V Q F1 F2. Q(\x.(V(\G1 G2.G2(x), \e.TrueP) & F1(x)), F2)
+
+- category: (NP\NP)/(S/NP)
+  semantics: \E V Q F1 F2. Q(\x.(V(\G1 G2.G2(x), \e.TrueP) & F1(x)), F2)
+
+- category: NP/(S\NP)
+  semantics: \E V F1 F2. exists x. (V(\F1 F2.F2(x),\e.TrueP) & F1(x) & F2(x))
+
+- category: (NP/(S\NP))/N
+  semantics: \E F V F1 F2. exists x. (F(x) & V(\G1 G2.G2(x),\e.TrueP) & F1(x) & F2(x))
+
+- category: (S[qem=true]/(S\NP))/N
+  semantics: \E F V K. exists x. (F(x) & V(\F1 F2.F2(x),K))
+
+- category: NP/((S\NP)/NP) 
+  semantics: \E V F1 F2. exists x y. (V(\F1 F2.F2(y),\G1 G2.G2(x),\e.TrueP) & F1(x) & F2(x))
+
+- category: (NP\NP)/(NP\NP) 
+  semantics: \E M Q F1 F2. Q(\y. exists x. (M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & Rel(x,y) & F1(y)), F2)
+  base: whose
+
+- category: NP/(S/NP)
+  semantics: \E V F1 F2. exists x. (V(\G1 G2.G2(x), \e.TrueP) & F1(x) & F2(x))
+
+- category: ((NP\NP)\(NP\NP))/S
+  semantics: \E S M Q F1 F2. Q(\x.(S(\e.(Dat(e) = x)) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2)
+
+- category: ((NP\NP)\(NP\NP))/(S\NP)
+  semantics: \E V M Q F1 F2. Q(\x.(V(\H1 H2.H2(x),\e.TrueP) & M(\G1 G2.G1(x),\w.TrueP,\w.TrueP) & F1(x)), F2)
+
+- category: ((NP\NP)/(S\NP))\(NP/NP)
+  semantics: \E M V Q F1 F2. M(Q, \x.(F1(x) & F2(x)), \x.V(\G1 G2.G2(x), \e.TrueP))
+
+- category: ((NP\NP)/S)\((NP\NP)/NP)
+  semantics: \E M S Q F1 F2. Q(\x.(S(\e.(Dat(e) = x)) & F1(x)),F2)
+  coq_type: Event -> Prop
+
+- category: ((S\NP)\(S\NP))/(S/NP)
+  semantics: \E V1 V2 Q K. Q(\x.(V1(\F1 F2. F2(x), \e.TrueP) & V2(\F1 F2. F2(x), \e.TrueP)),K)
+
+
+##### Templates for questions #####
+
+- category: S/(S/NP)
+  semantics: \E V K. exists x. V(\G1 G2. G2(x), \e.TrueP)
+
+- category: S/(S\NP)
+  semantics: \E V K. exists x. V(\G1 G2. G2(x), \e.TrueP)
+
+- category: (S/(S/NP))/N
+  semantics: \E F V K. exists x. (F(x) & V(\G1 G2. G2(x), \e.TrueP))
+
+- category: (S/(S\NP))/N
+  semantics: \E F V K. exists x. (F(x) & V(\G1 G2. G2(x), \e.TrueP))
+
+
+##### Templates for connectives #####
+
+## default conjunctive interpretation
+- category: (S/S)/S
+  semantics: \E S1 S2 K. (S2(\e.TrueP) & S1(\e.TrueP))
+
+- category: (S\S)/S
+  semantics: \E S1 S2 K. (S2(\e.TrueP) & S1(\e.TrueP))
+
+- category: (S\S)\S
+  semantics: \E S1 S2 K. (S2(\e.TrueP) & S1(\e.TrueP))
+
+- category: (S/S)\S
+  semantics: \E S1 S2 K. (S2(\e.TrueP) & S1(\e.TrueP))
+
+- category: ((S\NP)\(S\NP))/S
+  semantics: \E S V Q K. (V(Q,\e.TrueP) & S(\e.TrueP))
+
+- category: ((S\NP)/(S\NP))/S
+  semantics: \E S V Q K. (V(Q,\e.TrueP) & S(\e.TrueP))
+
+- category: ((S/NP)\(S/NP))/S
+  semantics: \E S V Q K. (V(Q,\e.TrueP) & S(\e.TrueP))
+
+- category: ((S/NP)/(S/NP))/S
+  semantics: \E S V Q K. (V(Q,\e.TrueP) & S(\e.TrueP))
+
+
+########## Templates with syntactic features ##########
+
+##### Templates for Copula #####
+
+- category: ((S\NP[expl=true])/S[em=true])/(S[adj=true]\NP)
+  semantics: \E V S Q K. V(\F1 F2.F2(S(K)),\e.TrueP)
+
+- category: ((S\NP)/(S\NP))/(S\NP)
+  semantics: \E V1 V2 Q K. Q(\x.TrueP,\x.((V1(\F1 F2.F2(x),\e.TrueP) & V2(\F1 F2.F2(x),\e.TrueP))))
+
+
+##### Templates for Adjectives #####
+
+- category: S[adj=true]\NP
+  semantics: \E Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & K(e))) # event semantics
+  coq_type: Event -> Prop
+  # semantics: \E Q K. Q(\x.TrueP, \x.E(x)) # plain semantics
+  # coq_type: Entity -> Prop
+
+- category: (S[adj=true]\NP)\NP
+  semantics: \E Q1 Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K(e))))
+  coq_type: Entity -> Prop
+  # semantics: \E Q1 Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.E(x,y))) # plain semantics
+  # coq_type: Entity -> Entity -> Prop
+
+## tough constructions
+- category: (S[adj=true]\NP)/((S[to=true]\NP)/NP)
+  semantics: \E V2 Q K. Q(\x.TrueP, \x.(exists y. V2(\F1 F2.F2(x),\F1 F2.F2(y),\e.(E(e) & K(e) ))))
+  coq_type: Event -> Prop
+
+- category: N/S
+  semantics: \E S x. (E(x) & S(\e.TrueP))
+  coq_type: Entity -> Prop
+
+
+##### passives #####
+
+- category: S[pss=true]\NP
+  semantics: \E Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Acc(e) = x) & K(e)))
+  coq_type: Event -> Prop
+
+- category: (S[pss=true]\NP)/NP
+  semantics: \E Q1 Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.(E(e) & (Dat(e) = x) & (Acc(e) = y) & K(e))))
+  coq_type: Event -> Prop
+
+- category: (S[pss=true]\NP)/PP
+  semantics: \E F Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Acc(e) = x) & F(e) & K(e)))
+  coq_type: Event -> Prop
+
+
+##### Templates for semantically empty expressions #####
+
+- category: NP[thr=true]
+  semantics: \E F1 F2. F2(E)
+
+- category: (S[to=true]\NP)/(S[b=true]\NP)
+  semantics: \E X. X
+
+- category: S[asup=true]\NP
+  semantics: \E Q K. Q(\x.TrueP,\x.TrueP)
+
+- category: (S/S)/(S[asup=true]\NP)
+  semantics: \E X Y. Y
+
+
+##### Templates for complementizers #####
+
+- category: S[em=true]/S
+  semantics: \E S K. S(K)
+
+
+##### Templates for auxiliary expressions #####
+
+- category: (S\NP)/(S[b=true]\NP)
+  semantics: \E V Q K. V(Q, \e.(E(e) & K(e)))
+  coq_type: Event -> Prop
+  # semantics: \E V Q K. Q(\x.TrueP, \x.V(\F1 F2.E(F2(x)),K)) # modal sentential operator
+  # coq_type: Prop -> Prop
+
+- category: (S/(S\NP))/NP
+  semantics: \E Q V K. Q(\x.TrueP, \x.V(\F1 F2.F2(x),K))
+  coq_type: Event -> Prop
+  # semantics: \E Q V K. Q(\x.TrueP, \x.V(\F1 F2.E(F2(x)),K))
+  # coq_type: Prop -> Prop
+
+- category: (S\(S\NP))/NP
+  semantics: \E Q V K. Q(\x.TrueP, \x.(E(x) & V(\F1 F2.F2(x),K)))
+  coq_type: Entity -> Prop
+
+- category: (S/(S/NP))/NP
+  semantics: \E Q V K. Q(\x.TrueP, \x.(E(x) & V(\F1 F2.F2(x),K)))
+  coq_type: Entity -> Prop
+
+- category: (S\(S/NP))/NP
+  semantics: \E Q V K. Q(\x.TrueP, \x.(E(x) & V(\F1 F2.F2(x),K)))
+  coq_type: Entity -> Prop
+
+
+############### Semantic templates for rebanked parsers #################
+
+- category: PR
+  semantics: \E. E
+  coq_type: Event -> Prop
+
+- category: N/PP
+  semantics: \E K x. (E(x) & exists e.((Subj(e) = x) & K(e)))
+  coq_type: Entity -> Prop
+
+- category: NP/PP
+  semantics: \E K F1 F2. exists x. (E(x) & exists e.((Subj(e) = x) & K(e)) & F1(x) & F2(x))
+  coq_type: Entity -> Prop
+
+- category: N/(S\NP)
+  semantics: \E V x. (E(x) & V(\F1 F2.F2(x),\w.TrueP))
+  coq_type: Entity -> Prop
+
+- category: (N\N)/NP
+  semantics: \E Q F x. Q(\y.TrueP, \y.exists e.(E(e,y) & (Subj(e) = x) & F(x)))
+  coq_type: Event -> Entity -> Prop
+
+- category: (N/PP)/PP
+  semantics: \E K1 K2 x. (E(x) & exists e. ((Subj(e) = x) & K1(e) & K2(e)))
+  coq_type: Entity -> Prop
+
+- category: NP/(N/PP)
+  semantics: \E M F1 F2. exists x.(exists y.(E(y) & Rel(x,y)) & M(\w.TrueP,x) & F1(x) & F2(x))
+  coq_type: Entity -> Prop
+
+- category: (S\NP)/PR
+  semantics: \E R Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & R(e) & K(e)))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/NP)/PR
+  semantics: \E R Q1 Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & R(e) & K(e))))
+  coq_type: Event -> Prop
+
+- category: ((S\NP)/(S\NP))/PR
+  semantics: \E R V Q K. V(Q,K)
+
+- category: (N/PP)/(S\NP) 
+  semantics: \E V K x. (E(x) & exists y. (Rel(x,y) & V(\G1 G2.G2(y),\w.TrueP) & exists e.((Subj(e) = x) & K(e))))
+  coq_type: Entity -> Prop
+
+- category: (N\N)/(S\NP)
+  semantics: \E V F x. (V(\G1 G2.G2(x),\w.TrueP) & F(x))
+
+- category: (N\N)/(S/NP)
+  semantics: \E V F x. (V(\G1 G2.G2(x),\w.TrueP) & F(x))
+
+- category: (N\N)/S
+  semantics: \E S F x. (S(\w.TrueP) & F(x))
+
+- category: (N/N)\(S\NP) 
+  semantics: \E V F x. (V(\G1 G2.G2(x),\w.TrueP) & F(x))
+
+- category: (N/N)\(S/NP) 
+  semantics: \E V F x. (V(\G1 G2.G2(x),\w.TrueP) & F(x))
+
+- category: ((N/PP)\(N/PP))/(S\NP)
+  semantics: \E V M K x. (V(\F1 F2.F2(x),\w.TrueP) & M(\w.TrueP,x) & exists e. ((Subj(e) = x) & K(e)))
+
+
+############### Lexical entries #################
+
+##### Lexical entries for NPs #####
+
+- category: NP
+  semantics: \E F1 F2. forall x. (F1(x) -> F2(x))
+  surf: everyone
+
+- category: NP
+  semantics: \E F1 F2. forall x. (F1(x) -> F2(x))
+  surf: everybody
+
+- category: NP
+  semantics: \E F1 F2. forall x. (F1(x) -> F2(x))
+  surf: everything
+
+- category: NP
+  semantics: \E F1 F2. exists x. (F1(x) & F2(x))
+  base: anyone
+
+- category: NP
+  semantics: \E F1 F2. forall x. (F1(x) -> F2(x))
+  base: anybody
+
+- category: NP
+  semantics: \E F1 F2. forall x. (F1(x) -> F2(x))
+  base: anything
+
+- category: NP
+  semantics: \E F1 F2. -exists x. (F1(x) & F2(x))
+  surf: nobody
+
+- category: NP
+  semantics: \E F1 F2. -exists x. (F1(x) & F2(x))
+  surf: nothing
+
+- category: NP
+  semantics: \E F1 F2. exists x. (F1(x) & F2(x))
+  surf: someone
+
+- category: NP
+  semantics: \E F1 F2. exists x. (F1(x) & F2(x))
+  surf: somebody
+
+- category: NP
+  semantics: \E F1 F2. exists x. (F1(x) & F2(x))
+  surf: something
+
+- category: NP
+  semantics: \E F1 F2. forall x. (F1(x) -> F2(x))
+  surf: all
+
+- category: NP
+  semantics: \E F1 F2. forall x. (F1(x) -> F2(x))
+  surf: each
+
+- category: NP
+  semantics: \E F1 F2. exists x. (F1(x) & F2(x))
+  surf: both
+
+- category: NP
+  semantics: \E F1 F2. (exists x. F1(x) & forall x. (F1(x) -> - F2(x)))
+  surf: neither
+
+- category: N
+  semantics: \E x. TrueP
+  pos: NN
+  base: one
+
+- category: N
+  semantics: \E x. TrueP
+  base: group
+
+# - category: N
+#   semantics: \E x. TrueP
+#   base: people
+
+# - category: N
+#   semantics: \E x. TrueP
+#   base: person
+
+- category: N/N
+  semantics: \E F. F
+  base: one
+
+- category: N/N
+  semantics: \E F. F
+  base: other
+
+- category: N/N
+  semantics: \E F. F
+  base: few
+
+
+##### Lexical entries for determiners #####
+
+- category: NP/N
+  semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> F3(x)))
+  surf: every
+
+- category: NP/N
+  semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> F3(x)))
+  surf: all
+
+- category: NP/N
+  semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> F3(x)))
+  surf: each
+
+- category: NP/N
+  semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> F3(x)))
+  surf: any
+
+- category: NP/N
+  semantics: \E F1 F2 F3. exists x. (F1(x) & F2(x) & F3(x))
+  surf: some
+
+- category: NP/N
+  semantics: \E F1 F2 F3. exists x. (F1(x) & F2(x) & F3(x))
+  surf: a
+
+- category: NP/N
+  semantics: \E F1 F2 F3. exists x. (F1(x) & F2(x) & F3(x))
+  surf: an
+
+- category: NP/N
+  semantics: \E F1 F2 F3. exists x. (F1(x) & F2(x) & F3(x))
+  surf: the
+
+- category: NP/N
+  semantics: \E F1 F2 F3. most(\x(F1(x) & F2(x)), F3)
+  surf: most
+
+- category: NP/N
+  semantics: \E F1 F2 F3. exists x. (F1(x) & F2(x) & F3(x))
+  surf: both
+
+- category: NP/N
+  semantics: \E F1 F2 F3. -exists x. (F1(x) & F2(x) & F3(x))
+  surf: neither
+
+- category: NP/N
+  semantics: \E F1 F2 F3. -exists x. (F1(x) & F2(x) & F3(x))
+  surf: "no"
+
+- category: NP/N
+  semantics: \E F1 F2 F3. forall x. (F1(x) -> (F2(x) -> - F3(x)))
+  surf: few
+
+- category: NP/NP
+  semantics: \E Q F1 F2. forall x. (Q(\y.TrueP, \y.((x = y) & F1(y))) -> F2(x))
+  surf: all
+
+- category: NP\NP
+  semantics: \E Q F1 F2. forall x. (Q(\y.TrueP, \y.((x = y) & F1(y))) -> F2(x))
+  surf: all
+
+- category: NP/NP
+  semantics: \E Q. Q
+  surf: such
+
+- category: NP/NP
+  semantics: \E Q F1 F2. forall x. (Q(\y.TrueP, \y.((x = y) & F2(y))) -> F1(x))
+  surf: only
+
+
+##### Floating quantifiers #####
+
+- category: (S\NP)/(S\NP)
+  semantics: \E V Q K. forall x. (Q(\y.TrueP, \y.(x = y)) -> V(\F1 F2.F2(x), K))
+  surf: all
+
+- category: (S\NP)\(S\NP)
+  semantics: \E V Q K. forall x. (Q(\y.TrueP, \y.(x = y)) -> V(\F1 F2.F2(x), K))
+  surf: all
+
+- category: (S\NP)/(S\NP)
+  semantics: \E V Q K. forall x. (Q(\y.TrueP, \y.(x = y)) -> V(\F1 F2.F2(x), K))
+  surf: each
+
+- category: (S\NP)\(S\NP)
+  semantics: \E V Q K. forall x. (Q(\y.TrueP, \y.(x = y)) -> V(\F1 F2.F2(x), K))
+  surf: each
+
+
+##### Adverb #####
+
+- category: (S\NP)/(S\NP)
+  semantics: \E V1. V1
+  coq_type: Entity -> Prop
+  surf: also
+
+- category: (S\NP)\(S\NP)
+  semantics: \E V1. V1
+  coq_type: Entity -> Prop
+  surf: together
+
+
+##### Prepositions #####
+
+- category: ((S\NP)\(S\NP))/NP
+  semantics: \E Q1 V Q2 K. V(Q2, \e.Q1(\x.TrueP, \x.((Subj(e) = x) & K(e))))  # subject wide scope
+  # semantics: \E Q1 V Q2 K. Q1(\x.TrueP, \x.V(Q2,\e.((Subj(e) = x) & K(e))))  # subject narrow scope
+  surf: by
+
+- category: ((S\NP)\(S\NP))/(S[ng=true]\NP)
+  semantics: \E V1 V2 Q K. Q(\x.TrueP, \x.V1(\F1 F2.(V2(\G1 G2.G2(x),\e.TrueP) & -F2(x)),K))
+  surf: without
+
+- category: (S[to=true]\NP)/(S[b=true]\NP)
+  semantics: \E V Q K. V(Q,K)
+  surf: to
+
+- category: S/S
+  semantics: \L R S K. S(\e.K(e))
+  rule: fa
+  child0_surf: at
+  child1_surf: least
+
+- category: NP/NP
+  semantics: \L R Q F1 F2. Q(F1,F2)
+  rule: fa
+  child0_surf: at
+  child1_surf: least
+
+- category: (N/N)/(N/N)
+  semantics: \L R S. S
+  rule: fa
+  child0_surf: at
+  child1_surf: least
+
+- category: S/S
+  semantics: \L R S K. -S(\e.TrueP)
+  child0_surf : at
+  child1_child0_surf : most
+
+##### Verbs #####
+
+## factive verbs
+- category: (S\NP)/(S[to=true]\NP)
+  semantics: \E V Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,V(\F1 F2.F2(x), \e.TrueP)) & K(e)))
+  base: manage
+
+- category: (S\NP)/(S[to=true]\NP)
+  semantics: \E V Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,V(\F1 F2.F2(x), \e.TrueP)) & K(e)))
+  base: fail
+
+- category: (S\NP)/S[em=true]
+  semantics: \E S Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,S(\w.TrueP)) & K(e)))
+  base: know
+
+- category: (S\NP)/S[em=true]
+  semantics: \E S Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,S(\e.TrueP)) & K(e)))
+  base: manage
+
+- category: (S\NP)/S[em=true]
+  semantics: \E S Q K. Q(\x.TrueP, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,S(\e.TrueP)) & K(e)))
+  base: fail
+
+
+##### Copula #####
+
+- category: (S\NP)/(S\NP)
+  semantics: \E V Q K. V(Q, K)
+  base: be
+
+- category: (S\NP)/NP
+  semantics: \E Q1 Q2 K. Q2(\x.TrueP, \x.Q1(\y.TrueP, \y.(x = y)))
+  base: be
+
+- category: (S\NP[thr=true])/NP
+  semantics: \E Q1 Q2 K. Q1(\x.TrueP, \x.exists e.((Subj(e) = Subj(e)) & K(e)))
+
+- category: (S\NP)/PP
+  semantics: \E F Q K. Q(\x.TrueP, \x.exists e.(F(e) & (Subj(e) = x) & K(e)))
+  base: be
+
+- category: (S\PP)/NP
+  semantics: \E F Q K. Q(\x.TrueP, \x.exists e.(F(e) & (Subj(e) = x) & K(e)))
+  base: be
+
+- category: ((S\NP)/S)/(S\NP)
+  semantics: \E V S Q K. Q(\x.TrueP, \x.exists e. (V(\F1 F2.F2(x),\w.TrueP) & (Subj(e) = x) & AccI(e,S(\w.TrueP)) & K(e)))
+  base: be
+
+
+##### Negation #####
+
+- category: S/S
+  semantics: \E S. -S
+  base: not
+
+- category: NP/NP
+  semantics: \E Q F1 F2. -Q(F1,F2)
+  base: not
+
+- category: (S\NP)\(S\NP) 
+  semantics: \E V Q K. -Q(\w.TrueP, \x.V(\F1 F2.F2(x), K))
+  # semantics: \E V Q K. Q(\x.TrueP, \x.-V(\F1 F2.F2(x), K))
+  surf: not
+
+- category: (S\NP)\(S\NP) 
+  semantics: \E V Q K. -Q(\x.TrueP, \x.V(\F1 F2.F2(x), K))
+  # semantics: \E V Q K. Q(\x.TrueP, \x.-V(\F1 F2.F2(x), K))
+  surf: n't
+
+- category: (S\NP)\(S\NP) 
+  semantics: \E V Q K. -Q(\x.TrueP, \x.V(\F1 F2.F2(x), K))
+  # semantics: \E V Q K. Q(\x.TrueP, \x.-V(\F1 F2.F2(x), K))
+  surf: never
+
+- category: ((S\NP)/(S\NP))/((S\NP)/(S\NP)) 
+  semantics: \E M V Q K. -M(V,Q,K)
+  surf: not
+
+##### Adjectives #####
+
+- category: S[adj=true]\NP
+  semantics: \E Q. Q(\x.TrueP, \x.E(x))
+  surf: "true"
+
+- category: S[adj=true]\NP
+  semantics: \E Q. Q(\x.TrueP, \x.E(x))
+  surf: "false"
+
+- category: N/N
+  semantics: \E F x. E(F(x))
+  surf: former
+
+##### Auxiliary expressions #####
+
+- category: (S\NP)/(S[b=true]\NP)
+  semantics: \E V Q K. V(Q, K)
+  surf: do
+
+- category: (S\NP)/(S[b=true]\NP)
+  semantics: \E V Q K. V(Q, K)
+  surf: does
+
+- category: (S\NP)/(S[b=true]\NP)
+  semantics: \E V Q K. V(Q, K)
+  surf: did
+
+- category: (S\NP)/(S[pt=true]\NP)
+  semantics: \E V Q K. V(Q, K)
+  base: have
+
+- category: (S\NP)/(S[b=true]\NP)
+  semantics: \E V Q K. V(Q, K)
+  base: will
+
+- category: (S\NP)/(S[to=true]\NP)
+  semantics: \E V Q K. V(Q, K)
+  base: use
+  pos: VBD
+
+
+##### Connectives #####
+
+- category: conj
+  semantics: \E X. X
+  surf: "and"
+
+- category: (S/S)/S
+  semantics: \E S1 S2 K. (S1(\e.TrueP) -> S2(K))
+  surf: if
+
+- category: ((S\NP)\(S\NP))/S
+  semantics: \E S1 V1 Q K. (S1(\e.TrueP) -> V1(Q,K))
+  surf: if
+
+- category: (S/S)/S
+  semantics: \E S1 S2 K. (-S1(\e.TrueP) -> S2(K))
+  surf: unless
+
+- category: ((S\NP)\(S\NP))/S
+  semantics: \E S V1 Q K. (-S(\e.TrueP) -> V1(Q,K))
+  surf: unless
+
+- category: (S/S)/S
+  semantics: \E S1 S2 K. (S1(\e.TrueP) -> S2(K))
+  base: when
+
+- category: (S\NP)/(S\NP)
+  semantics: \E V Q K. V(Q,K)
+  base: either
+
+- category : N/N
+  semantics: \E X.X
+  base: either
+
+- category : NP/NP
+  semantics: \E X.X
+  base: either
+
+- category : N/N
+  semantics: \E X.X
+  base: both
+
+- category : NP/NP
+  semantics: \E X.X
+  base: both
+
+- category : N/N
+  semantics: \E X.X
+  base: several
+
+- category : NP/NP
+  semantics: \E X.X
+  base: several
+
+- category : NP/NP
+  semantics: \E X.X
+  base: almost
+
+- category: (S\S)/S
+  semantics: \E S1 S2 K. (S2(\e.TrueP) & -S1(\e.TrueP))
+  base: nor
+
+##### Possesive particle #####
+
+- category: (NP/N)\NP
+  semantics: \E Q F1 F2 F3. exists x.((Q(\w.TrueP, \y.Rel(x,y)) & F1(x)) & F2(x) & F3(x))
+  surf: "'s"
+
+- category: (NP/N)\NP
+  semantics: \E Q F1 F2 F3. exists x.((Q(\w.TrueP, \y.Rel(x,y)) & F1(x)) & F2(x) & F3(x))
+  surf: "'"
+
+##### Sentence final particle #####
+
+- category: .
+  semantics: \S X. X
+  surf: "."
+
+- category: =true,
+  semantics: \S X. X
+  surf: ","
+
+- category: .
+  semantics: \S X. X
+  surf: "?"
+
+############### Lexical entries for rebanked parsers #################
+
+- category: PP/NP
+  semantics: \E Q e. Q(\x.TrueP, \x.((Subj(e) = x)))
+  surf: by
+
+- category: PP/NP
+  semantics: \E Q e. Q(\x.TrueP, \x.((Dat(e) = x)))
+  surf: to
+
+- category: (NP/(N/PP))\NP
+  semantics: \E Q M F1 F2. exists x.((Q(\w.TrueP, \y.Rel(x,y)) & M(\w.TrueP,x)) & F1(x) & F2(x))
+  surf: "'s"
+
+- category: (NP/(N/PP))\NP
+  semantics: \E Q M F1 F2. exists x.((Q(\w.TrueP, \y.Rel(x,y)) & M(\w.TrueP,x)) & F1(x) & F2(x))
+  surf: "'"
