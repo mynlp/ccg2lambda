@@ -62,7 +62,11 @@ def denormalize_category(category):
  
 def make_tree(line):
   tree_str = substitute_chars(line.strip())
-  tree = Tree.fromstring(tree_str)
+  try:
+    tree = Tree.fromstring(tree_str)
+  except ValueError:
+    tree = None
+    logging.warning('Failed to Tree parse line: {0}'.format(line))
   return tree
 
 def make_tokens_node(tree, sentence_id):
@@ -183,13 +187,14 @@ def make_jigg_sentence(line, sentence_id):
   </sentence>
   """
   sentence_id -= 1
-  tree = make_tree(line)
-  tokens_node = make_tokens_node(tree, sentence_id)
-  ccg_node = make_ccg_node(tree, sentence_id)
   sentence_node = etree.Element('sentence')
   sentence_node.set('id', 's' + str(sentence_id))
-  sentence_node.append(tokens_node)
-  sentence_node.append(ccg_node)
+  tree = make_tree(line)
+  if tree is not None:
+    tokens_node = make_tokens_node(tree, sentence_id)
+    ccg_node = make_ccg_node(tree, sentence_id)
+    sentence_node.append(tokens_node)
+    sentence_node.append(ccg_node)
   return sentence_node
 
 root_node = etree.Element('root')
