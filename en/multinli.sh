@@ -22,6 +22,9 @@
 #
 # ./en/eacl2017exp.sh 10 train en/semantic_templates_en_event.yaml
 #
+
+source /data/pascual/anaconda3/envs/py3/bin/activate
+
 category_templates=en/semantic_templates_en_event_flat.yaml
 # These variables contain the names of the directories where intermediate
 # results will be written.
@@ -32,16 +35,18 @@ mkdir -p $plain_dir $parsed_dir $results_dir
 
 multinli=multinli/multinli_0.9_train.jsonl
 sentences_basename=multinli
-python scripts/get_nli_sentences.py $multinli > ${plain_dir}/${sentences_basename}.txt
+python scripts/get_nli_sentences.py \
+    $multinli \
+    > ${plain_dir}/${sentences_basename}.tok
 
 function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
 
 # Tokenize text with Penn Treebank tokenizer.
-cat ${plain_dir}/${sentences_basename}.txt | \
-  sed -f en/tokenizer.sed | \
-  sed 's/ _ /_/g' | \
-  sed 's/[[:space:]]*$//' \
-  > ${plain_dir}/${sentences_basename}.tok
+# cat ${plain_dir}/${sentences_basename}.txt | \
+#   sed -f en/tokenizer.sed | \
+#   sed 's/ _ /_/g' | \
+#   sed 's/[[:space:]]*$//' \
+#   > ${plain_dir}/${sentences_basename}.tok
 
 # Check whether the parser variables point to correct directories.
 candc_dir=`cat en/candc_location.txt`
@@ -61,42 +66,59 @@ function parse_candc() {
   ${candc_dir}/bin/candc \
       --models ${candc_dir}/models \
       --candc-printer xml \
-      --input $parser_cmd ${plain_dir}/${base_fname}.tok \
-    2> ${parsed_dir}/${base_fname}.log \
+      --input ${plain_dir}/${base_fname}.tok \
+    2> ${parsed_dir}/${base_fname}.candc.log \
      > ${parsed_dir}/${base_fname}.candc.xml
   python en/candc2transccg.py ${parsed_dir}/${base_fname}.candc.xml \
     > ${parsed_dir}/${base_fname}.candc.jigg.xml \
-    2> ${parsed_dir}/${base_fname}.log
+    2> ${parsed_dir}/${base_fname}.candc.jigg.log
 }
+
+# function parse_easyccg() {
+#   # Parse using EasyCCG.
+#   base_fname=$1
+#   cat ${plain_dir}/${base_fname}.tok | \
+#   ${candc_dir}/bin/pos \
+#     --model ${candc_dir}/models/pos \
+#     --maxwords 410 | \
+#   ${candc_dir}/bin/ner \
+#     --model ${candc_dir}/models/ner \
+#     --maxwords 410 \
+#     --ofmt "%w|%p|%n \n" > ${parsed_dir}/multinli.ner
+# }
 
 function parse_easyccg() {
   # Parse using EasyCCG.
   base_fname=$1
   cat ${plain_dir}/${base_fname}.tok | \
   ${candc_dir}/bin/pos \
+    --maxwords 410 \
     --model ${candc_dir}/models/pos \
     2>/dev/null | \
   ${candc_dir}/bin/ner \
-    -model ${candc_dir}/models/ner \
-    -ofmt "%w|%p|%n \n" \
+    --maxwords 410 \
+    --model ${candc_dir}/models/ner \
+    --ofmt "%w|%p|%n \n" \
     2>/dev/null | \
   java -jar ${easyccg_dir}/easyccg.jar \
     --model ${easyccg_dir}/model \
     -i POSandNERtagged \
     -o extended \
     --nbest 1 \
+    --maxLength 200 \
     > ${parsed_dir}/${base_fname}.easyccg \
     2> ${parsed_dir}/${base_fname}.easyccg.log
   python en/easyccg2jigg.py \
     ${parsed_dir}/${base_fname}.easyccg \
     ${parsed_dir}/${base_fname}.easyccg.jigg.xml \
-    2> ${parsed_dir}/${base_fname}.xml.log
+    2> ${parsed_dir}/${base_fname}.easyccg.jigg.log
 }
 
 if [ ! -e ${parsed_dir}/${sentences_basename}.xml ]; then
   echo "Syntactic parsing ${plain_dir}/${sentences_basename}.tok"
-  parse_candc ${sentences_basename}
+  parse_candc ${sentences_basename} &
   parse_easyccg ${sentences_basename}
+  wait
 fi
 
 # Semantic parsing the CCG trees in XML.
@@ -307,11 +329,11 @@ results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
 
 # Tokenize text with Penn Treebank tokenizer.
-cat $sentences_fname | \
-  sed -f en/tokenizer.sed | \
-  sed 's/ _ /_/g' | \
-  sed 's/[[:space:]]*$//' \
-  > ${plain_dir}/${sentences_basename}.tok
+# cat $sentences_fname | \
+#   sed -f en/tokenizer.sed | \
+#   sed 's/ _ /_/g' | \
+#   sed 's/[[:space:]]*$//' \
+#   > ${plain_dir}/${sentences_basename}.tok
 
 # Check whether the parser variables point to correct directories.
 candc_dir=`cat en/candc_location.txt`
@@ -331,12 +353,12 @@ function parse_candc() {
   ${candc_dir}/bin/candc \
       --models ${candc_dir}/models \
       --candc-printer xml \
-      --input $parser_cmd ${plain_dir}/${base_fname}.tok \
-    2> ${parsed_dir}/${base_fname}.log \
+      --input ${plain_dir}/${base_fname}.tok \
+    2> ${parsed_dir}/${base_fname}.candc.log \
      > ${parsed_dir}/${base_fname}.candc.xml
   python en/candc2transccg.py ${parsed_dir}/${base_fname}.candc.xml \
     > ${parsed_dir}/${base_fname}.candc.jigg.xml \
-    2> ${parsed_dir}/${base_fname}.log
+    2> ${parsed_dir}/${base_fname}.candc.jigg.log
 }
 
 function parse_easyccg() {
@@ -360,7 +382,7 @@ function parse_easyccg() {
   python en/easyccg2jigg.py \
     ${parsed_dir}/${base_fname}.easyccg \
     ${parsed_dir}/${base_fname}.easyccg.jigg.xml \
-    2> ${parsed_dir}/${base_fname}.xml.log
+    2> ${parsed_dir}/${base_fname}.easyccg.jigg.log
 }
 
 if [ ! -e ${parsed_dir}/${sentences_basename}.xml ]; then

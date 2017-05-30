@@ -21,6 +21,8 @@ import argparse
 import codecs
 import logging
 from lxml import etree
+from multiprocessing import Pool
+from multiprocessing import Queue
 import os
 import sys
 import textwrap
@@ -30,7 +32,13 @@ from nltk.sem.logic import LogicalExpressionException
 from ccg2lambda_tools import assign_semantics_to_ccg
 from semantic_index import SemanticIndex
 
+SEMANTIC_INDEX=None
+kMaxTasksPerChild=None
+ARGS=None
+
 def main(args = None):
+    global SEMANTIC_INDEX
+    global ARGS
     DESCRIPTION=textwrap.dedent("""\
             categories_template.yaml should contain the semantic templates
               in YAML format.
@@ -54,43 +62,83 @@ def main(args = None):
     parser.add_argument("sem")
     parser.add_argument("--arbi-types", action="store_true", default=False)
     parser.add_argument("--gold_trees", action="store_true", default=True)
-    args = parser.parse_args()
+    parser.add_argument("--ncores", nargs='?', type=int, default="3",
+        help="Number of cores for multiprocessing.")
+    ARGS = parser.parse_args()
       
-    if not os.path.exists(args.templates):
-        print('File does not exist: {0}'.format(args.templates))
+    if not os.path.exists(ARGS.templates):
+        print('File does not exist: {0}'.format(ARGS.templates))
         sys.exit(1)
-    if not os.path.exists(args.ccg):
-        print('File does not exist: {0}'.format(args.ccg))
+    if not os.path.exists(ARGS.ccg):
+        print('File does not exist: {0}'.format(ARGS.ccg))
         sys.exit(1)
     
     logging.basicConfig(level=logging.WARNING)
 
-    semantic_index = SemanticIndex(args.templates)
+    SEMANTIC_INDEX = SemanticIndex(ARGS.templates)
 
     parser = etree.XMLParser(remove_blank_text=True)
-    root = etree.parse(args.ccg, parser)
+    root = etree.parse(ARGS.ccg, parser)
 
-    for sentence in root.findall('.//sentence'):
-        sem_node = etree.Element('semantics')
-        try:
-            sem_node.set('status', 'success')
-            tree_index = 1
-            if args.gold_trees:
-                tree_index = int(sentence.get('gold_tree', '0')) + 1
-            sem_tree = assign_semantics_to_ccg(
-                sentence, semantic_index, tree_index)
-            sem_node.set('root',
-                sentence.xpath('./ccg[{0}]/@root'.format(tree_index))[0])
-            filter_attributes(sem_tree)
-            sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
-        except LogicalExpressionException as e:
-            sem_node.set('status', 'failed')
-            logging.error('An error occurred: {0}'.format(e))
+    sentences = root.findall('.//sentence')
+    # from pudb import set_trace; set_trace()
+    sem_nodes = semantic_parse_sentences(sentences, ARGS.ncores)
+    for sentence, sem_node in zip(sentences, sem_nodes):
         sentence.append(sem_node)
 
     root_xml_str = serialize_tree(root)
-    with codecs.open(args.sem, 'wb') as fout:
+    with codecs.open(ARGS.sem, 'wb') as fout:
         fout.write(root_xml_str)
+
+def semantic_parse_sentences(sentences, ncores=1):
+    if ncores <= 1:
+        sem_nodes = semantic_parse_sentences_seq(sentences)
+    else:
+        sem_nodes = semantic_parse_sentences_par(sentences, ncores)
+    return sem_nodes
+
+def semantic_parse_sentences_par(sentences, ncores=3):
+    pool = Pool(processes=ncores, maxtasksperchild=kMaxTasksPerChild)
+    sentences_strs = [etree.tostring(s) for s in sentences]
+    sem_nodes = pool.map(semantic_parse_sentence, sentences_strs)
+    pool.close()
+    pool.join()
+    return sem_nodes
+
+def semantic_parse_sentences_seq(sentences):
+    sem_nodes = []
+    for sentence in sentences:
+        sentence_str = etree.tostring(sentence)
+        sem_node = semantic_parse_sentence(sentence_str)
+        sem_nodes.append(sem_node)
+    return sem_nodes
+
+def semantic_parse_sentence(sentence_str):
+    """
+    `sentence` is an lxml tree with tokens and ccg nodes.
+    It returns an lxml semantics node.
+    """
+    sentence = etree.fromstring(sentence_str)
+    sem_node = etree.Element('semantics')
+    try:
+        sem_node.set('status', 'success')
+        tree_index = 1
+        if ARGS.gold_trees:
+            tree_index = int(sentence.get('gold_tree', '0')) + 1
+        # from pudb import set_trace; set_trace()
+        sem_tree = assign_semantics_to_ccg(
+            sentence, SEMANTIC_INDEX, tree_index)
+        sem_node.set('root',
+            sentence.xpath('./ccg[{0}]/@root'.format(tree_index))[0])
+        filter_attributes(sem_tree)
+        sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
+        print('.', end='', file=sys.stdout)
+    except LogicalExpressionException as e:
+        sem_node.set('status', 'failed')
+        logging.error('An error occurred: {0}\nSentence: {1}'.format(
+            e, etree.tostring(sentence, encoding='utf-8', pretty_print=True).decode('utf-8')))
+        print('x', end='', file=sys.stdout)
+    return sem_node
 
 keep_attributes = set(['id', 'child', 'sem', 'type'])
 def filter_attributes(tree):
