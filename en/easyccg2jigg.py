@@ -36,16 +36,17 @@ logging.basicConfig(level=logging.DEBUG)
 def substitute_chars(sin):
   sout = []
   inside_tag = False
-  for s in sin:
-    if s == '<':
+  prev_char = None
+  for i, s in enumerate(sin):
+    if s == '<' and prev_char == '(':
       inside_tag = True
       t = s
-    elif s == '>':
+    elif s == '>' and prev_char != ' ':
       inside_tag = False
       t = s
     elif inside_tag:
       if s == ' ':
-        t = '_'
+        t = '|||'
       elif s == '(':
         t = '-lb-'
       elif s == ')':
@@ -55,6 +56,7 @@ def substitute_chars(sin):
     else:
       t = s
     sout.append(t)
+    prev_char = s
   return ''.join(sout)
 
 def denormalize_category(category):
@@ -97,7 +99,7 @@ def get_child_inds(tree, parent=None, i=0, d=None):
 
 def get_attributes_from_leaf(node_label):
   try:
-    _, cat, word, lemma, pos, ner, _, _ = node_label.split('_')
+    _, cat, word, lemma, pos, ner, _, _ = node_label.split('|||')
   except:
     # from pudb import set_trace; set_trace()
     raise(ValueError(
@@ -116,7 +118,7 @@ def get_attributes_from_leaf(node_label):
 
 def get_attributes_from_node(node_label):
   try:
-    _, cat, rule, _, _ = node_label.split('_')
+    _, cat, rule, _, _ = node_label.split('|||')
   except:
     raise(ValueError(
       ('CCG node {0} with wrong format. '.format(node_label),
