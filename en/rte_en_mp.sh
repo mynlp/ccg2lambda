@@ -97,7 +97,7 @@ function parse_candc() {
   ${candc_dir}/bin/candc \
       --models ${candc_dir}/models \
       --candc-printer xml \
-      --input $parser_cmd ${plain_dir}/${base_fname}.tok \
+      --input ${plain_dir}/${base_fname}.tok \
     2> ${parsed_dir}/${base_fname}.log \
      > ${parsed_dir}/${base_fname}.candc.xml
   python en/candc2transccg.py ${parsed_dir}/${base_fname}.candc.xml \
