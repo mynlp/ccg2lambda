@@ -63,7 +63,7 @@ def main(args = None):
                         l = {'label' : line.strip()}
                     labels.append(l)
         else:
-            print('File does not exist: {0}. Not using labels.'.format(
+            print('File does not exist: {0}. Ignoring labels.'.format(
                 args.doc_labels), file=sys.stderr)
 
     parser = etree.XMLParser(remove_blank_text=True)

@@ -60,7 +60,7 @@ def prove_doc(doc, abduction=None):
     """
     coq_scripts = []
     formulas = get_formulas_from_doc(doc)
-    if not formulas:
+    if not formulas or len(formulas) < 2:
         return 'unknown', coq_scripts
     dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, formulas)
 
