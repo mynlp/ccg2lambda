@@ -191,6 +191,7 @@ if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
         $parsed_dir/${sentences_basename}.${parser}.sem.xml \
         --graph_out ${results_dir}/${sentences_basename}.${parser}.html \
         --abduction spsa \
+        --proof ${results_dir}/${sentences_basename}.${parser}.proof.xml \
         > ${results_dir}/${sentences_basename}.${parser}.answer \
         2> ${results_dir}/${sentences_basename}.${parser}.err
     fi

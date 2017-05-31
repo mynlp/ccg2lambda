@@ -18,6 +18,7 @@ import codecs
 import logging
 import re
 import subprocess
+from subprocess import check_output
 
 from knowledge import get_lexical_relations
 from nltk2coq import normalize_interpretation
@@ -128,10 +129,19 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
         '{0}\nTheorem t1: {1}. {2}.\" | coqtop').format(
         dynamic_library, coq_formulae, tactics)
     input_coq_script = substitute_invalid_chars(input_coq_script, 'replacement.txt')
-    process = subprocess.Popen(\
-      input_coq_script, \
-      shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    output_lines = [str(line).strip().split() for line in process.stdout.readlines()]
+    coq_script = "Require Export coqlib.\n{0}\nTheorem t1: {1}. {2}.".format(
+        dynamic_library, coq_formulae, tactics)
+    coq_script = substitute_invalid_chars(coq_script, 'replacement.txt')
+
+    ps = subprocess.Popen(('echo', coq_script), stdout=subprocess.PIPE)
+    output = subprocess.check_output(
+        ('coqtop',),
+        stdin=ps.stdout,
+        stderr=subprocess.STDOUT,
+        timeout=20)
+    ps.wait()
+    output_lines = [
+        str(line).strip().split() for line in output.decode('utf-8').split('\n')]
     return is_theorem_defined(output_lines), input_coq_script
 
 # Given a string reprsenting the logical interpretation of the conclusion,

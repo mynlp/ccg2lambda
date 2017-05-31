@@ -24,6 +24,7 @@ from lxml import etree
 from multiprocessing import Pool
 from multiprocessing import Lock
 import os
+from subprocess import CalledProcessError
 import sys
 import textwrap
 
@@ -50,7 +51,7 @@ def main(args = None):
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=DESCRIPTION)
     parser.add_argument("sem", help="XML input filename with semantics")
-    parser.add_argument("proof", help="XML input filename with semantics")
+    parser.add_argument("--proof", default="", help="XML input filename with semantics")
     parser.add_argument("--graph_out", nargs='?', type=str, default="",
         help="HTML graphical output filename.")
     parser.add_argument("--abduction", nargs='?', type=str, default="no",
@@ -95,9 +96,10 @@ def main(args = None):
     for doc, proof_node in zip(DOCS, proof_nodes):
         doc.append(proof_node)
 
-    root_xml_str = serialize_tree(root)
-    with codecs.open(args.proof, 'wb') as fout:
-        fout.write(root_xml_str)
+    if args.proof:
+        root_xml_str = serialize_tree(root)
+        with codecs.open(args.proof, 'wb') as fout:
+            fout.write(root_xml_str)
 
 def prove_docs(document_inds, ncores=1):
     if ncores <= 1:
@@ -128,28 +130,31 @@ def prove_doc_ind(document_ind):
     """
     global lock
     doc = DOCS[document_ind]
-    proof_node = etree.Element('semantics')
-    # doc.append(proof_node)
+    proof_node = etree.Element('proof')
     try:
         proof_node.set('status', 'success')
         inference_result, coq_scripts = prove_doc(doc, ABDUCTION)
+        print(inference_result)
         proof_node.set('inference_result', inference_result)
         for coq_script in coq_scripts:
             coq_script_node = etree.Element('coq_script')
             coq_script_node.text = coq_script
             proof_node.append(coq_script_node)
         print('.', end='', file=sys.stdout)
-        sys.stdout.flush()
     except Exception as e:
-        proof_node.set('status', 'failed')
         doc_id = doc.get('id', None)
         lock.acquire()
         logging.error('An error occurred: {0}\nSentence: {1}\nTree XML:\n{2}'.format(
             e, doc_id,
             etree.tostring(doc, encoding='utf-8', pretty_print=True).decode('utf-8')))
         lock.release()
-        print('x', end='', file=sys.stdout)
-        sys.stdout.flush()
+        if 'timed out' in str(e):
+            proof_node.set('status', 'timedout')
+            print('t', end='', file=sys.stdout)
+        else:
+            proof_node.set('status', 'failed')
+            print('x', end='', file=sys.stdout)
+    sys.stdout.flush()
     return etree.tostring(proof_node)
 
 if __name__ == '__main__':

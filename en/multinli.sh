@@ -124,7 +124,7 @@ exit
 
 # Semantic parsing the CCG trees in XML.
 if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
-  for parser in "candc" "easyccg"; do
+  for parser in "easyccg"; do
     if [ ! -e "$parsed_dir/${sentences_basename}.${parser}.sem.xml" ]; then
       echo "Semantic parsing $parsed_dir/${sentences_basename}.${parser}.jigg.xml"
       python scripts/semparse.py \
@@ -146,6 +146,8 @@ for parser in "candc" "easyccg"; do
         $parsed_dir/${sentences_basename}.${parser}.rte.xml
   fi
 done
+
+python scripts/prove.py test.easyccg.rte.xml --proof test.easyccg.proof.xml --abduction spsa --ncores 1 2> errors3.log
 
 exit
 
