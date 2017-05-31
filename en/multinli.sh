@@ -116,10 +116,11 @@ function parse_easyccg() {
 
 if [ ! -e ${parsed_dir}/${sentences_basename}.xml ]; then
   echo "Syntactic parsing ${plain_dir}/${sentences_basename}.tok"
-  parse_candc ${sentences_basename} &
+  # parse_candc ${sentences_basename}
   parse_easyccg ${sentences_basename}
-  wait
 fi
+
+exit
 
 # Semantic parsing the CCG trees in XML.
 if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then

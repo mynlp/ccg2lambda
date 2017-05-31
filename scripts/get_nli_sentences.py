@@ -25,17 +25,10 @@ def print_tokenized_sentence(problem, sent_prefix):
           toks = sentence.split()
     if len(toks) > 0 and toks[-1] not in string.punctuation:
         toks.append('.')
-    print(' '.join(toks))
+    print(' '.join(toks).replace('#', '_POUND_'))
 
 with codecs.open(fname, 'r', 'utf-8') as fin:
     for i, line in enumerate(fin):
         problem = json.loads(line.strip())
         print_tokenized_sentences(problem)
 
-# with codecs.open(fname, 'r', 'utf-8') as fin:
-#     for i, line in enumerate(fin):
-#         problem = json.loads(line.strip())
-#         assert 'sentence1' in problem
-#         assert 'sentence2' in problem
-#         print(problem['sentence1'])
-#         print(problem['sentence2'])
