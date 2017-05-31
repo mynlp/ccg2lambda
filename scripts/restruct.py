@@ -20,6 +20,7 @@ from __future__ import print_function
 import argparse
 import codecs
 import logging
+import json
 from lxml import etree
 import os
 import sys
@@ -40,13 +41,8 @@ def main(args = None):
         description=DESCRIPTION)
     parser.add_argument("sem", help="XML input filename with semantics")
     parser.add_argument("rte", help="XML input filename with RTE problems.")
-    parser.add_argument("--graph_out", nargs='?', type=str, default="",
-        help="HTML graphical output filename.")
-    # parser.add_argument("--abduction", action="store_true", default=False)
-    parser.add_argument("--abduction", nargs='?', type=str, default="no",
-        choices=["no", "naive", "spsa"],
-        help="Activate on-demand axiom injection (default: no axiom injection).")
-    parser.add_argument("--gold_trees", action="store_true", default=False)
+    parser.add_argument("--doc_labels", default="",
+        help="RTE labels (e.g. entailment judgment)")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.WARNING)
@@ -55,18 +51,40 @@ def main(args = None):
         print('File does not exist: {0}'.format(args.sem), file=sys.stderr)
         parser.print_help(file=sys.stderr)
         sys.exit(1)
-    
+
+    labels = []
+    if args.doc_labels != "":
+        if os.path.exists(args.doc_labels):
+            with codecs.open(args.doc_labels, 'r', 'utf-8') as fin:
+                for line in fin:
+                    try:
+                        l = json.loads(line.strip())
+                    except ValueError:
+                        l = {'label' : line.strip()}
+                    labels.append(l)
+        else:
+            print('File does not exist: {0}. Not using labels.'.format(
+                args.doc_labels), file=sys.stderr)
+
     parser = etree.XMLParser(remove_blank_text=True)
     doc_orig = etree.parse(args.sem, parser)
 
     sentences_orig = doc_orig.xpath('//sentence')
     num_sentences = len(sentences_orig)
 
+    if labels:
+        assert num_sentences // 2 == len(labels), \
+            'Num RTE problems and labels mismatch: {0} vs. {1}'.format(
+                num_sentences // 2, len(labels))
+
     res = etree.Element('root')
     for i in range(num_sentences // 2):
         doc = etree.Element('document')
         res.append(doc)
         doc.set('id', 'd' + str(i))
+        if labels:
+            for name, value in labels[i].items():
+                doc.set(name, value)
         sentences = etree.Element('sentences')
         doc.append(sentences)
         sentences.append(sentences_orig[i * 2])
