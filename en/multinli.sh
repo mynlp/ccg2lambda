@@ -105,7 +105,7 @@ function parse_easyccg() {
     -i POSandNERtagged \
     -o extended \
     --nbest 1 \
-    --maxLength 200 \
+    --maxLength 120 \
     > ${parsed_dir}/${base_fname}.easyccg \
     2> ${parsed_dir}/${base_fname}.easyccg.log
   python en/easyccg2jigg.py \

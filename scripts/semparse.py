@@ -22,7 +22,7 @@ import codecs
 import logging
 from lxml import etree
 from multiprocessing import Pool
-from multiprocessing import Queue
+from multiprocessing import Lock
 import os
 import sys
 import textwrap
@@ -33,12 +33,15 @@ from ccg2lambda_tools import assign_semantics_to_ccg
 from semantic_index import SemanticIndex
 
 SEMANTIC_INDEX=None
-kMaxTasksPerChild=None
 ARGS=None
+SENTENCES=None
+kMaxTasksPerChild=None
+lock = Lock()
 
 def main(args = None):
     global SEMANTIC_INDEX
     global ARGS
+    global SENTENCES
     DESCRIPTION=textwrap.dedent("""\
             categories_template.yaml should contain the semantic templates
               in YAML format.
@@ -80,52 +83,54 @@ def main(args = None):
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.parse(ARGS.ccg, parser)
 
-    sentences = root.findall('.//sentence')
+    SENTENCES = root.findall('.//sentence')
     # from pudb import set_trace; set_trace()
-    sem_nodes = semantic_parse_sentences(sentences, ARGS.ncores)
-    for sentence, sem_node in zip(sentences, sem_nodes):
+    sentence_inds = range(len(SENTENCES))
+    sem_nodes = semantic_parse_sentences(sentence_inds, ARGS.ncores)
+    assert len(sem_nodes) == len(SENTENCES), \
+        'Element mismatch: {0} vs {1}'.format(len(sem_nodes), len(SENTENCES))
+    for sentence, sem_node in zip(SENTENCES, sem_nodes):
         sentence.append(sem_node)
 
     root_xml_str = serialize_tree(root)
     with codecs.open(ARGS.sem, 'wb') as fout:
         fout.write(root_xml_str)
 
-def semantic_parse_sentences(sentences, ncores=1):
+def semantic_parse_sentences(sentence_inds, ncores=1):
     if ncores <= 1:
-        sem_nodes = semantic_parse_sentences_seq(sentences)
+        sem_nodes = semantic_parse_sentences_seq(sentence_inds)
     else:
-        sem_nodes = semantic_parse_sentences_par(sentences, ncores)
+        sem_nodes = semantic_parse_sentences_par(sentence_inds, ncores)
+    sem_nodes = [etree.fromstring(s) for s in sem_nodes]
     return sem_nodes
 
-def semantic_parse_sentences_par(sentences, ncores=3):
+def semantic_parse_sentences_par(sentence_inds, ncores=3):
     pool = Pool(processes=ncores, maxtasksperchild=kMaxTasksPerChild)
-    sentences_strs = [etree.tostring(s) for s in sentences]
-    sem_nodes = pool.map(semantic_parse_sentence, sentences_strs)
+    sem_nodes = pool.map(semantic_parse_sentence, sentence_inds)
     pool.close()
     pool.join()
     return sem_nodes
 
-def semantic_parse_sentences_seq(sentences):
+def semantic_parse_sentences_seq(sentence_inds):
     sem_nodes = []
-    for sentence in sentences:
-        sentence_str = etree.tostring(sentence)
-        sem_node = semantic_parse_sentence(sentence_str)
+    for sentence_ind in sentence_inds:
+        sem_node = semantic_parse_sentence(sentence_ind)
         sem_nodes.append(sem_node)
     return sem_nodes
 
-def semantic_parse_sentence(sentence_str):
+def semantic_parse_sentence(sentence_ind):
     """
     `sentence` is an lxml tree with tokens and ccg nodes.
     It returns an lxml semantics node.
     """
-    sentence = etree.fromstring(sentence_str)
+    global lock
+    sentence = SENTENCES[sentence_ind]
     sem_node = etree.Element('semantics')
     try:
         sem_node.set('status', 'success')
         tree_index = 1
         if ARGS.gold_trees:
             tree_index = int(sentence.get('gold_tree', '0')) + 1
-        # from pudb import set_trace; set_trace()
         sem_tree = assign_semantics_to_ccg(
             sentence, SEMANTIC_INDEX, tree_index)
         sem_node.set('root',
@@ -133,12 +138,19 @@ def semantic_parse_sentence(sentence_str):
         filter_attributes(sem_tree)
         sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
         print('.', end='', file=sys.stdout)
-    except LogicalExpressionException as e:
+        sys.stdout.flush()
+    except (LogicalExpressionException, ValueError) as e:
         sem_node.set('status', 'failed')
-        logging.error('An error occurred: {0}\nSentence: {1}'.format(
-            e, etree.tostring(sentence, encoding='utf-8', pretty_print=True).decode('utf-8')))
+        sentence_surf = ' '.join(sentence.xpath('tokens/token/@surf'))
+        # from pudb import set_trace; set_trace()
+        lock.acquire()
+        logging.error('An error occurred: {0}\nSentence: {1}\nTree XML:\n{2}'.format(
+            e, sentence_surf,
+            etree.tostring(sentence, encoding='utf-8', pretty_print=True).decode('utf-8')))
+        lock.release()
         print('x', end='', file=sys.stdout)
-    return sem_node
+        sys.stdout.flush()
+    return etree.tostring(sem_node)
 
 keep_attributes = set(['id', 'child', 'sem', 'type'])
 def filter_attributes(tree):
