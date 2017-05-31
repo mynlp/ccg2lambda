@@ -22,6 +22,7 @@ from collections import defaultdict
 import logging
 from lxml import etree
 import os
+import string
 import sys
 
 from nltk import Tree
@@ -41,7 +42,11 @@ def substitute_chars(sin):
     if s == '<' and prev_char == '(':
       inside_tag = True
       t = s
-    elif s == '>' and prev_char != ' ':
+    elif s == '>' and (
+        prev_char in string.punctuation or \
+        prev_char.isupper() or \
+        prev_char in string.digits or \
+        prev_char == 'j'):
       inside_tag = False
       t = s
     elif inside_tag:
@@ -64,6 +69,7 @@ def denormalize_category(category):
  
 def make_tree(line):
   tree_str = substitute_chars(line.strip())
+  # from pudb import set_trace; set_trace()
   try:
     tree = Tree.fromstring(tree_str)
   except ValueError:
@@ -215,7 +221,11 @@ for line in codecs.open(args.infile, 'r', 'utf-8'):
       sentence_id = current_sentence_id
   elif is_new_sentence:
     is_new_sentence = False
-    sentence_tree = make_jigg_sentence(line, sentence_id)
+    try:
+      sentence_tree = make_jigg_sentence(line, sentence_id)
+    except ValueError as e:
+      logging.error('Error: {0}.\nLine: {1}'.format(e, line))
+      raise
     sentences_node.append(sentence_tree)
 
 def serialize_tree(tree):
