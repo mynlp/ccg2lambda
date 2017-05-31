@@ -26,8 +26,6 @@ import os
 import sys
 import textwrap
 
-from semantic_tools import prove_doc
-from visualization_tools import convert_doc_to_mathml
 from semparse import serialize_tree
 
 def main(args = None):

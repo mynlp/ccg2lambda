@@ -145,11 +145,11 @@ def make_failure_log(conclusion_pred, premise_preds, conclusion, premises,
     """
     failure_log = OrderedDict()
     conclusion_base = denormalize_token(conclusion_pred)
-    failure_log["unproved sub-goal"] = conclusion_base
+    # failure_log["unproved sub-goal"] = conclusion_base
     premises_base = [denormalize_token(p) for p in premise_preds]
-    failure_log["matching premises"] = premises_base
-    failure_log["raw sub-goal"] = conclusion
-    failure_log["raw premises"] = premises
+    # failure_log["matching premises"] = premises_base
+    # failure_log["raw sub-goal"] = conclusion
+    # failure_log["raw premises"] = premises
     premise_preds = []
     for p in premises:
         try:
@@ -158,11 +158,17 @@ def make_failure_log(conclusion_pred, premise_preds, conclusion, premises,
             continue
         if pred.startswith('_'):
             premise_preds.append(denormalize_token(pred))
-    failure_log["all premises"] = premise_preds
-    failure_log["other sub-goals"] = get_subgoals_from_coq_output(
+    failure_log["all_premises"] = premise_preds
+    failure_log["other_sub-goals"] = get_subgoals_from_coq_output(
         coq_output_lines, premises)
-    failure_log["type error"] = has_type_error(coq_output_lines)
-    failure_log["open formula"] = has_open_formula(coq_output_lines)
+    failure_log["other_sub-goals"].insert(0, {
+        'subgoal': conclusion_base,
+        'index': 1,
+        'raw_subgoal': conclusion,
+        'matching_premises' : premises_base,
+        'matching_raw_premises' : premises_base})
+    failure_log["type_error"] = has_type_error(coq_output_lines)
+    failure_log["open_formula"] = has_open_formula(coq_output_lines)
     return failure_log
 
 
@@ -221,15 +227,15 @@ def get_subgoals_from_coq_output(coq_output_lines, premises):
                 subgoal_index = -1
                 continue
             subgoal = {
-                'predicate': denormalize_token(line_tokens[0]),
+                'subgoal': denormalize_token(line_tokens[0]),
                 'index': subgoal_index,
-                'raw': subgoal_line}
+                'raw_subgoal': subgoal_line}
             matching_premises = get_premises_that_match_conclusion_args(
                 premises, subgoal_line)
-            subgoal['matching raw premises'] = matching_premises
+            subgoal['matching_raw_premises'] = matching_premises
             premise_preds = [
                 denormalize_token(premise.split()[2]) for premise in matching_premises]
-            subgoal['matching premises'] = premise_preds
+            subgoal['matching_premises'] = premise_preds
             subgoals.append(subgoal)
             subgoal_index = -1
         if len(line_tokens) >= 3 and line_tokens[0] == 'subgoal' and line_tokens[2] == 'is:':
@@ -245,11 +251,12 @@ def make_axioms_from_premises_and_conclusion(premises, conclusion, coq_output_li
     pred_args = get_predicate_arguments(premises, conclusion)
     axioms = make_axioms_from_preds(premise_preds, conclusion_pred, pred_args)
     # print('Has axioms: {0}'.format(axioms), file=sys.stderr)
+    failure_log = OrderedDict()
     if not axioms:
         failure_log = make_failure_log(
             conclusion_pred, premise_preds, conclusion, premises, coq_output_lines)
         print(json.dumps(failure_log), file=sys.stderr)
-    return axioms
+    return axioms, failure_log
 
 
 def parse_coq_line(coq_line):
@@ -361,22 +368,25 @@ def try_abductions(coq_scripts):
     direct_proof_script = coq_scripts[0]
     reverse_proof_script = coq_scripts[1]
     axioms = set()
+    failure_logs = []
     while True:
-        inference_result_str, direct_proof_scripts, new_direct_axioms = \
+        inference_result_str, direct_proof_scripts, new_direct_axioms, failure_log = \
             try_abduction(direct_proof_script,
                           previous_axioms=axioms, expected='yes')
         current_axioms = axioms.union(new_direct_axioms)
+        failure_logs.append(failure_log)
         reverse_proof_scripts = []
         if not inference_result_str == 'yes':
-            inference_result_str, reverse_proof_scripts, new_reverse_axioms = \
+            inference_result_str, reverse_proof_scripts, new_reverse_axioms, failure_log = \
                 try_abduction(reverse_proof_script,
                               previous_axioms=current_axioms, expected='no')
             current_axioms.update(new_reverse_axioms)
+            failure_logs.append(failure_log)
         all_scripts = direct_proof_scripts + reverse_proof_scripts
         if len(axioms) == len(current_axioms) or inference_result_str != 'unknown':
             break
         axioms = current_axioms
-    return inference_result_str, all_scripts
+    return inference_result_str, all_scripts, failure_logs
 
 
 def filter_wrong_axioms(axioms, coq_script):
@@ -394,6 +404,7 @@ def filter_wrong_axioms(axioms, coq_script):
 
 
 def try_abduction(coq_script, previous_axioms=set(), expected='yes'):
+    failure_log = OrderedDict()
     new_coq_script = insert_axioms_in_coq_script(previous_axioms, coq_script)
     current_tactics = get_tactics()
     debug_tactics = 'repeat nltac_base. try substitution. Qed'
@@ -404,17 +415,17 @@ def try_abduction(coq_script, previous_axioms=set(), expected='yes'):
     output_lines = [line.decode('utf-8').strip()
                     for line in process.stdout.readlines()]
     if is_theorem_defined(l.split() for l in output_lines):
-        return expected, [new_coq_script], previous_axioms
+        return expected, [new_coq_script], previous_axioms, failure_log
     premise_lines = get_premise_lines(output_lines)
     conclusion = get_conclusion_line(output_lines)
     if not premise_lines or not conclusion:
         failure_log = {"type error": has_type_error(output_lines),
                        "open formula": has_open_formula(output_lines)}
-        print(json.dumps(failure_log), file=sys.stderr)
-        return 'unknown', [], previous_axioms
+        # print(json.dumps(failure_log), file=sys.stderr)
+        return 'unknown', [], previous_axioms, failure_log
     matching_premises = get_premises_that_match_conclusion_args(
         premise_lines, conclusion)
-    axioms = make_axioms_from_premises_and_conclusion(
+    axioms, failure_log = make_axioms_from_premises_and_conclusion(
         premise_lines, conclusion, output_lines)
     axioms = filter_wrong_axioms(axioms, coq_script)
     axioms = axioms.union(previous_axioms)
@@ -426,4 +437,4 @@ def try_abduction(coq_script, previous_axioms=set(), expected='yes'):
                     for line in process.stdout.readlines()]
     inference_result_str = expected if is_theorem_defined(
         output_lines) else 'unknown'
-    return inference_result_str, [new_coq_script], axioms
+    return inference_result_str, [new_coq_script], axioms, failure_log

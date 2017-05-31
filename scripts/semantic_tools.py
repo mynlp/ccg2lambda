@@ -81,10 +81,10 @@ def prove_doc(doc, abduction=None):
         else:
             inference_result_str = 'unknown'
     if abduction and inference_result_str == 'unknown':
-        inference_result_str, abduction_scripts = \
+        inference_result_str, abduction_scripts, failure_logs = \
             abduction.attempt(coq_scripts, doc)
         coq_scripts.extend(abduction_scripts)
-    return inference_result_str, coq_scripts
+    return inference_result_str, coq_scripts, failure_logs
 
 # Check whether the string "is defined" appears in the output of coq.
 # In that case, we return True. Otherwise, we return False.
