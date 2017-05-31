@@ -74,18 +74,18 @@ function parse_candc() {
     2> ${parsed_dir}/${base_fname}.candc.jigg.log
 }
 
-# function parse_easyccg() {
-#   # Parse using EasyCCG.
-#   base_fname=$1
-#   cat ${plain_dir}/${base_fname}.tok | \
-#   ${candc_dir}/bin/pos \
-#     --model ${candc_dir}/models/pos \
-#     --maxwords 410 | \
-#   ${candc_dir}/bin/ner \
-#     --model ${candc_dir}/models/ner \
-#     --maxwords 410 \
-#     --ofmt "%w|%p|%n \n" > ${parsed_dir}/multinli.ner
-# }
+function parse_easyccg() {
+  # Parse using EasyCCG.
+  base_fname=$1
+  cat ${plain_dir}/${base_fname}.tok | \
+  ${candc_dir}/bin/pos \
+    --model ${candc_dir}/models/pos \
+    --maxwords 410 | \
+  ${candc_dir}/bin/ner \
+    --model ${candc_dir}/models/ner \
+    --maxwords 410 \
+    --ofmt "%w|%p|%n \n" > ${parsed_dir}/multinli.ner
+}
 
 function parse_easyccg() {
   # Parse using EasyCCG.
@@ -136,6 +136,16 @@ if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
     fi
   done
 fi
+
+
+for parser in "candc" "easyccg"; do
+  if [ ! -e "$parsed_dir/${sentences_basename}.${parser}.rte.xml" ]; then
+    echo "Restructuring sentences into RTE problems for ${parser}."
+      python scripts/restruct.py \
+        $parsed_dir/${sentences_basename}.${parser}.sem.xml
+        $parsed_dir/${sentences_basename}.${parser}.rte.xml
+  fi
+done
 
 exit
 
