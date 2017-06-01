@@ -89,8 +89,10 @@ def main(args = None):
     sem_nodes = semantic_parse_sentences(sentence_inds, ARGS.ncores)
     assert len(sem_nodes) == len(SENTENCES), \
         'Element mismatch: {0} vs {1}'.format(len(sem_nodes), len(SENTENCES))
+    logging.info('Adding XML semantic nodes to sentences...')
     for sentence, sem_node in zip(SENTENCES, sem_nodes):
         sentence.append(sem_node)
+    logging.info('Finished adding XML semantic nodes to sentences.')
 
     root_xml_str = serialize_tree(root)
     with codecs.open(ARGS.sem, 'wb') as fout:
