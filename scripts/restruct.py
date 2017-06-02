@@ -41,6 +41,8 @@ def main(args = None):
     parser.add_argument("rte", help="XML input filename with RTE problems.")
     parser.add_argument("--doc_labels", default="",
         help="RTE labels (e.g. entailment judgment)")
+    parser.add_argument("--split", nargs='?', type=int, default="-1",
+        help="Number of RTE problems per XML file.")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.WARNING)
@@ -75,6 +77,7 @@ def main(args = None):
             'Num RTE problems and labels mismatch: {0} vs. {1}'.format(
                 num_sentences // 2, len(labels))
 
+    num_docs = args.split if args.split > 0 else int(1e10)
     res = etree.Element('root')
     for i in range(num_sentences // 2):
         doc = etree.Element('document')
@@ -87,10 +90,15 @@ def main(args = None):
         doc.append(sentences)
         sentences.append(sentences_orig[i * 2])
         sentences.append(sentences_orig[i * 2 + 1])
+        if i + 1 % num_docs == 0:
+            save_xml_root(res, args.rte, i)
 
-    res_xml_str = serialize_tree(res)
-    with codecs.open(args.rte, 'wb') as fout:
-        fout.write(res_xml_str)
+def save_xml_root(root, fname, ind):
+    if fname.endswith('.xml'):
+        fname = '{0}.{1}.xml'.format(fname[:-4], ind)
+    root_xml_str = serialize_tree(root)
+    with codecs.open(fname, 'wb') as fout:
+        fout.write(root_xml_str)
 
 if __name__ == '__main__':
     main()
