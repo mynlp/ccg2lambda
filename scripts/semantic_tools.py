@@ -46,7 +46,7 @@ def get_formulas_from_doc(doc):
     If there are no semantic representation at all, or the conclusion
     has no semantic representation, it returns None to signal an error.
     """
-    formulas = [s.get('sem', None) for s in doc.xpath('//sentence/semantics/span[1]')]
+    formulas = [s.get('sem', None) for s in doc.xpath('./sentences/sentence/semantics/span[1]')]
     if len(formulas) < 2 or formulas[-1] == None:
         return None
     formulas = [f for f in formulas if f is not None]

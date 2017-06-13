@@ -32,9 +32,12 @@ plain_dir="plain" # tokenized sentences.
 parsed_dir="parsed" # parsed sentences into XML or other formats.
 results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
+parsers="easyccg candc"
 
-multinli=multinli/multinli_0.9_train.jsonl
-sentences_basename=multinli
+# multinli=multinli/multinli_0.9_train.jsonl
+# sentences_basename=multinli
+multinli=test.jsonl
+sentences_basename="test"
 python scripts/get_nli_sentences.py \
     $multinli \
     > ${plain_dir}/${sentences_basename}.tok
@@ -74,18 +77,18 @@ function parse_candc() {
     2> ${parsed_dir}/${base_fname}.candc.jigg.log
 }
 
-function parse_easyccg() {
-  # Parse using EasyCCG.
-  base_fname=$1
-  cat ${plain_dir}/${base_fname}.tok | \
-  ${candc_dir}/bin/pos \
-    --model ${candc_dir}/models/pos \
-    --maxwords 410 | \
-  ${candc_dir}/bin/ner \
-    --model ${candc_dir}/models/ner \
-    --maxwords 410 \
-    --ofmt "%w|%p|%n \n" > ${parsed_dir}/multinli.ner
-}
+# function parse_easyccg() {
+#   # Parse using EasyCCG.
+#   base_fname=$1
+#   cat ${plain_dir}/${base_fname}.tok | \
+#   ${candc_dir}/bin/pos \
+#     --model ${candc_dir}/models/pos \
+#     --maxwords 410 | \
+#   ${candc_dir}/bin/ner \
+#     --model ${candc_dir}/models/ner \
+#     --maxwords 410 \
+#     --ofmt "%w|%p|%n \n" > ${parsed_dir}/multinli.ner
+# }
 
 function parse_easyccg() {
   # Parse using EasyCCG.
@@ -114,40 +117,52 @@ function parse_easyccg() {
     2> ${parsed_dir}/${base_fname}.easyccg.jigg.log
 }
 
-if [ ! -e ${parsed_dir}/${sentences_basename}.xml ]; then
-  echo "Syntactic parsing ${plain_dir}/${sentences_basename}.tok"
-  # parse_candc ${sentences_basename}
-  parse_easyccg ${sentences_basename}
-fi
-
-exit
+for parser in ${parsers}; do
+  if [ ! -e ${parsed_dir}/${sentences_basename}.${parser}.jigg.xml ]; then
+    echo "Syntactic $parser parsing ${plain_dir}/${sentences_basename}.tok"
+    parse_$parser ${sentences_basename}
+  fi
+done
 
 # Semantic parsing the CCG trees in XML.
 if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
-  for parser in "easyccg"; do
+  for parser in ${parsers}; do
     if [ ! -e "$parsed_dir/${sentences_basename}.${parser}.sem.xml" ]; then
-      echo "Semantic parsing $parsed_dir/${sentences_basename}.${parser}.jigg.xml"
+      echo -n "Semantic parsing $parsed_dir/${sentences_basename}.${parser}.jigg.xml "
       python scripts/semparse.py \
         $parsed_dir/${sentences_basename}.${parser}.jigg.xml \
         $category_templates \
         $parsed_dir/${sentences_basename}.${parser}.sem.xml \
         --arbi-types \
         2> $parsed_dir/${sentences_basename}.${parser}.sem.err
+      echo
     fi
   done
 fi
 
 
-for parser in "candc" "easyccg"; do
+for parser in ${parsers}; do
   if [ ! -e "$parsed_dir/${sentences_basename}.${parser}.rte.xml" ]; then
-    echo "Restructuring sentences into RTE problems for ${parser}."
+    echo -n "Restructuring sentences into RTE problems for ${parser} "
       python scripts/restruct.py \
-        $parsed_dir/${sentences_basename}.${parser}.sem.xml
+        $parsed_dir/${sentences_basename}.${parser}.sem.xml \
         $parsed_dir/${sentences_basename}.${parser}.rte.xml
+    echo
   fi
 done
 
-python scripts/prove.py test.easyccg.rte.xml --proof test.easyccg.proof.xml --abduction spsa --ncores 1 2> errors3.log
+for parser in ${parsers}; do
+  for rte_fname in $parsed_dir/${sentences_basename}.${parser}.rte*.xml; do
+    echo -n "Proving for $rte_fname "
+    python scripts/prove.py \
+      $rte_fname \
+      --proof ${rte_fname/rte/proof} \
+      --abduction spsa \
+      --ncores 1 \
+      2> errors3.log
+    echo
+  done
+done
 
 exit
 

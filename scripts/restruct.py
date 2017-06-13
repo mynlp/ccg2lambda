@@ -79,6 +79,7 @@ def main(args = None):
 
     num_docs = args.split if args.split > 0 else int(1e10)
     res = etree.Element('root')
+    remaining_docs = False
     for i in range(num_sentences // 2):
         doc = etree.Element('document')
         res.append(doc)
@@ -90,8 +91,14 @@ def main(args = None):
         doc.append(sentences)
         sentences.append(sentences_orig[i * 2])
         sentences.append(sentences_orig[i * 2 + 1])
+        remaining_docs = True
         if i + 1 % num_docs == 0:
             save_xml_root(res, args.rte, i)
+            remaining_docs = False
+    else:
+        ind = i
+    if remaining_docs:
+        save_xml_root(res, args.rte, ind)
 
 def save_xml_root(root, fname, ind):
     if fname.endswith('.xml'):

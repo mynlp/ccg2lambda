@@ -153,12 +153,11 @@ def remove_reserved_predicates(signature):
 
 def get_dynamic_library_from_doc(doc, formulas):
     # Each type is of the form "predicate : basic_type -> ... -> basic_type."
-    semantics_nodes = doc.xpath('/root/document/sentences/sentence/semantics[1]')
+    semantics_nodes = doc.xpath('./sentences/sentence/semantics[1]')
     types_sets = []
     for semantics_node in semantics_nodes:
       types = set(semantics_node.xpath('./span/@type'))
       types_sets.append(types)
-    # from pudb import set_trace; set_trace()
     coq_libs = [['Parameter {0}.'.format(t) for t in types] for types in types_sets]
     nltk_sigs_arbi = [convert_coq_signatures_to_nltk(coq_lib) for coq_lib in coq_libs]
     formulas = parse_exprs_if_str(formulas)
@@ -250,7 +249,7 @@ def combine_signatures_or_rename_preds(signatures, exprs, preferred_sig=None):
     in the signature dictionary. The target predicate is also renamed in
     the logical expressions.
     """
-    assert len(signatures) == len(exprs)
+    assert len(signatures) == len(exprs), '{0} vs. {1}'.format(signatures, exprs)
     signatures_merged = {}
     exprs_new = []
     for i, (signature, expr) in enumerate(zip(signatures, exprs)):

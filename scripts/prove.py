@@ -169,6 +169,7 @@ def prove_doc_ind(document_ind):
     It returns an XML node with proof information.
     """
     global lock
+    # from pudb import set_trace; set_trace()
     doc = DOCS[document_ind]
     proof_node = etree.Element('proof')
     try:
