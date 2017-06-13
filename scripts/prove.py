@@ -183,7 +183,7 @@ def prove_doc_ind(document_ind):
             proof_node.append(coq_script_node)
         failure_log_node = make_failure_logs_node(failure_logs)
         proof_node.append(failure_log_node)
-        print('.', end='', file=sys.stdout)
+        print(inference_result[0], end='', file=sys.stdout)
     except Exception as e:
         doc_id = doc.get('id', None)
         lock.acquire()

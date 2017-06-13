@@ -144,7 +144,7 @@ fi
 for parser in ${parsers}; do
   if [ ! -e "$parsed_dir/${sentences_basename}.${parser}.rte.xml" ]; then
     echo -n "Restructuring sentences into RTE problems for ${parser} "
-      python scripts/restruct.py \
+      python scripts/restruct.py --split 1 \
         $parsed_dir/${sentences_basename}.${parser}.sem.xml \
         $parsed_dir/${sentences_basename}.${parser}.rte.xml
     echo
@@ -159,7 +159,7 @@ for parser in ${parsers}; do
       --proof ${rte_fname/rte/proof} \
       --abduction spsa \
       --ncores 1 \
-      2> errors3.log
+      2> ${rte_fname/rte/proof}.log
     echo
   done
 done

@@ -95,6 +95,7 @@ def main(args = None):
         if i + 1 % num_docs == 0:
             save_xml_root(res, args.rte, i)
             remaining_docs = False
+            res = etree.Element('root')
     else:
         ind = i
     if remaining_docs:
