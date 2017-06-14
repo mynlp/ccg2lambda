@@ -25,6 +25,7 @@ from multiprocessing import Pool
 from multiprocessing import Lock
 import os
 from subprocess import CalledProcessError
+from subprocess import TimeoutExpired
 import sys
 import textwrap
 
@@ -184,6 +185,9 @@ def prove_doc_ind(document_ind):
         failure_log_node = make_failure_logs_node(failure_logs)
         proof_node.append(failure_log_node)
         print(inference_result[0], end='', file=sys.stdout)
+    except TimeoutExpired as e:
+        proof_node.set('status', 'timedout')
+        print('t', end='', file=sys.stdout)
     except Exception as e:
         doc_id = doc.get('id', None)
         lock.acquire()
@@ -191,7 +195,7 @@ def prove_doc_ind(document_ind):
             e, doc_id,
             etree.tostring(doc, encoding='utf-8', pretty_print=True).decode('utf-8')))
         lock.release()
-        raise
+        # raise
         if 'timed out' in str(e):
             proof_node.set('status', 'timedout')
             print('t', end='', file=sys.stdout)
