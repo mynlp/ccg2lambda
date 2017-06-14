@@ -20,13 +20,14 @@ import json
 
 def main(args = None):
 
+    rel2label = {'entailment': 'yes', 'contradiction': 'no', 'neutral': 'unknown'}
     for line in fileinput.input():
         data = json.loads(line.strip())
         pair_id = data.get('set', 'train') + '_' + data.get('pairID', '0')
         doc_label = {
             'pair_id': pair_id,
             'set': data.get('set', 'train'),
-            'rte_label': data.get('gold_label', 'none'),
+            'rte_label': rel2label[data.get('gold_label', 'unknown')],
             'sts_label': data.get('similarity', '-1')}
         print(json.dumps(doc_label))
 
