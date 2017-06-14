@@ -47,7 +47,7 @@ if [ ! -e en/sick.trial.jsonl ] || [ ! -e en/sick.train.jsonl ] || [ ! -e en/sic
   grep TEST en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.test.jsonl
 fi
 
-sentences_basename="sick.trial"
+sentences_basename="sick.train"
 multinli=en/${sentences_basename}.jsonl
 python scripts/get_nli_sentences.py \
     $multinli \

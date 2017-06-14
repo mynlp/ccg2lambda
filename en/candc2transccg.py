@@ -15,11 +15,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import argparse
 import copy
 from lxml import etree
+import logging
 import re
 import os
 import sys
+import textwrap
 
 def get_nodes_by_tag(root, tag):
     nodes = []
@@ -173,36 +176,67 @@ def make_transccg_xml_tree(transccg_trees):
     root_node.append(document_node)
     return root_node
 
-def main(args=None):
-    import textwrap
-    usage = textwrap.dedent("""\
-        Usage:
-            python candc2transccg.py <candc_trees.xml>
+def get_failed_inds_from_log(log_fname):
+    failed_inds = set()
+    with open(log_fname) as fin:
+        for line in fin:
+            if 'failed' in line:
+                failed_index = int(line.split()[0])
+                failed_inds.add(failed_index)
+    return failed_inds
 
-            candc_trees.xml should contain sentences parsed by C&C parser.
-            This program will print in standard output the trees in transccg format.
-      """)
-    if args is None:
-        args = sys.argv[1:]
-    if len(args) != 1:
-        print('Wrong number of arguments.')
-        print(usage)
+def main(args=None):
+    DESCRIPTION=textwrap.dedent("""\
+        Convert C&C XML format into transccg format.
+        The C&C error log file (if specified) will be used
+        to introduce empty parses in place of parse failures.
+        It prints the transccg XML result to standard output.
+    """)
+
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=DESCRIPTION)
+    parser.add_argument("xml_fname", help="XML input filename with C&C trees.")
+    parser.add_argument("log_fname", nargs='?', default="",
+        help="C&C log file that signals parsing failures.")
+    args = parser.parse_args()
+
+    logging.basicConfig(level=logging.WARNING)
+
+    if not os.path.exists(args.xml_fname):
+        print('C&C XML file does not exist: {0}'.format(args.xml_fname))
+        parser.print_help(file=sys.stderr)
         sys.exit(1)
-    if not os.path.exists(args[0]):
-        print('File does not exist: {0}'.format(args[0]))
+
+    if args.log_fname != "" and not os.path.exists(args.log_fname):
+        print('C&C XML file does not exist: {0}'.format(args.log_fname))
+        parser.print_help(file=sys.stderr)
         sys.exit(1)
-    candc_trees_filename = args[0]
+
+    failed_inds = set()
+    if args.log_fname != "":
+        failed_inds = get_failed_inds_from_log(args.log_fname)
+        print('Found failures: {0}'.format(failed_inds), file=sys.stderr)
 
     parser = etree.XMLParser(remove_blank_text=True)
-    xml_tree = etree.parse(candc_trees_filename, parser)
+    xml_tree = etree.parse(args.xml_fname, parser)
     root = xml_tree.getroot()
     ccg_trees = root.findall('ccg')
 
     transccg_trees = []
-    for i, ccg_tree in enumerate(ccg_trees):
-        transccg_tree = candc_to_transccg(ccg_tree, i)
+    sentence_num = 1
+    for ccg_tree in ccg_trees:
+        if sentence_num in failed_inds:
+            # Make empty sentence node if C&C failed to parse.
+            transccg_tree = etree.Element('sentence')
+            transccg_trees.append(transccg_tree)
+            sentence_num += 1
+            print('Make dummy node.', file=sys.stderr)
+        transccg_tree = candc_to_transccg(ccg_tree, sentence_num - 1)
         transccg_trees.append(transccg_tree)
+        sentence_num += 1
 
+    print('Produced {0} transccg trees'.format(len(transccg_trees)), file=sys.stderr)
     transccg_xml_tree = make_transccg_xml_tree(transccg_trees)
     # transccg_xml_tree.write(pretty_print=True, encoding='utf-8')
     encoding = xml_tree.docinfo.encoding

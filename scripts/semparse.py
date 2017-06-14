@@ -84,6 +84,7 @@ def main(args = None):
     root = etree.parse(ARGS.ccg, parser)
 
     SENTENCES = root.findall('.//sentence')
+    # print('Found {0} sentences'.format(len(SENTENCES)))
     # from pudb import set_trace; set_trace()
     sentence_inds = range(len(SENTENCES))
     sem_nodes = semantic_parse_sentences(sentence_inds, ARGS.ncores)
@@ -141,7 +142,8 @@ def semantic_parse_sentence(sentence_ind):
         sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
         print('.', end='', file=sys.stdout)
         sys.stdout.flush()
-    except (LogicalExpressionException, ValueError) as e:
+    # except (LogicalExpressionException, ValueError) as e:
+    except Exception as e:
         sem_node.set('status', 'failed')
         sentence_surf = ' '.join(sentence.xpath('tokens/token/@surf'))
         # from pudb import set_trace; set_trace()
