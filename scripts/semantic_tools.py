@@ -60,9 +60,10 @@ def prove_doc(doc, abduction=None):
     If results are not conclusive, attempt basic abduction.
     """
     coq_scripts = []
+    failure_logs = []
     formulas = get_formulas_from_doc(doc)
     if not formulas or len(formulas) < 2:
-        return 'unknown', coq_scripts
+        return 'unknown', coq_scripts, failure_logs
     dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, formulas)
 
     premises, conclusion = formulas[:-1], formulas[-1]
@@ -138,7 +139,7 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
         ('coqtop',),
         stdin=ps.stdout,
         stderr=subprocess.STDOUT,
-        timeout=20)
+        timeout=100)
     ps.wait()
     output_lines = [
         str(line).strip().split() for line in output.decode('utf-8').split('\n')]

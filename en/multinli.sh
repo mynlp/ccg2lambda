@@ -23,7 +23,7 @@
 # ./en/eacl2017exp.sh 10 train en/semantic_templates_en_event.yaml
 #
 
-source /data/pascual/anaconda3/envs/py3/bin/activate
+source /data/pascual/anaconda2/envs/py3/bin/activate
 
 category_templates=en/semantic_templates_en_event_flat.yaml
 # These variables contain the names of the directories where intermediate
@@ -36,8 +36,18 @@ parsers="easyccg candc"
 
 # multinli=multinli/multinli_0.9_train.jsonl
 # sentences_basename=multinli
-multinli=test.jsonl
-sentences_basename="test"
+
+# Convert SICK.semeval.txt dataset into SNLI jsonl format.
+if [ ! -e en/sick.trial.jsonl ] || [ ! -e en/sick.train.jsonl ] || [ ! -e en/sick.test.jsonl ] ; then
+  echo "Preparing SICK dataset."
+  sed -i "s///" en/SICK.semeval.txt
+  grep TRIAL en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.trial.jsonl
+  grep TRAIN en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.train.jsonl
+  grep TEST en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.test.jsonl
+fi
+
+sentences_basename="sick.trial"
+multinli=en/${sentences_basename}.jsonl
 python scripts/get_nli_sentences.py \
     $multinli \
     > ${plain_dir}/${sentences_basename}.tok
@@ -144,9 +154,13 @@ fi
 for parser in ${parsers}; do
   if [ ! -e "$parsed_dir/${sentences_basename}.${parser}.rte.xml" ]; then
     echo -n "Restructuring sentences into RTE problems for ${parser} "
-      python scripts/restruct.py --split 1 \
+      cat en/${sentences_basename}.jsonl | \
+        python scripts/make_doc_labels.py \
+        > en/${sentences_basename}.doc_labels.jsonl
+      python scripts/restruct.py \
         $parsed_dir/${sentences_basename}.${parser}.sem.xml \
-        $parsed_dir/${sentences_basename}.${parser}.rte.xml
+        $parsed_dir/${sentences_basename}.${parser}.rte.xml \
+        --doc_labels en/${sentences_basename}.doc_labels.jsonl
     echo
   fi
 done
@@ -158,7 +172,7 @@ for parser in ${parsers}; do
       $rte_fname \
       --proof ${rte_fname/rte/proof} \
       --abduction spsa \
-      --ncores 1 \
+      --ncores 200 \
       2> ${rte_fname/rte/proof}.log
     echo
   done
