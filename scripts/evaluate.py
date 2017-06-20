@@ -39,7 +39,7 @@ def main(args = None):
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=DESCRIPTION)
-    parser.add_argument("proofs", nargs='+',
+    parser.add_argument("proofs", nargs='+', type=list,
         help="XML input filename(s) with proof results.")
     args = parser.parse_args()
 
