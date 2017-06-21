@@ -27,7 +27,7 @@ def main(args = None):
         doc_label = {
             'pair_id': pair_id,
             'set': data.get('set', 'train'),
-            'rte_label': rel2label[data.get('gold_label', 'unknown')],
+            'rte_label': rel2label.get(data.get('gold_label', 'neutral'), 'unknown'),
             'sts_label': data.get('similarity', '-1')}
         print(json.dumps(doc_label))
 

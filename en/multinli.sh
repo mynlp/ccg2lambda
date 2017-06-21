@@ -39,15 +39,15 @@ parsers="easyccg candc"
 # sentences_basename=multinli
 
 # Convert SICK.semeval.txt dataset into SNLI jsonl format.
-if [ ! -e en/sick.trial.jsonl ] || [ ! -e en/sick.train.jsonl ] || [ ! -e en/sick.test.jsonl ] ; then
-  echo "Preparing SICK dataset."
-  sed -i "s///" en/SICK.semeval.txt
-  grep TRIAL en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.trial.jsonl
-  grep TRAIN en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.train.jsonl
-  grep TEST en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.test.jsonl
-fi
+# if [ ! -e en/sick.trial.jsonl ] || [ ! -e en/sick.train.jsonl ] || [ ! -e en/sick.test.jsonl ] ; then
+#   echo "Preparing SICK dataset."
+#   sed -i "s///" en/SICK.semeval.txt
+#   grep TRIAL en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.trial.jsonl
+#   grep TRAIN en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.train.jsonl
+#   grep TEST en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.test.jsonl
+# fi
 
-sentences_basename="sick.test"
+sentences_basename="snli.trial"
 multinli=en/${sentences_basename}.jsonl
 python scripts/get_nli_sentences.py \
     $multinli \
