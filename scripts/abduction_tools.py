@@ -28,7 +28,7 @@ from nltk import Tree
 
 from knowledge import get_lexical_relations_from_preds
 from normalization import denormalize_token
-from semantic_tools import is_theorem_defined
+from theorem import is_theorem_defined
 from tactics import get_tactics
 from tree_tools import tree_or_string, tree_contains
 
@@ -255,7 +255,7 @@ def make_axioms_from_premises_and_conclusion(premises, conclusion, coq_output_li
     if not axioms:
         failure_log = make_failure_log(
             conclusion_pred, premise_preds, conclusion, premises, coq_output_lines)
-        print(json.dumps(failure_log), file=sys.stderr)
+        # print(json.dumps(failure_log), file=sys.stderr)
     return axioms, failure_log
 
 
@@ -363,7 +363,46 @@ def insert_axioms_in_coq_script(axioms, coq_script):
     return new_coq_script
 
 
-def try_abductions(coq_scripts):
+def try_abductions(theorem):
+    assert len(theorem.variations) == 2, 'Got %d variations' % len(theorem.variations)
+    theorem_master = theorem.variations[0]
+    theorem_negated = theorem.variations[1]
+    t_pos, t_neg = theorem_master, theorem_negated
+
+    direct_proof_script = t_pos.coq_script
+    reverse_proof_script = t_neg.coq_script
+    axioms = t_pos.axioms.union(t_neg.axioms)
+    current_axioms = t_pos.axioms.union(t_neg.axioms)
+    failure_logs = []
+    while True:
+        inference_result_str, direct_proof_scripts, new_direct_axioms, failure_log = \
+            try_abduction(t_pos.coq_script,
+                          previous_axioms=current_axioms,
+                          expected='yes')
+        if len(t_pos.axioms) < len(new_direct_axioms):
+            new_theorem = t_pos.copy(new_axioms=new_direct_axioms)
+            new_theorem.coq_script = direct_proof_scripts[-1]
+            new_theorem.failure_log = failure_log
+            new_theorem.inference_result = True if inference_result_str == 'yes' else False
+        current_axioms = axioms.union(new_direct_axioms)
+        reverse_proof_scripts = []
+        if not inference_result_str == 'yes':
+            inference_result_str, reverse_proof_scripts, new_reverse_axioms, failure_log = \
+                try_abduction(t_neg.coq_script,
+                              previous_axioms=current_axioms, expected='no')
+            if len(t_neg.axioms) < len(new_reverse_axioms):
+                new_theorem = t_neg.copy(new_axioms=new_reverse_axioms)
+                new_theorem.coq_script = reverse_proof_scripts[-1]
+                new_theorem.failure_log = failure_log
+                new_theorem.inference_result = True if inference_result_str == 'no' else False
+                t_pos.variations.append(new_theorem)
+            current_axioms.update(new_reverse_axioms)
+        if len(axioms) == len(current_axioms) or inference_result_str != 'unknown':
+            break
+        axioms = {a for a in current_axioms}
+    return
+
+def try_abductions_(coq_scripts):
     assert len(coq_scripts) == 2
     direct_proof_script = coq_scripts[0]
     reverse_proof_script = coq_scripts[1]

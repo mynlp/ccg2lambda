@@ -175,7 +175,10 @@ def prove_doc_ind(document_ind):
     proof_node = etree.Element('proof')
     try:
         proof_node.set('status', 'success')
-        inference_result, coq_scripts, failure_logs = prove_doc(doc, ABDUCTION)
+        theorem = prove_doc(doc, ABDUCTION)
+        inference_result = theorem.result
+        coq_scripts = [t.coq_script for t in theorem.variations]
+        failure_logs = [t.failure_log for t in theorem.variations if t.failure_log is not None]
         # print(inference_result)
         proof_node.set('inference_result', inference_result)
         for coq_script in coq_scripts:
@@ -189,6 +192,7 @@ def prove_doc_ind(document_ind):
         proof_node.set('status', 'timedout')
         print('t', end='', file=sys.stdout)
     except Exception as e:
+        raise
         doc_id = doc.get('id', None)
         lock.acquire()
         logging.error('An error occurred: {0}\nSentence: {1}\nTree XML:\n{2}'.format(
