@@ -190,16 +190,18 @@ class Theorem(object):
             self.premises, negate_conclusion(self.conclusion), reverse=True)
         ts_node.append(reverse_node_neg)
         # Add theorem(s) node.
+        # from pudb import set_trace; set_trace()
         for theorem in self.variations:
             t_node = etree.Element('theorem')
+            ts_node.append(t_node)
             if theorem.failure_log is None:
-                self.prove_debug()
+                _, failure_log = self.prove_debug()
             t_node.set('inference_result', theorem.result_simple)
             t_node.set('is_negated', str(theorem.is_negated))
             s_node = etree.Element('coq_script')
             s_node.text = self.coq_script
             t_node.append(s_node)
-            f_node = make_failure_log_node(theorem.failure_log)
+            f_node = make_failure_log_node(failure_log)
             t_node.append(f_node)
         return ts_node
 
