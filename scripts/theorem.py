@@ -135,8 +135,6 @@ class Theorem(object):
             self.dynamic_library_str,
             self.axioms)
         self.inference_result = prove_script(self.coq_script)
-        # self.inference_result, self.coq_script = prove_statements(
-        #     self.premises, self.conclusion, self.dynamic_library_str)
         return
 
     def prove(self, abduction=None):
@@ -172,6 +170,25 @@ class Theorem(object):
         d_node = etree.Element('dynamic_library')
         d_node.text = self.dynamic_library_str
         ts_node.append(d_node)
+        # Add direct and reverse theorem.
+        direct_node = etree.Element('direct_definition')
+        direct_node.text = make_coq_formulae(self.premises, self.conclusion)
+        ts_node.append(direct_node)
+
+        reverse_node = etree.Element('reverse_definition')
+        reverse_node.text = make_coq_formulae(
+            self.premises, self.conclusion, reverse=True)
+        ts_node.append(reverse_node)
+
+        direct_node_neg = etree.Element('direct_definition_neg')
+        direct_node_neg.text = make_coq_formulae(
+            self.premises, negate_conclusion(self.conclusion))
+        ts_node.append(direct_node_neg)
+
+        reverse_node_neg = etree.Element('reverse_definition_neg')
+        reverse_node_neg.text = make_coq_formulae(
+            self.premises, negate_conclusion(self.conclusion), reverse=True)
+        ts_node.append(reverse_node_neg)
         # Add theorem(s) node.
         for theorem in self.variations:
             t_node = etree.Element('theorem')
@@ -240,12 +257,18 @@ def get_formulas_from_doc(doc):
     formulas = [f for f in formulas if f is not None]
     return formulas
 
+def make_coq_formulae(premise_interpretations, conclusion, reverse=False):
+    interpretations = premise_interpretations + [conclusion]
+    interpretations = [normalize_interpretation(interp) for interp in interpretations]
+    if reverse:
+        interpretations.reverse()
+    coq_formulae = ' -> '.join(interpretations)
+    return coq_formulae
+
 def make_coq_script(premise_interpretations, conclusion, dynamic_library = '', axioms=None):
     # Transform these interpretations into coq format:
     #   interpretation1 -> interpretation2 -> ... -> conclusion
-    interpretations = premise_interpretations + [conclusion]
-    interpretations = [normalize_interpretation(interp) for interp in interpretations]
-    coq_formulae = ' -> '.join(interpretations)
+    coq_formulae = make_coq_formulae(premise_interpretations, conclusion)
     # Input these formulae to coq and retrieve the results.
     tactics = get_tactics()
     coq_script = "Require Export coqlib.\n{0}\nTheorem t1: {1}. {2}.".format(
@@ -258,27 +281,6 @@ def make_coq_script(premise_interpretations, conclusion, dynamic_library = '', a
 def prove_script(coq_script):
     output_lines = run_coq_script(coq_script)
     return is_theorem_defined(output_lines)
-
-# This function receives two arguments. The first one is a list of the logical
-# interpretations of the premises (only one interpretation per premise).
-# The second argument is a string with a single interpretation of the conclusion.
-# def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
-#     # Transform these interpretations into coq format:
-#     #   interpretation1 -> interpretation2 -> ... -> conclusion
-#     interpretations = premise_interpretations + [conclusion]
-#     interpretations = [normalize_interpretation(interp) for interp in interpretations]
-#     coq_formulae = ' -> '.join(interpretations)
-#     # Input these formulae to coq and retrieve the results.
-#     tactics = get_tactics()
-#     input_coq_script = ('echo \"Require Export coqlib.\n'
-#         '{0}\nTheorem t1: {1}. {2}.\" | coqtop').format(
-#         dynamic_library, coq_formulae, tactics)
-#     input_coq_script = substitute_invalid_chars(input_coq_script, 'replacement.txt')
-#     coq_script = "Require Export coqlib.\n{0}\nTheorem t1: {1}. {2}.".format(
-#         dynamic_library, coq_formulae, tactics)
-# 
-#     output_lines = run_coq_script(coq_script)
-#     return is_theorem_defined(output_lines), input_coq_script
 
 def run_coq_script(coq_script, timeout=100):
     """
