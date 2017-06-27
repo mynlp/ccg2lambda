@@ -39,12 +39,12 @@ def main(args = None):
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=DESCRIPTION)
-    parser.add_argument("proofs", nargs='+', type=list,
+    parser.add_argument("proofs", nargs='+',
         help="XML input filename(s) with proof results.")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.WARNING)
-      
+
     if any(not os.path.exists(p) for p in args.proofs):
         print('One of the files does not exists: {0}'.format(args.proofs),
             file=sys.stderr)

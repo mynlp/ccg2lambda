@@ -190,6 +190,7 @@ def prove_doc_ind(document_ind):
         print(inference_result[0], end='', file=sys.stdout)
     except TimeoutExpired as e:
         proof_node.set('status', 'timedout')
+        proof_node.set('inference_result', 'unknown')
         print('t', end='', file=sys.stdout)
     except Exception as e:
         raise
@@ -199,14 +200,9 @@ def prove_doc_ind(document_ind):
             e, doc_id,
             etree.tostring(doc, encoding='utf-8', pretty_print=True).decode('utf-8')))
         lock.release()
-        # raise
-        if 'timed out' in str(e):
-            proof_node.set('status', 'timedout')
-            print('t', end='', file=sys.stdout)
-        else:
-            proof_node.set('status', 'failed')
-            print('x', end='', file=sys.stdout)
+        proof_node.set('status', 'failed')
         proof_node.set('inference_result', 'unknown')
+        print('x', end='', file=sys.stdout)
     sys.stdout.flush()
     return etree.tostring(proof_node)
 

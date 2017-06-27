@@ -29,28 +29,10 @@ from nltk import Tree
 from knowledge import get_lexical_relations_from_preds
 from normalization import denormalize_token
 from theorem import is_theorem_defined
+from theorem import is_theorem_error
+from theorem import run_coq_script
 from tactics import get_tactics
 from tree_tools import tree_or_string, tree_contains
-
-def is_theorem_defined(output_lines):
-    """
-    Check whether the string "is defined" appears in the output of coq.
-    In that case, we return True. Otherwise, we return False.
-    """
-    for output_line in output_lines:
-        if len(output_line) > 2 and 'is defined' in (' '.join(output_line[-2:])):
-            return True
-    return False
-
-
-def is_theorem_error(output_lines):
-    """
-    Errors in the construction of a theorem (type mismatches in axioms, etc.)
-    are signaled using the symbols ^^^^ indicating where the error is.
-    We simply search for that string.
-    """
-    return any('^^^^' in o for ol in output_lines for o in ol)
-
 
 def find_final_subgoal_line_index(coq_output_lines):
     indices = [i for i, line in enumerate(coq_output_lines)
@@ -432,11 +414,8 @@ def filter_wrong_axioms(axioms, coq_script):
     good_axioms = set()
     for axiom in axioms:
         new_coq_script = insert_axioms_in_coq_script(set([axiom]), coq_script)
-        process = Popen(
-            new_coq_script,
-            shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        output_lines = [
-            line.decode('utf-8').strip().split() for line in process.stdout.readlines()]
+        # We only need to check if there is a type mismatch.
+        output_lines = run_coq_script(new_coq_script, timeout=2)
         if not is_theorem_error(output_lines):
             good_axioms.add(axiom)
     return good_axioms
@@ -448,12 +427,8 @@ def try_abduction(coq_script, previous_axioms=set(), expected='yes'):
     current_tactics = get_tactics()
     debug_tactics = 'repeat nltac_base. try substitution. Qed'
     coq_script_debug = new_coq_script.replace(current_tactics, debug_tactics)
-    process = Popen(
-        coq_script_debug,
-        shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    output_lines = [line.decode('utf-8').strip()
-                    for line in process.stdout.readlines()]
-    if is_theorem_defined(l.split() for l in output_lines):
+    output_lines = run_coq_script(coq_script_debug, timeout=100)
+    if is_theorem_defined(output_lines):
         return expected, [new_coq_script], previous_axioms, failure_log
     premise_lines = get_premise_lines(output_lines)
     conclusion = get_conclusion_line(output_lines)
@@ -469,11 +444,6 @@ def try_abduction(coq_script, previous_axioms=set(), expected='yes'):
     axioms = filter_wrong_axioms(axioms, coq_script)
     axioms = axioms.union(previous_axioms)
     new_coq_script = insert_axioms_in_coq_script(axioms, coq_script)
-    process = Popen(
-        new_coq_script,
-        shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    output_lines = [line.decode('utf-8').strip().split()
-                    for line in process.stdout.readlines()]
-    inference_result_str = expected if is_theorem_defined(
-        output_lines) else 'unknown'
+    output_lines = run_coq_script(new_coq_script, timeout=100)
+    inference_result_str = expected if is_theorem_defined(output_lines) else 'unknown'
     return inference_result_str, [new_coq_script], axioms, failure_log
