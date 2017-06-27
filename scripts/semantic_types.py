@@ -113,7 +113,7 @@ def remove_colliding_predicates(signature, expr):
             break
         i += 1
         if i > 100:
-            logging.warning('There is probably a problem in the typecheck resolution of ' \
+            logging.info('There is probably a problem in the typecheck resolution of ' \
                     'expression {0} with signature {1}'.format(str(expr), signature))
             break
     try:
@@ -123,7 +123,7 @@ def remove_colliding_predicates(signature, expr):
         variable_name = re.findall(r"'(\S+?)'", e_str)[0]
         signature.pop(variable_name, None)
     except AttributeError as e:
-        logging.warning('There is probably a problem in the typecheck resolution of ' \
+        logging.info('There is probably a problem in the typecheck resolution of ' \
             'expression {0} with signature {1}'.format(str(expr), signature))
     return signature
 

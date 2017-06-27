@@ -26,15 +26,17 @@ import sys
 
 from nltk import Tree
 
+from coq_analyzer import get_predicate_arguments
 from knowledge import get_lexical_relations_from_preds
 from normalization import denormalize_token
 from theorem import is_theorem_defined
 from theorem import is_theorem_error
 from theorem import run_coq_script
+from theorem import insert_axioms_in_coq_script
 from tactics import get_tactics
 from tree_tools import tree_or_string, tree_contains
 
-def find_final_subgoal_line_index(coq_output_lines):
+def find_final_subgoal_line_index_(coq_output_lines):
     indices = [i for i, line in enumerate(coq_output_lines)
                if line.endswith('subgoal')]
     if not indices:
@@ -42,7 +44,7 @@ def find_final_subgoal_line_index(coq_output_lines):
     return indices[-1]
 
 
-def find_final_conclusion_sep_line_index(coq_output_lines):
+def find_final_conclusion_sep_line_index_(coq_output_lines):
     indices = [i for i, line in enumerate(coq_output_lines)
                if line.startswith('===') and line.endswith('===')]
     if not indices:
@@ -50,7 +52,7 @@ def find_final_conclusion_sep_line_index(coq_output_lines):
     return indices[-1]
 
 
-def get_premise_lines(coq_output_lines):
+def get_premise_lines_(coq_output_lines):
     premise_lines = []
     line_index_last_conclusion_sep = find_final_conclusion_sep_line_index(
         coq_output_lines)
@@ -64,7 +66,7 @@ def get_premise_lines(coq_output_lines):
     return premise_lines
 
 
-def get_conclusion_line(coq_output_lines):
+def get_conclusion_line_(coq_output_lines):
     line_index_last_conclusion_sep = find_final_conclusion_sep_line_index(
         coq_output_lines)
     if not line_index_last_conclusion_sep:
@@ -90,7 +92,7 @@ def get_premises_that_match_conclusion_args_(premises, conclusion):
     return candidate_premises
 
 
-def get_premises_that_match_conclusion_args(premises, conclusion):
+def get_premises_that_match_conclusion_args_(premises, conclusion):
     """
     Returns premises where the predicates have at least one argument
     in common with the conclusion.
@@ -111,7 +113,7 @@ def get_premises_that_match_conclusion_args(premises, conclusion):
     return candidate_premises
 
 
-def make_failure_log(conclusion_pred, premise_preds, conclusion, premises,
+def make_failure_log_(conclusion_pred, premise_preds, conclusion, premises,
                      coq_output_lines=None):
     """
     Produces a dictionary with the following structure:
@@ -154,14 +156,14 @@ def make_failure_log(conclusion_pred, premise_preds, conclusion, premises,
     return failure_log
 
 
-def has_type_error(coq_output_lines):
+def has_type_error_(coq_output_lines):
     for line in coq_output_lines:
         if 'has type' in line and 'while it is expected to have type' in line:
             return 'yes'
     return 'no'
 
 
-def has_open_formula(coq_output_lines):
+def has_open_formula_(coq_output_lines):
     for line in coq_output_lines:
         if 'The type of this term is a product while it is expected to be' in line:
             return 'yes'
@@ -170,7 +172,7 @@ def has_open_formula(coq_output_lines):
     return 'no'
 
 
-def get_subgoals_from_coq_output(coq_output_lines, premises):
+def get_subgoals_from_coq_output_(coq_output_lines, premises):
     """
     When the proving is halted due to unprovable sub-goals,
     Coq produces an output similar to this:
@@ -241,7 +243,7 @@ def make_axioms_from_premises_and_conclusion(premises, conclusion, coq_output_li
     return axioms, failure_log
 
 
-def parse_coq_line(coq_line):
+def parse_coq_line_(coq_line):
     try:
         tree_args = tree_or_string('(' + coq_line + ')')
     except ValueError:
@@ -249,7 +251,7 @@ def parse_coq_line(coq_line):
     return tree_args
 
 
-def get_tree_pred_args(line, is_conclusion=False):
+def get_tree_pred_args_(line, is_conclusion=False):
     """
     Given the string representation of a premise, where each premise is:
       pX : predicate1 (arg1 arg2 arg3)
@@ -268,7 +270,7 @@ def get_tree_pred_args(line, is_conclusion=False):
     return tree_args[0]
 
 
-def get_predicate_arguments(premises, conclusion):
+def get_predicate_arguments_(premises, conclusion):
     """
     Given the string representations of the premises, where each premises is:
       pX : predicate1 arg1 arg2 arg3
@@ -325,26 +327,6 @@ def make_axioms_from_preds(premise_preds, conclusion_pred, pred_args):
     return axioms
 
 
-def get_theorem_line(coq_script_lines):
-    for i, line in enumerate(coq_script_lines):
-        if line.startswith('Theorem '):
-            return i
-    assert False, 'There was no theorem defined in the coq script: {0}'\
-        .format('\n'.join(coq_script_lines))
-
-
-def insert_axioms_in_coq_script(axioms, coq_script):
-    coq_script_lines = coq_script.split('\n')
-    theorem_line = get_theorem_line(coq_script_lines)
-    for axiom in axioms:
-        axiom_name = axiom.split()[1]
-        coq_script_lines.insert(
-            theorem_line, 'Hint Resolve {0}.'.format(axiom_name))
-        coq_script_lines.insert(theorem_line, axiom)
-    new_coq_script = '\n'.join(coq_script_lines)
-    return new_coq_script
-
-
 def try_abductions(theorem):
     assert len(theorem.variations) == 2, 'Got %d variations' % len(theorem.variations)
     theorem_master = theorem.variations[0]
@@ -357,10 +339,36 @@ def try_abductions(theorem):
     current_axioms = t_pos.axioms.union(t_neg.axioms)
     failure_logs = []
     while True:
-        inference_result_str, direct_proof_scripts, new_direct_axioms, failure_log = \
-            try_abduction(t_pos.coq_script,
-                          previous_axioms=current_axioms,
-                          expected='yes')
+        # inference_result_str, direct_proof_scripts, new_direct_axioms, failure_log = \
+        abduction_theorem = try_abduction(
+            t_pos, previous_axioms=current_axioms, expected='yes')
+        current_axioms = axioms.union(abduction_theorem.axioms)
+        reverse_proof_scripts = []
+        if theorem_master.result == 'unknown':
+            abduction_theorem = try_abduction(
+                t_neg, previous_axioms=current_axioms, expected='no')
+            theorem_master.variations.append(abduction_theorem)
+            current_axioms.update(abduction_theorem.axioms)
+        if len(axioms) == len(current_axioms) or theorem_master.result != 'unknown':
+            break
+        axioms = {a for a in current_axioms}
+    return
+
+def try_abductions_(theorem):
+    assert len(theorem.variations) == 2, 'Got %d variations' % len(theorem.variations)
+    theorem_master = theorem.variations[0]
+    theorem_negated = theorem.variations[1]
+    t_pos, t_neg = theorem_master, theorem_negated
+
+    direct_proof_script = t_pos.coq_script
+    reverse_proof_script = t_neg.coq_script
+    axioms = t_pos.axioms.union(t_neg.axioms)
+    current_axioms = t_pos.axioms.union(t_neg.axioms)
+    failure_logs = []
+    while True:
+        # inference_result_str, direct_proof_scripts, new_direct_axioms, failure_log = \
+        abduction_theorem = try_abduction(
+            t_pos, previous_axioms=current_axioms, expected='yes')
         if len(t_pos.axioms) < len(new_direct_axioms):
             new_theorem = t_pos.copy(new_axioms=new_direct_axioms)
             new_theorem.coq_script = direct_proof_scripts[-1]
@@ -370,7 +378,7 @@ def try_abductions(theorem):
         reverse_proof_scripts = []
         if not inference_result_str == 'yes':
             inference_result_str, reverse_proof_scripts, new_reverse_axioms, failure_log = \
-                try_abduction(t_neg.coq_script,
+                try_abduction(t_neg,
                               previous_axioms=current_axioms, expected='no')
             if len(t_neg.axioms) < len(new_reverse_axioms):
                 new_theorem = t_neg.copy(new_axioms=new_reverse_axioms)
@@ -414,31 +422,23 @@ def filter_wrong_axioms(axioms, coq_script):
     good_axioms = set()
     for axiom in axioms:
         new_coq_script = insert_axioms_in_coq_script(set([axiom]), coq_script)
-        # We only need to check if there is a type mismatch.
+        # We only need to check if there is a type mismatch, which should
+        # be fast (2 secs. maximum).
         output_lines = run_coq_script(new_coq_script, timeout=2)
         if not is_theorem_error(output_lines):
             good_axioms.add(axiom)
     return good_axioms
 
 
-def try_abduction(coq_script, previous_axioms=set(), expected='yes'):
-    failure_log = OrderedDict()
-    new_coq_script = insert_axioms_in_coq_script(previous_axioms, coq_script)
-    current_tactics = get_tactics()
-    debug_tactics = 'repeat nltac_base. try substitution. Qed'
-    coq_script_debug = new_coq_script.replace(current_tactics, debug_tactics)
-    output_lines = run_coq_script(coq_script_debug, timeout=100)
-    if is_theorem_defined(output_lines):
-        return expected, [new_coq_script], previous_axioms, failure_log
-    premise_lines = get_premise_lines(output_lines)
-    conclusion = get_conclusion_line(output_lines)
-    if not premise_lines or not conclusion:
-        failure_log = {"type error": has_type_error(output_lines),
-                       "open formula": has_open_formula(output_lines)}
-        # print(json.dumps(failure_log), file=sys.stderr)
-        return 'unknown', [], previous_axioms, failure_log
-    matching_premises = get_premises_that_match_conclusion_args(
-        premise_lines, conclusion)
+def try_abduction_(theorem, previous_axioms=None, expected='yes'):
+    if previous_axioms is None:
+        previous_axioms = set()
+    coq_script = theorem.coq_script
+    inference_result, failure_log = theorem.prove_debug(previous_axioms)
+    if inference_result:
+        abduction_theorem = theorem.copy(new_axioms=previous_axioms)
+        return abduction_theorem
+
     axioms, failure_log = make_axioms_from_premises_and_conclusion(
         premise_lines, conclusion, output_lines)
     axioms = filter_wrong_axioms(axioms, coq_script)
@@ -447,3 +447,32 @@ def try_abduction(coq_script, previous_axioms=set(), expected='yes'):
     output_lines = run_coq_script(new_coq_script, timeout=100)
     inference_result_str = expected if is_theorem_defined(output_lines) else 'unknown'
     return inference_result_str, [new_coq_script], axioms, failure_log
+
+def make_axioms_from_coq_analysis(failure_log):
+    axioms = set()
+    for subgoal in failure_log.get('other_sub-goals', []):
+        conclusion_pred = subgoal.get('subgoal', '')
+        premise_preds = subgoal.get('matching_premises', [])
+        pred_args = get_predicate_arguments(
+            subgoal.get('matching_raw_premises', []),
+            subgoal.get('raw_subgoal', ''))
+        subgoal_axioms = make_axioms_from_preds(
+            premise_preds, conclusion_pred, pred_args)
+        axioms.update(subgoal_axioms)
+    return axioms
+
+def try_abduction(theorem, previous_axioms=None, expected='yes'):
+    if previous_axioms is None:
+        previous_axioms = set()
+    inference_result, failure_log = theorem.prove_debug(previous_axioms)
+    if inference_result is True:
+        abduction_theorem = theorem.copy(new_axioms=previous_axioms)
+        return abduction_theorem
+
+    axioms = make_axioms_from_coq_analysis(failure_log)
+    axioms = filter_wrong_axioms(axioms, theorem.coq_script)
+    axioms = axioms.union(previous_axioms)
+    abduction_theorem = theorem.copy(new_axioms=axioms)
+    abduction_theorem.prove_simple()
+    return abduction_theorem
+

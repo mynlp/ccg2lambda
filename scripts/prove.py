@@ -171,7 +171,6 @@ def prove_doc_ind(document_ind):
     It returns an XML node with proof information.
     """
     global lock
-    # from pudb import set_trace; set_trace()
     doc = DOCS[document_ind]
     proof_node = etree.Element('proof')
     try:
@@ -180,7 +179,6 @@ def prove_doc_ind(document_ind):
         inference_result = theorem.result
         coq_scripts = [t.coq_script for t in theorem.variations]
         failure_logs = [t.failure_log for t in theorem.variations if t.failure_log is not None]
-        # print(inference_result)
         proof_node.set('inference_result', inference_result)
         for coq_script in coq_scripts:
             coq_script_node = etree.Element('coq_script')

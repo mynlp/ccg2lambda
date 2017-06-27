@@ -72,7 +72,7 @@ def main(args = None):
     sys_index = index_docs_by(rte_docs_sys, 'pair_id')
 
     # from pudb import set_trace; set_trace()
-    pair_ids = set(ref_index.keys()).union(set(sys_index.keys()))
+    pair_ids = sorted(set(ref_index.keys()).union(set(sys_index.keys())))
     for pair_id in pair_ids:
         ref_doc = ref_index.get(pair_id, None)
         sys_doc = sys_index.get(pair_id, None)
