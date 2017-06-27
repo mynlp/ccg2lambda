@@ -174,6 +174,40 @@ def prove_doc_ind(document_ind):
     doc = DOCS[document_ind]
     proof_node = etree.Element('proof')
     try:
+        theorem = prove_doc(doc, ABDUCTION)
+        proof_node.set('status', 'success')
+        inference_result = theorem.result
+        proof_node.set('inference_result', inference_result)
+        theorems_node = theorem.to_xml()
+        proof_node.append(theorems_node)
+        print(inference_result[0], end='', file=sys.stdout)
+    except TimeoutExpired as e:
+        proof_node.set('status', 'timedout')
+        proof_node.set('inference_result', 'unknown')
+        print('t', end='', file=sys.stdout)
+    except Exception as e:
+        raise
+        doc_id = doc.get('id', None)
+        lock.acquire()
+        logging.error('An error occurred: {0}\nSentence: {1}\nTree XML:\n{2}'.format(
+            e, doc_id,
+            etree.tostring(doc, encoding='utf-8', pretty_print=True).decode('utf-8')))
+        lock.release()
+        proof_node.set('status', 'failed')
+        proof_node.set('inference_result', 'unknown')
+        print('x', end='', file=sys.stdout)
+    sys.stdout.flush()
+    return etree.tostring(proof_node)
+
+def prove_doc_ind_(document_ind):
+    """
+    Perform RTE inference for the document ID document_ind.
+    It returns an XML node with proof information.
+    """
+    global lock
+    doc = DOCS[document_ind]
+    proof_node = etree.Element('proof')
+    try:
         proof_node.set('status', 'success')
         theorem = prove_doc(doc, ABDUCTION)
         inference_result = theorem.result

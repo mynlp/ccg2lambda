@@ -17,6 +17,7 @@
 
 import codecs
 from collections import OrderedDict
+from lxml import etree
 import subprocess
 
 from coq_analyzer import analyze_coq_output
@@ -153,6 +154,76 @@ class Theorem(object):
         if len(self.premises) != 1:
             return None
         return self.copy([self.conclusion], self.premises[0])
+
+    def to_xml(self):
+        ts_node = etree.Element('theorems')
+        # Add premises node.
+        ps_node = etree.Element('premises')
+        ts_node.append(ps_node)
+        for premise in self.premises:
+            p_node = etree.Element('premise')
+            p_node.text = str(premise)
+            ps_node.append(p_node)
+        # Add conclusion node.
+        c_node = etree.Element('conclusion')
+        c_node.text = str(self.conclusion)
+        ts_node.append(c_node)
+        # Add dynamic library.
+        d_node = etree.Element('dynamic_library')
+        d_node.text = self.dynamic_library_str
+        ts_node.append(d_node)
+        # Add theorem(s) node.
+        for theorem in self.variations:
+            t_node = etree.Element('theorem')
+            if theorem.failure_log is None:
+                self.prove_debug()
+            t_node.set('inference_result', theorem.result_simple)
+            t_node.set('is_negated', str(theorem.is_negated))
+            s_node = etree.Element('coq_script')
+            s_node.text = self.coq_script
+            t_node.append(s_node)
+            f_node = make_failure_log_node(theorem.failure_log)
+            t_node.append(f_node)
+        return ts_node
+
+
+def make_failure_log_node(failure_log):
+    fnode = etree.Element('failure_log')
+    if not failure_log:
+        return fnode
+    if 'all_premises' in failure_log:
+        n = etree.Element('all_premises')
+        fnode.append(n)
+        for p in failure_log.get('all_premises', []):
+            pn = etree.Element('premise')
+            n.append(pn)
+            pn.text = p
+    fnode.set('type_error', failure_log.get('type_error', 'unk'))
+    fnode.set('open_formula', failure_log.get('open_formula', 'unk'))
+    if 'other_sub-goals' in failure_log:
+        n = etree.Element('other_sub-goals')
+        fnode.append(n)
+        for g in failure_log.get('other_sub-goals', []):
+            gn = etree.Element('subgoal')
+            n.append(gn)
+            gn.set('predicate', g['subgoal'])
+            gn.set('index', str(g['index']))
+            gn.set('line', g['raw_subgoal'])
+    
+            pns = etree.Element('matching_premises')
+            gn.append(pns)
+            for prem in g.get('matching_premises', []):
+                pn = etree.Element('matching_premise')
+                pns.append(pn)
+                pn.set('predicate', prem)
+    
+            pns = etree.Element('matching_raw_premises')
+            gn.append(pns)
+            for prem in g.get('matching_raw_premises', []):
+                pn = etree.Element('matching_raw_premise')
+                pns.append(pn)
+                pn.set('line', prem)
+    return fnode
 
 def get_formulas_from_doc(doc):
     """
