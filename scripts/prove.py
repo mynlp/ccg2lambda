@@ -125,46 +125,6 @@ def prove_docs_seq(document_inds):
         proof_nodes.append(proof_node)
     return proof_nodes
 
-def make_failure_logs_node(failure_logs):
-    assert isinstance(failure_logs, list)
-    node = etree.Element('failure_log')
-    for failure_log in failure_logs:
-        fnode = etree.Element('failure')
-        node.append(fnode)
-        if 'all_premises' in failure_log:
-            n = etree.Element('all_premises')
-            fnode.append(n)
-            for p in failure_log.get('all_premises', []):
-                pn = etree.Element('premise')
-                n.append(pn)
-                pn.text = p
-        fnode.set('type_error', failure_log.get('type_error', 'unk'))
-        fnode.set('open_formula', failure_log.get('open_formula', 'unk'))
-        if 'other_sub-goals' in failure_log:
-            n = etree.Element('other_sub-goals')
-            fnode.append(n)
-            for g in failure_log.get('other_sub-goals', []):
-                gn = etree.Element('subgoal')
-                n.append(gn)
-                gn.set('predicate', g['subgoal'])
-                gn.set('index', str(g['index']))
-                gn.set('line', g['raw_subgoal'])
-
-                pns = etree.Element('matching_premises')
-                gn.append(pns)
-                for prem in g.get('matching_premises', []):
-                    pn = etree.Element('matching_premise')
-                    pns.append(pn)
-                    pn.set('predicate', prem)
-
-                pns = etree.Element('matching_raw_premises')
-                gn.append(pns)
-                for prem in g.get('matching_raw_premises', []):
-                    pn = etree.Element('matching_raw_premise')
-                    pns.append(pn)
-                    pn.set('line', prem)
-    return node
-
 def prove_doc_ind(document_ind):
     """
     Perform RTE inference for the document ID document_ind.

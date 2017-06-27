@@ -41,6 +41,7 @@ class Theorem(object):
         self.variations = []
         self.doc = None
         self.failure_log = None
+        self.timeout = 100
 
     def __repr__(self):
         return self.coq_script
@@ -80,6 +81,7 @@ class Theorem(object):
         theorem.dynamic_library_str = self.dynamic_library_str
         theorem.is_negated = is_negated
         theorem.doc = self.doc
+        theorem.timeout = self.timeout
         self.variations.append(theorem)
         return theorem
 
@@ -116,7 +118,7 @@ class Theorem(object):
         current_tactics = get_tactics()
         debug_tactics = 'repeat nltac_base. try substitution. Qed'
         coq_script = coq_script.replace(current_tactics, debug_tactics)
-        output_lines = run_coq_script(coq_script)
+        output_lines = run_coq_script(coq_script, self.timeout)
 
         if is_theorem_defined(output_lines):
             if axioms == self.axioms:
@@ -134,7 +136,7 @@ class Theorem(object):
             self.conclusion,
             self.dynamic_library_str,
             self.axioms)
-        self.inference_result = prove_script(self.coq_script)
+        self.inference_result = prove_script(self.coq_script, self.timeout)
         return
 
     def prove(self, abduction=None):
@@ -280,8 +282,8 @@ def make_coq_script(premise_interpretations, conclusion, dynamic_library = '', a
     coq_script = substitute_invalid_chars(coq_script, 'replacement.txt')
     return coq_script
 
-def prove_script(coq_script):
-    output_lines = run_coq_script(coq_script)
+def prove_script(coq_script, timeout=100):
+    output_lines = run_coq_script(coq_script, timeout)
     return is_theorem_defined(output_lines)
 
 def run_coq_script(coq_script, timeout=100):
