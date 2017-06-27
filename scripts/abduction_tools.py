@@ -14,27 +14,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import print_function
-
 from collections import OrderedDict
-import json
-import logging
-import re
-from subprocess import Popen
-import subprocess
-import sys
-
-from nltk import Tree
 
 from coq_analyzer import get_predicate_arguments
 from knowledge import get_lexical_relations_from_preds
-from normalization import denormalize_token
-from theorem import is_theorem_defined
 from theorem import is_theorem_error
 from theorem import run_coq_script
 from theorem import insert_axioms_in_coq_script
-from tactics import get_tactics
-from tree_tools import tree_or_string, tree_contains
 
 def make_axioms_from_premises_and_conclusion(premises, conclusion, coq_output_lines=None):
     matching_premises = get_premises_that_match_conclusion_args(
@@ -43,12 +29,10 @@ def make_axioms_from_premises_and_conclusion(premises, conclusion, coq_output_li
     conclusion_pred = conclusion.split()[0]
     pred_args = get_predicate_arguments(premises, conclusion)
     axioms = make_axioms_from_preds(premise_preds, conclusion_pred, pred_args)
-    # print('Has axioms: {0}'.format(axioms), file=sys.stderr)
     failure_log = OrderedDict()
     if not axioms:
         failure_log = make_failure_log(
             conclusion_pred, premise_preds, conclusion, premises, coq_output_lines)
-        # print(json.dumps(failure_log), file=sys.stderr)
     return axioms, failure_log
 
 
