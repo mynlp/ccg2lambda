@@ -107,6 +107,7 @@ def prove_docs(document_inds, ncores=1):
         proof_nodes = prove_docs_seq(document_inds)
     else:
         proof_nodes = prove_docs_par(document_inds, ncores)
+    print('', file=sys.stdout)
     proof_nodes = [etree.fromstring(p) for p in proof_nodes]
     return proof_nodes
 

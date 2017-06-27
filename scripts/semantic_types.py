@@ -176,7 +176,7 @@ def get_dynamic_library_from_doc(doc, formulas):
         nltk_sig_auto,
         coq_static_lib_path='coqlib.v', 
         doc=doc)
-    dynamic_library_str = '\n'.join(dynamic_library)
+    dynamic_library_str = '\n'.join(sorted(dynamic_library))
     return dynamic_library_str, formulas
 
 def build_library_entry(predicate, pred_type):
