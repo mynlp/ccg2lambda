@@ -18,9 +18,9 @@ from collections import OrderedDict
 
 from coq_analyzer import get_predicate_arguments
 from knowledge import get_lexical_relations_from_preds
+from theorem import insert_axioms_in_coq_script
 from theorem import is_theorem_error
 from theorem import run_coq_script
-from theorem import insert_axioms_in_coq_script
 
 def make_axioms_from_premises_and_conclusion(premises, conclusion, coq_output_lines=None):
     matching_premises = get_premises_that_match_conclusion_args(

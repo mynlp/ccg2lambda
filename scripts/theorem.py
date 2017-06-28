@@ -17,6 +17,7 @@
 
 import codecs
 from collections import OrderedDict
+import logging
 from lxml import etree
 import subprocess
 
@@ -297,13 +298,19 @@ def run_coq_script(coq_script, timeout=100):
     Returns the output lines.
     """
     coq_script = substitute_invalid_chars(coq_script, 'replacement.txt')
-    ps = subprocess.Popen(('echo', coq_script), stdout=subprocess.PIPE)
-    output = subprocess.check_output(
-        ('coqtop',),
-        stdin=ps.stdout,
-        stderr=subprocess.STDOUT,
-        timeout=timeout)
-    ps.wait()
+    try:
+        ps = subprocess.Popen(('echo', coq_script), stdout=subprocess.PIPE)
+        output = subprocess.check_output(
+            ('coqtop',),
+            stdin=ps.stdout,
+            stderr=subprocess.STDOUT,
+            timeout=timeout)
+        ps.wait()
+    except subprocess.CalledProcessError as e:
+        logging.error(
+            'Error when running the following script:\n{0}\nMessage was: {1}'.format(
+            coq_script, e))
+        return []
     output_lines = [
         str(line).strip() for line in output.decode('utf-8').split('\n')]
     return output_lines

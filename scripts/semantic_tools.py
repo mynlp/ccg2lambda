@@ -14,16 +14,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import codecs
 import logging
 import re
-import subprocess
-from subprocess import check_output
 
 from knowledge import get_lexical_relations
-from nltk2coq import normalize_interpretation
 from semantic_types import get_dynamic_library_from_doc
-from tactics import get_tactics
 from theorem import Theorem
 
 def build_knowledge_axioms(doc):
@@ -46,7 +41,7 @@ def prove_doc(doc, abduction=None):
     If results are not conclusive, attempt basic abduction.
     """
     theorem = Theorem.from_doc(doc)
-    theorem.timeout = 5
+    theorem.timeout = 100
     theorem.prove(abduction)
     return theorem
 
