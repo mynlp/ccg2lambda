@@ -197,11 +197,11 @@ class Theorem(object):
             t_node = etree.Element('theorem')
             ts_node.append(t_node)
             if theorem.failure_log is None:
-                _, failure_log = self.prove_debug()
+                _, failure_log = theorem.prove_debug()
             t_node.set('inference_result', theorem.result_simple)
             t_node.set('is_negated', str(theorem.is_negated))
             s_node = etree.Element('coq_script')
-            s_node.text = self.coq_script
+            s_node.text = theorem.coq_script
             t_node.append(s_node)
             f_node = make_failure_log_node(failure_log)
             t_node.append(f_node)
@@ -277,7 +277,8 @@ def make_coq_script(premise_interpretations, conclusion, dynamic_library = '', a
     tactics = get_tactics()
     coq_script = "Require Export coqlib.\n{0}\nTheorem t1: {1}. {2}.".format(
         dynamic_library, coq_formulae, tactics)
-    if axioms is not None:
+    if axioms is not None and len(axioms) > 0:
+        # from pudb import set_trace; set_trace()
         coq_script = insert_axioms_in_coq_script(axioms, coq_script)
     coq_script = substitute_invalid_chars(coq_script, 'replacement.txt')
     return coq_script

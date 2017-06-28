@@ -146,7 +146,6 @@ def prove_doc_ind(document_ind):
         proof_node.set('inference_result', 'unknown')
         print('t', end='', file=sys.stdout)
     except Exception as e:
-        raise
         doc_id = doc.get('id', None)
         lock.acquire()
         logging.error('An error occurred: {0}\nSentence: {1}\nTree XML:\n{2}'.format(
@@ -156,6 +155,7 @@ def prove_doc_ind(document_ind):
         proof_node.set('status', 'failed')
         proof_node.set('inference_result', 'unknown')
         print('x', end='', file=sys.stdout)
+        raise
     sys.stdout.flush()
     return etree.tostring(proof_node)
 
