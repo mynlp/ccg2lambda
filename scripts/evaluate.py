@@ -63,8 +63,16 @@ def print_label_distribution(labels, title=''):
     print('Label Distribution {0}: {1}'.format(title.rjust(5), c))
 
 def print_confusion_matrix(gold_labels, sys_labels):
-    confusion_matrix = ConfusionMatrix(gold_labels, sys_labels)
-    print('Confusion matrix:\n{0}'.format(confusion_matrix))
+    c = ConfusionMatrix(gold_labels, sys_labels)
+    print('Confusion matrix:\n{0}'.format(c))
+    true_positives = c.get('yes', 'yes') + c.get('no', 'no')
+    true_negatives = c.get('unknown', 'unknown')
+    false_positives = c.get('unknown', 'yes') + c.get('unknown', 'no')
+    false_negatives = c.get('yes', 'unknown') + c.get('no', 'unknown')
+    print('True positives : {0}'.format(true_positives))
+    print('True negatives : {0}'.format(true_negatives))
+    print('False positives: {0}'.format(false_positives))
+    print('False negatives: {0}'.format(false_negatives))
 
 def print_num_syntactic_errors(roots):
     """
@@ -83,6 +91,10 @@ def print_num_semantic_errors(roots):
     print('Semantic parse errors: {0} (from which {1} are syntactic errors)'.format(
         len(sem_errors), len(sem_syn_errors)))
 
+def print_proof_status_stats(roots):
+    statuses = [s for root in roots for s in root.xpath('./document/proof/@status')]
+    c = Counter(statuses)
+    print('Proof status distribution: {0}'.format(c))
 
 def print_evaluation(proof_fnames):
     roots = load_files(proof_fnames)
@@ -90,15 +102,18 @@ def print_evaluation(proof_fnames):
     sys_labels = get_sys_labels(roots)
     assert len(gold_labels) == len(sys_labels), \
         '{0} != {1}'.format(len(gold_labels) == len(sys_labels))
+    print('Number of problems: {0}'.format(len(gold_labels)))
 
     print_accuracy(gold_labels, sys_labels)
+    print_confusion_matrix(gold_labels, sys_labels)
     print_label_distribution(gold_labels, 'gold')
     print_label_distribution(sys_labels, 'sys')
-    print_confusion_matrix(gold_labels, sys_labels)
 
     print_num_syntactic_errors(roots)
     print_num_semantic_errors(roots)
-    # TODO: print number of timeouts.
+    print_proof_status_stats(roots)
+
+    # For false negatives, show:
     # TODO: print number of open formulas.
     # TODO: print number of type errors.
 
