@@ -19,6 +19,7 @@ from __future__ import print_function
 
 import argparse
 import codecs
+from collections import Counter
 import logging
 import json
 from lxml import etree
@@ -26,10 +27,81 @@ import os
 import sys
 import textwrap
 
-def print_evaluation(gold_labels, sys_labels):
+from pandas_ml import ConfusionMatrix
+
+def load_files(proof_fnames):
+    """
+    From a list of XML filenames that contain a <proof> node,
+    it returns a list of lxml root nodes.
+    """
+    roots = []
+    parser = etree.XMLParser(remove_blank_text=True)
+    for fname in proof_fnames:
+        docs = etree.parse(fname, parser)
+        roots.append(docs)
+    return roots
+
+def get_sys_labels(roots):
+    labels = []
+    for root in roots:
+        labels.extend(root.xpath('./document/proof/@inference_result'))
+    return labels
+    
+def get_gold_labels(roots):
+    labels = []
+    for root in roots:
+        labels.extend(root.xpath('./document/@rte_label'))
+    return labels
+
+def print_accuracy(gold_labels, sys_labels):
     hits = sum(int(g == s) for g, s in zip(gold_labels, sys_labels))
     accuracy = float(hits) / len(sys_labels)
     print('Accuracy: {0:.2f}'.format(accuracy))
+
+def print_label_distribution(labels, title=''):
+    c = Counter(labels)
+    print('Label Distribution {0}: {1}'.format(title.rjust(5), c))
+
+def print_confusion_matrix(gold_labels, sys_labels):
+    confusion_matrix = ConfusionMatrix(gold_labels, sys_labels)
+    print('Confusion matrix:\n{0}'.format(confusion_matrix))
+
+def print_num_syntactic_errors(roots):
+    """
+    Syntactic parse errors are likely to be signaled by sentence XML nodes
+    for which there is no 'tokens' node (failure of syntactic parser
+    earlier in the pipeline).
+    """
+    syn_errors = [s for root in roots for s in root.xpath(
+        './document/sentences/sentence') if not s.xpath('./tokens')]
+    print('Syntactic parse errors: {0}'.format(len(syn_errors)))
+
+def print_num_semantic_errors(roots):
+    sem_errors = [se for root in roots for se in root.xpath(
+        './document/sentences/sentence/semantics[@status="failed"]')]
+    sem_syn_errors = [se for se in sem_errors if not se.getparent().xpath('./tokens')]
+    print('Semantic parse errors: {0} (from which {1} are syntactic errors)'.format(
+        len(sem_errors), len(sem_syn_errors)))
+
+
+def print_evaluation(proof_fnames):
+    roots = load_files(proof_fnames)
+    gold_labels = get_gold_labels(roots)
+    sys_labels = get_sys_labels(roots)
+    assert len(gold_labels) == len(sys_labels), \
+        '{0} != {1}'.format(len(gold_labels) == len(sys_labels))
+
+    print_accuracy(gold_labels, sys_labels)
+    print_label_distribution(gold_labels, 'gold')
+    print_label_distribution(sys_labels, 'sys')
+    print_confusion_matrix(gold_labels, sys_labels)
+
+    print_num_syntactic_errors(roots)
+    print_num_semantic_errors(roots)
+    # TODO: print number of timeouts.
+    # TODO: print number of open formulas.
+    # TODO: print number of type errors.
+
 
 def main(args = None):
     DESCRIPTION=textwrap.dedent("""\
@@ -51,17 +123,8 @@ def main(args = None):
         parser.print_help(file=sys.stderr)
         sys.exit(1)
 
-    parser = etree.XMLParser(remove_blank_text=True)
-    gold_labels = []
-    sys_labels = []
-    for fname in args.proofs:
-        rte_docs = etree.parse(fname, parser)
-        gold_labels.extend(rte_docs.xpath('//document/@rte_label'))
-        sys_labels.extend(rte_docs.xpath('//document/proof/@inference_result'))
-    assert len(gold_labels) == len(sys_labels), \
-        '{0} != {1}'.format(len(gold_labels) == len(sys_labels))
-
-    print_evaluation(gold_labels, sys_labels)
+    proof_fnames = args.proofs
+    print_evaluation(proof_fnames)
 
 
 if __name__ == '__main__':

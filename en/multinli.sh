@@ -33,7 +33,9 @@ plain_dir="plain" # tokenized sentences.
 parsed_dir="parsed" # parsed sentences into XML or other formats.
 results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
-parsers="easyccg candc"
+# parsers="easyccg candc"
+parsers="easyccg"
+ncores=100
 
 # multinli=multinli/multinli_0.9_train.jsonl
 # sentences_basename=multinli
@@ -47,7 +49,7 @@ parsers="easyccg candc"
 #   grep TEST en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.test.jsonl
 # fi
 
-sentences_basename="snli.trial"
+sentences_basename="snli.train"
 multinli=en/${sentences_basename}.jsonl
 python scripts/get_nli_sentences.py \
     $multinli \
@@ -136,6 +138,7 @@ if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
         $category_templates \
         $parsed_dir/${sentences_basename}.${parser}.sem.xml \
         --arbi-types \
+        --ncores $ncores \
         2> $parsed_dir/${sentences_basename}.${parser}.sem.err
       echo
     fi
@@ -164,7 +167,7 @@ for parser in ${parsers}; do
         $rte_fname \
         --proof ${rte_fname/rte/proof} \
         --abduction spsa \
-        --ncores 200 \
+        --ncores $ncores \
         2> ${rte_fname/rte/proof}.log
       echo
     fi

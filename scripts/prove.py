@@ -30,6 +30,7 @@ import sys
 import textwrap
 
 from semantic_tools import prove_doc
+from utils import time_count
 from visualization_tools import convert_doc_to_mathml
 from semparse import serialize_tree
 
@@ -89,7 +90,6 @@ def main(args = None):
     #         fout.write(html_str)
 
     DOCS = root.findall('.//document')
-    # from pudb import set_trace; set_trace()
     document_inds = range(len(DOCS))
     proof_nodes = prove_docs(document_inds, args.ncores)
     assert len(proof_nodes) == len(DOCS), \
@@ -98,10 +98,16 @@ def main(args = None):
         doc.append(proof_node)
 
     if args.proof:
-        root_xml_str = serialize_tree(root)
-        with codecs.open(args.proof, 'wb') as fout:
-            fout.write(root_xml_str)
+        serialize_tree_to_file(root, args.proof)
 
+@time_count
+def serialize_tree_to_file(tree_xml, fname):
+    root_xml_str = serialize_tree(tree_xml)
+    with codecs.open(fname, 'wb') as fout:
+        fout.write(root_xml_str)
+    return
+
+@time_count
 def prove_docs(document_inds, ncores=1):
     if ncores <= 1:
         proof_nodes = prove_docs_seq(document_inds)
@@ -156,46 +162,6 @@ def prove_doc_ind(document_ind):
         proof_node.set('inference_result', 'unknown')
         print('x', end='', file=sys.stdout)
         raise
-    sys.stdout.flush()
-    return etree.tostring(proof_node)
-
-def prove_doc_ind_(document_ind):
-    """
-    Perform RTE inference for the document ID document_ind.
-    It returns an XML node with proof information.
-    """
-    global lock
-    doc = DOCS[document_ind]
-    proof_node = etree.Element('proof')
-    try:
-        proof_node.set('status', 'success')
-        theorem = prove_doc(doc, ABDUCTION)
-        inference_result = theorem.result
-        coq_scripts = [t.coq_script for t in theorem.variations]
-        failure_logs = [t.failure_log for t in theorem.variations if t.failure_log is not None]
-        proof_node.set('inference_result', inference_result)
-        for coq_script in coq_scripts:
-            coq_script_node = etree.Element('coq_script')
-            coq_script_node.text = coq_script
-            proof_node.append(coq_script_node)
-        failure_log_node = make_failure_logs_node(failure_logs)
-        proof_node.append(failure_log_node)
-        print(inference_result[0], end='', file=sys.stdout)
-    except TimeoutExpired as e:
-        proof_node.set('status', 'timedout')
-        proof_node.set('inference_result', 'unknown')
-        print('t', end='', file=sys.stdout)
-    except Exception as e:
-        raise
-        doc_id = doc.get('id', None)
-        lock.acquire()
-        logging.error('An error occurred: {0}\nSentence: {1}\nTree XML:\n{2}'.format(
-            e, doc_id,
-            etree.tostring(doc, encoding='utf-8', pretty_print=True).decode('utf-8')))
-        lock.release()
-        proof_node.set('status', 'failed')
-        proof_node.set('inference_result', 'unknown')
-        print('x', end='', file=sys.stdout)
     sys.stdout.flush()
     return etree.tostring(proof_node)
 
