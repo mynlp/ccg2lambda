@@ -21,7 +21,6 @@ import argparse
 import codecs
 from collections import Counter
 import logging
-import json
 from lxml import etree
 import os
 import sys
@@ -96,6 +95,42 @@ def print_proof_status_stats(roots):
     c = Counter(statuses)
     print('Proof status distribution: {0}'.format(c))
 
+def get_problems(roots, error='false_positives'):
+    if error == 'false_positives':
+        cond = '@rte_label = "unknown" and ./proof/@inference_result != "unknown"'
+    elif error == 'false_negatives':
+        cond = '@rte_label != "unknown" and ./proof/@inference_result = "unknown"'
+    elif error == 'true_positives':
+        cond = '@rte_label != "unknown" and ./proof/@inference_result = @rte_label'
+    elif error == 'true_negatives':
+        cond = '@rte_label = "unknown" and ./proof/@inference_result = @rte_label'
+    else:
+        raise ValueError('Error type not recognized: {0}'.format(error))
+    problems = [p for root in roots for p in root.xpath('./document[{0}]'.format(cond))]
+    return problems
+
+def get_open_formula(doc):
+    f = doc.xpath('./proof/theorems/theorem/failure_log[1]/@open_formula')
+    if len(f) == 0:
+        return 'no'
+    return f[0]
+
+def get_type_error(doc):
+    f = doc.xpath('./proof/theorems/theorem/failure_log[1]/@type_error')
+    if len(f) == 0:
+        return 'no'
+    return f[0]
+
+def print_stats_for(roots, error='false_positives'):
+    problems = get_problems(roots, error)
+    open_formulas = [get_open_formula(p) for p in problems]
+    type_errors = [get_type_error(p) for p in problems]
+    print('{0}: {1}'.format(error, len(problems)))
+    ct = Counter(type_errors)
+    print('  Type error distribution: {0}'.format(ct))
+    co = Counter(open_formulas)
+    print('  Open formula distribution: {0}'.format(co))
+
 def print_evaluation(proof_fnames):
     roots = load_files(proof_fnames)
     gold_labels = get_gold_labels(roots)
@@ -113,9 +148,12 @@ def print_evaluation(proof_fnames):
     print_num_semantic_errors(roots)
     print_proof_status_stats(roots)
 
-    # For false negatives, show:
-    # TODO: print number of open formulas.
-    # TODO: print number of type errors.
+    print_stats_for(roots, 'false_positives')
+    print_stats_for(roots, 'false_negatives')
+    print_stats_for(roots, 'true_positives')
+    print_stats_for(roots, 'true_negatives')
+
+    # TODO: show errors, HTML, etc.
 
 
 def main(args = None):
