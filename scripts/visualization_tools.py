@@ -127,16 +127,16 @@ def convert_doc_to_mathml(doc, verbatim_strings = [], use_gold_trees=False):
     """
     ccg_trees = []
     if use_gold_trees:
-        for sentence in doc.xpath('//sentence'):
+        for sentence in doc.xpath('./sentences/sentence'):
             gold_tree_index = int(sentence.get('gold_tree', '0'))
             ccg_trees.append(sentence.xpath('./ccg')[gold_tree_index])
         ccg_trees = [build_ccg_tree(c) for c in ccg_trees]
     else:
-        ccg_trees = [build_ccg_tree(c) for c in doc.xpath('//sentence/ccg[1]')]
-    sem_trees = [build_ccg_tree(c) for c in doc.xpath('//semantics')]
+        ccg_trees = [build_ccg_tree(c) for c in doc.xpath('./sentences/sentence/ccg[1]')]
+    sem_trees = [build_ccg_tree(c) for c in doc.xpath('./sentences/sentence/semantics')]
     if not sem_trees:
         sem_trees = [None] * len(ccg_trees)
-    tokens = doc.xpath('//tokens')
+    tokens = doc.xpath('./sentences/sentence/tokens')
     assert len(ccg_trees) == len(tokens) 
     num_hypotheses = len(ccg_trees) - 1
     sentence_ids = ["Premise {0}: ".format(i + 1) for i in range(num_hypotheses)]

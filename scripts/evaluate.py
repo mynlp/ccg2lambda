@@ -26,7 +26,10 @@ import os
 import sys
 import textwrap
 
+from tqdm import tqdm
+
 from pandas_ml import ConfusionMatrix
+from visualization_tools import convert_doc_to_mathml
 
 def load_files(proof_fnames):
     """
@@ -105,7 +108,7 @@ def get_problems(roots, error='false_positives'):
     elif error == 'true_negatives':
         cond = '@rte_label = "unknown" and ./proof/@inference_result = @rte_label'
     else:
-        raise ValueError('Error type not recognized: {0}'.format(error))
+        return [p for root in roots for p in root.xpath('./document')]
     problems = [p for root in roots for p in root.xpath('./document[{0}]'.format(cond))]
     return problems
 
@@ -131,7 +134,120 @@ def print_stats_for(roots, error='false_positives'):
     co = Counter(open_formulas)
     print('  Open formula distribution: {0}'.format(co))
 
-def print_evaluation(proof_fnames):
+def make_html_header():
+    return (
+        "<!doctype html>\n"
+        "<html lang='en'>\n"
+        "<head>\n"
+        "  <meta charset='UTF-8'>\n"
+        "  <title>Evaluation results</title>\n"
+        "  <style>\n"
+        "    body {\n"
+        "      font-size: 1.5em;\n"
+        "    }\n"
+        "  </style>\n"
+        "</head>\n"
+        "<body>\n"
+        "<table border='1'>\n"
+        "<tr>\n"
+        "  <td>sick problem</td>\n"
+        "  <td>gold answer</td>\n"
+        "  <td>system answer</td>\n"
+        "  <td>proving time</td>\n"
+        "</tr>\n")
+
+def make_html_tail():
+    return '</table>\n</body>\n</html>'
+
+# def get_doc_error_type(doc):
+#     cond = '@rte_label = "unknown" and ./proof/@inference_result != "unknown"'
+#     if doc.xpath('{0}'.format(cond)):
+#         return 'false_positive'
+#     cond = '@rte_label != "unknown" and ./proof/@inference_result = "unknown"'
+#     if doc.xpath('{0}'.format(cond)):
+#         return 'false_negative'
+#     cond = '@rte_label != "unknown" and ./proof/@inference_result = @rte_label'
+#     if doc.xpath('{0}'.format(cond)):
+#         return 'true_positive'
+#     cond = '@rte_label = "unknown" and ./proof/@inference_result = @rte_label'
+#     if doc.xpath('{0}'.format(cond)):
+#         return 'true_negative'
+#     from pudb import set_trace; set_trace()
+#     raise ValueError('Error not recognized for document:\n{0}'.format(doc))
+
+def print_html_problem(doc, dir_name):
+    prob_id = doc.get('pair_id')
+    prob_html_fname = dir_name + '/' + prob_id + '.html'
+    coq_scripts = doc.xpath('./proof/theorems/theorem/coq_script/text()')
+    html_str = convert_doc_to_mathml(doc, coq_scripts)
+    with codecs.open(prob_html_fname, 'w', 'utf-8') as fout:
+        fout.write(html_str)
+    return
+
+red_color="rgb(255,0,0)"
+green_color="rgb(0,255,0)"
+white_color="rgb(255,255,255)"
+gray_color="rgb(136,136,136)"
+def print_html_problems(problems, fname_base, dir_name):
+    html_head = make_html_header()
+    with codecs.open(fname_base + '.html', 'w', 'utf-8') as fout:
+        fout.write(html_head)
+        for p in tqdm(problems):
+            print_html_problem(p, dir_name)
+            gold_label = p.get('rte_label')
+            sys_label = p.xpath('./proof/@inference_result')[0]
+            if gold_label == 'unknown' and sys_label != 'unknown':
+                color = red_color # false positive
+            elif gold_label == sys_label:
+                color = green_color # true positive and true negative.
+            elif gold_label != 'unknown' and sys_label == 'unknown':
+                color = gray_color # false negative
+            else:
+                color = white_color
+            prob_id = p.get('pair_id')
+            prob_html_fname = dir_name + '/' + prob_id + '.html'
+            proving_time = -1.0
+            html_str = (
+                '<tr>\n'
+                '  <td><a style="background-color:{0};" href="{1}">{2}</a></td>\n'
+                '  <td>{3}</td>\n'
+                '  <td>{4}</td>\n'
+                '  <td>{5}s</td>\n'
+                '</tr>\n').format(
+                color, prob_html_fname, prob_id, gold_label, sys_label, proving_time)
+            fout.write(html_str)
+        html_tail = make_html_tail()
+        fout.write(html_tail)
+
+def print_html(roots, fname_base='main', dir_name='results'):
+    print('Creating HTML graphical output. Please be patient...')
+    problems = get_problems(roots, '')
+    print_html_problems(problems, fname_base + '_all', dir_name)
+
+def main(args = None):
+    DESCRIPTION=textwrap.dedent("""\
+            The XML input file proof should contain the gold and automatic inference results.
+      """)
+
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=DESCRIPTION)
+    parser.add_argument("proofs", nargs='+',
+        help="XML input filename(s) with proof results.")
+    parser.add_argument("--dir_name", nargs='?', type=str, default='results',
+        help="Directory name where evaluation results will be stored.")
+    args = parser.parse_args()
+
+    logging.basicConfig(level=logging.WARNING)
+
+    if any(not os.path.exists(p) for p in args.proofs):
+        print('One of the files does not exists: {0}'.format(args.proofs),
+            file=sys.stderr)
+        parser.print_help(file=sys.stderr)
+        sys.exit(1)
+
+    proof_fnames = args.proofs
+
     roots = load_files(proof_fnames)
     gold_labels = get_gold_labels(roots)
     sys_labels = get_sys_labels(roots)
@@ -153,31 +269,9 @@ def print_evaluation(proof_fnames):
     print_stats_for(roots, 'true_positives')
     print_stats_for(roots, 'true_negatives')
 
-    # TODO: show errors, HTML, etc.
-
-
-def main(args = None):
-    DESCRIPTION=textwrap.dedent("""\
-            The XML input file proof should contain the gold and automatic inference results.
-      """)
-
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=DESCRIPTION)
-    parser.add_argument("proofs", nargs='+',
-        help="XML input filename(s) with proof results.")
-    args = parser.parse_args()
-
-    logging.basicConfig(level=logging.WARNING)
-
-    if any(not os.path.exists(p) for p in args.proofs):
-        print('One of the files does not exists: {0}'.format(args.proofs),
-            file=sys.stderr)
-        parser.print_help(file=sys.stderr)
-        sys.exit(1)
-
-    proof_fnames = args.proofs
-    print_evaluation(proof_fnames)
+    if not os.path.exists(args.dir_name):
+        os.makedirs(args.dir_name)
+    print_html(roots, 'main', args.dir_name)
 
 
 if __name__ == '__main__':
