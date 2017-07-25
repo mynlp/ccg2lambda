@@ -178,6 +178,7 @@ If you wish to reproduce our reported results, please follow the instructions be
 * [Experiments on FraCaS at EMNLP 2015](en/fracas.md)
 * [Experiments on JSeM at EMNLP 2016](ja/jsem.md)
 * [Experiments on SICK at EACL 2017](en/sick.md)
+* [Experiments on STS for SICK and MSRvid at EMNLP 2017](en/emnlp2017_sts.md)
 
 ## Interpreting (and writing your own) semantic templates.
 
@@ -216,6 +217,23 @@ If you use this software or the semantic templates for your work, please conside
   url       = {https://aclweb.org/anthology/P/P16/P16-4015.pdf}
 }
 ```
+
+## A system to comput Semantic Sentence Similarity:
+
+* Hitomi Yanaka, Koji Mineshima, Pascual Martínez-Gómez and Daisuke Bekki. Determining Semantic Textual Similarity using Natural Deduction Proofs. Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing, Copenhagen, Denmark, 7-11 September 2017.
+
+```
+@InProceedings{yanaka-EtAl:2017:EMNLP,
+  author    = {Yanaka, Hitomi and Mineshima, Koji  and  Mart\'{i}nez-G\'{o}mez, Pascual  and  Bekki, Daisuke},
+  title     = {Determining Semantic Textual Similarity using Natural Deduction Proofs},
+  booktitle = {Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing},
+  month     = {September},
+  year      = {2017},
+  address   = {Copenhagen, Denmark},
+  publisher = {Association for Computational Linguistics},
+}
+```
+
 
 ## A mechanism to inject axioms on-demand:
 
