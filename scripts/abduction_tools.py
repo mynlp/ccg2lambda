@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#  Copyright 2017 Pascual Martinez-Gomez
+#  Copyright 2017 Pascual Martinez-Gomez and Hitomi Yanaka
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.

@@ -1,5 +1,19 @@
 #!/bin/bash
-# for text similarity task
+# for text similarity task with SICK dataset
+#
+#  Copyright 2017 Hitomi Yanaka
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 
 word2vec=$4
 if [ "$word2vec" == "word2vec" ]; then
@@ -31,28 +45,28 @@ if [ ! -d ${plain_dir} ]; then
   mkdir -p ${plain_dir}
 fi
 
-#echo "Extracting problems from the SICK file."
-#tail -n +2 $sick | \
-#tr -d '\r' | \
-#awk -F'\t' \
-#  '{pair_id=$1;
-#    sub(/\.$/,"",$2);
-#    sub(/\.$/,"",$3);
-#    premise=$2;
-#    conclusion=$3;
-#    score=$4;
-#    if($5 == "CONTRADICTION"){
-#      judgement="no";
-#    } else if ($5 == "ENTAILMENT") {
-#      judgement="yes";
-#    } else if ($5 == "NEUTRAL") {
-#      judgement="unknown";
-#    }
-#    set=$12;
-#    printf "%s.\n%s.\n", premise, conclusion > "plain/sick_"tolower(set)"_"pair_id".txt";
-#    printf "%s\n", judgement > "plain/sick_"tolower(set)"_"pair_id".answer";
-#    printf "%s\n", score > "plain2/sick_"tolower(set)"_"pair_id".answer";
-#   }'
+echo "Extracting problems from the SICK file."
+tail -n +2 $sick | \
+tr -d '\r' | \
+awk -F'\t' \
+  '{pair_id=$1;
+    sub(/\.$/,"",$2);
+    sub(/\.$/,"",$3);
+    premise=$2;
+    conclusion=$3;
+    score=$4;
+    if($5 == "CONTRADICTION"){
+      judgement="no";
+    } else if ($5 == "ENTAILMENT") {
+      judgement="yes";
+    } else if ($5 == "NEUTRAL") {
+      judgement="unknown";
+    }
+    set=$NF;
+    printf "%s.\n%s.\n", premise, conclusion > "plain/sick_"tolower(set)"_"pair_id".txt";
+    printf "%s\n", judgement > "plain/sick_"tolower(set)"_"pair_id".answer";
+    printf "%s\n", score > "plain2/sick_"tolower(set)"_"pair_id".answer";
+   }'
 
 # Create files that list all filenames of training, testing and trial.
 for dset in {train,test,trial}; do

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Copyright 2016 Pascual Martinez-Gomez
+#  Copyright 2017 Hitomi Yanaka
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,30 +14,27 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Script to Recognize Textual Entailment of problems in English, using
+# Script to extract features for learning semantic textual similarity between sentence pairs in English, using
 # multiple CCG parsers (C&C and EasyCCG at the moment).
-# This script receives a file with several sentences (one per line), where all
-# sentences are premises except the last one, which is a conclusion. It returns
-# 'yes' (the premises entail the conclusion), 'no' (there is a contradiction) or
-# 'unknown' (none of the former).
+# This script receives a file with two sentences (one per line).
 # You can use it as:
 # 
-# ./rte_en_mp.sh <sentences.txt> <semantic_templates.yaml>
+# ./similarity_en_mp_any.sh <sentences.txt> <semantic_templates.yaml>
 # 
 # E.g.
-# ./rte_en_mp.sh en/sample_en.txt en/semantic_templates_en.yaml
+# ./similarity_en_mp_any.sh en/sample_en.txt en/semantic_templates_en_event_sts.yaml
 #
-# It should return 'yes'.
-# You need to have a file in the current directory named candc_location.txt
-# where you have the absolute directory path to C&C parser.
-# Inside the directory pointed by candc_location.txt, there should be
+# You need to have a file in the current directory named parser_location.txt
+# where you have the absolute directory path to C&C parser and EasyCCG parser.
+# Inside the directory pointed by parser_location.txt, there should be
 # a directory called "bin" that contains the binaries of C&C parser
 # and another directory called "models" that contains the models.
 # For example:
-# $ cat en/candc_location.txt
-#   /home/pasmargo/software/candc/candc-1.00
+# $ cat en/parser_location.txt
+# candc:/home/usr/software/candc/candc-1.00
+# easyccg:/home/usr/software/easyccg
 
-USAGE="Usage: ./similarity_en_mp.sh <sentences.txt> <semantic_templates.yaml>"
+USAGE="Usage: ./similarity_en_mp_any.sh <sentences.txt> <semantic_templates.yaml>"
 
 # Check that the number of arguments is correct.
 if [ "$#" -ne 2 ]; then
@@ -77,11 +74,13 @@ results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
 
 # Tokenize text with Penn Treebank tokenizer.
-cat $sentences_fname | \
-  sed -f en/tokenizer.sed | \
-  sed 's/ _ /_/g' | \
-  sed 's/[[:space:]]*$//' \
-  > ${plain_dir}/${sentences_basename}.tok
+if [ ! -f ${plain_dir}/${sentences_basename}.tok ]; then
+  cat $sentences_fname | \
+    sed -f en/tokenizer.sed | \
+    sed 's/ _ /_/g' | \
+    sed 's/[[:space:]]*$//' \
+    > ${plain_dir}/${sentences_basename}.tok
+fi
 
 # Set parser locations
 if [ ! -f "en/parser_location.txt" ]; then

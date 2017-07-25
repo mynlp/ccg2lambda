@@ -21,3 +21,6 @@ cd ..
 wget http://www.patrickpantel.com/download/data/verbocean/verbocean.unrefined.2004-05-20.txt.gz -P en/
 python en/verbocean_to_json.py en/verbocean.unrefined.2004-05-20.txt.gz en/verbocean.json
 
+# Download pretrained vector space models for STS
+wget https://github.com/mynlp/ccg2lambda/files/1172401/models.zip -P en/
+unzip en/models.zip

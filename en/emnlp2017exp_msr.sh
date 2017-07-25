@@ -1,6 +1,20 @@
 #!/bin/bash
 # for text similarity task
 # for MSR-video(SemEval-2012) dataset
+#
+#  Copyright 2017 Hitomi Yanaka
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 
 #run word2vec(optional)
 word2vec=$4
@@ -20,11 +34,11 @@ if [ ! -d ${plain2_dir} ]; then
 fi
 
 #download MSR-video dataset
-#wget https://www.cs.york.ac.uk/semeval-2012/task6/data/uploads/datasets/train.tgz
-#wget https://www.cs.york.ac.uk/semeval-2012/task6/data/uploads/datasets/test-gold.tgz
-#tar xvfz train.tgz
-#tar xvfz test-gold.tgz
-#python en/separate_msr.py
+wget https://www.cs.york.ac.uk/semeval-2012/task6/data/uploads/datasets/train.tgz
+wget https://www.cs.york.ac.uk/semeval-2012/task6/data/uploads/datasets/test-gold.tgz
+tar xvfz train.tgz
+tar xvfz test-gold.tgz
+python en/separate_msr.py
 
 # How many processes in parallel you want to run.
 # The maximum number should be inferior to the number of cores in your machine.
