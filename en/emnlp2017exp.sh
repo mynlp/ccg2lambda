@@ -40,16 +40,18 @@ fi
 #    sub(/\.$/,"",$3);
 #    premise=$2;
 #    conclusion=$3;
-#    if($4 == "CONTRADICTION"){
+#    score=$4;
+#    if($5 == "CONTRADICTION"){
 #      judgement="no";
-#    } else if ($4 == "ENTAILMENT") {
+#    } else if ($5 == "ENTAILMENT") {
 #      judgement="yes";
-#    } else if ($4 == "NEUTRAL") {
+#    } else if ($5 == "NEUTRAL") {
 #      judgement="unknown";
 #    }
 #    set=$12;
-#    printf "%s.\n%s.\n", premise, conclusion > "en_plain/sick_"tolower(set)"_"pair_id".txt";
-#    printf "%s\n", judgement > "en_plain/sick_"tolower(set)"_"pair_id".answer";
+#    printf "%s.\n%s.\n", premise, conclusion > "plain/sick_"tolower(set)"_"pair_id".txt";
+#    printf "%s\n", judgement > "plain/sick_"tolower(set)"_"pair_id".answer";
+#    printf "%s\n", score > "plain2/sick_"tolower(set)"_"pair_id".answer";
 #   }'
 
 # Create files that list all filenames of training, testing and trial.
