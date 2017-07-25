@@ -190,7 +190,7 @@ if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
       timeout 100 python scripts/prove.py \
         $parsed_dir/${sentences_basename}.${parser}.sem.xml \
         --graph_out ${results_dir}/${sentences_basename}.${parser}.html \
-        --abduction \
+        --abduction spsa \
         > ${results_dir}/${sentences_basename}.${parser}.answer \
         2> ${results_dir}/${sentences_basename}.${parser}.err
     fi

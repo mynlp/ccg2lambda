@@ -49,3 +49,4 @@ def denormalize_token(token):
     denormalized = re.sub('_dash_', r'-', denormalized)
     denormalized = denormalized.lstrip('_')
     return denormalized
+

@@ -17,14 +17,7 @@
 
 import unittest
 
-from lxml import etree
-from nltk.sem.logic import Expression
-
 from category import Category
-from ccg2lambda_tools import (assign_semantics_to_ccg, type_raise, build_ccg_tree)
-from logic_parser import lexpr
-from semantic_index import (SemanticRule, SemanticIndex,
-                            get_attributes_from_ccg_node_recursively, find_node_by_id)
 
 class CategoryTestCase(unittest.TestCase):
     def test_category_matches(self):

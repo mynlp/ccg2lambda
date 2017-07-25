@@ -18,7 +18,7 @@
 import unittest
 
 from abduction_tools import get_tree_pred_args
-from abduction_tools import GetPremisesThatMatchConclusionArgs
+from abduction_tools import get_premises_that_match_conclusion_args
 from tree_tools import tree_or_string
 
 class GetTreePredArgsTestCase(unittest.TestCase):
@@ -49,7 +49,7 @@ class GetPremisesThatMatchConclusionArgsTestCase(unittest.TestCase):
         conclusion_line = "_person (Acc x1)"
         expected_premises = [
             "H0 : _woman (Acc x1)"]
-        matching_premises = GetPremisesThatMatchConclusionArgs(
+        matching_premises = get_premises_that_match_conclusion_args(
             premise_lines, conclusion_line)
         self.assertEqual(expected_premises, matching_premises)
 
@@ -60,7 +60,7 @@ class GetPremisesThatMatchConclusionArgsTestCase(unittest.TestCase):
             "H0 : _woman (Acc x1)"]
         conclusion_line = "_person (Acc x2)"
         expected_premises = []
-        matching_premises = GetPremisesThatMatchConclusionArgs(
+        matching_premises = get_premises_that_match_conclusion_args(
             premise_lines, conclusion_line)
         self.assertEqual(expected_premises, matching_premises)
 
@@ -71,7 +71,7 @@ class GetPremisesThatMatchConclusionArgsTestCase(unittest.TestCase):
             "H0 : _woman (Acc x1)"]
         conclusion_line = "_person (Ind x1)"
         expected_premises = []
-        matching_premises = GetPremisesThatMatchConclusionArgs(
+        matching_premises = get_premises_that_match_conclusion_args(
             premise_lines, conclusion_line)
         self.assertEqual(expected_premises, matching_premises)
 
@@ -83,7 +83,7 @@ class GetPremisesThatMatchConclusionArgsTestCase(unittest.TestCase):
         conclusion_line = "_greets x1"
         expected_premises = [
             "H2 : _kiss x1"]
-        matching_premises = GetPremisesThatMatchConclusionArgs(
+        matching_premises = get_premises_that_match_conclusion_args(
             premise_lines, conclusion_line)
         self.assertEqual(expected_premises, matching_premises)
 
@@ -94,7 +94,7 @@ class GetPremisesThatMatchConclusionArgsTestCase(unittest.TestCase):
             "H0 : _woman (Acc x1)"]
         conclusion_line = "_greets x2"
         expected_premises = []
-        matching_premises = GetPremisesThatMatchConclusionArgs(
+        matching_premises = get_premises_that_match_conclusion_args(
             premise_lines, conclusion_line)
         self.assertEqual(expected_premises, matching_premises)
 
@@ -107,7 +107,7 @@ class GetPremisesThatMatchConclusionArgsTestCase(unittest.TestCase):
             "H0 : _woman (Acc x1)"]
         conclusion_line = "_greets ?284"
         expected_premises = ["H2 : _kiss x1"]
-        matching_premises = GetPremisesThatMatchConclusionArgs(
+        matching_premises = get_premises_that_match_conclusion_args(
             premise_lines, conclusion_line)
         self.assertEqual(expected_premises, matching_premises)
 
@@ -123,7 +123,7 @@ class GetPremisesThatMatchConclusionArgsTestCase(unittest.TestCase):
         expected_premises = [
             "H : _bird (Subj x2)",
             "H : _man (Subj x1)"]
-        matching_premises = GetPremisesThatMatchConclusionArgs(
+        matching_premises = get_premises_that_match_conclusion_args(
             premise_lines, conclusion_line)
         self.assertEqual(expected_premises, matching_premises)
 

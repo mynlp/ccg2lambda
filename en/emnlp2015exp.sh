@@ -21,7 +21,7 @@
 # ./en/emnlp2015exp.sh <semantic_template.yaml> <dataset>
 # 
 # E.g.
-# ./en/emnlp2015exp.sh semantic_templates_en.yaml fracas.xml
+# ./en/emnlp2015exp.sh en/semantic_templates_en_emnlp2015.yaml fracas.xml
 #
 # You need to have a file in the current directory named candc_location.txt
 # where you have the absolute directory path to C&C parser.
@@ -149,7 +149,7 @@ for f in ${plain_dir}/*.tok; do
     python scripts/prove.py \
       $parsed_dir/${base_filename/.tok/.sem.xml} \
     --graph_out ${results_dir}/${base_filename/.tok/.html} \
-    --abduction \
+    --abduction spsa \
     > ${results_dir}/${base_filename/.tok/.answer} \
     2> ${results_dir}/${base_filename/.tok/.err}
   fi

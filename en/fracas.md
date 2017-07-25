@@ -1,17 +1,18 @@
 # Running the RTE pipeline on FraCas.
 
-First, ensure that you have downloaded C&C parser and wrote its location in the file `candc_location.txt`.
+First, ensure that you have downloaded C&C parser and wrote its location in the file `en/candc_location.txt`.
 
 Second, you need to download the copy of [FraCaS provided by MacCartney and Manning (2007)](http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml):
 
 ```bash
-$ wget http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml
+$ wget --no-check-certificate http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml
 ```
 
 You can evaluate the end-to-end system performance of a certain list of semantic templates on
 fracas by doing:
 
 ```bash
+git checkout tags/fracas
 ./en/emnlp2015exp.sh en/semantic_templates_en_emnlp2015.yaml fracas.xml
 ```
 

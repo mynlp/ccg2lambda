@@ -139,7 +139,7 @@ def WriteFracasProblems(problems, fracas_dirname, file_prefix = ''):
                                                        problem.section_name)
     foutput = codecs.open(problem_filename, 'w', 'utf-8')
     for sentence in problem.sentences:
-      foutput.write('{0}\n'.format(sentence))
+      foutput.write(u'{0}\n'.format(sentence))
       n_sentence += 1 # count the number of sentences
     foutput.close()
     # Add entry in "jsem_problems_list"

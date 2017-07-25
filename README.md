@@ -11,6 +11,7 @@ and install the packages in the virtual environment with `pip`:
 
 ```bash
 git clone https://github.com/mynlp/ccg2lambda.git
+cd ccg2lambda
 virtualenv --no-site-packages --distribute -p /usr/bin/python3 py3
 source py3/bin/activate
 pip install lxml simplejson pyyaml -I nltk==3.0.5
@@ -25,7 +26,6 @@ python -c "import nltk; nltk.download('wordnet')"
 To ensure that all software is working as expected, you can run the tests:
 
 ```bash
-cd ccg2lambda/
 python scripts/run_tests.py
 ```
 (all tests should pass, except a few expected failures).
@@ -46,10 +46,10 @@ Our system assigns semantics to CCG structures. At the moment, we support C&C fo
 
 ### Installing [C&C parser](http://www.cl.cam.ac.uk/~sc609/candc-1.00.html) (for English)
 
-In order to install the C&C parser, you may need to register, download the parser and the models, and follow their instructions to set it up. For ccg2lambda to find the C&C parser, please create a file `candc_location.txt` with the path to the C&C parser:
+In order to install the C&C parser, you may need to register, download the parser and the models, and follow their instructions to set it up. For ccg2lambda to find the C&C parser, please create a file `en/candc_location.txt` with the path to the C&C parser:
 
 ```bash
-echo "/path/to/candc-1.00/" > candc_location.txt
+echo "/path/to/candc-1.00/" > en/candc_location.txt
 ```
 
 ### Installing [Jigg parser](https://github.com/mynlp/jigg) (for Japanese)
@@ -60,7 +60,7 @@ Simply do:
 ./ja/download_dependencies.sh
 ```
 
-The command above will download Jigg, its models, and create the file `jigg_location.txt` where the path to Jigg is specified. That is all.
+The command above will download Jigg, its models, and create the file `ja/jigg_location.txt` where the path to Jigg is specified. That is all.
 
 ## Using the Semantic Parser
 
@@ -86,16 +86,16 @@ First we need to obtain the CCG derivations (parse trees) of the sentences
 in the text file using C&C and convert its XML format into Jigg's XML format:
 
 ```bash
-cat sentences.txt | perl tokenizer.perl -l en 2>/dev/null > sentences.tok
+cat sentences.txt | sed -f en/tokenizer.sed > sentences.tok
 /path/to/candc-1.00/bin/candc --models /path/to/candc-1.00/models --candc-printer xml --input sentences.tok > sentences.candc.xml
-python candc2transccg.py sentences.candc.xml > sentences.xml
+python en/candc2transccg.py sentences.candc.xml > sentences.xml
 ```
 
 Then, we are ready to obtain the semantic representations by using semantic
 templates and the CCG derivations obtained above:
 
 ```bash
-python semparse.py sentences.xml semantic_templates_en_emnlp2015.yaml sentences.sem.xml
+python scripts/semparse.py sentences.xml en/semantic_templates_en_emnlp2015.yaml sentences.sem.xml
 ```
 
 The semantic representations are in the `sentences.sem.xml` file,
@@ -136,7 +136,7 @@ pipe it to a theorem prover (Coq) and judge the entailment
 relation, you can run the following command:
 
 ```bash
-python prove.py sentences.sem.xml --graph_out graphdebug.html
+python scripts/prove.py sentences.sem.xml --graph_out graphdebug.html
 ```
 
 That command will output `yes` (entailment relation - the conclusion
@@ -163,7 +163,7 @@ For example, to visualize the CCG trees only (without
 semantic representations):
 
 ```bash
-python visualize.py sentences.xml > sentences.html
+python scripts/visualize.py sentences.xml > sentences.html
 ```
 
 and then open the file `sentences.html` with your favourite web browser.
@@ -173,15 +173,16 @@ You should be able to see something like this:
 
 ## Reproducibility
 
-If you wish to reproduce our results reported in EMNLP 2015 or EMNLP 2016, please follow the instructions below:
+If you wish to reproduce our reported results, please follow the instructions below:
 
 * [Experiments on FraCaS at EMNLP 2015](en/fracas.md)
 * [Experiments on JSeM at EMNLP 2016](ja/jsem.md)
+* [Experiments on SICK at EACL 2017](en/sick.md)
 * [Experiments on SICK STS at EMNLP 2017](en/sick_sts.md)
 
 ## Interpreting (and writing your own) semantic templates.
 
-You can find our semantic templates in `semantic_templates_en.yaml`. Here are some notes:
+You can find one of our semantic templates in `en/semantic_templates_en.yaml`. Here are some notes:
 
 1. Each Yaml block is a rule. If the rule matches the attributes of a CCG node, then the semantic template specified by "semantics" is applied. It is possible to write an arbitrary set of field names and their values. For example, you could specify the "category" of the CCG node and the surface "surf" form of a word (in case the CCG node is a leaf). Only the "category" field and the "semantics" field are compulsory.
 2. If you underspecify the characteristics of a CCG node, the semantic rule will match more general CCG nodes. It is also possible to underspecify the features of syntactic categories.
@@ -214,6 +215,24 @@ If you use this software or the semantic templates for your work, please conside
   publisher = {Association for Computational Linguistics},
   pages     = {85--90},
   url       = {https://aclweb.org/anthology/P/P16/P16-4015.pdf}
+}
+```
+
+## A mechanism to inject axioms on-demand:
+
+* Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. On-demand Injection of Lexical Knowledge for Recognising Textual Entailment. Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics, pages 710-720, Valencia, Spain, 3-7 April, 2017. [pdf](http://www.aclweb.org/anthology/E17-1067)
+
+```
+@InProceedings{martinezgomez-EtAl:2017:EACLlong,
+  author    = {Mart\'{i}nez-G\'{o}mez, Pascual  and  Mineshima, Koji  and  Miyao, Yusuke  and  Bekki, Daisuke},
+  title     = {On-demand Injection of Lexical Knowledge for Recognising Textual Entailment},
+  booktitle = {Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics: Volume 1, Long Papers},
+  month     = {April},
+  year      = {2017},
+  address   = {Valencia, Spain},
+  publisher = {Association for Computational Linguistics},
+  pages     = {710--720},
+  url       = {http://www.aclweb.org/anthology/E17-1067}
 }
 ```
 

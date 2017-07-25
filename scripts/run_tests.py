@@ -17,16 +17,23 @@
 
 import unittest
 
-from abduction_tools_test import GetTreePredArgsTestCase
 from abduction_tools_test import GetPremisesThatMatchConclusionArgsTestCase
-from ccg2lambda_tools_test import (TypeRaiseTestCase, AssignSemanticsToCCGTestCase,
-  AssignSemanticsToCCGWithFeatsTestCase, get_attributes_from_ccg_node_recursivelyTestCase)
+from abduction_tools_test import GetTreePredArgsTestCase
+from category_test import CategoryTestCase
+from ccg2lambda_tools_test import AssignSemanticsToCCGTestCase
+from ccg2lambda_tools_test import AssignSemanticsToCCGWithFeatsTestCase
+from ccg2lambda_tools_test import get_attributes_from_ccg_node_recursivelyTestCase
+from ccg2lambda_tools_test import TypeRaiseTestCase
 from knowledge_test import LexicalRelationsTestCase
-from semantic_tools_test import (build_arbitrary_dynamic_libraryTestCase,
-  build_dynamic_libraryTestCase, resolve_prefix_to_infix_operationsTestCase,
-  Nltk2coqTestCase, Coq2NLTKTypesTestCase,
-  Coq2NLTKSignaturesTestCase, ArbiAutoTypesTestCase)
+from nltk2coq_test import Nltk2coqTestCase
 from semantic_index_test import GetSemanticRepresentationTestCase
+from semantic_tools_test import resolve_prefix_to_infix_operationsTestCase
+from semantic_types_test import ArbiAutoTypesTestCase
+from semantic_types_test import build_arbitrary_dynamic_libraryTestCase
+from semantic_types_test import build_dynamic_libraryTestCase
+from semantic_types_test import Coq2NLTKTypesTestCase
+from semantic_types_test import Coq2NLTKSignaturesTestCase
+from semantic_types_test import combine_signatures_or_rename_predsTestCase
 
 if __name__ == '__main__':
     suite1  = unittest.TestLoader().loadTestsFromTestCase(AssignSemanticsToCCGTestCase)
@@ -44,7 +51,9 @@ if __name__ == '__main__':
     suite13 = unittest.TestLoader().loadTestsFromTestCase(GetSemanticRepresentationTestCase)
     suite14 = unittest.TestLoader().loadTestsFromTestCase(GetTreePredArgsTestCase)
     suite15 = unittest.TestLoader().loadTestsFromTestCase(GetPremisesThatMatchConclusionArgsTestCase)
+    suite16 = unittest.TestLoader().loadTestsFromTestCase(combine_signatures_or_rename_predsTestCase)
+    suite17 = unittest.TestLoader().loadTestsFromTestCase(CategoryTestCase)
     suites  = unittest.TestSuite([suite1, suite2, suite3, suite4, suite5, suite6,
                                   suite7, suite8, suite9, suite10, suite11, suite12,
-                                  suite13, suite14])
+                                  suite13, suite14, suite15, suite16, suite17])
     unittest.TextTestRunner(verbosity=2).run(suites)

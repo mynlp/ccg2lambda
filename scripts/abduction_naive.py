@@ -1,11 +1,25 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+#
+#  Copyright 2017 Pascual Martinez-Gomez
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 
 from subprocess import Popen
 import subprocess
 
-from abduction_tools import InsertAxiomsInCoqScript
-from knowledge import get_tokens_from_xml_node, GetLexicalRelationsFromPreds
+from abduction_tools import insert_axioms_in_coq_script
+from knowledge import get_tokens_from_xml_node, get_lexical_relations_from_preds
 from semantic_tools import is_theorem_defined
 
 class AxiomsWordnet(object):
@@ -31,7 +45,7 @@ def TryNaiveAbduction(coq_scripts, doc):
     axioms = set()
 
     for c_token in conclusion_tokens:
-        p_axioms = GetLexicalRelationsFromPreds(premise_tokens, c_token)
+        p_axioms = get_lexical_relations_from_preds(premise_tokens, c_token)
         axioms.update(p_axioms)
     if not axioms:
         return 'unknown', coq_scripts
@@ -47,7 +61,7 @@ def TryNaiveAbduction(coq_scripts, doc):
     return 'unknown', coq_scripts
     
 def run_theorem(axioms, proof_script, expected='yes'):
-    augmented_script = InsertAxiomsInCoqScript(axioms, proof_script)
+    augmented_script = insert_axioms_in_coq_script(axioms, proof_script)
     process = Popen(augmented_script, shell=True, stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT)
     output_lines = [
