@@ -45,6 +45,7 @@ def main(args = None):
         choices=["no", "naive", "spsa"],
         help="Activate on-demand axiom injection (default: no axiom injection).")
     parser.add_argument("--gold_trees", action="store_true", default=False)
+    parser.add_argument("--similarity", action="store_true", default=False)
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.WARNING)
@@ -65,7 +66,7 @@ def main(args = None):
     parser = etree.XMLParser(remove_blank_text=True)
     doc = etree.parse(args.sem, parser)
 
-    inference_result, coq_scripts = prove_doc(doc, abduction)
+    inference_result, coq_scripts = prove_doc(doc, abduction, args.similarity)
     print(inference_result, file=sys.stdout)
 
     if args.graph_out:

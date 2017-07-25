@@ -26,11 +26,11 @@ import sys
 
 from nltk import Tree
 
-from knowledge import get_lexical_relations_from_preds
-from normalization import denormalize_token
-from semantic_tools import is_theorem_defined
+from knowledge import get_lexical_relations_from_preds, get_approx_relations_from_preds
+from normalization import denormalize_token, normalize_token
 from tactics import get_tactics
 from tree_tools import tree_or_string, tree_contains
+import unicodedata
 
 def is_theorem_defined(output_lines):
     """
@@ -50,6 +50,13 @@ def is_theorem_error(output_lines):
     We simply search for that string.
     """
     return any('^^^^' in o for ol in output_lines for o in ol)
+
+def is_theorem_error2(output_lines):
+    if any('Error' in o for ol in output_lines for o in ol):
+        if any('environment' in o for ol in output_lines for o in ol):
+            return True
+        else:
+            return False
 
 
 def find_final_subgoal_line_index(coq_output_lines):
@@ -89,6 +96,24 @@ def get_conclusion_line(coq_output_lines):
         return None
     return coq_output_lines[line_index_last_conclusion_sep + 1]
 
+def get_conclusion_lines(coq_output_lines):
+    conclusion_lines = []
+    line_index_last_conclusion_sep = find_final_conclusion_sep_line_index(coq_output_lines)
+    if not line_index_last_conclusion_sep:
+        return None
+    for line in coq_output_lines[line_index_last_conclusion_sep+1:]:
+        if re.search('Toplevel', line):
+            return conclusion_lines
+        elif line == '':
+            continue
+        elif re.search('subgoal', line):
+            continue
+        elif re.search('repeat nltac_base', line):
+            return conclusion_lines
+        else:
+            conclusion_lines.append(line)
+    return conclusion_lines
+
 def get_premises_that_match_conclusion_args_(premises, conclusion):
     """
     Returns premises where the predicates have at least one argument
@@ -114,7 +139,7 @@ def get_premises_that_match_conclusion_args(premises, conclusion):
     in common with the conclusion.
     """
     candidate_premises = []
-    conclusion = re.sub(r'\?([0-9]+)', r'?x\1', conclusion)
+    conclusion = re.sub(r'\?([0-9]+)', r'?x\1', str(conclusion))
     conclusion_args = get_tree_pred_args(conclusion, is_conclusion=True)
     if conclusion_args is None:
         return candidate_premises
@@ -237,18 +262,25 @@ def get_subgoals_from_coq_output(coq_output_lines, premises):
     return subgoals
 
 
-def make_axioms_from_premises_and_conclusion(premises, conclusion, coq_output_lines=None):
-    matching_premises = get_premises_that_match_conclusion_args(
-        premises, conclusion)
-    premise_preds = [premise.split()[2] for premise in matching_premises]
-    conclusion_pred = conclusion.split()[0]
-    pred_args = get_predicate_arguments(premises, conclusion)
-    axioms = make_axioms_from_preds(premise_preds, conclusion_pred, pred_args)
-    # print('Has axioms: {0}'.format(axioms), file=sys.stderr)
-    if not axioms:
-        failure_log = make_failure_log(
-            conclusion_pred, premise_preds, conclusion, premises, coq_output_lines)
-        print(json.dumps(failure_log), file=sys.stderr)
+def make_axioms_from_premises_and_conclusion(premises, conclusions, coq_output_lines=None):
+    axioms = set()
+    for conclusion in conclusions:
+        matching_premises = get_premises_that_match_conclusion_args(premises, conclusion)
+        premise_preds = []
+        if unicodedata.category(conclusion[1]) == "Lo":
+            #for Japanese
+            for premise in matching_premises:
+                if re.search("\_.*\s\(?", premise): 
+                    premise_preds.append(re.search("(\_.*)\s\(?", premise).group(1))
+        else:
+            premise_preds = [premise.split()[2] for premise in matching_premises]
+        conclusion_pred = conclusion.split()[0]
+        pred_args = get_predicate_arguments(premises, conclusion)
+        axioms.update(make_axioms_from_preds(premise_preds, conclusion_pred, pred_args))
+        if not axioms and 'False' not in conclusion_pred:
+            failure_log = make_failure_log(
+                conclusion_pred, premise_preds, conclusion, premises, coq_output_lines)
+            print(json.dumps(failure_log), file=sys.stderr)
     return axioms
 
 
@@ -330,9 +362,9 @@ def make_axioms_from_preds(premise_preds, conclusion_pred, pred_args):
         get_lexical_relations_from_preds(
             premise_preds, conclusion_pred, pred_args)
     axioms.update(set(linguistic_axioms))
-    # if not axioms:
-    #   approx_axioms = GetApproxRelationsFromPreds(premise_preds, conclusion_pred)
-    #   axioms.update(approx_axioms)
+    if not axioms:
+        approx_axioms = get_approx_relations_from_preds(premise_preds, conclusion_pred)
+        axioms.update(approx_axioms)
     return axioms
 
 
@@ -378,6 +410,50 @@ def try_abductions(coq_scripts):
         axioms = current_axioms
     return inference_result_str, all_scripts
 
+## for text similarity task
+def try_sim_abductions(coq_scripts):
+    assert len(coq_scripts) == 2
+    direct_proof_script = coq_scripts[0]
+    reverse_proof_script = coq_scripts[1]
+    axioms = set()
+
+    while True:
+        inference_result_str, direct_proof_scripts, new_direct_axioms = \
+        try_abduction(direct_proof_script, previous_axioms=axioms, expected='yes')
+        current_axioms = axioms.union(new_direct_axioms)
+        reverse_proof_scripts = []
+        if not inference_result_str == 'yes':
+            inference_result_str, reverse_proof_scripts, new_reverse_axioms = \
+            try_abduction(reverse_proof_script, previous_axioms=current_axioms, expected='no')
+            current_axioms.update(new_reverse_axioms)
+        all_scripts = direct_proof_scripts + reverse_proof_scripts
+        if len(axioms) == len(current_axioms) or inference_result_str != 'unknown':
+            break
+        axioms = current_axioms
+
+    return inference_result_str, all_scripts
+
+def try_reduce_subgoals(coq_scripts):
+    ## detect the number of unprovable subgoals
+    ## add admit from coq
+    ## return the number of final subgoals and the number of original subgoals
+    ## delete assertion
+    ##assert len(coq_scripts) == 2
+    all_scripts = []
+    ## use not negated coq_script
+    if len(coq_scripts) == 4:
+        direct_proof_script = coq_scripts[-2]
+    else:
+        direct_proof_script = coq_scripts[-1]
+    axioms = set()
+    while True:
+        inference_result_str, new_direct_proof_script, new_direct_axioms = \
+        try_reduce_subgoal(direct_proof_script, previous_axioms=axioms, expected='yes')
+        all_scripts.append(new_direct_proof_script)
+        if inference_result_str != 'unknown':
+            break
+    return inference_result_str, all_scripts
+
 
 def filter_wrong_axioms(axioms, coq_script):
     good_axioms = set()
@@ -388,7 +464,7 @@ def filter_wrong_axioms(axioms, coq_script):
             shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         output_lines = [
             line.decode('utf-8').strip().split() for line in process.stdout.readlines()]
-        if not is_theorem_error(output_lines):
+        if not is_theorem_error2(output_lines):
             good_axioms.add(axiom)
     return good_axioms
 
@@ -406,7 +482,8 @@ def try_abduction(coq_script, previous_axioms=set(), expected='yes'):
     if is_theorem_defined(l.split() for l in output_lines):
         return expected, [new_coq_script], previous_axioms
     premise_lines = get_premise_lines(output_lines)
-    conclusion = get_conclusion_line(output_lines)
+    #conclusion = get_conclusion_line(output_lines)
+    conclusion = get_conclusion_lines(output_lines)
     if not premise_lines or not conclusion:
         failure_log = {"type error": has_type_error(output_lines),
                        "open formula": has_open_formula(output_lines)}
@@ -427,3 +504,51 @@ def try_abduction(coq_script, previous_axioms=set(), expected='yes'):
     inference_result_str = expected if is_theorem_defined(
         output_lines) else 'unknown'
     return inference_result_str, [new_coq_script], axioms
+
+
+## for text similarity task
+def get_subgoal_lines(coq_output_lines):
+    ##ConclusionLines
+    line_index_last_conclusion_sep = find_final_conclusion_sep_line_index(coq_output_lines)
+    if not line_index_last_conclusion_sep:
+        return None
+    ## extract all subgoals 
+    subgoals = []
+    subgoalflg = 0
+    subgoals.append(coq_output_lines[line_index_last_conclusion_sep+1])
+    for line in coq_output_lines[line_index_last_conclusion_sep+1:]:
+        if subgoalflg == 1:
+            subgoals.append(line)
+            subgoalflg = 0
+        if re.search("subgoal ", line):
+            subgoalflg = 1
+    return subgoals
+
+
+def try_reduce_subgoal(coq_script, previous_axioms=set(), expected='yes'):
+    new_coq_script = insert_axioms_in_coq_script(previous_axioms, coq_script)
+    current_tactics = get_tactics()
+    debug_tactics = 'Set Firstorder Depth 1. nltac. Set Firstorder Depth 3. repeat nltac_base. Qed'
+    coq_script_debug = new_coq_script.replace(current_tactics, debug_tactics)
+
+    process = Popen(\
+        coq_script_debug, \
+        shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output_lines = [line.decode('utf-8').strip() for line in process.stdout.readlines()]
+    subgoal_lines = get_subgoal_lines(output_lines)
+    if not subgoal_lines:
+        error_lines = []
+        error_flg = 0
+        stop_phrases = ["Error: No focused proof (No proof-editing in progress).",\
+        "Error: Unknown command of the non proof-editing mode."]
+        for o in output_lines:
+            if re.search("Error", o) and o not in stop_phrases:
+                error_flg = 1
+            elif re.search("Error", o) and o in stop_phrases:
+                error_flg = 0
+            if error_flg == 1:
+                error_lines.append(o)
+        return 'coq_error,'+"\n".join(error_lines), "", previous_axioms
+    return 'yes', coq_script_debug, previous_axioms
+
+
