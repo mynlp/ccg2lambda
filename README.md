@@ -178,7 +178,7 @@ If you wish to reproduce our reported results, please follow the instructions be
 * [Experiments on FraCaS at EMNLP 2015](en/fracas.md)
 * [Experiments on JSeM at EMNLP 2016](ja/jsem.md)
 * [Experiments on SICK at EACL 2017](en/sick.md)
-* [Experiments on SICK STS at EMNLP 2017](en/sick_sts.md)
+* [Experiments on STS for SICK and MSRvid at EMNLP 2017](en/emnlp2017_sts.md)
 
 ## Interpreting (and writing your own) semantic templates.
 
@@ -202,7 +202,7 @@ If you use this software or the semantic templates for your work, please conside
 
 ## The system - software for compositional semantics:
 
-* Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. ccg2lambda: A Compositional Semantics System. Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics - System Demonstrations, pages 85–90, Berlin, Germany, August 7-12, 2016. [pdf](https://aclweb.org/anthology/P/P16/P16-4015.pdf)
+* Pascual Martinez-Gomez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. ccg2lambda: A Compositional Semantics System. Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics - System Demonstrations, pages 85?90, Berlin, Germany, August 7-12, 2016. [pdf](https://aclweb.org/anthology/P/P16/P16-4015.pdf)
 
 ```
 @InProceedings{pascual-EtAl:2016:ACL-2016-System-Demonstrations,
@@ -218,9 +218,26 @@ If you use this software or the semantic templates for your work, please conside
 }
 ```
 
+## A system to compute Semantic Sentence Similarity:
+
+* Hitomi Yanaka, Koji Mineshima, Pascual Martinez-Gomez and Daisuke Bekki. Determining Semantic Textual Similarity using Natural Deduction Proofs. Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing, Copenhagen, Denmark, 7-11 September 2017.
+
+```
+@InProceedings{yanaka-EtAl:2017:EMNLP,
+  author    = {Yanaka, Hitomi and Mineshima, Koji  and  Mart\'{i}nez-G\'{o}mez, Pascual  and  Bekki, Daisuke},
+  title     = {Determining Semantic Textual Similarity using Natural Deduction Proofs},
+  booktitle = {Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing},
+  month     = {September},
+  year      = {2017},
+  address   = {Copenhagen, Denmark},
+  publisher = {Association for Computational Linguistics},
+}
+```
+
+
 ## A mechanism to inject axioms on-demand:
 
-* Pascual Martínez-Gómez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. On-demand Injection of Lexical Knowledge for Recognising Textual Entailment. Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics, pages 710-720, Valencia, Spain, 3-7 April, 2017. [pdf](http://www.aclweb.org/anthology/E17-1067)
+* Pascual Martinez-Gomez, Koji Mineshima, Yusuke Miyao, Daisuke Bekki. On-demand Injection of Lexical Knowledge for Recognising Textual Entailment. Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics, pages 710-720, Valencia, Spain, 3-7 April, 2017. [pdf](http://www.aclweb.org/anthology/E17-1067)
 
 ```
 @InProceedings{martinezgomez-EtAl:2017:EACLlong,
@@ -238,7 +255,7 @@ If you use this software or the semantic templates for your work, please conside
 
 ## The English semantic model declared as semantic templates:
 
-* Koji Mineshima, Pascual Martínez-Gómez, Yusuke Miyao, Daisuke Bekki. Higher-order logical inference with compositional semantics. Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing, pages 2055–2061, Lisbon, Portugal, 17-21 September 2015. [pdf](http://www.aclweb.org/anthology/D15-1244)
+* Koji Mineshima, Pascual Martinez-Gomez, Yusuke Miyao, Daisuke Bekki. Higher-order logical inference with compositional semantics. Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing, pages 2055?2061, Lisbon, Portugal, 17-21 September 2015. [pdf](http://www.aclweb.org/anthology/D15-1244)
 
 ```
 @InProceedings{mineshima-EtAl:2015:EMNLP,
@@ -256,7 +273,7 @@ If you use this software or the semantic templates for your work, please conside
 
 ## The Japanese semantic model declared as semantic templates:
 
-* Koji Mineshima, Ribeka Tanaka, Pascual Martínez-Gómez, Yusuke Miyao, Daisuke Bekki. Building compositional semantics and higher-order inference system for wide-coverage Japanese CCG parsers. Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing, pages 2236-2242, Austin, Texas, 1-5 November 2016. [pdf](http://aclweb.org/anthology/D16-1242)
+* Koji Mineshima, Ribeka Tanaka, Pascual Martinez-Gomez, Yusuke Miyao, Daisuke Bekki. Building compositional semantics and higher-order inference system for wide-coverage Japanese CCG parsers. Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing, pages 2236-2242, Austin, Texas, 1-5 November 2016. [pdf](http://aclweb.org/anthology/D16-1242)
 
 ```
 @InProceedings{D16-1242,
