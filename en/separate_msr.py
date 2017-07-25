@@ -30,20 +30,20 @@ def main():
     i = open("test-gold/STS.gs.MSRvid.txt", "r")
     test_answers = i.readlines()
     i.close()
-    for num in range(1, 750):
+    for num in range(1, 751):
         j = open("plain/sick_train_"+str(num)+".txt", "w")
-        train_sentences = train_inputs[num].split("\t")
+        train_sentences = train_inputs[num-1].split("\t")
         j.write(train_sentences[0]+"\n"+train_sentences[1])
         j.close()
         k = open("plain2/sick_train_"+str(num)+".answer", "w")
-        k.write(train_answers[num])
+        k.write(train_answers[num-1])
         k.close()
         l = open("plain/sick_test_"+str(num)+".txt", "w")
-        test_sentences = test_inputs[num].split("\t")
+        test_sentences = test_inputs[num-1].split("\t")
         l.write(test_sentences[0]+"\n"+test_sentences[1])
         l.close()
         m = open("plain2/sick_test_"+str(num)+".answer", "w")
-        m.write(test_answers[num])
+        m.write(test_answers[num-1])
         m.close()
 
 
