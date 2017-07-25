@@ -133,7 +133,7 @@ function parse_easyccg() {
     -model ${candc_dir}/models/ner \
     -ofmt "%w|%p|%n \n" \
     2>/dev/null | \
-  /usr/apps.sp3/nosupport/java/jre/bin/java -jar ${easyccg_dir}/easyccg.jar \
+  java -jar ${easyccg_dir}/easyccg.jar \
     --model ${easyccg_dir}/model \
     -i POSandNERtagged \
     -o extended \

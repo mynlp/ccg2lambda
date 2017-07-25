@@ -290,7 +290,7 @@ def load_sick_data_from(sick_id, kind):
     line.append(texts[1].strip())
     i.close()
 
-    j = open('./tmp/sick.mapping_costs.txt')
+    j = open('./tmp/sick.mapping_costs.new.txt')
     scores = j.readlines()
     for score in scores:
         if re.search('^plain/sick_'+kind.lower()+'_'+sick_id+'.txt', score):
@@ -305,13 +305,13 @@ def load_sick_data_from(sick_id, kind):
 def load_sick_data():
     sick_train, sick_test = [], []
     for line in open('./en/SICK.semeval.txt'):
-        if line.split('\t')[0] != 'pair_ID' and line.split('\t')[11].strip() == 'TRAIN':
+        if line.split('\t')[0] != 'pair_ID' and line.split('\t')[-1].strip() == 'TRAIN':
             if load_sick_data_from(line.split('\t')[0], 'TRAIN') is not None:
                 sick_train.append(load_sick_data_from(line.split('\t')[0], 'TRAIN'))
-        if line.split('\t')[0] != 'pair_ID' and line.split('\t')[11].strip() == 'TRIAL':
+        if line.split('\t')[0] != 'pair_ID' and line.split('\t')[-1].strip() == 'TRIAL':
             if load_sick_data_from(line.split('\t')[0], 'TRIAL') is not None:
                 sick_train.append(load_sick_data_from(line.split('\t')[0], 'TRIAL'))
-        if line.split('\t')[0] != 'pair_ID' and line.split('\t')[11].strip() == 'TEST':
+        if line.split('\t')[0] != 'pair_ID' and line.split('\t')[-1].strip() == 'TEST':
             if load_sick_data_from(line.split('\t')[0], 'TEST') is not None:
                 sick_test.append(load_sick_data_from(line.split('\t')[0], 'TEST'))
        # if len(sick_train) == 10:
