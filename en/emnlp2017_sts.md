@@ -1,4 +1,4 @@
-# learning textual similarity with ccg2lambda
+# Learning textual similarity with ccg2lambda
 
 In order to run this system, you need to checkout a different branch:
 

@@ -218,7 +218,7 @@ If you use this software or the semantic templates for your work, please conside
 }
 ```
 
-## A system to comput Semantic Sentence Similarity:
+## A system to compute Semantic Sentence Similarity:
 
 * Hitomi Yanaka, Koji Mineshima, Pascual Martínez-Gómez and Daisuke Bekki. Determining Semantic Textual Similarity using Natural Deduction Proofs. Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing, Copenhagen, Denmark, 7-11 September 2017.
 
