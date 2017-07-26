@@ -1,12 +1,14 @@
-# Learning textual similarity with ccg2lambda
+# Learning semantic textual similarity with ccg2lambda
+The system for determining semantic textual similarity by combining shallow features with features with features extracted from natural deduction proofs of bidirectional entailment relations between sentence pairs
 
-In order to run this system, you need to checkout a different branch:
+## Requirement
+1. In order to run this system, you need to checkout a different branch at first:
 
 ```bash
 git checkout emnlp2017_sts
 ```
 
-Then, ensure that you have downloaded [C&C parser](http://www.cl.cam.ac.uk/~sc609/candc-1.00.html)
+2. Ensure that you have downloaded [C&C parser](http://www.cl.cam.ac.uk/~sc609/candc-1.00.html)
 and [EasyCCG parser](https://github.com/mikelewis0/easyccg) and wrote their installation locations
 in the files `en/parser_location.txt`.
 ```bash
@@ -14,9 +16,9 @@ cat en/parser_location.txt
 candc:/home/usr/software/candc/candc-1.00
 easyccg:/home/usr/software/easyccg
 ```
-Second, you need to download some python modules,
-the [SICK dataset](http://alt.qcri.org/semeval2014/task1/index.php?id=data-and-tools),
-and pretrained vector spaced models
+
+3. You need to download some python modules,
+the [SICK dataset](http://alt.qcri.org/semeval2014/task1/index.php?id=data-and-tools)
 by running the following script:
 
 ```bash
@@ -24,20 +26,26 @@ by running the following script:
 pip install -r requirements.txt
 ```
 
-Then, you can evaluate the end-to-end system performance of a certain list of semantic templates on
+4. Also, you need to download pretrained vector space models from [Here](https://github.com/mynlp/ccg2lambda/files/1172401/models.zip). 
+After that, unzip the `models.zip` file and put this `models` directory into the `en` directory.
+
+## Evaluation with SemEval-2014 SICK dataset
+You can evaluate the end-to-end system performance of a certain list of semantic templates on
 the test split of SICK by doing:
 
 ```bash
 ./en/emnlp2017exp.sh 3 en/semantic_templates_en_event_sts.yaml
 ```
 
-with SemEval-2012 dataset(MSR-video)  
-2. run another evaluation program at the top directory
+## Evaluation with SemEval-2012 MSR-video dataset  
+You can also evaluate the system performance with MSR-video dataset by doing:
+
 ```bash
 ./en/emnlp2017exp_msr.sh 3 en/semantic_templates_en_event_sts.yaml
 ```
 
-Outputs are shown below:
+## Output
+System output is shown below:
 ```bash
 features_np.pickle(extracted features from ccg2lambda)
 randomforestregressor.pkl(trained model)
