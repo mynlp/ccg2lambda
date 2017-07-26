@@ -1,5 +1,5 @@
 # Learning semantic textual similarity with ccg2lambda
-
+The system for determining semantic textual similarity by combining shallow features with features with features extracted from natural deduction proofs of bidirectional entailment relations between sentence pairs
 
 ## Requirement
 1. In order to run this system, you need to checkout a different branch at first:
