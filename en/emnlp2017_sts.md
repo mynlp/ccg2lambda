@@ -26,7 +26,7 @@ by running the following script:
 pip install -r requirements.txt
 ```
 
-4. Also, you need to download pretrained vector space models from [Here](https://github.com/mynlp/ccg2lambda/files/1172401/models.zip) 
+4. Also, you need to download pretrained vector space models from [Here](https://github.com/mynlp/ccg2lambda/files/1172401/models.zip). 
 After that, unzip the `models.zip` file and put this `models` directory into the `en` directory.
 
 ## Evaluation with SemEval-2014 SICK dataset
