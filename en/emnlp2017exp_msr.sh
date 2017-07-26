@@ -61,11 +61,9 @@ cp en/tactics_coq_sick.txt tactics_coq.txt
 
 for dataset in {train,test}; do
   # Run pipeline for each entailment problem.
-  for ff in ${plain_dir}/sick_${dataset}.files_??; do
-    for f in `cat ${ff}`; do
-      ./en/similarity_en_mp_any.sh $f $templates $word2vec;
-    done &
-  done
+  for i in {1..750}; do
+      ./en/similarity_en_mp_any.sh ./${plain_dir}/sick_${dataset}_$i.txt $templates $word2vec;
+  done &
 
   # Wait for the parallel processes to finish.
   wait
