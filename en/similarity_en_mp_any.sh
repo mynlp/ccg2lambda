@@ -173,7 +173,36 @@ function select_answer() {
     answer1=${answer1/\[}
     answer2=`cat ${answer2_fname}|tr -d '\r'|awk -F , 'NR == 1 {print $1}'` #easyccg
     answer2=${answer2/\[}
-    #check gold answer
+
+    #select candc or easyccg
+    # use candc
+    if [ "$answer1" == "1" ] && [ "$answer2" == "0" ]; then
+      prediction_fname=$base_fname1
+    elif [ "$answer1" == "1" ] && [ "$answer2" == "coq_error" ]; then
+      prediction_fname=$base_fname1
+    elif [ "$answer1" == "1" ] && [ "$answer2" == "" ]; then
+      prediction_fname=$base_fname1
+    elif [ "$answer1" == "1" ] && [ "$answer2" == "unknown" ]; then
+      prediction_fname=$base_fname1
+    elif [ "$answer1" == "0.5" ] && [ "$answer2" == "0" ]; then
+      prediction_fname=$base_fname1
+    elif [ "$answer1" == "0.5" ] && [ "$answer2" == "coq_error" ]; then
+      prediction_fname=$base_fname1
+    elif [ "$answer1" == "0.5" ] && [ "$answer2" == "" ]; then
+      prediction_fname=$base_fname1
+    elif [ "$answer1" == "0.5" ] && [ "$answer2" == "unknown" ]; then
+      prediction_fname=$base_fname1
+    elif [ "$answer1" == "0" ] && [ "$answer2" == "coq_error" ]; then
+      prediction_fname=$base_fname1
+    elif [ "$answer1" == "0" ] && [ "$answer2" == "" ]; then
+      prediction_fname=$base_fname1
+    elif [ "$answer1" == "0" ] && [ "$answer2" == "unknown" ]; then
+      prediction_fname=$base_fname1
+    else
+      #use easyccg
+      prediction_fname=$base_fname2
+    fi
+    #if there is gold answer, check gold answer
     if [ "$gold_answer" == "$answer1" ]; then
       prediction_fname=$base_fname1 #candc
     elif [ "$gold_answer" == "$answer2" ]; then

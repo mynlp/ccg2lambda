@@ -97,11 +97,15 @@ def synset_distance(sentence_a, sentence_b):
     score = get_synset_distance(sentence_a, sentence_b)            
     return score
 
-def pred_overlap(sick_id):
-    if glob.glob("./parsed/*_"+sick_id+".sem.xml") is None:
+def pred_overlap(sick_id, kind=None):
+    if kind:
+        filename = "./parsed/*_"+kind+"_"+sick_id+".sem.xml"
+    else:
+        filename = "./parsed/*_"+sick_id+".sem.xml"
+    if glob.glob(filename) is None:
         return 0
     else:
-        file = glob.glob("./parsed/*_"+sick_id+".sem.xml")
+        file = glob.glob(filename)
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(file[0], parser)
         pred1 = set(tree.xpath("//span[contains(@id, 's0')]/@type"))
@@ -109,12 +113,16 @@ def pred_overlap(sick_id):
 
         return len(pred1&pred2)/float(len(pred1|pred2))
 
-def type_overlap(sick_id):
-    if glob.glob("./parsed/*_"+sick_id+".sem.xml") is None:
+def type_overlap(sick_id, kind=None):
+    if kind:
+        filename = "./parsed/*_"+kind+"_"+sick_id+".sem.xml"
+    else:
+        filename = "./parsed/*_"+sick_id+".sem.xml"
+    if glob.glob(filename) is None:
         return 0
     else:
         type1, type2 = [], []
-        file = glob.glob("./parsed/*_"+sick_id+".sem.xml")
+        file = glob.glob(filename)
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(file[0], parser)
         pred1 = tree.xpath("//span[contains(@id, 's0')]/@type")
@@ -128,11 +136,15 @@ def type_overlap(sick_id):
 
         return len(set(type1)&set(type2))/float(len(set(type1)|set(type2)))
     
-def pos_overlap(sick_id):
-    if glob.glob("./parsed/*_"+sick_id+".sem.xml") is None:
+def pos_overlap(sick_id, kind=None):
+    if kind:
+        filename = "./parsed/*_"+kind+"_"+sick_id+".sem.xml"
+    else:
+        filename = "./parsed/*_"+sick_id+".sem.xml"
+    if glob.glob(filename) is None:
         return 0
     else:
-        file = glob.glob("./parsed/*_"+sick_id+".sem.xml")
+        file = glob.glob(filename)
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(file[0], parser)
         pos1 = set(tree.xpath("//token[contains(@id, 't0')]/@pos"))
@@ -150,12 +162,16 @@ def get_nouns(root):
             nouns.append(nounword)
     return nouns
 
-def noun_overlap(sick_id):
+def noun_overlap(sick_id, kind=None):
     score = 0
-    if glob.glob("./parsed/*_"+sick_id+".sem.xml") is None:
+    if kind:
+        filename = "./parsed/*_"+kind+"_"+sick_id+".sem.xml"
+    else:
+        filename = "./parsed/*_"+sick_id+".sem.xml"
+    if glob.glob(filename) is None:
         return 0
     else:
-        file = glob.glob("./parsed/*_"+sick_id+".sem.xml")
+        file = glob.glob(filename)
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(file[0], parser)
         t_set = set(get_nouns(tree.xpath("//token[contains(@id, 't0')]")))
@@ -175,12 +191,16 @@ def get_verbs(root):
             verbs.append(verbword)
     return verbs
 
-def verb_overlap(sick_id):
+def verb_overlap(sick_id, kind=None):
     score = 0
-    if glob.glob("./parsed/*_"+sick_id+".sem.xml") is None:
+    if kind:
+        filename = "./parsed/*_"+kind+"_"+sick_id+".sem.xml"
+    else:
+        filename = "./parsed/*_"+sick_id+".sem.xml"
+    if glob.glob(filename) is None:
         return 0
     else:
-        file = glob.glob("./parsed/*_"+sick_id+".sem.xml")
+        file = glob.glob(filename)
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(file[0], parser)
         t_set = set(get_verbs(tree.xpath("//token[contains(@id, 't0')]")))
@@ -243,12 +263,16 @@ def get_passive(root):
             passives += 1
     return passives
 
-def passive_overlap(sick_id):
+def passive_overlap(sick_id, kind=None):
     score = 0
-    if glob.glob("./parsed/*_"+sick_id+".sem.xml") is None:
+    if kind:
+        filename = "./parsed/*_"+kind+"_"+sick_id+".sem.xml"
+    else:
+        filename = "./parsed/*_"+sick_id+".sem.xml"
+    if glob.glob(filename) is None:
         return 0
     else:
-        file = glob.glob("./parsed/*_"+sick_id+".sem.xml")
+        file = glob.glob(filename)
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(file[0], parser)
         t_set = get_passive(tree.xpath("//token[contains(@id, 't0')]"))
@@ -265,12 +289,16 @@ def get_negation(root):
             negations += 1
     return negations
 
-def negation_overlap(sick_id):
+def negation_overlap(sick_id, kind=None):
     score = 0
-    if glob.glob("./parsed/*_"+sick_id+".sem.xml") is None:
+    if kind:
+        filename = "./parsed/*_"+kind+"_"+sick_id+".sem.xml"
+    else:
+        filename = "./parsed/*_"+sick_id+".sem.xml"
+    if glob.glob(filename) is None:
         return 0
     else:
-        file = glob.glob("./parsed/*_"+sick_id+".sem.xml")
+        file = glob.glob(filename)
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(file[0], parser)
         t_set = get_negation(tree.xpath("//semantics[contains(@root, 's0_sp0')]//@sem"))

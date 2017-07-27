@@ -46,7 +46,7 @@ def regression(X_train, y_train, X_test, y_test):
     parameters = {
         'n_estimators'      : [10, 50, 100, 200, 300],
         'random_state'      : [0],
-        'n_jobs'            : [1],
+        'n_jobs'            : [50],
         'max_features'      : ['auto', 'log2', 'sqrt', None],
         'criterion'         : ['mse'],
         'max_depth'         : [3, 5, 10, 20, 30, 40, 50, 100]
@@ -59,12 +59,12 @@ def regression(X_train, y_train, X_test, y_test):
     clf.fit(X_train, y_train)
 
     #Serialize
-    joblib.dump(clf, 'randomforestregressor_wnw2v_msr.pkl')
-    #clf = joblib.load('randomforestclassifier_wnw2v_msr.pkl')
+    joblib.dump(clf, 'randomforestregressor.pkl')
+    #clf = joblib.load('randomforestregressor.pkl')
 
     return clf
 
-def get_features(line):
+def get_features(line, kind):
     if line[14] == "0":
         line[14] = "1"
     if line[22] == "0":
@@ -141,16 +141,16 @@ def get_features(line):
         float(feature_extraction.sentence_lengths_difference(sentence1_list, sentence2_list)), #40 Proportion of difference in sentence length
         float(feature_extraction.synset_overlap(sentence1_list, sentence2_list)),              #41 Proportion of synset lemma overlap
         float(feature_extraction.synset_distance(sentence1_list, sentence2_list)),             #42 Synset distance
-        float(feature_extraction.type_overlap(line[0])),                                       #43 type overlap
-        float(feature_extraction.pos_overlap(line[0])),                                        #44 pos-tag overlap
-        float(feature_extraction.noun_overlap(line[0])),                                       #45 Proportion of noun overlap
-        float(feature_extraction.verb_overlap(line[0])),                                       #46 Proportion of verb overlap
-        float(feature_extraction.pred_overlap(line[0])),                                       #47 Proportion of predicate overlap
-        float(feature_extraction.tfidf_msr(line[0])),                                              #48 tfidf
-        float(feature_extraction.lsi_msr(line[0])),                                                #49 LSI
-        float(feature_extraction.lda_msr(line[0])),                                                #50 LDA
-        float(feature_extraction.passive_overlap(line[0])),                                    #52 passive overlap 2017/02/14
-        float(feature_extraction.negation_overlap(line[0])),                                   #53 negation overlap 2017/02/14
+        float(feature_extraction.type_overlap(line[0], kind)),                                       #43 type overlap
+        float(feature_extraction.pos_overlap(line[0], kind)),                                        #44 pos-tag overlap
+        float(feature_extraction.noun_overlap(line[0], kind)),                                       #45 Proportion of noun overlap
+        float(feature_extraction.verb_overlap(line[0], kind)),                                       #46 Proportion of verb overlap
+        float(feature_extraction.pred_overlap(line[0], kind)),                                       #47 Proportion of predicate overlap
+        #float(feature_extraction.tfidf_msr(line[0], kind)),                                              #48 tfidf
+        #float(feature_extraction.lsi_msr(line[0], kind)),                                                #49 LSI
+        #float(feature_extraction.lda_msr(line[0], kind)),                                                #50 LDA
+        float(feature_extraction.passive_overlap(line[0], kind)),                                    #52 passive overlap 2017/02/14
+        float(feature_extraction.negation_overlap(line[0], kind)),                                   #53 negation overlap 2017/02/14
     ]   
     return features
 
@@ -159,12 +159,12 @@ def retrieve_features(recalc=None, sick_train=None, sick_test=None):
     if recalc:
         # Extract training features and targets
         print ('Feature extraction (train)...')
-        train_sources = np.array([get_features(line) for line in sick_train])
+        train_sources = np.array([get_features(line, 'train') for line in sick_train])
         train_targets = np.array([float(line[1]) for line in sick_train])
 
         # Extract trial features and targets
         print ('Feature extraction (trial)...')
-        trial_sources = np.array([get_features(line) for line in sick_test])
+        trial_sources = np.array([get_features(line, 'test') for line in sick_test])
         trial_targets = np.array([float(line[1]) for line in sick_test])
         
         # Save SICK ID
@@ -172,7 +172,7 @@ def retrieve_features(recalc=None, sick_train=None, sick_test=None):
         trial_id = np.array([line[0] for line in sick_test])
 
         # Store to pickle for future reference
-        with open('features_wnw2v_sick_np.pickle', 'wb') as out_f:
+        with open('features_np.pickle', 'wb') as out_f:
             np.save(out_f, train_sources)
             np.save(out_f, train_targets)
             np.save(out_f, trial_sources)
@@ -180,7 +180,7 @@ def retrieve_features(recalc=None, sick_train=None, sick_test=None):
             np.save(out_f, train_id)
             np.save(out_f, trial_id)
     else:
-        with open('features_wnw2v_sick_np_20170607.pickle', 'rb') as in_f:
+        with open('features_np.pickle', 'rb') as in_f:
             train_sources = np.load(in_f)
             train_targets = np.load(in_f)
             trial_sources = np.load(in_f)
@@ -323,8 +323,6 @@ def main():
     # Check errors
     output_errors(outputs, trial_targets, [line[0] for line in sick_test], [line[2:4] for line in sick_test]) #Outputs and sick_ids
 
-    # Plot deviations
-    #plot_deviation(outputs, trial_targets)
 
     x = np.loadtxt(outputs, dtype=np.float32)
     y = np.loadtxt(trial_targets, dtype=np.float32)
@@ -340,7 +338,8 @@ def main():
         ## mean squared error(rmse)
         score = rmse(x, y)
         eval_f.write('mean squared error:{0}\n'.format(score))
-    
+    # Plot deviations
+    plot_deviation(outputs, trial_targets)    
 
 if __name__ == '__main__':
     main()
