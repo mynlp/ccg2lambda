@@ -45,7 +45,7 @@ def crossvalidation(clf, X_train, y_train):
 
 def regression(X_train, y_train, X_test, y_test):
     parameters = {
-        'n_estimators'      : [10, 50, 100, 200, 300],
+        'n_estimators'      : [10, 50, 100, 200, 300, 400, 500],
         'random_state'      : [0],
         'n_jobs'            : [200],
         'max_features'      : ['auto', 'log2', 'sqrt', None],
@@ -54,8 +54,8 @@ def regression(X_train, y_train, X_test, y_test):
     }
 
     clf = make_pipeline(
-        #preprocessing.StandardScaler(),
-        preprocessing.MinMaxScaler(),
+        preprocessing.StandardScaler(),
+        #preprocessing.MinMaxScaler(),
         GridSearchCV(RandomForestRegressor(), parameters))
     clf.fit(X_train, y_train)
 
@@ -260,6 +260,7 @@ def output_errors(outputs, gold, sick_ids, sick_sentences):
 
 def load_sick_data_from(sick_id, kind):
     line = []
+    print(kind, sick_id)
     line.append(sick_id)
     f = open('./plain2/sick_'+kind.lower()+'_'+sick_id+'.answer', 'r')
     line.append(f.readlines()[0].strip())
