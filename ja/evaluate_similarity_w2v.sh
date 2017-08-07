@@ -2,7 +2,7 @@
 # for text similarity task
 
 #run word2vec-api for Japanese
-nohup python ../word2vec-api/word2vec-api.py --model /work1/t2g-17IAH/yanaka/entity_vector/entity_vector.model.txt 2>&1 &
+nohup python ../word2vec-api/word2vec-api.py --model entity_vector.model.txt 2>&1 &
 while :
 do
   testsim=$(curl http://localhost:5000/word2vec/similarity?w1=の\&w2=が)
