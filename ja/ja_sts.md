@@ -17,6 +17,8 @@ git clone https://github.com/3Top/word2vec-api
 pip install -r requirements.txt
 ```
 
+3. Run word2vec-api with your Gensim Word2Vec model(See https://github.com/3Top/word2vec-api in detail)
+
 ## Trial with sample text:
 You can try extracting features for learning Japanese STS by doing:
 
@@ -34,4 +36,21 @@ results/evaluation.txt(correlation evaluation)
 results/error_result.txt(error predictions (diff > 0.75))
 results/all_result.txt(all the predictions)
 results/result.png(regression line)
+```
+
+If you use this software or the semantic templates for your work, please consider citing it.
+## A system to compute Semantic Sentence Similarity:
+
+* Hitomi Yanaka, Koji Mineshima, Pascual Martinez-Gomez and Daisuke Bekki. Determining Semantic Textual Similarity using Natural Deduction Proofs. Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing, Copenhagen, Denmark, 7-11 September 2017. [arXiv](https://arxiv.org/pdf/1707.08713.pdf)
+
+```
+@InProceedings{yanaka-EtAl:2017:EMNLP,
+  author    = {Yanaka, Hitomi and Mineshima, Koji  and  Mart\'{i}nez-G\'{o}mez, Pascual  and  Bekki, Daisuke},
+  title     = {Determining Semantic Textual Similarity using Natural Deduction Proofs},
+  booktitle = {Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing},
+  month     = {September},
+  year      = {2017},
+  address   = {Copenhagen, Denmark},
+  publisher = {Association for Computational Linguistics},
+}
 ```
