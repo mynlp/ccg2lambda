@@ -24,7 +24,7 @@
 # E.g.
 # ./similarity_en_mp_any.sh en/sample_en.txt en/semantic_templates_en_event_sts.yaml
 
-USAGE="Usage: ./rte_ja_mp.sh <sentences.txt> <semantic_templates.yaml>"
+USAGE="Usage: ./similarity_ja_mp.sh <sentences.txt> <semantic_templates.yaml>"
 
 # Create a file named "parser_location_ja.txt" at the "ja" directory and
 # write a list of CCG parsers installed, as in:
@@ -58,9 +58,9 @@ fi
 
 # These variables contain the names of the directories where intermediate
 # results will be written.
-plain_dir="ja_plain" # tokenized sentences.
-parsed_dir="ja_parsed" # parsed sentences into XML or other formats.
-results_dir="ja_results" # HTML semantic outputs, proving results, etc.
+plain_dir="plain" # tokenized sentences.
+parsed_dir="parsed" # parsed sentences into XML or other formats.
+results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
 
 # Copy the input text to plain_dir

@@ -16,14 +16,27 @@ by running the following script:
 git clone https://github.com/3Top/word2vec-api
 pip install -r requirements.txt
 ```
+3. Ensure that you have written the parser's location
+in the files `ja/parser_location_ja.txt`.
+```bash
+cat ja/parser_location_ja.txt
+jigg:/Users/ccg2lambda/ja/jigg-v-0.4
+```
 
-3. Run word2vec-api with your Gensim Word2Vec model(See https://github.com/3Top/word2vec-api in detail)
+4. Run word2vec-api with your Gensim Word2Vec model(See https://github.com/3Top/word2vec-api in detail)
 
-## Trial with sample text:
-You can try extracting features for learning Japanese STS by doing:
+## Extract features from texts for training and testing:
+You can extract features for learning Japanese STS by doing:
 
 ```bash
-./ja/similarity_ja_mp.sh sample.txt ja/semantic_templates_ja_event.yaml 
+./ja/similarity_ja_mp.sh plain/sick_train_xxx.txt ja/semantic_templates_ja_event.yaml
+./ja/similarity_ja_mp.sh plain/sick_test_xxx.txt ja/semantic_templates_ja_event.yaml 
+```
+
+5. Ensure that features for training are extracted in `results/sick_train_xxx.txt` and features for testing are extracted in `results/sick_test_xxx.txt`.
+Run training random forest model and predicting similarity scores.
+```bash
+python scripts/randomforest_all.py
 ```
 
 ## Output
