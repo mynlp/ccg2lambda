@@ -51,6 +51,20 @@ results/all_result.txt(all the predictions)
 results/result.png(regression line)
 ```
 
+## Option
+If you'd like to use pretrained model, please modify `scripts/randomforest_all.py` like this:
+```bash
+    before
+    62 #Serialize
+    63 joblib.dump(clf, 'randomforestregressor.pkl')
+    64 #clf = joblib.load('randomforestregressor.pkl')    
+
+    after
+    62 #Serialize
+    63 #joblib.dump(clf, 'randomforestregressor.pkl')
+    64 clf = joblib.load('randomforestregressor.pkl')
+```
+
 If you use this software or the semantic templates for your work, please consider citing it.
 ## A system to compute Semantic Sentence Similarity:
 
