@@ -30,7 +30,7 @@
 # S\NP\NP     \Q1 Q2 C1 C2 C3 K. exists v. Q2(\I.I, \y.Q1(\I.I, \x.exists v.(K(E,v) & C1(x,v,Nom) & C2(y,v,Acc)))) : NP* -> NP* -> S*
 # S\NP\NP\NP  \Q1 Q2 Q3 C1 C2 C3 K. exists v. Q3(\I.I,\z.Q2(\I.I, \y.Q1(\I.I, \x.exists v.(K(E,v) & C1(x,v,Nom)
 #                & C2(y,v,Acc) & C3(z,v,Dat))))) : NP* -> NP* -> NP* -> S*
-# S/S         \S C1 C2 C3 K. S(C1,C2,C3,\J v1.K(\v2.(J(v2) & E(v2)),v1) : S* -> S* (extensional modification)
+# S/S         \S C1 C2 C3 K. S(C1,C2,C3,\J v1.K(\v2.(J(v2) & E(v2)),v1)) : S* -> S* (extensional modification)
 # S/S         \S C1 C2 C3 K. S(C1,C2,C3,\J v.K(E(J),v)) : S* -> S* (intensional modification)
 # NP/NP       \Q N F. Q(\G x. N(\y.(E(y) & G(y)),x), F) : NP* -> NP* (extensional modification)
 # NP/NP       \Q N F. Q(\G x. N(E(G),x), F) : NP* -> NP* (intensional modification)
@@ -389,7 +389,7 @@
   coq_type: Event -> Prop
 
 - category: S\NP[case=to]
-  semantics: \E Q C1 C2 C3 K. exists v.(K(E,v) & AccI(v,Q(\x.True, \x.True)))
+  semantics: \E Q C1 C2 C3 K. exists v.(K(E,v) & AccI(v,Q(\I.I, \x.True)))
   coq_type: Event -> Prop
 
 - category: (S\NP)\NP
@@ -436,10 +436,15 @@
   semantics: \E Q1 Q2 Q3 C1 C2 C3 K. (Q3(\I.I, \x3.Q2(\I.I, \x2.Q1(\I.I, \x1.exists v.(K(E,v) & C1(x1,v,Acc) & C2(x2,v,Dat) & C3(x3,v,Nom))))))
   coq_type: Event -> Prop
 
-
 # Templates for particles
 - category: (NP/NP)\S
   semantics: \E S Q N F. Q(\G.N(\x.(G(x) & S(\x v T.(T(v) = x),\x v T.(T(v) = x),\x v T.(T(v) = x),\J v.(J(v) & (Nom(v) = x))))),F)
+
+- category: NP\S
+  semantics: \E S N F. exists x. (N(\x.S(\x v T.(T(v) = x),\x v T.(T(v) = x),\x v T.(T(v) = x),\J v.(J(v) & (Nom(v) = x))),x) & F(x))
+
+- category: (S/S)\(S/S)
+  semantics: \E M S C1 C2 C3 K. M(S,C1,C2,C3,\J v1.K(\v2.(J(v2)),v1))
 
 
 ##### Lexical entries #####
@@ -770,8 +775,16 @@
   base: は
 
 - category: S\S
+  semantics: \E S C1 C2 C3 K. S(C1,C2,C3,K)
+  base: ます
+
+- category: S\S
   semantics: \E S C1 C2 C3 K. -S(C1,C2,C3,K)
   base: ない
+
+- category: S\S
+  semantics: \E S C1 C2 C3 K. -S(C1,C2,C3,K)
+  base: ん
 
 - category: S
   semantics: \E C1 C2 C3 K. exists v.K(E,v)
@@ -789,6 +802,10 @@
 - category: S\S
   semantics: \E S C1 C2 C3 K. S(C1,C2,C3,\J v1.K(\v2.(J(v2) & E(v2)),v1))
   base: せる
+
+- category: S\S
+  semantics: \E S C1 C2 C3 K. E(S(C1,C2,C3,K))
+  base: たい
 
 # Punctuation
 - category: (NP/NP)\(NP/NP)
