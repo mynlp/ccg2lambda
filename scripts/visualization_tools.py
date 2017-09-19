@@ -31,6 +31,8 @@ kCategoryColor = 'Red'
 kFeatureColor = 'Purple'
 kSemanticsColor = 'Blue'
 kLexicalColor = 'Black'
+kEntityColor = 'Green'
+kPosColor = 'Green'
 # The full list of colors is:
 # Black Green Silver Lime Gray Olive White Maroon Red Purple Fuchsia Yellow Navy
 # Blue Teal Aqua
@@ -78,6 +80,20 @@ def get_surface_mathml(surface):
            + surface \
            + "</mtext>\n"
 
+def get_entity_mathml(entity):
+    return "<mtext " \
+           + " fontsize='" + str(kOtherSize) + "'" \
+           + " color='" + kEntityColor + "'>" \
+           + entity \
+           + "</mtext>\n"
+
+def get_pos_mathml(pos):
+    return "<mtext " \
+           + " fontsize='" + str(kOtherSize) + "'" \
+           + " color='" + kPosColor + "'>" \
+           + pos \
+           + "</mtext>\n"
+
 def get_semantics_mathml(semantics):
     return "<mtext " \
            + " fontsize='" + str(kOtherSize) + "'" \
@@ -94,7 +110,29 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
         token = find_node_by_id(token_id, tokens)
         surf = token.get('surf')
         surf_mathml = get_surface_mathml(surf)
-        mathml_str = get_fraction_mathml(category_mathml, surf_mathml, '0')
+        pos = token.get('pos')
+        pos_mathml = get_pos_mathml(pos)
+        entity = token.get('entity')
+        if not entity == None:
+            entity_mathml = get_entity_mathml(entity)
+            pos_mathml = pos_mathml + "<mtext>,</mtext><mspace width='.1em'/>" + entity_mathml
+        pos1 = token.get('pos1')
+        if not (pos1 == None or pos1 == '*'):
+            pos1_mathml = get_pos_mathml(pos1)
+            pos_mathml = pos_mathml + "<mspace width='.1em'/>" + pos1_mathml
+        pos2 = token.get('pos2')
+        if not (pos2 == None or pos2 == '*'):
+            pos2_mathml = get_pos_mathml(pos2)
+            pos_mathml = pos_mathml + "<mspace width='.1em'/>" + pos2_mathml
+        pos3 = token.get('pos3')
+        if not (pos3 == None or pos3 == '*'):
+            pos3_mathml = get_pos_mathml(pos3)
+            pos_mathml = pos_mathml + "<mspace width='.1em'/>" + pos3_mathml
+        if pos == '.':
+            mathml_str = get_fraction_mathml(category_mathml, surf_mathml, '0')
+        else:
+            mathml_pos_str = get_fraction_mathml(category_mathml, pos_mathml, '0')
+            mathml_str = get_fraction_mathml(mathml_pos_str, surf_mathml, '0')
     elif len(ccg_node) == 1:
         mathml_str_child = convert_node_to_mathml(ccg_node[0], sem_tree, tokens)
         rule = ccg_node.get('rule')
