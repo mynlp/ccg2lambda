@@ -171,7 +171,6 @@ def convert_root_to_mathml(root, verbatim_strings = [], use_gold_trees=False):
     for doc_ind, doc in enumerate(root.xpath('./document')):
         doc_id = doc.get('id', doc_ind)
         num_sentences = int(doc.xpath('count(./sentences/sentence)'))
-        print('Num sentences: {0}'.format(num_sentences), file=sys.stderr)
         mathml_str = ""
         for sent_ind, sentence in enumerate(doc.xpath('./sentences/sentence')):
             gold_tree_index = int(sentence.get('gold_tree', -1))
@@ -179,11 +178,9 @@ def convert_root_to_mathml(root, verbatim_strings = [], use_gold_trees=False):
                 sentence_label = 'Premise {0}'.format(sent_ind)
             else:
                 sentence_label = 'Conclusion'
-            print('sentence label: {0}'.format(sentence_label), file=sys.stderr)
             sentence_text = get_surf_from_xml_node(sentence)
             ccg_trees = sentence.xpath('./ccg')
             sem_trees = sentence.xpath('./semantics')
-            # from pudb import set_trace; set_trace()
             tokens = sentence.xpath('./tokens')[0]
             assert len(ccg_trees) >= len(sem_trees)
             for i in range(len(ccg_trees)):
@@ -231,6 +228,7 @@ def convert_root_to_mathml(root, verbatim_strings = [], use_gold_trees=False):
   """
     return html_str
 
+# TODO: possibly deprecated. Confirm and then remove this function.
 def convert_doc_to_mathml(doc, verbatim_strings = [], use_gold_trees=False):
     """
     This function expects a list of ccg_trees, and a list of tokens
