@@ -120,7 +120,7 @@ function parse_easyccg() {
     --model ${easyccg_dir}/model \
     -i POSandNERtagged \
     -o extended \
-    --nbest 1 \
+    --nbest 2 \
     > ${parsed_dir}/${base_fname}.easyccg \
     2> ${parsed_dir}/${base_fname}.easyccg.log
   python en/easyccg2jigg.py \

@@ -26,7 +26,7 @@ import sys
 import textwrap
 
 from semantic_tools import prove_doc
-from visualization_tools import convert_doc_to_mathml
+from visualization_tools import convert_root_to_mathml
 
 def main(args = None):
     DESCRIPTION=textwrap.dedent("""\
@@ -40,7 +40,6 @@ def main(args = None):
     parser.add_argument("sem", help="XML input filename with semantics")
     parser.add_argument("--graph_out", nargs='?', type=str, default="",
         help="HTML graphical output filename.")
-    # parser.add_argument("--abduction", action="store_true", default=False)
     parser.add_argument("--abduction", nargs='?', type=str, default="no",
         choices=["no", "naive", "spsa"],
         help="Activate on-demand axiom injection (default: no axiom injection).")
@@ -69,7 +68,7 @@ def main(args = None):
     print(inference_result, file=sys.stdout)
 
     if args.graph_out:
-        html_str = convert_doc_to_mathml(doc, coq_scripts, args.gold_trees)
+        html_str = convert_root_to_mathml(doc, coq_scripts, args.gold_trees)
         with codecs.open(args.graph_out, 'w', 'utf-8') as fout:
             fout.write(html_str)
 

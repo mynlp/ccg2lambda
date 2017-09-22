@@ -45,7 +45,7 @@ def get_formulas_from_doc(doc):
     If there are no semantic representation at all, or the conclusion
     has no semantic representation, it returns None to signal an error.
     """
-    formulas = [s.get('sem', None) for s in doc.xpath('//sentence/semantics/span[1]')]
+    formulas = [s.get('sem', None) for s in doc.xpath('//sentence/semantics[1]/span[1]')]
     if len(formulas) < 2 or formulas[-1] == None:
         return None
     formulas = [f for f in formulas if f is not None]
@@ -62,6 +62,7 @@ def prove_doc(doc, abduction=None):
     formulas = get_formulas_from_doc(doc)
     if not formulas:
         return 'unknown', coq_scripts
+    # TODO: check this for n-best.
     dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, formulas)
 
     premises, conclusion = formulas[:-1], formulas[-1]

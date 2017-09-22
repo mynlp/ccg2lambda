@@ -54,7 +54,7 @@ def main(args = None):
     parser.add_argument("sem")
     parser.add_argument("--arbi-types", action="store_true", default=False)
     parser.add_argument("--gold_trees", action="store_true", default=True)
-    parser.add_argument("--nbest", nargs='?', type=int, default="1")
+    parser.add_argument("--nbest", nargs='?', type=int, default="0")
     args = parser.parse_args()
       
     if not os.path.exists(args.templates):
@@ -99,6 +99,8 @@ def main(args = None):
 
 def get_tree_indices(sentence, nbest):
     num_ccg_trees = int(sentence.xpath('count(./ccg)'))
+    if nbest < 1:
+        nbest = num_ccg_trees
     return list(range(1, min(nbest, num_ccg_trees) + 1))
 
 keep_attributes = set(['id', 'child', 'sem', 'type'])
