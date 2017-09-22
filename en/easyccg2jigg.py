@@ -138,10 +138,10 @@ def get_attributes(node_label):
     attributes = get_attributes_from_node(node_label)
   return attributes
 
-def make_ccg_node(tree, sentence_id):
+def make_ccg_node(tree, sentence_id, ccg_count=0):
   ccg_node = etree.Element('ccg')
   ccg_node.set('root', 's{0}_sp{1}'.format(sentence_id, 0))
-  ccg_node.set('id', 's{0}_ccg{1}'.format(sentence_id, 0))
+  ccg_node.set('id', 's{0}_ccg{1}'.format(sentence_id, ccg_count))
   nodes = [tree[p] for p in tree.treepositions() \
     if isinstance(tree[p], Tree)]
   child_inds = defaultdict(list)
@@ -192,6 +192,13 @@ def make_jigg_sentence(line, sentence_id):
   sentence_node.append(ccg_node)
   return sentence_node
 
+def add_ccg_nodes(line, sentence_node, sentence_id, ccg_count):
+  sentence_id -= 1
+  tree = make_tree(line)
+  ccg_node = make_ccg_node(tree, sentence_id, ccg_count)
+  sentence_node.append(ccg_node)
+
+
 root_node = etree.Element('root')
 document_node = etree.Element('document')
 root_node.append(document_node)
@@ -199,17 +206,28 @@ sentences_node = etree.Element('sentences')
 document_node.append(sentences_node)
 
 sentence_id = 0
+ccg_count = 0
 is_new_sentence = False
+sentence_tree = None
+
 for line in codecs.open(args.infile, 'r', 'utf-8'):
   if line.startswith('ID='):
     current_sentence_id = int(line.split('=')[-1])
     if sentence_id != current_sentence_id:
       is_new_sentence = True
       sentence_id = current_sentence_id
-  elif is_new_sentence:
-    is_new_sentence = False
-    sentence_tree = make_jigg_sentence(line, sentence_id)
-    sentences_node.append(sentence_tree)
+      ccg_count = 0
+      #print("sentence_id:" + str(sentence_id))
+    else:
+      ccg_count += 1
+  else:
+    if is_new_sentence:
+      is_new_sentence = False
+      sentence_tree = make_jigg_sentence(line, sentence_id)
+      sentences_node.append(sentence_tree)
+    else:
+      if sentence_tree is not None:
+        add_ccg_nodes(line, sentence_tree, sentence_id, ccg_count)
 
 def serialize_tree(tree):
     tree_str = etree.tostring(
