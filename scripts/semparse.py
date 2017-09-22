@@ -54,6 +54,7 @@ def main(args = None):
     parser.add_argument("sem")
     parser.add_argument("--arbi-types", action="store_true", default=False)
     parser.add_argument("--gold_trees", action="store_true", default=True)
+    parser.add_argument("--nbest", nargs='?', type=int, default="1")
     args = parser.parse_args()
       
     if not os.path.exists(args.templates):
@@ -71,26 +72,34 @@ def main(args = None):
     root = etree.parse(args.ccg, parser)
 
     for sentence in root.findall('.//sentence'):
-        sem_node = etree.Element('semantics')
-        try:
-            sem_node.set('status', 'success')
-            tree_index = 1
-            if args.gold_trees:
-                tree_index = int(sentence.get('gold_tree', '0')) + 1
-            sem_tree = assign_semantics_to_ccg(
-                sentence, semantic_index, tree_index)
-            sem_node.set('root',
-                sentence.xpath('./ccg[{0}]/@root'.format(tree_index))[0])
-            filter_attributes(sem_tree)
-            sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
-        except LogicalExpressionException as e:
-            sem_node.set('status', 'failed')
-            logging.error('An error occurred: {0}'.format(e))
-        sentence.append(sem_node)
+        if args.gold_trees:
+            tree_indices = [int(sentence.get('gold_tree', '0')) + 1]
+        if args.nbest != 1:
+            tree_indices = get_tree_indices(sentence, args.nbest)
+        for tree_index in tree_indices: 
+            sem_node = etree.Element('semantics')
+            sem_node.set('ccg_id',
+                sentence.xpath('./ccg[{0}]/@id'.format(tree_index))[0])
+            try:
+                sem_node.set('status', 'success')
+                sem_tree = assign_semantics_to_ccg(
+                    sentence, semantic_index, tree_index)
+                sem_node.set('root',
+                    sentence.xpath('./ccg[{0}]/@root'.format(tree_index))[0])
+                filter_attributes(sem_tree)
+                sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
+            except LogicalExpressionException as e:
+                sem_node.set('status', 'failed')
+                logging.error('An error occurred: {0}'.format(e))
+            sentence.append(sem_node)
 
     root_xml_str = serialize_tree(root)
     with codecs.open(args.sem, 'wb') as fout:
         fout.write(root_xml_str)
+
+def get_tree_indices(sentence, nbest):
+    num_ccg_trees = int(sentence.xpath('count(./ccg)'))
+    return list(range(1, min(nbest, num_ccg_trees) + 1))
 
 keep_attributes = set(['id', 'child', 'sem', 'type'])
 def filter_attributes(tree):
