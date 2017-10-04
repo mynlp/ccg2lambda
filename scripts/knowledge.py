@@ -24,7 +24,7 @@ from normalization import denormalize_token, normalize_token
 
 def get_tokens_from_xml_node(node):
     tokens = node.xpath(
-        "//token[not(@base='*')]/@base | //token[@base='*']/@surf")
+        ".//token[not(@base='*')]/@base | //token[@base='*']/@surf")
     return tokens
 
 

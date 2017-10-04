@@ -17,9 +17,12 @@
 
 import cgi
 import re
+import sys
+
+from lxml import etree
 
 from ccg2lambda_tools import build_ccg_tree
-from lxml import etree
+from knowledge import get_tokens_from_xml_node
 from semantic_index import find_node_by_id
 
 kUpwardsTree = True
@@ -31,6 +34,8 @@ kCategoryColor = 'Red'
 kFeatureColor = 'Purple'
 kSemanticsColor = 'Blue'
 kLexicalColor = 'Black'
+kEntityColor = 'Green'
+kPosColor = 'Green'
 # The full list of colors is:
 # Black Green Silver Lime Gray Olive White Maroon Red Purple Fuchsia Yellow Navy
 # Blue Teal Aqua
@@ -78,6 +83,20 @@ def get_surface_mathml(surface):
            + surface \
            + "</mtext>\n"
 
+def get_entity_mathml(entity):
+    return "<mtext " \
+           + " fontsize='" + str(kOtherSize) + "'" \
+           + " color='" + kEntityColor + "'>" \
+           + entity \
+           + "</mtext>\n"
+
+def get_pos_mathml(pos):
+    return "<mtext " \
+           + " fontsize='" + str(kOtherSize) + "'" \
+           + " color='" + kPosColor + "'>" \
+           + pos \
+           + "</mtext>\n"
+
 def get_semantics_mathml(semantics):
     return "<mtext " \
            + " fontsize='" + str(kOtherSize) + "'" \
@@ -94,7 +113,29 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
         token = find_node_by_id(token_id, tokens)
         surf = token.get('surf')
         surf_mathml = get_surface_mathml(surf)
-        mathml_str = get_fraction_mathml(category_mathml, surf_mathml, '0')
+        pos = token.get('pos')
+        pos_mathml = get_pos_mathml(pos)
+        entity = token.get('entity')
+        if not entity == None:
+            entity_mathml = get_entity_mathml(entity)
+            pos_mathml = pos_mathml + "<mtext>,</mtext><mspace width='.1em'/>" + entity_mathml
+        pos1 = token.get('pos1')
+        if not (pos1 == None or pos1 == '*'):
+            pos1_mathml = get_pos_mathml(pos1)
+            pos_mathml = pos_mathml + "<mspace width='.1em'/>" + pos1_mathml
+        pos2 = token.get('pos2')
+        if not (pos2 == None or pos2 == '*'):
+            pos2_mathml = get_pos_mathml(pos2)
+            pos_mathml = pos_mathml + "<mspace width='.1em'/>" + pos2_mathml
+        pos3 = token.get('pos3')
+        if not (pos3 == None or pos3 == '*'):
+            pos3_mathml = get_pos_mathml(pos3)
+            pos_mathml = pos_mathml + "<mspace width='.1em'/>" + pos3_mathml
+        if pos == '.':
+            mathml_str = get_fraction_mathml(category_mathml, surf_mathml, '0')
+        else:
+            mathml_pos_str = get_fraction_mathml(category_mathml, pos_mathml, '0')
+            mathml_str = get_fraction_mathml(mathml_pos_str, surf_mathml, '0')
     elif len(ccg_node) == 1:
         mathml_str_child = convert_node_to_mathml(ccg_node[0], sem_tree, tokens)
         rule = ccg_node.get('rule')
@@ -114,9 +155,80 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
         mathml_str = get_fraction_mathml(semantics_mathml, mathml_str, '0')
     return mathml_str
 
-def get_sentence_surface_from_tokens(ccg_tokens, attribute = 'surf'):
-    return ' '.join([token.get(attribute) for token in ccg_tokens])
+def get_surf_from_xml_node(node):
+    tokens = node.xpath(
+        ".//token[not(@surf='*')]/@surf | //token[@surf='*']/@base")
+    return ' '.join(tokens)
 
+def convert_root_to_mathml(root, verbatim_strings = [], use_gold_trees=False):
+    """
+    This function expects an XML root. Then, it converts each document doc
+    into a presentation MathML string, and wraps them with HTML code.
+    verbatim_strings is a list of strings that should be printed verbatim at
+    the end of the HTML document, for debugging.
+    """
+    doc_mathml_strs = []
+    for doc_ind, doc in enumerate(root.xpath('./document')):
+        doc_id = doc.get('id', doc_ind)
+        num_sentences = int(doc.xpath('count(./sentences/sentence)'))
+        mathml_str = ""
+        for sent_ind, sentence in enumerate(doc.xpath('./sentences/sentence')):
+            gold_tree_index = int(sentence.get('gold_tree', -1))
+            if sent_ind < num_sentences - 1:
+                sentence_label = 'Premise {0}'.format(sent_ind)
+            else:
+                sentence_label = 'Conclusion'
+            sentence_text = get_surf_from_xml_node(sentence)
+            ccg_trees = sentence.xpath('./ccg')
+            sem_trees = sentence.xpath('./semantics')
+            tokens = sentence.xpath('./tokens')[0]
+            assert len(ccg_trees) >= len(sem_trees)
+            for i in range(len(ccg_trees)):
+                ccg_tree_id = ccg_trees[i].get('id', str(i))
+                ccg_tree = build_ccg_tree(ccg_trees[i])
+                if gold_tree_index == i:
+                    ccg_tree_id += " (gold)"
+                sem_tree = None if i >= len(sem_trees) else sem_trees[i]
+                if sem_tree is not None:
+                    sem_tree = build_ccg_tree(sem_tree)
+                mathml_str += "<p>{0}, tree {1}: {2}</p>\n".format(
+                                sentence_label, ccg_tree_id, sentence_text) \
+                            + "<math xmlns='http://www.w3.org/1998/Math/MathML'>\n" \
+                            + convert_node_to_mathml(ccg_tree, sem_tree, tokens) \
+                            + "</math>\n"
+        verbatim_text = ""
+        if verbatim_strings:
+           verbatim_text = "<p>Script piped to coq</p>"
+           for vb_str in verbatim_strings:
+               verbatim_text += "<pre>\n" + vb_str + "\n</pre>\n"
+        doc_mathml_str = '{0}\n{1}'.format(mathml_str, verbatim_text)
+        doc_mathml_strs.append(doc_mathml_str)
+
+    html_str = """\
+  <!doctype html>
+  <html lang='en'>
+  <head>
+    <meta charset='UTF-8'>
+    <title>CCG to Lambda conversion</title>
+    <style>
+      body {
+        font-size: 1em;
+      }
+    </style>
+    <script type="text/javascript"
+            src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+  </head>
+  <body>
+  """
+    html_str += '\n'.join([s for s in doc_mathml_strs])
+    html_str += """\
+  </body>
+  </html>
+  """
+    return html_str
+
+# TODO: possibly deprecated. Confirm and then remove this function.
 def convert_doc_to_mathml(doc, verbatim_strings = [], use_gold_trees=False):
     """
     This function expects a list of ccg_trees, and a list of tokens

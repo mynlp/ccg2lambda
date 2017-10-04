@@ -20,6 +20,7 @@ import re
 from knowledge import get_lexical_relations
 from semantic_types import get_dynamic_library_from_doc
 from theorem import Theorem
+from theorem import get_formulas_from_doc
 
 def build_knowledge_axioms(doc):
     if not doc:
@@ -57,6 +58,7 @@ def prove_doc_(doc, abduction=None):
     formulas = get_formulas_from_doc(doc)
     if not formulas or len(formulas) < 2:
         return 'unknown', coq_scripts, failure_logs
+    # TODO: check this for n-best.
     dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, formulas)
 
     premises, conclusion = formulas[:-1], formulas[-1]

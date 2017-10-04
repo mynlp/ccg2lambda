@@ -30,9 +30,11 @@ import sys
 import textwrap
 
 from semantic_tools import prove_doc
-from utils import time_count
-from visualization_tools import convert_doc_to_mathml
 from semparse import serialize_tree
+from utils import time_count
+# TODO: maybe remove this functionality from this script.
+from visualization_tools import convert_doc_to_mathml
+from visualization_tools import convert_root_to_mathml
 
 ARGS=None
 DOCS=None
@@ -82,11 +84,13 @@ def main(args = None):
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.parse(args.sem, parser)
 
-    # inference_result, coq_scripts = prove_doc(doc, ABDUCTION)
-    # print(inference_result, file=sys.stdout)
-
     # if args.graph_out:
     #     html_str = convert_doc_to_mathml(doc, coq_scripts, args.gold_trees)
+    #     with codecs.open(args.graph_out, 'w', 'utf-8') as fout:
+    #         fout.write(html_str)
+    # TODO: enable graphical output (or perhaps as stand-alone).
+    # if args.graph_out:
+    #     html_str = convert_root_to_mathml(doc, coq_scripts, args.gold_trees)
     #     with codecs.open(args.graph_out, 'w', 'utf-8') as fout:
     #         fout.write(html_str)
 
@@ -100,6 +104,11 @@ def main(args = None):
 
     if args.proof:
         serialize_tree_to_file(root, args.proof)
+
+    if args.graph_out:
+        html_str = convert_root_to_mathml(root, args.gold_trees)
+        with codecs.open(args.graph_out, 'w', 'utf-8') as fout:
+            fout.write(html_str)
 
 @time_count
 def serialize_tree_to_file(tree_xml, fname):
@@ -147,21 +156,25 @@ def prove_doc_ind(document_ind):
         proof_node.set('inference_result', inference_result)
         theorems_node = theorem.to_xml()
         proof_node.append(theorems_node)
-        print(inference_result[0], end='', file=sys.stdout)
+        # TODO: have a better way to track progress.
+        # print(inference_result[0], end='', file=sys.stdout)
+        print(inference_result, end='', file=sys.stdout)
     except TimeoutExpired as e:
         proof_node.set('status', 'timedout')
         proof_node.set('inference_result', 'unknown')
-        print('t', end='', file=sys.stdout)
+        # print('t', end='', file=sys.stdout)
+        print('unknown', end='', file=sys.stdout)
     except Exception as e:
-        doc_id = doc.get('id', None)
+        doc_id = doc.get('id', '(unspecified)')
         lock.acquire()
-        logging.error('An error occurred: {0}\nSentence: {1}\nTree XML:\n{2}'.format(
+        logging.error('An error occurred: {0}\nDoc ID: {1}\nTree XML:\n{2}'.format(
             e, doc_id,
             etree.tostring(doc, encoding='utf-8', pretty_print=True).decode('utf-8')))
         lock.release()
         proof_node.set('status', 'failed')
         proof_node.set('inference_result', 'unknown')
-        print('x', end='', file=sys.stdout)
+        # print('x', end='', file=sys.stdout)
+        print('unknown', end='', file=sys.stdout)
         raise
     sys.stdout.flush()
     return etree.tostring(proof_node)

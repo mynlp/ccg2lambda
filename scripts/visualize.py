@@ -19,9 +19,10 @@ import argparse
 import logging
 from lxml import etree
 import os
+import sys
 import textwrap
 
-from visualization_tools import convert_doc_to_mathml
+from visualization_tools import convert_root_to_mathml
 
 def main(args = None):
     DESCRIPTION=textwrap.dedent("""\
@@ -36,17 +37,19 @@ def main(args = None):
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=DESCRIPTION)
     parser.add_argument("trees_xml")
+    parser.add_argument("--nbest", nargs='?', type=int, default="1")
     args = parser.parse_args()
       
     if not os.path.exists(args.trees_xml):
         print('File does not exist: {0}'.format(args.trees_xml))
+        sys.exit(1)
     
     logging.basicConfig(level=logging.WARNING)
 
     parser = etree.XMLParser(remove_blank_text=True)
-    doc = etree.parse(args.trees_xml, parser)
+    root = etree.parse(args.trees_xml, parser)
 
-    html_str = convert_doc_to_mathml(doc)
+    html_str = convert_root_to_mathml(root)
     print(html_str)
 
 if __name__ == '__main__':

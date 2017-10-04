@@ -65,6 +65,7 @@ def main(args = None):
     parser.add_argument("sem")
     parser.add_argument("--arbi-types", action="store_true", default=False)
     parser.add_argument("--gold_trees", action="store_true", default=True)
+    parser.add_argument("--nbest", nargs='?', type=int, default="0")
     parser.add_argument("--ncores", nargs='?', type=int, default="3",
         help="Number of cores for multiprocessing.")
     ARGS = parser.parse_args()
@@ -87,12 +88,12 @@ def main(args = None):
     # print('Found {0} sentences'.format(len(SENTENCES)))
     # from pudb import set_trace; set_trace()
     sentence_inds = range(len(SENTENCES))
-    sem_nodes = semantic_parse_sentences(sentence_inds, ARGS.ncores)
-    assert len(sem_nodes) == len(SENTENCES), \
-        'Element mismatch: {0} vs {1}'.format(len(sem_nodes), len(SENTENCES))
+    sem_nodes_lists = semantic_parse_sentences(sentence_inds, ARGS.ncores)
+    assert len(sem_nodes_lists) == len(SENTENCES), \
+        'Element mismatch: {0} vs {1}'.format(len(sem_nodes_lists), len(SENTENCES))
     logging.info('Adding XML semantic nodes to sentences...')
-    for sentence, sem_node in zip(SENTENCES, sem_nodes):
-        sentence.append(sem_node)
+    for sentence, sem_nodes in zip(SENTENCES, sem_nodes_lists):
+        sentence.extend(sem_nodes)
     logging.info('Finished adding XML semantic nodes to sentences.')
 
     root_xml_str = serialize_tree(root)
@@ -101,11 +102,12 @@ def main(args = None):
 
 def semantic_parse_sentences(sentence_inds, ncores=1):
     if ncores <= 1:
-        sem_nodes = semantic_parse_sentences_seq(sentence_inds)
+        sem_nodes_lists = semantic_parse_sentences_seq(sentence_inds)
     else:
-        sem_nodes = semantic_parse_sentences_par(sentence_inds, ncores)
-    sem_nodes = [etree.fromstring(s) for s in sem_nodes]
-    return sem_nodes
+        sem_nodes_lists = semantic_parse_sentences_par(sentence_inds, ncores)
+    sem_nodes_lists = [
+        [etree.fromstring(s) for s in sem_nodes] for sem_nodes in sem_nodes_lists]
+    return sem_nodes_lists
 
 def semantic_parse_sentences_par(sentence_inds, ncores=3):
     pool = Pool(processes=ncores, maxtasksperchild=kMaxTasksPerChild)
@@ -128,33 +130,46 @@ def semantic_parse_sentence(sentence_ind):
     """
     global lock
     sentence = SENTENCES[sentence_ind]
-    sem_node = etree.Element('semantics')
-    try:
-        sem_node.set('status', 'success')
-        tree_index = 1
-        if ARGS.gold_trees:
-            tree_index = int(sentence.get('gold_tree', '0')) + 1
-        sem_tree = assign_semantics_to_ccg(
-            sentence, SEMANTIC_INDEX, tree_index)
-        sem_node.set('root',
-            sentence.xpath('./ccg[{0}]/@root'.format(tree_index))[0])
-        filter_attributes(sem_tree)
-        sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
-        print('.', end='', file=sys.stdout)
-        sys.stdout.flush()
-    # except (LogicalExpressionException, ValueError) as e:
-    except Exception as e:
-        sem_node.set('status', 'failed')
-        sentence_surf = ' '.join(sentence.xpath('tokens/token/@surf'))
-        # from pudb import set_trace; set_trace()
-        lock.acquire()
-        logging.error('An error occurred: {0}\nSentence: {1}\nTree XML:\n{2}'.format(
-            e, sentence_surf,
-            etree.tostring(sentence, encoding='utf-8', pretty_print=True).decode('utf-8')))
-        lock.release()
-        print('x', end='', file=sys.stdout)
-        sys.stdout.flush()
-    return etree.tostring(sem_node)
+    sem_nodes = []
+    # TODO: try to prevent semantic parsing for fragmented CCG trees.
+    # Otherwise, produce fragmented semantics.
+    if ARGS.gold_trees:
+        tree_indices = [int(sentence.get('gold_tree', '0')) + 1]
+    if ARGS.nbest != 1:
+        tree_indices = get_tree_indices(sentence, ARGS.nbest)
+    for tree_index in tree_indices: 
+        sem_node = etree.Element('semantics')
+        try:
+            sem_tree = assign_semantics_to_ccg(
+                sentence, SEMANTIC_INDEX, tree_index)
+            filter_attributes(sem_tree)
+            sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
+            sem_node.set('status', 'success')
+            sem_node.set('ccg_id',
+                sentence.xpath('./ccg[{0}]/@id'.format(tree_index))[0])
+            sem_node.set('root',
+                sentence.xpath('./ccg[{0}]/@root'.format(tree_index))[0])
+            # print('.', end='', file=sys.stdout)
+            sys.stdout.flush()
+        except Exception as e:
+            sem_node.set('status', 'failed')
+            # from pudb import set_trace; set_trace()
+            sentence_surf = ' '.join(sentence.xpath('tokens/token/@surf'))
+            lock.acquire()
+            logging.error('An error occurred: {0}\nSentence: {1}\nTree XML:\n{2}'.format(
+                e, sentence_surf,
+                etree.tostring(sentence, encoding='utf-8', pretty_print=True).decode('utf-8')))
+            lock.release()
+            # print('x', end='', file=sys.stdout)
+            sys.stdout.flush()
+        sem_nodes.append(sem_node)
+    return [etree.tostring(sem_node) for sem_node in sem_nodes]
+
+def get_tree_indices(sentence, nbest):
+    num_ccg_trees = int(sentence.xpath('count(./ccg)'))
+    if nbest < 1:
+        nbest = num_ccg_trees
+    return list(range(1, min(nbest, num_ccg_trees) + 1))
 
 keep_attributes = set(['id', 'child', 'sem', 'type'])
 def filter_attributes(tree):
