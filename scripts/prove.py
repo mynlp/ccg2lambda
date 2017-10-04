@@ -53,7 +53,8 @@ def main(args = None):
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=DESCRIPTION)
     parser.add_argument("sem", help="XML input filename with semantics")
-    parser.add_argument("--proof", default="", help="XML input filename with semantics")
+    parser.add_argument("--proof", default="",
+        help="XML output filename with proof information")
     parser.add_argument("--graph_out", nargs='?', type=str, default="",
         help="HTML graphical output filename.")
     parser.add_argument("--abduction", nargs='?', type=str, default="no",
