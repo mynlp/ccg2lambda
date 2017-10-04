@@ -160,12 +160,10 @@ def get_surf_from_xml_node(node):
         ".//token[not(@surf='*')]/@surf | //token[@surf='*']/@base")
     return ' '.join(tokens)
 
-def convert_root_to_mathml(root, verbatim_strings = [], use_gold_trees=False):
+def convert_root_to_mathml(root, use_gold_trees=False):
     """
     This function expects an XML root. Then, it converts each document doc
     into a presentation MathML string, and wraps them with HTML code.
-    verbatim_strings is a list of strings that should be printed verbatim at
-    the end of the HTML document, for debugging.
     """
     doc_mathml_strs = []
     for doc_ind, doc in enumerate(root.xpath('./document')):
@@ -196,6 +194,7 @@ def convert_root_to_mathml(root, verbatim_strings = [], use_gold_trees=False):
                             + "<math xmlns='http://www.w3.org/1998/Math/MathML'>\n" \
                             + convert_node_to_mathml(ccg_tree, sem_tree, tokens) \
                             + "</math>\n"
+        verbatim_strings = doc.xpath('./proof/theorems/theorem/coq_script/text()')
         verbatim_text = ""
         if verbatim_strings:
            verbatim_text = "<p>Script piped to coq</p>"

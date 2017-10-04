@@ -22,10 +22,10 @@
 # 'unknown' (none of the former).
 # You can use it as:
 # 
-# ./rte_en_mp.sh <sentences.txt> <semantic_templates.yaml>
+# ./en/rte_en_mp.sh <sentences.txt> <semantic_templates.yaml>
 # 
 # E.g.
-# ./rte_en_mp.sh en/sample_en.txt en/semantic_templates_en.yaml
+# ./en/rte_en_mp.sh en/sample_en.txt en/semantic_templates_en.yaml
 #
 # It should return 'yes'.
 # You need to have a file in the current directory named candc_location.txt
@@ -62,8 +62,6 @@ if [ ! -f $sentences_fname ]; then
   echo $USAGE
   exit 1
 fi
-
-function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
 
 # These variables contain the names of the directories where intermediate
 # results will be written.
@@ -187,7 +185,7 @@ if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
   start_time=`python -c 'import time; print(time.time())'`
   for parser in "candc" "easyccg"; do
     if [ ! -e "${results_dir}/${sentences_basename}.${parser}.answer" ]; then
-      timeout 100 python scripts/prove.py \
+      python scripts/prove.py \
         $parsed_dir/${sentences_basename}.${parser}.sem.xml \
         --graph_out ${results_dir}/${sentences_basename}.${parser}.html \
         --abduction spsa \

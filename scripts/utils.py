@@ -15,6 +15,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import logging
 import time
 
 def time_count(fn):
@@ -22,7 +23,7 @@ def time_count(fn):
   def _wrapper(*args, **kwargs):
     start = time.clock()
     returns = fn(*args, **kwargs)
-    print("[time_count]: %s took %fs" % (fn.__name__, time.clock() - start))
+    logging.debug("[time_count]: %s took %fs" % (fn.__name__, time.clock() - start))
     return returns
   return _wrapper
 

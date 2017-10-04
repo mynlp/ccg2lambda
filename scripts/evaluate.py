@@ -176,8 +176,11 @@ def make_html_tail():
 #     raise ValueError('Error not recognized for document:\n{0}'.format(doc))
 
 def print_html_problem(doc, dir_name):
-    prob_id = doc.get('pair_id')
+    prob_id = doc.get('pair_id', '00000')
     prob_html_fname = dir_name + '/' + prob_id + '.html'
+    if prob_id == '00000':
+        logging.warning(
+            'RTE problem ID unspecified. Overwriting ' + prob_html_fname)
     coq_scripts = doc.xpath('./proof/theorems/theorem/coq_script/text()')
     html_str = convert_doc_to_mathml(doc, coq_scripts)
     with codecs.open(prob_html_fname, 'w', 'utf-8') as fout:
@@ -194,7 +197,7 @@ def print_html_problems(problems, fname_base, dir_name):
         fout.write(html_head)
         for p in tqdm(problems):
             print_html_problem(p, dir_name)
-            gold_label = p.get('rte_label')
+            gold_label = p.get('rte_label', 'None')
             sys_label = p.xpath('./proof/@inference_result')[0]
             if gold_label == 'unknown' and sys_label != 'unknown':
                 color = red_color # false positive
@@ -204,7 +207,7 @@ def print_html_problems(problems, fname_base, dir_name):
                 color = gray_color # false negative
             else:
                 color = white_color
-            prob_id = p.get('pair_id')
+            prob_id = p.get('pair_id', '00000')
             prob_html_fname = dir_name + '/' + prob_id + '.html'
             proving_time = -1.0
             html_str = (
@@ -251,23 +254,26 @@ def main(args = None):
     roots = load_files(proof_fnames)
     gold_labels = get_gold_labels(roots)
     sys_labels = get_sys_labels(roots)
-    assert len(gold_labels) == len(sys_labels), \
-        '{0} != {1}'.format(len(gold_labels) == len(sys_labels))
-    print('Number of problems: {0}'.format(len(gold_labels)))
+    # assert len(gold_labels) == len(sys_labels), \
+    #     '{0} != {1}'.format(len(gold_labels) == len(sys_labels))
+    print('Number of problems processed: {0}'.format(len(sys_labels)))
 
-    print_accuracy(gold_labels, sys_labels)
-    print_confusion_matrix(gold_labels, sys_labels)
-    print_label_distribution(gold_labels, 'gold')
-    print_label_distribution(sys_labels, 'sys')
+    if gold_labels:
+        print_accuracy(gold_labels, sys_labels)
+        print_confusion_matrix(gold_labels, sys_labels)
+        print_label_distribution(gold_labels, 'gold')
+        print_label_distribution(sys_labels, 'sys')
+
+        print_stats_for(roots, 'false_positives')
+        print_stats_for(roots, 'false_negatives')
+        print_stats_for(roots, 'true_positives')
+        print_stats_for(roots, 'true_negatives')
+    else:
+        logging.warning('No gold RTE labels provided.')
 
     print_num_syntactic_errors(roots)
     print_num_semantic_errors(roots)
     print_proof_status_stats(roots)
-
-    print_stats_for(roots, 'false_positives')
-    print_stats_for(roots, 'false_negatives')
-    print_stats_for(roots, 'true_positives')
-    print_stats_for(roots, 'true_negatives')
 
     if not os.path.exists(args.dir_name):
         os.makedirs(args.dir_name)
