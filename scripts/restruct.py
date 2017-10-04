@@ -96,10 +96,8 @@ def main(args = None):
             save_xml_root(res, args.rte, i)
             remaining_docs = False
             res = etree.Element('root')
-    else:
-        ind = i
     if remaining_docs:
-        save_xml_root(res, args.rte, ind)
+        save_xml_root(res, args.rte, num_sentences // 2)
 
 def save_xml_root(root, fname, ind):
     if fname.endswith('.xml'):

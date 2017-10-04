@@ -19,14 +19,14 @@
 # ./en/multinli.sh
 #
 
-source activate py3
+source python_env.sh
 
-# Copy a coq static library and compile it.
+# Copy coq static library and compile it.
 cp en/coqlib_sick.v coqlib.v
 coqc coqlib.v
 cp en/tactics_coq_sick.txt tactics_coq.txt
 
-category_templates=en/semantic_templates_en_event_flat.yaml
+category_templates=en/semantic_templates_en_event.yaml
 # These variables contain the names of the directories where intermediate
 # results will be written.
 plain_dir="plain" # tokenized sentences.
@@ -35,7 +35,7 @@ results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
 # parsers="easyccg candc"
 parsers="easyccg"
-ncores=100
+ncores=200
 
 # multinli=multinli/multinli_0.9_train.jsonl
 # sentences_basename=multinli
@@ -49,7 +49,8 @@ ncores=100
 #   grep TEST en/SICK.semeval.txt | python scripts/sick2snli.py > en/sick.test.jsonl
 # fi
 
-sentences_basename="snli.train"
+# sentences_basename="snli.train"
+sentences_basename="sick.trial"
 multinli=en/${sentences_basename}.jsonl
 python scripts/get_nli_sentences.py \
     $multinli \
@@ -111,7 +112,7 @@ function parse_easyccg() {
     --model ${easyccg_dir}/model \
     -i POSandNERtagged \
     -o extended \
-    --nbest 1 \
+    --nbest 2 \
     --maxLength 120 \
     > ${parsed_dir}/${base_fname}.easyccg \
     2> ${parsed_dir}/${base_fname}.easyccg.log

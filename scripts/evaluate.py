@@ -30,6 +30,7 @@ from tqdm import tqdm
 
 from pandas_ml import ConfusionMatrix
 from visualization_tools import convert_doc_to_mathml
+from visualization_tools import wrap_mathml_in_html
 
 def load_files(proof_fnames):
     """
@@ -58,7 +59,7 @@ def get_gold_labels(roots):
 def print_accuracy(gold_labels, sys_labels):
     hits = sum(int(g == s) for g, s in zip(gold_labels, sys_labels))
     accuracy = float(hits) / len(sys_labels)
-    print('Accuracy: {0:.2f}'.format(accuracy))
+    print('Accuracy: {0:.4f}'.format(accuracy))
 
 def print_label_distribution(labels, title=''):
     c = Counter(labels)
@@ -182,7 +183,8 @@ def print_html_problem(doc, dir_name):
         logging.warning(
             'RTE problem ID unspecified. Overwriting ' + prob_html_fname)
     coq_scripts = doc.xpath('./proof/theorems/theorem/coq_script/text()')
-    html_str = convert_doc_to_mathml(doc, coq_scripts)
+    mathml_str = convert_doc_to_mathml(doc)
+    html_str = wrap_mathml_in_html(mathml_str)
     with codecs.open(prob_html_fname, 'w', 'utf-8') as fout:
         fout.write(html_str)
     return
@@ -193,7 +195,7 @@ white_color="rgb(255,255,255)"
 gray_color="rgb(136,136,136)"
 def print_html_problems(problems, fname_base, dir_name):
     html_head = make_html_header()
-    with codecs.open(fname_base + '.html', 'w', 'utf-8') as fout:
+    with codecs.open('{0}/{1}.html'.format(dir_name, fname_base), 'w', 'utf-8') as fout:
         fout.write(html_head)
         for p in tqdm(problems):
             print_html_problem(p, dir_name)
@@ -208,7 +210,7 @@ def print_html_problems(problems, fname_base, dir_name):
             else:
                 color = white_color
             prob_id = p.get('pair_id', '00000')
-            prob_html_fname = dir_name + '/' + prob_id + '.html'
+            prob_html_fname = prob_id + '.html'
             proving_time = -1.0
             html_str = (
                 '<tr>\n'
@@ -226,6 +228,7 @@ def print_html(roots, fname_base='main', dir_name='results'):
     print('Creating HTML graphical output. Please be patient...')
     problems = get_problems(roots, '')
     print_html_problems(problems, fname_base + '_all', dir_name)
+    print('HTML graphical output written to {0}/{1}_all.html'.format(dir_name, fname_base))
 
 def main(args = None):
     DESCRIPTION=textwrap.dedent("""\
