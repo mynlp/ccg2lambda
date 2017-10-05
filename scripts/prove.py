@@ -32,8 +32,6 @@ import textwrap
 from semantic_tools import prove_doc
 from semparse import serialize_tree
 from utils import time_count
-# TODO: maybe remove this functionality from this script.
-from visualization_tools import convert_doc_to_mathml
 from visualization_tools import convert_root_to_mathml
 
 ARGS=None
@@ -63,51 +61,47 @@ def main(args = None):
         choices=["no", "naive", "spsa"],
         help="Activate on-demand axiom injection (default: no axiom injection).")
     parser.add_argument("--gold_trees", action="store_true", default=False)
+    parser.add_argument("--print", nargs='?', type=str, default="result",
+        choices=["result", "status"],
+        help="Print to standard output the inference result or termination status.")
+    parser.add_argument("--print_length", nargs='?', type=str, default="full",
+        choices=["full", "short", "zero"],
+        help="Length of printed output.")
     parser.add_argument("--ncores", nargs='?', type=int, default="1",
         help="Number of cores for multiprocessing.")
-    args = parser.parse_args()
+    ARGS = parser.parse_args()
 
     logging.basicConfig(level=logging.WARNING)
       
-    if not os.path.exists(args.sem):
-        print('File does not exist: {0}'.format(args.sem), file=sys.stderr)
+    if not os.path.exists(ARGS.sem):
+        print('File does not exist: {0}'.format(ARGS.sem), file=sys.stderr)
         parser.print_help(file=sys.stderr)
         sys.exit(1)
     
-    if args.abduction == "spsa":
+    if ARGS.abduction == "spsa":
         from abduction_spsa import AxiomsWordnet
         ABDUCTION = AxiomsWordnet()
-    elif args.abduction == "naive":
+    elif ARGS.abduction == "naive":
         from abduction_naive import AxiomsWordnet
         ABDUCTION = AxiomsWordnet()
 
     parser = etree.XMLParser(remove_blank_text=True)
-    root = etree.parse(args.sem, parser)
-
-    # if args.graph_out:
-    #     html_str = convert_doc_to_mathml(doc, coq_scripts, args.gold_trees)
-    #     with codecs.open(args.graph_out, 'w', 'utf-8') as fout:
-    #         fout.write(html_str)
-    # TODO: enable graphical output (or perhaps as stand-alone).
-    # if args.graph_out:
-    #     html_str = convert_root_to_mathml(doc, coq_scripts, args.gold_trees)
-    #     with codecs.open(args.graph_out, 'w', 'utf-8') as fout:
-    #         fout.write(html_str)
+    root = etree.parse(ARGS.sem, parser)
 
     DOCS = root.findall('.//document')
     document_inds = range(len(DOCS))
-    proof_nodes = prove_docs(document_inds, args.ncores)
+    proof_nodes = prove_docs(document_inds, ARGS.ncores)
     assert len(proof_nodes) == len(DOCS), \
         'Num. elements mismatch: {0} vs {1}'.format(len(proof_nodes), len(DOCS))
     for doc, proof_node in zip(DOCS, proof_nodes):
         doc.append(proof_node)
 
-    if args.proof:
-        serialize_tree_to_file(root, args.proof)
+    if ARGS.proof:
+        serialize_tree_to_file(root, ARGS.proof)
 
-    if args.graph_out:
-        html_str = convert_root_to_mathml(root, args.gold_trees)
-        with codecs.open(args.graph_out, 'w', 'utf-8') as fout:
+    if ARGS.graph_out:
+        html_str = convert_root_to_mathml(root, ARGS.gold_trees)
+        with codecs.open(ARGS.graph_out, 'w', 'utf-8') as fout:
             fout.write(html_str)
 
 @time_count
@@ -149,6 +143,7 @@ def prove_doc_ind(document_ind):
     global lock
     doc = DOCS[document_ind]
     proof_node = etree.Element('proof')
+    inference_result = 'unknown'
     try:
         theorem = prove_doc(doc, ABDUCTION)
         proof_node.set('status', 'success')
@@ -156,14 +151,9 @@ def prove_doc_ind(document_ind):
         proof_node.set('inference_result', inference_result)
         theorems_node = theorem.to_xml()
         proof_node.append(theorems_node)
-        # TODO: have a better way to track progress.
-        # print(inference_result[0], end='', file=sys.stdout)
-        print(inference_result, end='', file=sys.stdout)
     except TimeoutExpired as e:
         proof_node.set('status', 'timedout')
         proof_node.set('inference_result', 'unknown')
-        # print('t', end='', file=sys.stdout)
-        print('unknown', end='', file=sys.stdout)
     except Exception as e:
         doc_id = doc.get('id', '(unspecified)')
         lock.acquire()
@@ -173,9 +163,16 @@ def prove_doc_ind(document_ind):
         lock.release()
         proof_node.set('status', 'failed')
         proof_node.set('inference_result', 'unknown')
-        # print('x', end='', file=sys.stdout)
-        print('unknown', end='', file=sys.stdout)
-        raise
+    if ARGS.print == 'status':
+        label = proof_node.get('status')
+    else:
+        label = proof_node.get('inference_result', 'unknown')
+    lock.acquire()
+    if ARGS.print_length == 'full':
+        print(label, end='', file=sys.stdout)
+    elif ARGS.print_length == 'short':
+        print(label[0], end='', file=sys.stdout)
+    lock.release()
     sys.stdout.flush()
     return etree.tostring(proof_node)
 
