@@ -17,8 +17,8 @@
 
 import unittest
 
-from abduction_tools import get_tree_pred_args
-from abduction_tools import get_premises_that_match_conclusion_args
+from coq_analyzer import get_tree_pred_args
+from coq_analyzer import get_premises_that_match_conclusion_args
 from tree_tools import tree_or_string
 
 class GetTreePredArgsTestCase(unittest.TestCase):
