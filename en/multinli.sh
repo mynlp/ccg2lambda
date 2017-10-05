@@ -34,7 +34,7 @@ parsed_dir="parsed" # parsed sentences into XML or other formats.
 results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
 # parsers="easyccg candc"
-parsers="easyccg"
+parsers="candc"
 ncores=200
 
 # multinli=multinli/multinli_0.9_train.jsonl

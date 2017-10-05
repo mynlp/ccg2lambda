@@ -44,28 +44,65 @@ def load_files(proof_fnames):
         roots.append(docs)
     return roots
 
+possible_inference_results = set(['yes', 'no', 'unknown'])
+def select_result(inference_results):
+    """
+    inference_results is a list with elements {'yes', 'no', 'unknown'}.
+    """
+    if not inference_results:
+        return 'unknown'
+    for r in inference_results:
+        assert r in possible_inference_results, '{0} not in {1}'.format(r, possible_inference_results)
+        if r != 'unknown':
+            return r
+    return 'unknown'
+
 def get_sys_labels(roots):
-    labels = []
+    labels = dict()
     for root in roots:
-        labels.extend(root.xpath('./document/proof/@inference_result'))
+        for doc in root.xpath('./document'):
+            problem_id = doc.get('pair_id', None)
+            if problem_id is not None and labels.get(problem_id, None) not in ['yes', 'no']:
+                inference_results = doc.xpath('./proof/@inference_result')
+                labels[problem_id] = select_result(inference_results)
     return labels
     
 def get_gold_labels(roots):
-    labels = []
+    labels = dict()
     for root in roots:
-        labels.extend(root.xpath('./document/@rte_label'))
+        for doc in root.xpath('./document'):
+            problem_id = doc.get('pair_id', None)
+            rte_label = doc.get('rte_label', None)
+            if problem_id is not None and rte_label is not None:
+                if problem_id in labels and labels[problem_id] != rte_label:
+                    logging.warning(
+                        'problem_id {0} with different rte_label: {1} vs {2}'.format(
+                        problem_id, labels[problem_id], rte_label))
+                else:
+                    labels[problem_id] = rte_label
     return labels
 
 def print_accuracy(gold_labels, sys_labels):
-    hits = sum(int(g == s) for g, s in zip(gold_labels, sys_labels))
-    accuracy = float(hits) / len(sys_labels)
+    if len(gold_labels) != len(sys_labels):
+        logging.warning(
+            'In computing accuracy, the number of gold and system labels differs: g{0} vs s{1}.'.format(
+            len(gold_labels), len(sys_labels)))
+    hits = 0
+    for prob_id, gold_label in gold_labels.items():
+        if sys_labels.get(prob_id, 'unknown') == gold_label:
+            hits += 1
+    accuracy = float(hits) / len(gold_labels)
     print('Accuracy: {0:.4f}'.format(accuracy))
 
 def print_label_distribution(labels, title=''):
-    c = Counter(labels)
+    c = Counter(labels.values())
     print('Label Distribution {0}: {1}'.format(title.rjust(5), c))
 
-def print_confusion_matrix(gold_labels, sys_labels):
+# TODO: print precision and recall too.
+def print_confusion_matrix(gold_id_labels, sys_id_labels):
+    gold_ids = gold_id_labels.keys()
+    gold_labels = [gold_id_labels[i] for i in gold_ids]
+    sys_labels = [sys_id_labels.get(i, 'unknown') for i in gold_ids]
     c = ConfusionMatrix(gold_labels, sys_labels)
     print('Confusion matrix:\n{0}'.format(c))
     true_positives = c.get('yes', 'yes') + c.get('no', 'no')
@@ -257,8 +294,6 @@ def main(args = None):
     roots = load_files(proof_fnames)
     gold_labels = get_gold_labels(roots)
     sys_labels = get_sys_labels(roots)
-    # assert len(gold_labels) == len(sys_labels), \
-    #     '{0} != {1}'.format(len(gold_labels) == len(sys_labels))
     print('Number of problems processed: {0}'.format(len(sys_labels)))
 
     if gold_labels:
