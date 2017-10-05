@@ -98,7 +98,6 @@ def print_label_distribution(labels, title=''):
     c = Counter(labels.values())
     print('Label Distribution {0}: {1}'.format(title.rjust(5), c))
 
-# TODO: print precision and recall too.
 def print_confusion_matrix(gold_id_labels, sys_id_labels):
     gold_ids = gold_id_labels.keys()
     gold_labels = [gold_id_labels[i] for i in gold_ids]

@@ -42,7 +42,7 @@ def prove_doc(doc, abduction=None):
     If results are not conclusive, attempt basic abduction.
     """
     theorem = Theorem.from_doc(doc)
-    theorem.timeout = 100
+    theorem.timeout = 300
     theorem.prove(abduction)
     return theorem
 

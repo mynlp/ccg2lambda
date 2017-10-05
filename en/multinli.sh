@@ -26,7 +26,7 @@ cp en/coqlib_sick.v coqlib.v
 coqc coqlib.v
 cp en/tactics_coq_sick.txt tactics_coq.txt
 
-category_templates=en/semantic_templates_en_event.yaml
+category_templates=en/semantic_templates_en_event_flat.yaml
 # These variables contain the names of the directories where intermediate
 # results will be written.
 plain_dir="plain" # tokenized sentences.
@@ -35,7 +35,7 @@ results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
 # parsers="easyccg candc"
 parsers="candc"
-ncores=200
+ncores=50
 
 # multinli=multinli/multinli_0.9_train.jsonl
 # sentences_basename=multinli
@@ -50,7 +50,7 @@ ncores=200
 # fi
 
 # sentences_basename="snli.train"
-sentences_basename="sick.trial"
+sentences_basename="sick.test"
 multinli=en/${sentences_basename}.jsonl
 python scripts/get_nli_sentences.py \
     $multinli \
@@ -77,23 +77,12 @@ function parse_candc() {
       --input ${plain_dir}/${base_fname}.tok \
     2> ${parsed_dir}/${base_fname}.candc.log \
      > ${parsed_dir}/${base_fname}.candc.xml
-  python en/candc2transccg.py ${parsed_dir}/${base_fname}.candc.xml \
+  python en/candc2transccg.py \
+      ${parsed_dir}/${base_fname}.candc.xml \
+      ${parsed_dir}/${base_fname}.candc.log \
     > ${parsed_dir}/${base_fname}.candc.jigg.xml \
     2> ${parsed_dir}/${base_fname}.candc.jigg.log
 }
-
-# function parse_easyccg() {
-#   # Parse using EasyCCG.
-#   base_fname=$1
-#   cat ${plain_dir}/${base_fname}.tok | \
-#   ${candc_dir}/bin/pos \
-#     --model ${candc_dir}/models/pos \
-#     --maxwords 410 | \
-#   ${candc_dir}/bin/ner \
-#     --model ${candc_dir}/models/ner \
-#     --maxwords 410 \
-#     --ofmt "%w|%p|%n \n" > ${parsed_dir}/multinli.ner
-# }
 
 function parse_easyccg() {
   # Parse using EasyCCG.
@@ -169,6 +158,7 @@ for parser in ${parsers}; do
         --proof ${rte_fname/rte/proof} \
         --abduction spsa \
         --ncores $ncores \
+        --print_length short \
         2> ${rte_fname/rte/proof}.log
       echo
     fi
