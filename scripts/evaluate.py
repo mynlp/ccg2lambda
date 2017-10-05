@@ -92,7 +92,7 @@ def print_accuracy(gold_labels, sys_labels):
         if sys_labels.get(prob_id, 'unknown') == gold_label:
             hits += 1
     accuracy = float(hits) / len(gold_labels)
-    print('Accuracy: {0:.4f}'.format(accuracy))
+    print('Accuracy: {0:.4f} ({1}/{2})'.format(accuracy, hits, len(gold_labels)))
 
 def print_label_distribution(labels, title=''):
     c = Counter(labels.values())
@@ -109,6 +109,10 @@ def print_confusion_matrix(gold_id_labels, sys_id_labels):
     true_negatives = c.get('unknown', 'unknown')
     false_positives = c.get('unknown', 'yes') + c.get('unknown', 'no')
     false_negatives = c.get('yes', 'unknown') + c.get('no', 'unknown')
+    print('Precision      : {0:.4f}'.format(
+        float(true_positives) / (true_positives + false_positives)))
+    print('Recall         : {0:.4f}'.format(
+        float(true_positives) / (true_positives + false_negatives)))
     print('True positives : {0}'.format(true_positives))
     print('True negatives : {0}'.format(true_negatives))
     print('False positives: {0}'.format(false_positives))
@@ -197,22 +201,6 @@ def make_html_header():
 def make_html_tail():
     return '</table>\n</body>\n</html>'
 
-# def get_doc_error_type(doc):
-#     cond = '@rte_label = "unknown" and ./proof/@inference_result != "unknown"'
-#     if doc.xpath('{0}'.format(cond)):
-#         return 'false_positive'
-#     cond = '@rte_label != "unknown" and ./proof/@inference_result = "unknown"'
-#     if doc.xpath('{0}'.format(cond)):
-#         return 'false_negative'
-#     cond = '@rte_label != "unknown" and ./proof/@inference_result = @rte_label'
-#     if doc.xpath('{0}'.format(cond)):
-#         return 'true_positive'
-#     cond = '@rte_label = "unknown" and ./proof/@inference_result = @rte_label'
-#     if doc.xpath('{0}'.format(cond)):
-#         return 'true_negative'
-#     from pudb import set_trace; set_trace()
-#     raise ValueError('Error not recognized for document:\n{0}'.format(doc))
-
 def print_html_problem(doc, dir_name):
     prob_id = doc.get('pair_id', '00000')
     prob_html_fname = dir_name + '/' + prob_id + '.html'
@@ -277,7 +265,7 @@ def main(args = None):
         description=DESCRIPTION)
     parser.add_argument("proofs", nargs='+',
         help="XML input filename(s) with proof results.")
-    parser.add_argument("--dir_name", nargs='?', type=str, default='results',
+    parser.add_argument("--dir_name", nargs='?', type=str, default='',
         help="Directory name where evaluation results will be stored.")
     args = parser.parse_args()
 
@@ -313,9 +301,10 @@ def main(args = None):
     print_num_semantic_errors(roots)
     print_proof_status_stats(roots)
 
-    if not os.path.exists(args.dir_name):
-        os.makedirs(args.dir_name)
-    print_html(roots, 'main', args.dir_name)
+    if args.dir_name:
+        if not os.path.exists(args.dir_name):
+            os.makedirs(args.dir_name)
+        print_html(roots, 'main', args.dir_name)
 
 
 if __name__ == '__main__':
