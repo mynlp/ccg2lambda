@@ -157,7 +157,7 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
 
 def get_surf_from_xml_node(node):
     tokens = node.xpath(
-        ".//token[not(@surf='*')]/@surf | //token[@surf='*']/@base")
+        "./tokens/token[not(@surf='*')]/@surf | ./tokens/token[@surf='*']/@base")
     return ' '.join(tokens)
 
 def convert_doc_to_mathml(doc, use_gold_trees=False):
@@ -176,7 +176,10 @@ def convert_doc_to_mathml(doc, use_gold_trees=False):
         sentence_text = get_surf_from_xml_node(sentence)
         ccg_trees = sentence.xpath('./ccg')
         sem_trees = sentence.xpath('./semantics')
-        tokens = sentence.xpath('./tokens')[0]
+        tokens = sentence.xpath('./tokens')
+        if not tokens:
+            return mathml_str
+        tokens = tokens[0]
         assert len(ccg_trees) >= len(sem_trees)
         for i in range(len(ccg_trees)):
             ccg_tree_id = ccg_trees[i].get('id', str(i))
