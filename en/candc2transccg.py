@@ -238,7 +238,6 @@ def main(args=None):
 
     print('Produced {0} transccg trees'.format(len(transccg_trees)), file=sys.stderr)
     transccg_xml_tree = make_transccg_xml_tree(transccg_trees)
-    # transccg_xml_tree.write(pretty_print=True, encoding='utf-8')
     encoding = xml_tree.docinfo.encoding
     result = etree.tostring(transccg_xml_tree, xml_declaration=True,
                             encoding=encoding, pretty_print=True)
