@@ -17,6 +17,7 @@
 
 import codecs
 from collections import OrderedDict
+import itertools
 import logging
 from lxml import etree
 import subprocess
@@ -26,16 +27,18 @@ from nltk2coq import normalize_interpretation
 from semantic_types import get_dynamic_library_from_doc
 from tactics import get_tactics
 
+
 class Theorem(object):
     """
     Manage a theorem and its variations.
     """
 
-    def __init__(self, premises, conclusion, axioms=None, is_negated=False):
+    def __init__(self, premises, conclusion, axioms=None, dynamic_library_str='',
+                 is_negated=False):
         self.premises = premises
         self.conclusion = conclusion
         self.axioms = set() if axioms is None else axioms
-        self.dynamic_library_str = None
+        self.dynamic_library_str = dynamic_library_str
         self.inference_result = None
         self.coq_script = None
         self.is_negated = is_negated
@@ -43,6 +46,7 @@ class Theorem(object):
         self.doc = None
         self.failure_log = None
         self.timeout = 100
+        self.labels = []
 
     def __repr__(self):
         return self.coq_script
@@ -60,11 +64,10 @@ class Theorem(object):
         """
         formulas = get_formulas_from_doc(doc)
         if not formulas or len(formulas) < 2:
-            return Theorem([], '', set())
+            return Theorem([], '', set(), '')
         dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, formulas)
         premises, conclusion = formulas[:-1], formulas[-1]
-        theorem = Theorem(premises, conclusion, set())
-        theorem.dynamic_library_str = dynamic_library_str
+        theorem = Theorem(premises, conclusion, set(), dynamic_library_str)
         theorem.doc = doc
         return theorem
 
@@ -78,9 +81,8 @@ class Theorem(object):
         if is_negated is None:
             is_negated = self.is_negated
         theorem = Theorem(
-            new_premises, new_conclusion, new_axioms, is_negated=is_negated)
-        theorem.dynamic_library_str = self.dynamic_library_str
-        theorem.is_negated = is_negated
+            new_premises, new_conclusion, new_axioms,
+            self.dynamic_library_str, is_negated=is_negated)
         theorem.doc = self.doc
         theorem.timeout = self.timeout
         self.variations.append(theorem)
@@ -146,7 +148,6 @@ class Theorem(object):
         if self.inference_result is False:
             neg_theorem = self.negate()
             neg_theorem.prove_simple()
-        # from pudb import set_trace; set_trace()
         if abduction and self.result == 'unknown' and self.doc is not None:
             abduction.attempt(self)
         return
@@ -281,7 +282,6 @@ def make_coq_script(premise_interpretations, conclusion, dynamic_library = '', a
     coq_script = "Require Export coqlib.\n{0}\nTheorem t1: {1}. {2}.".format(
         dynamic_library, coq_formulae, tactics)
     if axioms is not None and len(axioms) > 0:
-        # from pudb import set_trace; set_trace()
         coq_script = insert_axioms_in_coq_script(axioms, coq_script)
     coq_script = substitute_invalid_chars(coq_script, 'replacement.txt')
     return coq_script
@@ -362,4 +362,113 @@ def insert_axioms_in_coq_script(axioms, coq_script):
         coq_script_lines.insert(theorem_line, axiom)
     new_coq_script = '\n'.join(coq_script_lines)
     return new_coq_script
+
+# TODO: Move this to another file.
+class MasterTheorem(Theorem):
+    """
+    Produce multiple theorems derived from the combination of
+    different semantic interpretations of sentences. Check those
+    theorems and build an ensemble of judgements.
+    """
+
+    def __init__(self, theorems=None):
+        self.theorems = [] if theorems is None else theorems
+        self.doc = None
+        self.inference_result = None
+        self.failure_log = None
+        self.timeout = 100
+
+    def __repr__(self):
+        return '\n'.join(t.coq_script for t in self.theorems)
+
+    def __hash__(self):
+        return hash(self.__repr__())
+
+    def __eq__(self, other):
+        return isinstance(other, MasterTheorem) and self.__hash__() == other.__hash__()
+
+    @staticmethod
+    def from_doc(doc):
+        """
+        Build multiple theorems from an XML document produced by semparse.py script.
+        """
+        theorems = []
+        for semantics in generate_semantics_from_doc(doc, max_gen=10):
+            # from pudb import set_trace; set_trace()
+            formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics]
+            assert formulas and len(formulas) > 1
+            dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, formulas)
+            premises, conclusion = formulas[:-1], formulas[-1]
+            theorem = Theorem(premises, conclusion, set(), dynamic_library_str)
+            labels = [(s.get('ccg_id', None), s.get('ccg_parser', None)) for s in semantics]
+            theorem.labels = labels
+            theorem.doc = doc
+            theorems.append(theorem)
+        master_theorem = MasterTheorem(theorems)
+        return master_theorem
+
+    def prove(self, abduction=None):
+        for theorem in self.theorems:
+            theorem.prove(abduction)
+            if theorem.result != 'unknown':
+                break
+
+    @property
+    def result(self):
+        for theorem in self.theorems:
+            if theorem.result != 'unknown':
+                return theorem.result
+        return 'unknown'
+
+    def get_best_theorem(self):
+        if not self.theorems:
+            return None
+        for theorem in self.theorems:
+            if theorem.result != 'unknown':
+                return theorem
+        return self.theorems[0]
+
+    def to_xml(self):
+        theorem = self.get_best_theorem()
+        if not theorem:
+            ts_node = etree.Element('theorems')
+        else:
+            ts_node = theorem.to_xml()
+        return ts_node
+
+
+def generate_semantics_from_doc(doc, max_gen=1):
+    """
+    Returns string representations of logical formulas,
+    as stored in the "sem" attribute of the root node
+    of semantic trees.
+    If a premise has no semantic representation, it is ignored.
+    If there are no semantic representation at all, or the conclusion
+    has no semantic representation, it returns None to signal an error.
+    """
+    sentences = doc.xpath('./sentences/sentence')
+    # There are not enough correctly parsed sentences to form a theorem.
+    if not sentences or len(sentences) < 2:
+        return
+    semantics_lists = []
+    for sentence in sentences:
+        semantics_lists.append(sentence.xpath('./semantics'))
+    # Case: the conclusion has no semantic interpretations.
+    if len(semantics_lists[-1]) == 0:
+        return
+
+    i = 0
+    for sems in itertools.product(*semantics_lists):
+        # from pudb import set_trace; set_trace()
+        if i >= max_gen:
+            return
+        if any(sem.get('status', 'failed') != 'success' for sem in sems):
+            continue
+        if any(sem.xpath('./span[1]/@sem')[0] is None for sem in sems):
+            continue
+        i += 1
+        yield sems
+    if i == 0:
+        logging.warning('Cartesian product of semantic interpretations exhausted with i == 0')
+    return
 

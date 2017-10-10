@@ -100,8 +100,8 @@ def main(args = None):
         save_xml_root(res, args.rte, num_sentences // 2)
 
 def save_xml_root(root, fname, ind):
-    if fname.endswith('.xml'):
-        fname = '{0}.{1}.xml'.format(fname[:-4], ind)
+    # if fname.endswith('.xml'):
+    #     fname = '{0}.{1}.xml'.format(fname[:-4], ind)
     root_xml_str = serialize_tree(root)
     with codecs.open(fname, 'wb') as fout:
         fout.write(root_xml_str)

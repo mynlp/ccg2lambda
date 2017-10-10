@@ -121,6 +121,7 @@ def prove_docs(document_inds, ncores=1):
     proof_nodes = [etree.fromstring(p) for p in proof_nodes]
     return proof_nodes
 
+# TODO: try other kMaxTasksPerChild
 def prove_docs_par(document_inds, ncores=3):
     pool = Pool(processes=ncores, maxtasksperchild=kMaxTasksPerChild)
     proof_nodes = pool.map(prove_doc_ind, document_inds)
@@ -145,6 +146,7 @@ def prove_doc_ind(document_ind):
     proof_node = etree.Element('proof')
     inference_result = 'unknown'
     try:
+        # from pudb import set_trace; set_trace()
         theorem = prove_doc(doc, ABDUCTION)
         proof_node.set('status', 'success')
         inference_result = theorem.result
@@ -169,7 +171,10 @@ def prove_doc_ind(document_ind):
         label = proof_node.get('inference_result', 'unknown')
     lock.acquire()
     if ARGS.print_length == 'full':
-        print(label, end='', file=sys.stdout)
+        print('{0} {1}'.format(
+            doc.get('pair_id', ''),
+            label,
+            end='\n', file=sys.stdout))
     elif ARGS.print_length == 'short':
         print(label[0], end='', file=sys.stdout)
     lock.release()

@@ -26,15 +26,15 @@ cp en/coqlib_sick.v coqlib.v
 coqc coqlib.v
 cp en/tactics_coq_sick.txt tactics_coq.txt
 
-category_templates=en/semantic_templates_en_event_flat.yaml
+category_templates=en/semantic_templates_en_event.yaml
 # These variables contain the names of the directories where intermediate
 # results will be written.
 plain_dir="plain" # tokenized sentences.
 parsed_dir="parsed" # parsed sentences into XML or other formats.
 results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
-# parsers="easyccg candc"
-parsers="candc"
+parsers="easyccg candc"
+# parsers="candc"
 ncores=50
 
 # multinli=multinli/multinli_0.9_train.jsonl
@@ -50,7 +50,7 @@ ncores=50
 # fi
 
 # sentences_basename="snli.train"
-sentences_basename="sick.test"
+sentences_basename="sick.train"
 multinli=en/${sentences_basename}.jsonl
 python scripts/get_nli_sentences.py \
     $multinli \
@@ -149,24 +149,41 @@ for parser in ${parsers}; do
   fi
 done
 
-for parser in ${parsers}; do
-  for rte_fname in $parsed_dir/${sentences_basename}.${parser}.rte*.xml; do
-    if [ ! -e ${rte_fname/rte/proof} ]; then
-      echo -n "Proving for $rte_fname "
-      python scripts/prove.py \
-        $rte_fname \
-        --proof ${rte_fname/rte/proof} \
-        --abduction spsa \
-        --ncores $ncores \
-        --print_length short \
-        2> ${rte_fname/rte/proof}.log
-      echo
-    fi
-  done
-done
+if [ ! -e "$parsed_dir/${sentences_basename}.rte.xml" ]; then
+  python scripts/merge.py \
+    $parsed_dir/${sentences_basename}.rte.xml \
+    --input easyccg $parsed_dir/${sentences_basename}.easyccg.rte.xml \
+    --input candc $parsed_dir/${sentences_basename}.candc.rte.xml
+fi
 
-for parser in ${parsers}; do
-  echo "Evaluate on ${parser}:"
-  python scripts/evaluate.py $parsed_dir/${sentences_basename}.${parser}.proof*.xml
-done
+python scripts/prove.py \
+  $parsed_dir/${sentences_basename}.rte.xml \
+  --proof $parsed_dir/${sentences_basename}.proof.xml \
+  --abduction spsa \
+  --ncores $ncores \
+  --print_length short \
+  2> $parsed_dir/${sentences_basename}.proof.log
+
+python scripts/evaluate.py $parsed_dir/${sentences_basename}.proof.xml
+
+# for parser in ${parsers}; do
+#   for rte_fname in $parsed_dir/${sentences_basename}.${parser}.rte*.xml; do
+#     if [ ! -e ${rte_fname/rte/proof} ]; then
+#       echo -n "Proving for $rte_fname "
+#       python scripts/prove.py \
+#         $rte_fname \
+#         --proof ${rte_fname/rte/proof} \
+#         --abduction spsa \
+#         --ncores $ncores \
+#         --print_length short \
+#         2> ${rte_fname/rte/proof}.log
+#       echo
+#     fi
+#   done
+# done
+
+# for parser in ${parsers}; do
+#   echo "Evaluate on ${parser}:"
+#   python scripts/evaluate.py $parsed_dir/${sentences_basename}.${parser}.proof*.xml
+# done
 

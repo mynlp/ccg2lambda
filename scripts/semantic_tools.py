@@ -20,6 +20,7 @@ import re
 from knowledge import get_lexical_relations
 from semantic_types import get_dynamic_library_from_doc
 from theorem import Theorem
+from theorem import MasterTheorem
 from theorem import get_formulas_from_doc
 
 def build_knowledge_axioms(doc):
@@ -41,8 +42,11 @@ def prove_doc(doc, abduction=None):
     Then build a prover script and retrieve entailment judgement.
     If results are not conclusive, attempt basic abduction.
     """
-    theorem = Theorem.from_doc(doc)
-    theorem.timeout = 300
+    # TODO: parameterize the switch to choose the type of theorem...
+    # .. unless the MasterTheorem mechanism is a complete generalization.
+    # theorem = Theorem.from_doc(doc)
+    theorem = MasterTheorem.from_doc(doc)
+    theorem.timeout = 100
     theorem.prove(abduction)
     return theorem
 
