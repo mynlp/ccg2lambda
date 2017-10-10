@@ -33,16 +33,26 @@ def relabel(root, label=None):
         return root
     for ccg in root.xpath('./document/sentences/sentence/ccg'):
         ccg.set('id', '{0}_{1}'.format(label, ccg.get('id')))
+        ccg.set('ccg_parser', label)
     for sem in root.xpath('./document/sentences/sentence/semantics'):
         sem.set('ccg_id', '{0}_{1}'.format(label, sem.get('ccg_id')))
+        sem.set('ccg_parser', label)
     return root
 
 def create_index(root):
-    index = {doc.get('pair_id') : doc for doc in root.xpath('./document')}
+    index = {doc.get('pair_id', None) : doc for doc in root.xpath('./document')}
     return index
 
 def insert_nodes_by_tag(target, nodes, tag):
     assert isinstance(nodes, list)
+    target_nodes = target.xpath('./' + tag)
+    if not target_nodes:
+        target.extend(nodes)
+    else:
+        insert_index = target.index(target_nodes[-1])
+        for i, node in enumerate(nodes):
+            target.insert(insert_index + i + 1, node)
+    return
 
 class Merger(object):
     """
@@ -52,11 +62,13 @@ class Merger(object):
     def __init__(self):
         self.id2doc = None
         self.root = None
+        self.xml = None
 
     def add(self, root, label=None):
         root = relabel(root, label)
         if self.root is None:
-            self.root = root
+            self.xml = root
+            self.root = root.getroot()
             self.id2doc = create_index(self.root)
         for doc in root.xpath('./document'):
             doc_id = doc.get('id', None)
@@ -69,7 +81,7 @@ class Merger(object):
                 orig_doc = self.id2doc[doc_id]
                 orig_sents = orig_doc.xpath('./sentences/sentence')
                 new_sents = doc.xpath('./sentences/sentence')
-                assert len(orig_sents) == len(new_sents), '%d vs. %d' % len(orig_sents), len(new_sents)
+                assert len(orig_sents) == len(new_sents), '%d vs. %d' % (len(orig_sents), len(new_sents))
                 for orig_sent, new_sent in zip(orig_sents, new_sents):
                     new_ccgs = new_sent.xpath('./ccg')
                     if new_ccgs:
@@ -78,6 +90,12 @@ class Merger(object):
                     if new_sems:
                         insert_nodes_by_tag(orig_sent, new_sems, 'semantics')
         return
+
+    def write(self, out_fname):
+        xml_str = serialize_tree(self.xml)
+        with codecs.open(out_fname, 'wb') as fout:
+            fout.write(xml_str)
+        return True
 
 
 def main(args = None):
@@ -105,20 +123,12 @@ def main(args = None):
 
     parser = etree.XMLParser(remove_blank_text=True)
 
-    root = None
+    merger = Merger()
     for label, ifname in args.input:
-        lroot = etree.parse(ifname, parser)
-        relabel(lroot, label)
-        if root is None:
-            root = lroot
-        else:
-            merge(lroot, root)
+        root = etree.parse(ifname, parser)
+        merger.add(root, label)
 
-    sentences_orig = doc_orig.xpath('//sentence')
-
-    root_xml_str = serialize_tree(root)
-    with codecs.open(fname, 'wb') as fout:
-        fout.write(root_xml_str)
+    merger.write(args.out)
 
 if __name__ == '__main__':
     main()
