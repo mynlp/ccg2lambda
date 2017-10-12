@@ -393,11 +393,11 @@ class MasterTheorem(Theorem):
         Build multiple theorems from an XML document produced by semparse.py script.
         """
         theorems = []
-        for semantics in generate_semantics_from_doc(doc, max_gen=10):
+        for semantics in generate_semantics_from_doc(doc, max_gen=100):
             # from pudb import set_trace; set_trace()
             formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics]
             assert formulas and len(formulas) > 1
-            dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, formulas)
+            dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, semantics)
             premises, conclusion = formulas[:-1], formulas[-1]
             theorem = Theorem(premises, conclusion, set(), dynamic_library_str)
             labels = [(s.get('ccg_id', None), s.get('ccg_parser', None)) for s in semantics]
