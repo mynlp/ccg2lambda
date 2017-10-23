@@ -22,6 +22,7 @@ import networkx as nx
 from logic_parser import lexpr
 from nltk2graph import formula_to_graph
 from nltk2graph import merge_leaf_nodes
+from nltk2graph import rename_nodes
 
 # TODO: + test variables vs. constants vs. free variables.
 # TODO: + test functions as variables.
@@ -243,8 +244,51 @@ class MergeLeafNodesTestCase(unittest.TestCase):
         oG = merge_leaf_nodes(iG)
         self.assert_graphs_are_equal(eG, oG)
 
+class RenameNodesTestCase(unittest.TestCase):
+    def assert_graphs_are_equal(self, expected_graph, output_graph):
+        expected_graph = nx.convert_node_labels_to_integers(expected_graph)
+        output_graph = nx.convert_node_labels_to_integers(output_graph)
+        self.assertTrue(
+            are_graphs_equal(expected_graph, output_graph),
+            msg='\nexpected: {0}\n          {1}\nvs.\noutput:   {2}\n          {3}'.format(
+                expected_graph.adj, nx.get_node_attributes(expected_graph, 'label'),
+                output_graph.adj, nx.get_node_attributes(output_graph, 'label')))
+        return
+
+    def test_no_quant_pred_var(self):
+        iG = nx.DiGraph()
+        iG.add_nodes_from([
+            (i, {'label':s}) for i, s in enumerate('Px')])
+        iG.add_edges_from([(0, 1)])
+        iG.head_node = 0
+
+        eG = nx.DiGraph()
+        eG.add_nodes_from([
+            (i, {'label':s}) for i, s in enumerate('Px')])
+        eG.add_edges_from([(0, 1)])
+
+        oG = merge_leaf_nodes(iG)
+        self.assert_graphs_are_equal(eG, oG)
+
+    def test_quant_pred_var_const(self):
+        iG = nx.DiGraph()
+        iG.add_nodes_from([
+            (i, {'label':s}) for i, s in enumerate(['forall', 'x', 'P', 'y'])])
+        iG.add_edges_from([(0, 1), (0, 2), (2, 1), (2, 3)])
+        iG.head_node = 0
+
+        eG = nx.DiGraph()
+        eG.add_nodes_from([
+            (i, {'label':s}) for i, s in enumerate(['forall', '<var_en>', 'P', 'y'])])
+        eG.add_edges_from([(0, 1), (0, 2), (2, 1), (2, 3)])
+
+        # from pudb import set_trace; set_trace()
+        oG = rename_nodes(iG)
+        self.assert_graphs_are_equal(eG, oG)
+
 if __name__ == '__main__':
     suite1  = unittest.TestLoader().loadTestsFromTestCase(Nltk2GraphTestCase)
     suite2  = unittest.TestLoader().loadTestsFromTestCase(MergeLeafNodesTestCase)
-    suites  = unittest.TestSuite([suite1, suite2])
+    suite3  = unittest.TestLoader().loadTestsFromTestCase(RenameNodesTestCase)
+    suites  = unittest.TestSuite([suite1, suite2, suite3])
     unittest.TextTestRunner(verbosity=2).run(suites)

@@ -74,15 +74,16 @@ def get_scoped_nodes(graph, head_node=None, quant_active=None, quant_scope=None)
     """
     Returns a dictionary where:
     keys are tuples (scope_node_id, expression) and
-    values are lists of node IDs within the scope and with
+    values are lists of tuples (node ID, node_type)s within the scope and with
     the same expression.
+    node_type is one of {'leaf', 'internal'}.
     """
     if quant_scope is None:
         quant_scope = {}
     label = get_label(graph, head_node)
     if label in quantifiers:
         quant_active = head_node
-    elif quant_active in graph.pred[head_node]:
+    elif quant_active in graph.pred[head_node] and not graph.succ[head_node]:
         min_sibling_id = min(list(graph.succ[list(graph.pred[head_node])[0]].keys()))
         assert not graph.succ[min_sibling_id], 'Expected node {0} to be a leaf'.format(head_node)
         quant_scope[(quant_active, label)] = [(head_node, 'leaf')]
@@ -93,7 +94,6 @@ def get_scoped_nodes(graph, head_node=None, quant_active=None, quant_scope=None)
         get_scoped_nodes(graph, child_node_id, quant_active, quant_scope)
     return quant_scope
 
-# TODO: decide whether we want to modify the graph in-place.
 def merge_leaf_nodes(graph, head_node=None, quant_active=None, quant_scope=None):
     """
     Traverses the graph, merging those nodes
@@ -115,4 +115,38 @@ def merge_leaf_nodes(graph, head_node=None, quant_active=None, quant_scope=None)
                 # Add edges from quantifier to internal function names:
                 elif node_type == 'internal':
                     graph.add_edge(quant_node, node)
+    return graph
+
+def make_label(expr, node_type):
+    """
+    Make a graph label to replace named variable values and variable functions.
+    If it is a variable function (node_type = 'internal'), the label is '<var_func>'.
+    If it is a variable value (node_type = 'leaf'), the label is:
+        <var_ev> if the variable name starts with 'e' (event).
+        <var_en> otherwise (entity).
+    """
+    label = '<var_en>'
+    if node_type == 'internal':
+        label = '<var_func>'
+    else:
+        if expr.startswith('e'):
+            label = '<var_ev>'
+    return label
+
+def rename_nodes(graph, head_node=None, quant_active=None, quant_scope=None):
+    """
+    Traverses the graph, renaming those nodes that are either
+    variable values or variable functions.
+    """
+    # from pudb import set_trace; set_trace()
+    if head_node is None:
+        head_node = graph.head_node
+    # Get nodes and their scope information.
+    scoped_nodes = get_scoped_nodes(graph, head_node)
+    for nodes_to_relabel in scoped_nodes.values():
+        for node, node_type in nodes_to_relabel:
+            new_label = make_label(
+                get_label(graph, node),
+                node_type)
+            nx.set_node_attributes(graph, {node : new_label}, 'label')
     return graph
