@@ -20,9 +20,10 @@ import unittest
 import networkx as nx
 
 from logic_parser import lexpr
-from nltk2graph import formula_to_graph
+from nltk2graph import formula_to_tree
 from nltk2graph import merge_leaf_nodes
 from nltk2graph import rename_nodes
+from nltk2graph import formula_to_graph
 
 # TODO: + test variables vs. constants vs. free variables.
 # TODO: + test functions as variables.
@@ -34,37 +35,16 @@ from nltk2graph import rename_nodes
 # TODO: test two logical formulas with different proposition order producing the same graph.
 # TODO: test two logical formulas with different variable naming producing the same graph.
 
-def nodes_match(attrib1, attrib2):
-    return attrib1 == attrib2
-
-def are_graphs_equal_(g1, g2):
-    return nx.is_isomorphic(g1, g2, node_match=nodes_match)
-
-def are_graphs_equal2(g1, g2):
-    g1_graph = nx.convert_node_labels_to_integers(g1)
-    g2_graph = nx.convert_node_labels_to_integers(g2)
-    if g1_graph.adj != g2_graph.adj:
-        return False
-    if nx.get_node_attributes(g1_graph, 'label') != nx.get_node_attributes(g2_graph, 'label'):
-        return False
-    if g1_graph.edges != g2_graph.edges:
-        return False
-    return True
-
 def are_graphs_equal(g1, g2):
     g1_n2a = nx.get_node_attributes(g1, 'label')
-    # from pudb import set_trace; set_trace()
     g1_label_adj = sorted([(g1_n2a[src], frozenset(g1_n2a[trg] for trg in g1.succ[src])) for src in g1.nodes()])
     g2_n2a = nx.get_node_attributes(g2, 'label')
     g2_label_adj = sorted([(g2_n2a[src], frozenset(g2_n2a[trg] for trg in g2.succ[src])) for src in g2.nodes()])
 
     return g1_label_adj == g2_label_adj
 
-class Nltk2GraphTestCase(unittest.TestCase):
+class FormulaToTreeTestCase(unittest.TestCase):
     def assert_graphs_are_equal(self, expected_graph, output_graph):
-        # expected_graph = nx.convert_node_labels_to_integers(expected_graph)
-        # output_graph = nx.convert_node_labels_to_integers(output_graph)
-        # from pudb import set_trace; set_trace()
         self.assertTrue(
             are_graphs_equal(expected_graph, output_graph),
             msg='\nexpected: {0}\n          {1}\nvs.\noutput:   {2}\n          {3}'.format(
@@ -76,14 +56,14 @@ class Nltk2GraphTestCase(unittest.TestCase):
         formula = lexpr(r'a')
         eG = nx.DiGraph()
         eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate('a')])
-        G = formula_to_graph(formula)
+        G = formula_to_tree(formula)
         self.assert_graphs_are_equal(eG, G)
 
     def test_var(self):
         formula = lexpr(r'x')
         eG = nx.DiGraph()
         eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate('x')])
-        G = formula_to_graph(formula)
+        G = formula_to_tree(formula)
         self.assert_graphs_are_equal(eG, G)
 
     def test_pred_var(self):
@@ -91,7 +71,7 @@ class Nltk2GraphTestCase(unittest.TestCase):
         eG = nx.DiGraph()
         eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate('Px')])
         eG.add_edges_from([(0, 1)])
-        G = formula_to_graph(formula)
+        G = formula_to_tree(formula)
         self.assert_graphs_are_equal(eG, G)
 
     def test_quant_pred_var(self):
@@ -99,8 +79,7 @@ class Nltk2GraphTestCase(unittest.TestCase):
         eG = nx.DiGraph()
         eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['exists', 'x', 'P', 'x'])])
         eG.add_edges_from([(0, 1), (0,  2), (2, 3)])
-        # from pudb import set_trace; set_trace()
-        G = formula_to_graph(formula)
+        G = formula_to_tree(formula)
         self.assert_graphs_are_equal(eG, G)
 
     def test_quant_pred_var_var(self):
@@ -108,7 +87,7 @@ class Nltk2GraphTestCase(unittest.TestCase):
         eG = nx.DiGraph()
         eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['exists', 'x', 'exists', 'y', 'P', 'x', 'y'])])
         eG.add_edges_from([(0, 1), (0, 2), (2,  3), (2, 4), (4, 5), (4, 6)])
-        G = formula_to_graph(formula)
+        G = formula_to_tree(formula)
         self.assert_graphs_are_equal(eG, G)
 
     def test_quantf_pred_var(self):
@@ -116,7 +95,7 @@ class Nltk2GraphTestCase(unittest.TestCase):
         eG = nx.DiGraph()
         eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['exists', 'P', 'P', 'x'])])
         eG.add_edges_from([(0, 1), (0, 2), (2,  3)])
-        G = formula_to_graph(formula)
+        G = formula_to_tree(formula)
         self.assert_graphs_are_equal(eG, G)
 
     def test_lamdba_pred_var(self):
@@ -124,7 +103,7 @@ class Nltk2GraphTestCase(unittest.TestCase):
         eG = nx.DiGraph()
         eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['lambda', 'x', 'P', 'x'])])
         eG.add_edges_from([(0, 1), (0,  2), (2, 3)])
-        G = formula_to_graph(formula)
+        G = formula_to_tree(formula)
         self.assert_graphs_are_equal(eG, G)
 
     def test_and_pred_var_pred_var(self):
@@ -132,7 +111,7 @@ class Nltk2GraphTestCase(unittest.TestCase):
         eG = nx.DiGraph()
         eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate('&PxQx')])
         eG.add_edges_from([(0, 1),  (0, 3), (1, 2), (3, 4)])
-        G = formula_to_graph(formula)
+        G = formula_to_tree(formula)
         self.assert_graphs_are_equal(eG, G)
 
     def test_equality(self):
@@ -140,7 +119,7 @@ class Nltk2GraphTestCase(unittest.TestCase):
         eG = nx.DiGraph()
         eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate('=PxQx')])
         eG.add_edges_from([(0, 1),  (0, 3), (1, 2), (3, 4)])
-        G = formula_to_graph(formula)
+        G = formula_to_tree(formula)
         self.assert_graphs_are_equal(eG, G)
 
 class MergeLeafNodesTestCase(unittest.TestCase):
@@ -296,7 +275,6 @@ class RenameNodesTestCase(unittest.TestCase):
             (i, {'label':s}) for i, s in enumerate(['forall', '<var_en>', 'P', 'y'])])
         eG.add_edges_from([(0, 1), (0, 2), (2, 1), (2, 3)])
 
-        # from pudb import set_trace; set_trace()
         oG = rename_nodes(iG)
         self.assert_graphs_are_equal(eG, oG)
 
@@ -330,9 +308,134 @@ class RenameNodesTestCase(unittest.TestCase):
         oG = rename_nodes(iG)
         self.assert_graphs_are_equal(eG, oG)
 
+class FormulaToGraphTestCase(unittest.TestCase):
+    def assert_graphs_are_equal(self, expected_graph, output_graph):
+        self.assertTrue(
+            are_graphs_equal(expected_graph, output_graph),
+            msg='\nexpected: {0}\n          {1}\nvs.\noutput:   {2}\n          {3}'.format(
+                expected_graph.adj, nx.get_node_attributes(expected_graph, 'label'),
+                output_graph.adj, nx.get_node_attributes(output_graph, 'label')))
+        return
+
+    def assert_graphs_are_different(self, expected_graph, output_graph):
+        self.assertFalse(
+            are_graphs_equal(expected_graph, output_graph),
+            msg='\nexpected: {0}\n          {1}\nvs.\noutput:   {2}\n          {3}'.format(
+                expected_graph.adj, nx.get_node_attributes(expected_graph, 'label'),
+                output_graph.adj, nx.get_node_attributes(output_graph, 'label')))
+        return
+
+    def test_constant(self):
+        formula = lexpr(r'a')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate('a')])
+        G = formula_to_graph(formula)
+        self.assert_graphs_are_equal(eG, G)
+
+    def test_var(self):
+        formula = lexpr(r'x')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate('x')])
+        G = formula_to_graph(formula)
+        self.assert_graphs_are_equal(eG, G)
+
+    def test_pred_var(self):
+        formula = lexpr(r'P(x)')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate('Px')])
+        eG.add_edges_from([(0, 1)])
+        G = formula_to_graph(formula)
+        self.assert_graphs_are_equal(eG, G)
+
+    def test_quant_pred_var(self):
+        formula = lexpr(r'exists x. P(x)')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['exists', '<var_en>', 'P'])])
+        eG.add_edges_from([(0, 1), (0,  2), (2, 1)])
+        G = formula_to_graph(formula)
+        self.assert_graphs_are_equal(eG, G)
+
+    def test_quant_pred_var_var(self):
+        formula = lexpr(r'exists x y. P(x, y)')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['exists', '<var_en>', 'exists', '<var_en>', 'P'])])
+        eG.add_edges_from([(0, 1), (0, 2), (2,  3), (2, 4), (4, 1), (4, 3)])
+        G = formula_to_graph(formula)
+        self.assert_graphs_are_equal(eG, G)
+
+    def test_quantf_pred_var(self):
+        formula = lexpr(r'exists P. P(x)')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['exists', '<var_func>', '<var_func>', 'x'])])
+        eG.add_edges_from([(0, 1), (0, 2), (2,  3)])
+        G = formula_to_graph(formula)
+        self.assert_graphs_are_equal(eG, G)
+
+    def test_lamdba_pred_var(self):
+        formula = lexpr(r'\x. P(x)')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['lambda', 'x', 'P', 'x'])])
+        eG.add_edges_from([(0, 1), (0,  2), (2, 3)])
+        G = formula_to_graph(formula)
+        self.assert_graphs_are_equal(eG, G)
+
+    def test_and_pred_var_pred_var(self):
+        formula = lexpr(r'P(x) & Q(x)')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate('&PxQx')])
+        eG.add_edges_from([(0, 1),  (0, 3), (1, 2), (3, 4)])
+        G = formula_to_graph(formula)
+        self.assert_graphs_are_equal(eG, G)
+
+    def test_and_pred_var_pred_var_order(self):
+        formula1 = lexpr(r'all x. (P(x) & Q(x))')
+        formula2 = lexpr(r'all x. (Q(x) & P(x))')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['all', '<var_en>', '&', 'P', 'Q'])])
+        eG.add_edges_from([(0, 1),  (0, 2), (2, 3), (2, 4), (3, 1), (4, 1)])
+        G1 = formula_to_graph(formula1)
+        G2 = formula_to_graph(formula2)
+        self.assert_graphs_are_equal(eG, G1)
+        self.assert_graphs_are_equal(eG, G2)
+
+    def test_and_pred_var_pred_var_rename(self):
+        formula1 = lexpr(r'all x. (P(x) & Q(x))')
+        formula2 = lexpr(r'all y. (Q(y) & P(y))')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['all', '<var_en>', '&', 'P', 'Q'])])
+        eG.add_edges_from([(0, 1),  (0, 2), (2, 3), (2, 4), (3, 1), (4, 1)])
+        G1 = formula_to_graph(formula1)
+        G2 = formula_to_graph(formula2)
+        self.assert_graphs_are_equal(eG, G1)
+        self.assert_graphs_are_equal(eG, G2)
+
+    def test_and_pred_var_pred_var_rename2(self):
+        formula1 = lexpr(r'all x. exists y. (P(x, y) & Q(x))')
+        formula2 = lexpr(r'all y. exists x. (Q(y) & P(y, x))')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['all', '<var_en>', 'exists', '<var_en>', '&', 'P', 'Q'])])
+        eG.add_edges_from([(0, 1),  (0, 2), (2, 3), (2, 4), (4, 5), (4, 6), (5, 1), (5, 3), (6, 3)])
+        G1 = formula_to_graph(formula1)
+        G2 = formula_to_graph(formula2)
+        self.assert_graphs_are_equal(eG, G1)
+        self.assert_graphs_are_equal(eG, G2)
+
+    def test_and_pred_var_pred_var_rename2_different(self):
+        formula1 = lexpr(r'all x. exists y. (P(x, y) & Q(x))')
+        formula2 = lexpr(r'all y. exists x. (Q(x) & P(x, y))')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['all', '<var_en>', 'exists', '<var_en>', '&', 'P', 'Q'])])
+        eG.add_edges_from([(0, 1),  (0, 2), (2, 3), (2, 4), (4, 5), (4, 6), (5, 1), (5, 3), (6, 3)])
+        G1 = formula_to_graph(formula1)
+        G2 = formula_to_graph(formula2)
+        self.assert_graphs_are_equal(eG, G1)
+        # TODO: I cannot test yet for graph differences.
+        # self.assert_graphs_are_different(eG, G2)
+
 if __name__ == '__main__':
-    suite1  = unittest.TestLoader().loadTestsFromTestCase(Nltk2GraphTestCase)
+    suite1  = unittest.TestLoader().loadTestsFromTestCase(FormulaToTreeTestCase)
     suite2  = unittest.TestLoader().loadTestsFromTestCase(MergeLeafNodesTestCase)
     suite3  = unittest.TestLoader().loadTestsFromTestCase(RenameNodesTestCase)
-    suites  = unittest.TestSuite([suite1, suite2, suite3])
+    suite4  = unittest.TestLoader().loadTestsFromTestCase(FormulaToGraphTestCase)
+    suites  = unittest.TestSuite([suite1, suite2, suite3, suite4])
     unittest.TextTestRunner(verbosity=2).run(suites)

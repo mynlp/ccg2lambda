@@ -19,8 +19,19 @@ from logic_parser import lexpr
 
 import networkx as nx
 
-# TODO: make this counter local.
-node_id_gen = (i for i in range(10000))
+node_id_gen = (i for i in range(1000000))
+
+def formula_to_graph(formula):
+    """
+    Transforms a higher-order formula into a graph, following the paper:
+    https://arxiv.org/pdf/1709.09994.pdf
+    """
+    global node_id_gen
+    node_id_gen = (i for i in range(1000000))
+    tree = formula_to_tree(formula)
+    dag = merge_leaf_nodes(tree)
+    dag_renamed = rename_nodes(dag)
+    return dag_renamed
 
 def merge_graphs_to(graph, graphs):
     head_node = graph.head_node
@@ -30,7 +41,7 @@ def merge_graphs_to(graph, graphs):
     graph.head_node = head_node
     return graph
 
-def formula_to_graph(expr):
+def formula_to_tree(expr):
     if isinstance(expr, str):
         expr = lexpr(expr)
     expr_str = str(expr)
@@ -43,12 +54,12 @@ def formula_to_graph(expr):
     elif isinstance(expr, BinaryExpression):
         G.head_node = next(node_id_gen)
         G.add_node(G.head_node, label=expr.getOp())
-        graphs = map(formula_to_graph, [expr.first,  expr.second])
+        graphs = map(formula_to_tree, [expr.first,  expr.second])
         G = merge_graphs_to(G, graphs)
     elif isinstance(expr, ApplicationExpression):
         func, args = expr.uncurry()
-        G = formula_to_graph(func)
-        args_graphs = map(formula_to_graph, args)
+        G = formula_to_tree(func)
+        args_graphs = map(formula_to_tree, args)
         G = merge_graphs_to(G, args_graphs)
     elif isinstance(expr, VariableBinderExpression):
         quant = '<quant_unk>'
@@ -61,7 +72,7 @@ def formula_to_graph(expr):
         var_node_id = next(node_id_gen)
         G.add_node(var_node_id, label=str(expr.variable))
         G.add_edge(G.head_node, var_node_id)
-        graphs = map(formula_to_graph, [expr.term])
+        graphs = map(formula_to_tree, [expr.term])
         G = merge_graphs_to(G, graphs)
     return G
 
@@ -112,7 +123,6 @@ def merge_leaf_nodes(graph, head_node=None, quant_active=None, quant_scope=None)
     Traverses the graph, merging those nodes
     with the same label within the same quantificaton scope.
     """
-    # from pudb import set_trace; set_trace()
     if head_node is None:
         head_node = graph.head_node
     # Get nodes and their scope information.
@@ -128,6 +138,7 @@ def merge_leaf_nodes(graph, head_node=None, quant_active=None, quant_scope=None)
                 # Add edges from quantifier to internal function names:
                 elif node_type == 'internal':
                     graph.add_edge(quant_node, node)
+    graph.head_node = head_node
     return graph
 
 def make_label(expr, node_type):
@@ -153,7 +164,6 @@ def rename_nodes(graph, head_node=None, quant_active=None, quant_scope=None):
     Traverses the graph, renaming those nodes that are either
     variable values or variable functions.
     """
-    # from pudb import set_trace; set_trace()
     if head_node is None:
         head_node = graph.head_node
     # Get nodes and their scope information.
