@@ -70,6 +70,15 @@ def get_label(graph, node_id, label='label'):
 
 quantifiers = Tokens.QUANTS
 
+def find_its_quantifier(graph, node, label, quant_scope):
+    if (node, label) in quant_scope:
+        return node
+    preds = list(graph.pred[node])
+    quants = [find_its_quantifier(graph, pred, label, quant_scope) for pred in preds]
+    if not quants or all(q is False for q in quants):
+        return False
+    return max([q for q in quants if q is not False])
+
 def get_scoped_nodes(graph, head_node=None, quant_active=None, quant_scope=None):
     """
     Returns a dictionary where:
@@ -84,12 +93,16 @@ def get_scoped_nodes(graph, head_node=None, quant_active=None, quant_scope=None)
     if label in quantifiers:
         quant_active = head_node
     elif quant_active in graph.pred[head_node] and not graph.succ[head_node]:
+        # Case: a variable directly attached to its quantifier.
         min_sibling_id = min(list(graph.succ[list(graph.pred[head_node])[0]].keys()))
         assert not graph.succ[min_sibling_id], 'Expected node {0} to be a leaf'.format(head_node)
         quant_scope[(quant_active, label)] = [(head_node, 'leaf')]
-    elif (quant_active, label) in quant_scope:
-        node_type = 'leaf' if not graph.succ[head_node] else 'internal'
-        quant_scope[(quant_active, label)].append((head_node, node_type))
+    else:
+        # Case: a variable quantified in an outer scope.
+        node_quantifier = find_its_quantifier(graph, head_node, label, quant_scope)
+        if node_quantifier is not False:
+            node_type = 'leaf' if not graph.succ[head_node] else 'internal'
+            quant_scope[(node_quantifier, label)].append((head_node, node_type))
     for child_node_id in graph.succ[head_node]:
         get_scoped_nodes(graph, child_node_id, quant_active, quant_scope)
     return quant_scope
@@ -131,6 +144,8 @@ def make_label(expr, node_type):
     else:
         if expr.startswith('e'):
             label = '<var_ev>'
+        if expr[0].isupper():
+            label = '<var_func>'
     return label
 
 def rename_nodes(graph, head_node=None, quant_active=None, quant_scope=None):

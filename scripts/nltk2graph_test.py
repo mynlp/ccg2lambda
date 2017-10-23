@@ -240,7 +240,21 @@ class MergeLeafNodesTestCase(unittest.TestCase):
             (i, {'label':s}) for i, s in enumerate(['forall', 'P', 'x', '&', 'forall', 'Q', 'x'])])
         eG.add_edges_from([(0, 3), (0, 2), (1, 2), (3, 1), (3, 4), (4, 5), (4, 6), (5, 6)])
 
-        # from pudb import set_trace; set_trace()
+        oG = merge_leaf_nodes(iG)
+        self.assert_graphs_are_equal(eG, oG)
+
+    def test_quant_root_cross(self):
+        iG = nx.DiGraph()
+        iG.add_nodes_from([
+            (i, {'label':s}) for i, s in enumerate(['forall', 'x', 'P', 'x', '&', 'forall', 'y', 'Q', 'x', 'y'])])
+        iG.add_edges_from([(0, 1), (0, 4), (2, 3), (4, 2), (4, 5), (5, 6), (5, 7), (7, 8), (7, 9)])
+        iG.head_node = 0
+
+        eG = nx.DiGraph()
+        eG.add_nodes_from([
+            (i, {'label':s}) for i, s in enumerate(['forall', 'P', 'x', '&', 'forall', 'Q', 'y'])])
+        eG.add_edges_from([(0, 3), (0, 2), (1, 2), (3, 1), (3, 4), (4, 5), (4, 6), (5, 2), (5, 6)])
+
         oG = merge_leaf_nodes(iG)
         self.assert_graphs_are_equal(eG, oG)
 
@@ -283,6 +297,36 @@ class RenameNodesTestCase(unittest.TestCase):
         eG.add_edges_from([(0, 1), (0, 2), (2, 1), (2, 3)])
 
         # from pudb import set_trace; set_trace()
+        oG = rename_nodes(iG)
+        self.assert_graphs_are_equal(eG, oG)
+
+    def test_quant_pred_var_var(self):
+        iG = nx.DiGraph()
+        iG.add_nodes_from([
+            (i, {'label':s}) for i, s in enumerate(['forall', 'x', 'forall', 'y', 'P'])])
+        iG.add_edges_from([(0, 1), (0, 2), (2, 3), (2, 4), (4, 1), (4, 3)])
+        iG.head_node = 0
+
+        eG = nx.DiGraph()
+        eG.add_nodes_from([
+            (i, {'label':s}) for i, s in enumerate(['forall', '<var_en>', 'forall', '<var_en>', 'P'])])
+        eG.add_edges_from([(0, 1), (0, 2), (2, 3), (2, 4), (4, 1), (4, 3)])
+
+        oG = rename_nodes(iG)
+        self.assert_graphs_are_equal(eG, oG)
+
+    def test_quant_pred_var_var(self):
+        iG = nx.DiGraph()
+        iG.add_nodes_from([
+            (i, {'label':s}) for i, s in enumerate(['forall', 'x', 'forall', 'P', 'P', 'y'])])
+        iG.add_edges_from([(0, 1), (0, 2), (2, 3), (2, 4), (4, 1), (4, 5)])
+        iG.head_node = 0
+
+        eG = nx.DiGraph()
+        eG.add_nodes_from([
+            (i, {'label':s}) for i, s in enumerate(['forall', '<var_en>', 'forall', '<var_func>', '<var_func>', 'y'])])
+        eG.add_edges_from([(0, 1), (0, 2), (2, 3), (2, 4), (4, 1), (4, 5)])
+
         oG = rename_nodes(iG)
         self.assert_graphs_are_equal(eG, oG)
 
