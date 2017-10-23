@@ -19,8 +19,7 @@ from logic_parser import lexpr
 
 import networkx as nx
 
-import time
-
+# TODO: make this counter local.
 node_id_gen = (i for i in range(10000))
 
 def merge_graphs_to(graph, graphs):
@@ -66,9 +65,54 @@ def formula_to_graph(expr):
         G = merge_graphs_to(G, graphs)
     return G
 
-def merge_leaf_nodes(graph, head_node=None):
+def get_label(graph, node_id, label='label'):
+    return graph.nodes[node_id].get(label, None)
+
+quantifiers = Tokens.QUANTS
+
+def get_scoped_nodes(graph, head_node=None, quant_active=None, quant_scope=None):
+    """
+    Returns a dictionary where:
+    keys are tuples (scope_node_id, expression) and
+    values are lists of node IDs within the scope and with
+    the same expression.
+    """
+    if quant_scope is None:
+        quant_scope = {}
+    label = get_label(graph, head_node)
+    if label in quantifiers:
+        quant_active = head_node
+    elif quant_active in graph.pred[head_node]:
+        min_sibling_id = min(list(graph.succ[list(graph.pred[head_node])[0]].keys()))
+        assert not graph.succ[min_sibling_id], 'Expected node {0} to be a leaf'.format(head_node)
+        quant_scope[(quant_active, label)] = [(head_node, 'leaf')]
+    elif (quant_active, label) in quant_scope:
+        node_type = 'leaf' if not graph.succ[head_node] else 'internal'
+        quant_scope[(quant_active, label)].append((head_node, node_type))
+    for child_node_id in graph.succ[head_node]:
+        get_scoped_nodes(graph, child_node_id, quant_active, quant_scope)
+    return quant_scope
+
+# TODO: decide whether we want to modify the graph in-place.
+def merge_leaf_nodes(graph, head_node=None, quant_active=None, quant_scope=None):
     """
     Traverses the graph, merging those nodes
     with the same label within the same quantificaton scope.
     """
-    pass
+    # from pudb import set_trace; set_trace()
+    if head_node is None:
+        head_node = graph.head_node
+    # Get nodes and their scope information.
+    scoped_nodes = get_scoped_nodes(graph, head_node)
+    for (quant_node, expr), nodes_to_merge in scoped_nodes.items():
+        if len(nodes_to_merge) > 1:
+            master_node, node_type = nodes_to_merge[0]
+            assert node_type == 'leaf'
+            for node, node_type in nodes_to_merge[1:]:
+                # Merge leaves within the same scope:
+                if node_type == 'leaf':
+                    graph = nx.contracted_nodes(graph, master_node, node)
+                # Add edges from quantifier to internal function names:
+                elif node_type == 'internal':
+                    graph.add_edge(quant_node, node)
+    return graph
