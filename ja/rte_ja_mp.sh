@@ -126,6 +126,7 @@ function parse_depccg() {
   env PYTHONPATH=$depccg_dir/src:$PYTHONPATH \
     python ja/rte.py \
     ${depccg_dir}/../models/ja_headfinal \
+    ja \
     ${parsed_dir}/${base_fname}.tagged.xml \
     > ${parsed_dir}/${base_fname}.depccg.jigg.xml
 }
