@@ -61,6 +61,11 @@ def formula_to_tree(expr):
         G = formula_to_tree(func)
         args_graphs = map(formula_to_tree, args)
         G = merge_graphs_to(G, args_graphs)
+    elif isinstance(expr, NegatedExpression):
+        G.head_node = next(node_id_gen)
+        G.add_node(G.head_node, label='not')
+        graphs = map(formula_to_tree, [expr.term])
+        G = merge_graphs_to(G, graphs)
     elif isinstance(expr, VariableBinderExpression):
         quant = '<quant_unk>'
         if isinstance(expr, QuantifiedExpression):

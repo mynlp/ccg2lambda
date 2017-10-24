@@ -74,6 +74,14 @@ class FormulaToTreeTestCase(unittest.TestCase):
         G = formula_to_tree(formula)
         self.assert_graphs_are_equal(eG, G)
 
+    def test_neg_pred_var(self):
+        formula = lexpr(r'-P(x)')
+        eG = nx.DiGraph()
+        eG.add_nodes_from([(i, {'label':s}) for i, s in enumerate(['not', 'P', 'x'])])
+        eG.add_edges_from([(0, 1), (1, 2)])
+        G = formula_to_tree(formula)
+        self.assert_graphs_are_equal(eG, G)
+
     def test_quant_pred_var(self):
         formula = lexpr(r'exists x. P(x)')
         eG = nx.DiGraph()
