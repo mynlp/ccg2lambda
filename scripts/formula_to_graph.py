@@ -18,7 +18,8 @@ for i, line in enumerate(fileinput.input()):
         continue
     expr = lexpr(line)
     graph = formula_to_graph(expr)
-    nx.nx_agraph.write_dot(graph, './graph_{0}.dot'.format(i))
+    nx.drawing.nx_pydot.write_dot(graph, './graph_{0}.dot'.format(i))
+    # nx.nx_agraph.write_dot(graph, './graph_{0}.dot'.format(i))
     process = subprocess.Popen(
         'cat ./graph_{0}.dot | dot -Tpng -o graph_{0}.png'.format(i),
         shell=True,
