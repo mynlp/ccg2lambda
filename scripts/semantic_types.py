@@ -31,6 +31,7 @@ from nltk.sem.logic import ConstantExpression
 from nltk.sem.logic import InconsistentTypeHierarchyException
 from nltk.sem.logic import LogicalExpressionException
 from nltk.sem.logic import Variable
+from nltk.sem.logic import typecheck
 
 from knowledge import get_tokens_from_xml_node
 from logic_parser import lexpr
@@ -253,11 +254,83 @@ def make_new_pred_name(pred, pred_type):
     # from pudb import set_trace; set_trace()
     if type_len > 2:
         pred_name = '{0}_{1}'.format(str(pred), type_len)
+    elif type_len == 2:
+        pred_name = '{0}_{1}'.format(str(pred), str(pred_type.first))
     else:
-        pred_name = '{0}_e{1}'.format(str(pred), str(pred_type.first))
+        pred_name = '{0}_{1}'.format(str(pred), str(pred_type))
     return pred_name
 
 resolution_guide = {}
+
+def resolve_types_and_rename_collisions(expr, signature = {}):
+    """
+    Function that is used to traverse the structure of a NLTK formula
+    and infer types bottom up, resolving unknowns '?' into 't' (Prop).
+    """
+    global resolution_guide
+    signature = resolve_types_rec(expr, signature)
+
+    resolution_guide = {}
+    for pred, sigs_exprs in signature.items():
+        if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, _) in sigs_exprs)) > 1:
+            for pred_type, ex in sigs_exprs:
+                new_pred_name = make_new_pred_name(pred, pred_type)
+                resolution_guide[ex] = (pred, new_pred_name)
+
+    expr = expr.visit_structured(
+        lambda e: rename_guided(e, resolution_guide),
+        expr.__class__)
+    signature = expr.typecheck()
+
+    signature = remove_reserved_predicates(signature)
+    # signature = remove_colliding_predicates(signature, expr)
+    # signature = remove_reserved_predicates(signature)
+    signature = resolve_types_in_signature(signature)
+    return signature, expr
+
+def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
+    """
+    `signatures` is a list of dictionaries. Each dictionary has key-value
+      pairs where key is a predicate name, and value is a type object.
+    `exprs` are logical formula objects.
+    This function return a single signature dictionary with merged signatures.
+    If there is a predicate for which there are differing types, then the
+    predicate is renamed and each version is associated to a different type
+    in the signature dictionary. The target predicate is also renamed in
+    the logical expressions.
+    """
+    global resolution_guide
+
+    signatures = [resolve_types_rec(expr) for expr in exprs]
+    signature = defaultdict(list)
+    for s in signatures:
+        for k, v in s.items():
+            signature[k].extend(v)
+    
+    resolution_guide = {}
+    for pred, sigs_exprs in signature.items():
+        if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, _) in sigs_exprs)) > 1:
+            for pred_type, ex in sigs_exprs:
+                new_pred_name = make_new_pred_name(pred, pred_type)
+                resolution_guide[ex] = (pred, new_pred_name)
+
+    new_exprs = []
+    for expr in exprs:
+        expr = expr.visit_structured(
+            lambda e: rename_guided(e, resolution_guide),
+            expr.__class__)
+        new_exprs.append(expr)
+    signature = typecheck(new_exprs)
+
+    signature = remove_reserved_predicates(signature)
+    # signature = remove_colliding_predicates(signature, expr)
+    # signature = remove_reserved_predicates(signature)
+    try:
+        signature = resolve_types_in_signature(signature)
+    except:
+        from pudb import set_trace; set_trace()
+    return signature, new_exprs
+
 
 def resolve_types(expr, signature = {}):
     """
@@ -269,14 +342,10 @@ def resolve_types(expr, signature = {}):
 
     resolution_guide = {}
     for pred, sigs_exprs in signature.items():
-        # try:
-        #     len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, expr) in sigs_exprs))
-        # except:
-        #     from pudb import set_trace; set_trace()
-        if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, expr) in sigs_exprs)) > 1:
-            for pred_type, expr in sigs_exprs:
+        if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, _) in sigs_exprs)) > 1:
+            for pred_type, ex in sigs_exprs:
                 new_pred_name = make_new_pred_name(pred, pred_type)
-                resolution_guide[expr] = (pred, new_pred_name)
+                resolution_guide[ex] = (pred, new_pred_name)
 
     expr = expr.visit_structured(
         lambda e: rename_guided(e, resolution_guide),
@@ -390,7 +459,7 @@ def build_dynamic_library(exprs, preferred_signature=None):
     signature = remove_reserved_predicates(signature)
     return signature, exprs
 
-def combine_signatures_or_rename_preds(signatures, exprs, preferred_sig=None):
+def combine_signatures_or_rename_preds_(signatures, exprs, preferred_sig=None):
     """
     `signatures` is a list of dictionaries. Each dictionary has key-value
       pairs where key is a predicate name, and value is a type object.

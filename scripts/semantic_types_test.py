@@ -82,8 +82,9 @@ class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
     def test_different_one_pred_vartype(self):
         exprs = [lexpr(r'pred1(x)'), lexpr(r'pred1(F)')]
         expected_exprs = [lexpr(r'pred1_en(x)'), lexpr(r'pred1_pr(F)')]
-        sigs = [resolve_types(e) for e in exprs]
-        sig, exprs_new = combine_signatures_or_rename_preds(sigs, exprs)
+        # sigs = [resolve_types(e) for e in exprs]
+        # from pudb import set_trace; set_trace()
+        sig, exprs_new = combine_signatures_or_rename_preds(3, exprs)
         self.assertEqual(4, len(sig), msg='Unexpected signature: {0}'.format(sig))
         self.assertEqual(expected_exprs, exprs)
         self.assertEqual(exprs[0], exprs_new[0])
@@ -93,18 +94,38 @@ class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
 
     def test_different_in_same_expression(self):
         # exprs = [lexpr(r'pred1(x) & pred1(F)'), lexpr(r'pred1(F)')]
-        exprs = [lexpr(r'pred1(e) & pred1(x)'), lexpr(r'pred1(e)')]
-        from pudb import set_trace; set_trace()
-        sigs = [resolve_types(e) for e in exprs]
-        sig, exprs_new = combine_signatures_or_rename_preds(sigs, exprs)
+        # exprs = [lexpr(r'pred1(e) & pred1(x)'), lexpr(r'pred1(e)')]
+        expr = lexpr(r'pred1(e) & pred1(x)')
+        # from pudb import set_trace; set_trace()
+        from semantic_types import resolve_types_and_rename_collisions
+        sigs, new_expr = resolve_types_and_rename_collisions(expr)
+        # sig, exprs_new = combine_signatures_or_rename_preds(sigs, exprs)
         # print(sig)
         # print(exprs_new)
-        expected_exprs_new = [
-            lexpr(r'pred1_ev(v) & pred1_en(x)'), lexpr(r'pred1_ev(v)')]
-        self.assertEqual(expected_exprs_new, exprs_new)
-        self.assertEqual(4, len(sig), msg='Unexpected signature: {0}'.format(sig))
-        self.assertEqual(exprs[0], exprs_new[0])
-        self.assertNotEqual(exprs[1], exprs_new[1])
+        # expected_exprs_new = [
+        #     lexpr(r'pred1_ev(v) & pred1_en(x)'), lexpr(r'pred1_ev(v)')]
+        expected_expr = lexpr(r'pred1_v(e) & pred1_e(x)')
+        self.assertEqual(expected_expr, new_expr)
+        # self.assertEqual(4, len(sig), msg='Unexpected signature: {0}'.format(sig))
+        # self.assertEqual(exprs[0], exprs_new[0])
+        # self.assertNotEqual(exprs[1], exprs_new[1])
+
+    # def test_different_in_same_expression(self):
+    #     # exprs = [lexpr(r'pred1(x) & pred1(F)'), lexpr(r'pred1(F)')]
+    #     # exprs = [lexpr(r'pred1(e) & pred1(x)'), lexpr(r'pred1(e)')]
+    #     exprs = [lexpr(r'pred1(e) & pred1(x)')]
+    #     # from pudb import set_trace; set_trace()
+    #     sigs = [resolve_types(e) for e in exprs]
+    #     # sig, exprs_new = combine_signatures_or_rename_preds(sigs, exprs)
+    #     # print(sig)
+    #     # print(exprs_new)
+    #     # expected_exprs_new = [
+    #     #     lexpr(r'pred1_ev(v) & pred1_en(x)'), lexpr(r'pred1_ev(v)')]
+    #     expected_exprs_new = [lexpr(r'pred1_v(e) & pred1_e(x)')]
+    #     self.assertEqual(expected_exprs_new, exprs_new)
+    #     self.assertEqual(4, len(sig), msg='Unexpected signature: {0}'.format(sig))
+    #     self.assertEqual(exprs[0], exprs_new[0])
+    #     self.assertNotEqual(exprs[1], exprs_new[1])
 
 # TODO: also test for types that are Propositions 't'.
 
