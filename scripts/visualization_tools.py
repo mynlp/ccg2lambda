@@ -101,7 +101,7 @@ def get_semantics_mathml(semantics):
     return "<mtext " \
            + " fontsize='" + str(kOtherSize) + "'" \
            + " color='" + kSemanticsColor + "'>" \
-           + semantics \
+           + cgi.escape(semantics) \
            + "</mtext>\n"
 
 def convert_node_to_mathml(ccg_node, sem_tree, tokens):
@@ -211,10 +211,10 @@ def convert_doc_to_mathml(doc, use_gold_trees=False):
 
 def wrap_mathml_in_html(mathml_str):
     html_str = """\
-    <!doctype html>
+    <!DOCTYPE html>
     <html lang='en'>
     <head>
-      <meta charset='UTF-8'>
+      <meta charset='UTF-8'/>
       <title>CCG to Lambda conversion</title>
       <style>
         body {
@@ -290,13 +290,13 @@ def convert_doc_to_mathml_(doc, verbatim_strings = [], use_gold_trees=False):
   <!doctype html>
   <html lang='en'>
   <head>
-    <meta charset='UTF-8'>
-    <title>CCG to Lambda conversion</title>
     <style>
       body {
         font-size: 1em;
       }
     </style>
+    <meta charset='UTF-8'>
+    <title>CCG to Lambda conversion</title>
     <script type="text/javascript"
             src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
@@ -309,4 +309,4 @@ def convert_doc_to_mathml_(doc, verbatim_strings = [], use_gold_trees=False):
   </body>
   </html>
   """
-    return html_str
+    return cgi.escape(html_str)
