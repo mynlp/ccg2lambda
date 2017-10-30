@@ -183,7 +183,13 @@ def convert_doc_to_mathml(doc, use_gold_trees=False):
         assert len(ccg_trees) >= len(sem_trees)
         for i in range(len(ccg_trees)):
             ccg_tree_id = ccg_trees[i].get('id', str(i))
-            ccg_tree = build_ccg_tree(ccg_trees[i])
+            try:
+                ccg_tree = build_ccg_tree(ccg_trees[i])
+            except ValueError:
+                mathml_str += "<p>{0}, tree {1}: {2}</p>\n".format(
+                                sentence_label, ccg_tree_id, sentence_text) \
+                            + "<p>Syntactic parse error. Visualization skipped.</p>"
+                continue
             if gold_tree_index == i:
                 ccg_tree_id += " (gold)"
             sem_tree = None if i >= len(sem_trees) else sem_trees[i]
