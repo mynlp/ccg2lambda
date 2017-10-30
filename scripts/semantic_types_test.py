@@ -33,7 +33,22 @@ from semantic_types import merge_dynamic_libraries
 from semantic_types import read_type
 from semantic_types import resolve_types
 
+from nltk.sem.logic import Variable, Expression
+
 class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
+    # def test_resolve(self):
+    #     expr = lexpr(r'pred1(x)')
+    #     from pudb import set_trace; set_trace()
+    #     resolve_types(expr)
+    #     expr2 = lexpr(r'pred1(x) & pred2(e) & pred3(v)')
+    #     expr3 = lexpr(r'exists x e. (pred1(x) & pred2(e) & (exists x. pred2(x)))')
+    #     # print(expr2.visit_structured(
+    #     #     lambda e: e,
+    #     #     lambda es: [e.replace(Variable('pred2'), lexpr('pred22')) for e in es]))
+    #     print(expr2.visit_structured(
+    #         lambda e: e.replace(Variable('pred2'), lexpr('pred22')),
+    #         expr2.__class__))
+
     def test_different_onepred(self):
         exprs = [lexpr(r'pred1(x)'), lexpr(r'pred2(x)')]
         sigs = [resolve_types(e) for e in exprs]
@@ -57,6 +72,7 @@ class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
 
     def test_different_one_two_pred(self):
         exprs = [lexpr(r'pred1(x)'), lexpr(r'pred1(x,y)')]
+        expected_exprs = [lexpr(r'pred1_en(x)'), lexpr(r'pred1_2(x,y)')]
         sigs = [resolve_types(e) for e in exprs]
         sig, exprs_new = combine_signatures_or_rename_preds(sigs, exprs)
         self.assertEqual(4, len(sig), msg='Unexpected signature: {0}'.format(sig))
@@ -65,11 +81,32 @@ class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
 
     def test_different_one_pred_vartype(self):
         exprs = [lexpr(r'pred1(x)'), lexpr(r'pred1(F)')]
+        expected_exprs = [lexpr(r'pred1_en(x)'), lexpr(r'pred1_pr(F)')]
         sigs = [resolve_types(e) for e in exprs]
         sig, exprs_new = combine_signatures_or_rename_preds(sigs, exprs)
         self.assertEqual(4, len(sig), msg='Unexpected signature: {0}'.format(sig))
+        self.assertEqual(expected_exprs, exprs)
         self.assertEqual(exprs[0], exprs_new[0])
         self.assertNotEqual(exprs[1], exprs_new[1])
+        # print(sig)
+        # print(exprs_new)
+
+    def test_different_in_same_expression(self):
+        # exprs = [lexpr(r'pred1(x) & pred1(F)'), lexpr(r'pred1(F)')]
+        exprs = [lexpr(r'pred1(e) & pred1(x)'), lexpr(r'pred1(e)')]
+        from pudb import set_trace; set_trace()
+        sigs = [resolve_types(e) for e in exprs]
+        sig, exprs_new = combine_signatures_or_rename_preds(sigs, exprs)
+        # print(sig)
+        # print(exprs_new)
+        expected_exprs_new = [
+            lexpr(r'pred1_ev(v) & pred1_en(x)'), lexpr(r'pred1_ev(v)')]
+        self.assertEqual(expected_exprs_new, exprs_new)
+        self.assertEqual(4, len(sig), msg='Unexpected signature: {0}'.format(sig))
+        self.assertEqual(exprs[0], exprs_new[0])
+        self.assertNotEqual(exprs[1], exprs_new[1])
+
+# TODO: also test for types that are Propositions 't'.
 
 def nltk_sig_to_coq_lib(nltk_sig):
    # Convert into coq style library entries.

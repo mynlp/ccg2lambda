@@ -15,6 +15,7 @@
 #  limitations under the License.
 
 import codecs
+from collections import defaultdict
 import logging
 import re
 
@@ -68,24 +69,6 @@ def type_length(expr_type):
         acc_second = type_length(expr_type.second)
     return acc_first + acc_second
 
-def combine_signatures(signatures):
-    """
-    Combinator function necessary for .visit method.
-    If one predicate is resolved as different types, only the shortest
-    (less complex) type is finally assigned.
-    """
-    combined_signature = {}
-    for signature in signatures:
-        for predicate, predicate_sig in signature.items():
-            if predicate not in combined_signature:
-                combined_signature[predicate] = predicate_sig
-            else:
-                sig_length_previous = type_length(combined_signature[predicate])
-                sig_length_new = type_length(predicate_sig)
-                if sig_length_new > sig_length_previous:
-                    combined_signature[predicate] = predicate_sig
-    return combined_signature
-
 def resolve_types_in_signature(signature):
     signature = {k : v for k, v in signature.items() if v is not None}
     for predicate, pred_type in signature.items():
@@ -127,19 +110,182 @@ def remove_colliding_predicates(signature, expr):
             'expression {0} with signature {1}'.format(str(expr), signature))
     return signature
 
-def resolve_types(expr, signature = {}):
+def combine_signatures_(signatures):
+    """
+    Combinator function necessary for .visit method.
+    If one predicate is resolved as different types, only the shortest
+    (less complex) type is finally assigned.
+    """
+    combined_signature = {}
+    for signature in signatures:
+        for predicate, predicate_sig in signature.items():
+            if predicate not in combined_signature:
+                combined_signature[predicate] = predicate_sig
+            else:
+                sig_length_previous = type_length(combined_signature[predicate])
+                sig_length_new = type_length(predicate_sig)
+                if sig_length_new > sig_length_previous:
+                    combined_signature[predicate] = predicate_sig
+    return combined_signature
+
+def resolve_types_(expr, signature=None):
+    try:
+        return resolve_types_in_signature(expr.typecheck())
+    except InconsistentTypeHierarchyException:
+        pass
+    if signature is None:
+        signature = {}
+    if isinstance(expr, ConstantExpression) or \
+       isinstance(expr, AbstractVariableExpression) or \
+       isinstance(expr, Variable):
+        return resolve_types_in_signature(expr.typecheck())
+    elif isinstance(expr, NegatedExpression):
+        return resolve_types_in_signature(expr.term.typecheck())
+    elif isinstance(expr, BinaryExpression):
+        child_exprs = [expr.first,  expr.second]
+        signatures = [resolve_types(e) for e in child_exprs]
+    elif isinstance(expr, ApplicationExpression):
+        func, args = expr.uncurry()
+        child_exprs = [func] + args
+    elif isinstance(expr, VariableBinderExpression):
+        child_exprs = [expr.variable,  expr.term]
+    else:
+        raise NotImplementedError(
+            'Expression not recognized: {0}, type: {1}'.format(expr, type(expr)))
+    signatures = [resolve_types(e) for e in child_exprs]
+
+    # elif isinstance(expr, NegatedExpression):
+    #     G.graph['head_node'] = next(node_id_gen)
+    #     G.add_node(G.graph['head_node'], label='not', type='op')
+    #     graphs = map(formula_to_tree, [expr.term])
+    #     G = merge_graphs_to(G, graphs)
+    # elif isinstance(expr, VariableBinderExpression):
+    #     quant = '<quant_unk>'
+    #     if isinstance(expr, QuantifiedExpression):
+    #         quant = expr.getQuantifier()
+    #         type = 'quantifier'
+    #     elif isinstance(expr, LambdaExpression):
+    #         quant = 'lambda'
+    #         type = 'binder'
+    #     G.graph['head_node'] = next(node_id_gen)
+    #     G.add_node(G.graph['head_node'], label=quant, type=type)
+    #     var_node_id = next(node_id_gen)
+    #     G.add_node(var_node_id, label=str(expr.variable), type='variable')
+    #     G.add_edge(G.graph['head_node'], var_node_id, type='var_bind')
+    #     graphs = map(formula_to_tree, [expr.term])
+    #     G = merge_graphs_to(G, graphs)
+    # return G
+    return signatures
+
+def resolve_types_(expr, signature = {}):
     """
     Function that is used to traverse the structure of a NLTK formula
     and infer types bottom up, resolving unknowns '?' into 't' (Prop).
     """
     if isinstance(expr, ConstantExpression) or \
        isinstance(expr, AbstractVariableExpression):
-        return expr.typecheck()
+        return expr.typecheck(), expr
     signature = expr.visit(lambda e: resolve_types(e, signature),
                            lambda parts: combine_signatures(parts))
     signature = remove_reserved_predicates(signature)
     signature = remove_colliding_predicates(signature, expr)
     signature = remove_reserved_predicates(signature)
+    signature = resolve_types_in_signature(signature)
+    return signature
+
+def combine_signatures_safe(signatures):
+    """
+    Combinator function necessary for .visit method.
+    If one predicate is resolved as different types, only the shortest
+    (less complex) type is finally assigned.
+    """
+    combined_signature = defaultdict(list)
+    for signature in signatures:
+        for predicate, predtypes_exprs in signature.items():
+            # from pudb import set_trace; set_trace()
+            for predtype, expr in predtypes_exprs:
+                combined_signature[predicate].append((predtype, expr))
+    # for pred, sigs_exprs in combined_signature:
+    #     if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, expr) in sigs_exprs)) > 1:
+    #         for pred_type, expr in sigs_exprs:
+    #             new_pred_name = make_new_pred_name(pred, pred_type)
+    #             combined_signature[predicate].append((pred_type, expr))
+    return combined_signature
+
+def convert_to_multitypes(signature, expr):
+    multi_signature = defaultdict(list)
+    for k, v in signature.items():
+        multi_signature[k].append((v, expr))
+    return multi_signature
+
+def resolve_types_rec(expr, signature=None):
+    """
+    Function that is used to traverse the structure of a NLTK formula
+    and infer types bottom up, resolving unknowns '?' into 't' (Prop).
+    """
+    if signature is None:
+        signature = defaultdict(list)
+    try:
+        signature = convert_to_multitypes(expr.typecheck(), expr)
+    except InconsistentTypeHierarchyException as e:
+        if isinstance(expr, ConstantExpression) or \
+           isinstance(expr, AbstractVariableExpression):
+            signature = convert_to_multitypes(expr.typecheck(), expr)
+        else:
+            signature = expr.visit(lambda e: resolve_types_rec(e, signature),
+                                   lambda parts: combine_signatures_safe(parts))
+    return signature
+
+def rename_guided(expr, resolution_guide):
+    """
+    resolution_guide is a dictionary whose keys are expressions
+    and values are tuples (previous_pred, new_pred) that guide
+    the renaming.
+    """
+    # from pudb import set_trace; set_trace()
+    if expr in resolution_guide:
+        prev_pred, new_pred = resolution_guide[expr]
+        return expr.replace(Variable(prev_pred), lexpr(new_pred))
+    return expr
+
+def make_new_pred_name(pred, pred_type):
+    type_len = type_length(pred_type)
+    # from pudb import set_trace; set_trace()
+    if type_len > 2:
+        pred_name = '{0}_{1}'.format(str(pred), type_len)
+    else:
+        pred_name = '{0}_e{1}'.format(str(pred), str(pred_type.first))
+    return pred_name
+
+resolution_guide = {}
+
+def resolve_types(expr, signature = {}):
+    """
+    Function that is used to traverse the structure of a NLTK formula
+    and infer types bottom up, resolving unknowns '?' into 't' (Prop).
+    """
+    global resolution_guide
+    signature = resolve_types_rec(expr, signature)
+
+    resolution_guide = {}
+    for pred, sigs_exprs in signature.items():
+        # try:
+        #     len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, expr) in sigs_exprs))
+        # except:
+        #     from pudb import set_trace; set_trace()
+        if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, expr) in sigs_exprs)) > 1:
+            for pred_type, expr in sigs_exprs:
+                new_pred_name = make_new_pred_name(pred, pred_type)
+                resolution_guide[expr] = (pred, new_pred_name)
+
+    expr = expr.visit_structured(
+        lambda e: rename_guided(e, resolution_guide),
+        expr.__class__)
+    signature = expr.typecheck()
+
+    signature = remove_reserved_predicates(signature)
+    # signature = remove_colliding_predicates(signature, expr)
+    # signature = remove_reserved_predicates(signature)
     signature = resolve_types_in_signature(signature)
     return signature
 
