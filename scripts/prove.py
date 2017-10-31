@@ -121,7 +121,6 @@ def prove_docs(document_inds, ncores=1):
     proof_nodes = [etree.fromstring(p) for p in proof_nodes]
     return proof_nodes
 
-# TODO: try other kMaxTasksPerChild
 def prove_docs_par(document_inds, ncores=3):
     pool = Pool(processes=ncores, maxtasksperchild=kMaxTasksPerChild)
     proof_nodes = pool.map(prove_doc_ind, document_inds)
