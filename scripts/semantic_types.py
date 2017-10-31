@@ -280,10 +280,10 @@ def rename_guided(expr, resolution_guide):
     and values are tuples (previous_pred, new_pred) that guide
     the renaming.
     """
-    # from pudb import set_trace; set_trace()
-    if expr in resolution_guide:
-        prev_pred, new_pred = resolution_guide[expr]
-        return expr.replace(Variable(prev_pred), lexpr(new_pred))
+    print('Expression to rename: {0}'.format(expr))
+    replacements = resolution_guide.get(expr, [])
+    for prev_pred, new_pred in replacements:
+        expr = expr.replace(Variable(prev_pred), lexpr(new_pred))
     return expr
 
 def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
@@ -305,16 +305,17 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
         for k, v in s.items():
             signature[k].extend(v)
     
-    resolution_guide = {}
+    resolution_guide = defaultdict(list)
     for pred, sigs_exprs in signature.items():
         if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, _) in sigs_exprs)) > 1:
             for pred_type, ex in sigs_exprs:
                 new_pred_name = make_new_pred_name(pred, pred_type)
-                resolution_guide[ex] = (pred, new_pred_name)
+                resolution_guide[ex].append((pred, new_pred_name))
 
     new_exprs = []
     for expr in exprs:
         if not isinstance(expr, ConstantExpression):
+            # expr = replace_recursively(expr, resolution_guide)
             expr = expr.visit_structured(
                 lambda e: rename_guided(e, resolution_guide),
                 expr.__class__)
@@ -380,8 +381,12 @@ def get_dynamic_library_from_doc(doc, semantics_nodes):
     nltk_sigs_arbi = [convert_coq_signatures_to_nltk(coq_lib) for coq_lib in coq_libs]
     formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics_nodes]
     formulas = parse_exprs_if_str(formulas)
+    # from pudb import set_trace; set_trace()
+    print('Before: {0}'.format(formulas))
     nltk_sig_arbi, formulas = combine_signatures_or_rename_preds(nltk_sigs_arbi, formulas)
+    print('Middle: {0}'.format(formulas))
     nltk_sig_auto, formulas = build_dynamic_library(formulas, nltk_sig_arbi)
+    print('After: {0}'.format(formulas))
     # coq_static_lib_path is useful to get reserved predicates.
     # ccg_xml_trees is useful to get full list of tokens
     # for which we need to specify types.

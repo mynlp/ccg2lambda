@@ -93,6 +93,22 @@ class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
             lexpr(r'pred1_e2(x) & pred1_v2(e)'), lexpr(r'pred1_v2(e)')]
         self.assertEqual(expected_exprs, new_exprs)
 
+    def test_different_in_same_expression_embed(self):
+        exprs = [lexpr(r'exists x. (pred1(x) & exists e. pred1(e))')]
+        # from pudb import set_trace; set_trace()
+        sigs, new_exprs = combine_signatures_or_rename_preds(3, exprs)
+        expected_exprs = [
+            lexpr(r'exists x. (pred1_e2(x) & exists e. pred1_v2(e))')]
+        self.assertEqual(expected_exprs, new_exprs)
+
+    # def test_same_expression_japanese(self):
+    #     exprs = [lexpr(r'exists x.(_上場(x) & _等(x) & _株式(x) & exists z3.(_新株(z3) & _権(z3) & _予約(z3) & exists z2.(exists z1.(_日本(z1) & (z2 = z1)) & _金融(z2) & _商品(z2) & _所(z2) & _取引(z2) & exists e.(_上場(e) & _する(e) & (Nom(e) = z3) & (Dat(e) = z2))) & exists v.(_含む(v) & (Nom(v) = x) & (Acc(v) = z3))))')]
+    #     from pudb import set_trace; set_trace()
+    #     sigs, new_exprs = combine_signatures_or_rename_preds(3, exprs)
+    #     expected_exprs = [
+    #         lexpr(r'pred1_e2(x) & pred1_v2(e)'), lexpr(r'pred1_v2(e)')]
+    #     self.assertEqual(expected_exprs, new_exprs)
+
 # TODO: also test for types that are Propositions 't'.
 
 def nltk_sig_to_coq_lib(nltk_sig):
@@ -410,7 +426,6 @@ class Coq2NLTKTypesTestCase(unittest.TestCase):
 class build_dynamic_libraryTestCase(unittest.TestCase):
     def test_entity(self):
         exprs = [lexpr('Python')]
-        # from pudb import set_trace; set_trace()
         dynamic_library, _ = build_dynamic_library(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
@@ -468,7 +483,6 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_pred1_prop_prop(self):
         exprs = [lexpr('nice(language(Python, Scala))')]
-        # from pudb import set_trace; set_trace()
         dynamic_library, _ = build_dynamic_library(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
