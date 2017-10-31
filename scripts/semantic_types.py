@@ -16,6 +16,7 @@
 
 import codecs
 from collections import defaultdict
+from copy import deepcopy
 import logging
 import re
 
@@ -28,6 +29,10 @@ from nltk.sem.logic import ANY_TYPE
 from nltk.sem.logic import AbstractVariableExpression
 from nltk.sem.logic import ComplexType
 from nltk.sem.logic import ConstantExpression
+from nltk.sem.logic import NegatedExpression
+from nltk.sem.logic import BinaryExpression
+from nltk.sem.logic import ApplicationExpression
+from nltk.sem.logic import VariableBinderExpression
 from nltk.sem.logic import InconsistentTypeHierarchyException
 from nltk.sem.logic import LogicalExpressionException
 from nltk.sem.logic import Variable
@@ -154,28 +159,6 @@ def resolve_types_(expr, signature=None):
         raise NotImplementedError(
             'Expression not recognized: {0}, type: {1}'.format(expr, type(expr)))
     signatures = [resolve_types(e) for e in child_exprs]
-
-    # elif isinstance(expr, NegatedExpression):
-    #     G.graph['head_node'] = next(node_id_gen)
-    #     G.add_node(G.graph['head_node'], label='not', type='op')
-    #     graphs = map(formula_to_tree, [expr.term])
-    #     G = merge_graphs_to(G, graphs)
-    # elif isinstance(expr, VariableBinderExpression):
-    #     quant = '<quant_unk>'
-    #     if isinstance(expr, QuantifiedExpression):
-    #         quant = expr.getQuantifier()
-    #         type = 'quantifier'
-    #     elif isinstance(expr, LambdaExpression):
-    #         quant = 'lambda'
-    #         type = 'binder'
-    #     G.graph['head_node'] = next(node_id_gen)
-    #     G.add_node(G.graph['head_node'], label=quant, type=type)
-    #     var_node_id = next(node_id_gen)
-    #     G.add_node(var_node_id, label=str(expr.variable), type='variable')
-    #     G.add_edge(G.graph['head_node'], var_node_id, type='var_bind')
-    #     graphs = map(formula_to_tree, [expr.term])
-    #     G = merge_graphs_to(G, graphs)
-    # return G
     return signatures
 
 def resolve_types_(expr, signature = {}):
@@ -197,8 +180,6 @@ def resolve_types_(expr, signature = {}):
 def combine_signatures_safe(signatures):
     """
     Combinator function necessary for .visit method.
-    If one predicate is resolved as different types, only the shortest
-    (less complex) type is finally assigned.
     """
     combined_signature = defaultdict(list)
     for signature in signatures:
@@ -242,48 +223,46 @@ def make_new_pred_name(pred, pred_type):
         pred_name = '{0}_{1}{2}'.format(str(pred), str(pred_type), type_len)
     return pred_name
 
-resolution_guide = {}
-
-# def resolve_types_and_rename_collisions(expr, signature = {}):
-#     """
-#     Function that is used to traverse the structure of a NLTK formula
-#     and infer types bottom up, resolving unknowns '?' into 't' (Prop).
-#     """
-#     global resolution_guide
-#     signature = resolve_types_rec(expr, signature)
-# 
-#     resolution_guide = {}
-#     for pred, sigs_exprs in signature.items():
-#         if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, _) in sigs_exprs)) > 1:
-#             for pred_type, ex in sigs_exprs:
-#                 new_pred_name = make_new_pred_name(pred, pred_type)
-#                 resolution_guide[ex] = (pred, new_pred_name)
-# 
-#     expr = expr.visit_structured(
-#         lambda e: rename_guided(e, resolution_guide),
-#         expr.__class__)
-#     try:
-#         signature = expr.typecheck()
-#     except:
-#         from pudb import set_trace; set_trace()
-# 
-#     signature = remove_reserved_predicates(signature)
-#     signature = resolve_types_in_signature(signature)
-#     signature = remove_colliding_predicates(signature, expr)
-#     # signature = remove_reserved_predicates(signature)
-#     signature = resolve_types_in_signature(signature)
-#     return signature, expr
-
 def rename_guided(expr, resolution_guide):
     """
     resolution_guide is a dictionary whose keys are expressions
     and values are tuples (previous_pred, new_pred) that guide
     the renaming.
     """
-    print('Expression to rename: {0}'.format(expr))
     replacements = resolution_guide.get(expr, [])
     for prev_pred, new_pred in replacements:
         expr = expr.replace(Variable(prev_pred), lexpr(new_pred))
+    return expr
+
+def replace_function_names(expr, resolution_guide, active=None):
+    if active is None:
+        active = {}
+    else:
+        active = dict(active)
+    if expr in resolution_guide:
+        for prev_pred, new_pred in resolution_guide[expr]:
+            active[prev_pred] = new_pred
+    if isinstance(expr, ConstantExpression) or \
+       isinstance(expr, AbstractVariableExpression) or \
+       isinstance(expr, Variable):
+        return expr
+    elif isinstance(expr, NegatedExpression):
+        return replace_function_names(expr.term, resolution_guide, active)
+    elif isinstance(expr, BinaryExpression):
+        child_exprs = [expr.first,  expr.second]
+        exprs = [replace_function_names(e, resolution_guide, active) for e in child_exprs]
+    elif isinstance(expr, ApplicationExpression):
+        func, args = expr.uncurry()
+        if str(func) in active:
+            expr.function = ConstantExpression(Variable(active[str(func)]))
+        child_exprs = [func] + args
+        exprs = [replace_function_names(e, resolution_guide, active) for e in child_exprs]
+    elif isinstance(expr, VariableBinderExpression):
+        child_exprs = [expr.variable,  expr.term]
+        exprs = [replace_function_names(e, resolution_guide, active) for e in child_exprs]
+    else:
+        raise NotImplementedError(
+            'Expression not recognized: {0}, type: {1}'.format(expr, type(expr)))
     return expr
 
 def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
@@ -297,7 +276,7 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
     in the signature dictionary. The target predicate is also renamed in
     the logical expressions.
     """
-    global resolution_guide
+    # global resolution_guide
 
     signatures = [resolve_types_rec(expr) for expr in exprs]
     signature = defaultdict(list)
@@ -312,14 +291,11 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
                 new_pred_name = make_new_pred_name(pred, pred_type)
                 resolution_guide[ex].append((pred, new_pred_name))
 
+    resolution_guide_local = deepcopy(resolution_guide)
     new_exprs = []
     for expr in exprs:
         if not isinstance(expr, ConstantExpression):
-            # expr = replace_recursively(expr, resolution_guide)
-            expr = expr.visit_structured(
-                lambda e: rename_guided(e, resolution_guide),
-                expr.__class__)
-            expr = rename_guided(expr, resolution_guide)
+            expr = replace_function_names(expr, resolution_guide_local)
         new_exprs.append(expr)
     signature = typecheck(new_exprs)
 
