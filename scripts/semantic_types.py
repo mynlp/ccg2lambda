@@ -650,7 +650,7 @@ def merge_dynamic_libraries(sig_arbi, sig_auto, coq_static_lib_path, doc):
     preds_to_remove = set()
     preds_to_remove.update(reserved_predicates)
     for pred in sig_merged:
-        if pred not in required_predicates and not re.match(r'\S+_[0-9]', pred):
+        if pred not in required_predicates and not re.match(r'\S+_[a-z][0-9]', pred):
             preds_to_remove.add(pred)
     for pred in preds_to_remove:
         if pred in sig_merged:

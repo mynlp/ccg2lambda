@@ -200,7 +200,7 @@ def convert_doc_to_mathml(doc, use_gold_trees=False):
                         + "<math xmlns='http://www.w3.org/1998/Math/MathML'>\n" \
                         + convert_node_to_mathml(ccg_tree, sem_tree, tokens) \
                         + "</math>\n"
-    verbatim_strings = doc.xpath('./proof/theorems/theorem/coq_script/text()')
+    verbatim_strings = doc.xpath('./proof/master_theorem/theorems/theorem/coq_script/text()')
     verbatim_text = ""
     if verbatim_strings:
        verbatim_text = "<p>Script piped to coq</p>"
