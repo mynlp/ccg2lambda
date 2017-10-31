@@ -33,9 +33,9 @@ plain_dir="plain" # tokenized sentences.
 parsed_dir="parsed" # parsed sentences into XML or other formats.
 results_dir="results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
-parsers="easyccg candc"
-# parsers="candc"
-ncores=50
+# parsers="depccg easyccg candc"
+parsers="candc"
+ncores=100
 
 # multinli=multinli/multinli_0.9_train.jsonl
 # sentences_basename=multinli
@@ -50,7 +50,7 @@ ncores=50
 # fi
 
 # sentences_basename="snli.train"
-sentences_basename="sick.train"
+sentences_basename="sick.trial"
 multinli=en/${sentences_basename}.jsonl
 python scripts/get_nli_sentences.py \
     $multinli \
@@ -152,8 +152,9 @@ done
 if [ ! -e "$parsed_dir/${sentences_basename}.rte.xml" ]; then
   python scripts/merge.py \
     $parsed_dir/${sentences_basename}.rte.xml \
-    --input easyccg $parsed_dir/${sentences_basename}.easyccg.rte.xml \
     --input candc $parsed_dir/${sentences_basename}.candc.rte.xml
+    # --input depccg $parsed_dir/${sentences_basename}.depccg.rte.xml \
+    # --input easyccg $parsed_dir/${sentences_basename}.easyccg.rte.xml \
 fi
 
 python scripts/prove.py \

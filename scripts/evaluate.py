@@ -305,12 +305,12 @@ def main(args = None):
             os.makedirs(args.dir_name)
         print_html(roots, 'main', args.dir_name)
 
-    fps = get_problems(roots, 'false_negatives')
-    for fp in fps:
-        print('{0} {1} {2}'.format(
-            fp.get('pair_id'),
-            fp.get('rte_label'),
-            fp.xpath('./proof/@inference_result')[0]))
+    # fps = get_problems(roots, 'false_negatives')
+    # for fp in fps:
+    #     print('{0} {1} {2}'.format(
+    #         fp.get('pair_id'),
+    #         fp.get('rte_label'),
+    #         fp.xpath('./proof/@inference_result')[0]))
 
 if __name__ == '__main__':
     main()
