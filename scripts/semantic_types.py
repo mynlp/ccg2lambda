@@ -247,7 +247,8 @@ def replace_function_names(expr, resolution_guide, active=None):
        isinstance(expr, Variable):
         return expr
     elif isinstance(expr, NegatedExpression):
-        return replace_function_names(expr.term, resolution_guide, active)
+        replace_function_names(expr.term, resolution_guide, active)
+        return expr
     elif isinstance(expr, BinaryExpression):
         child_exprs = [expr.first,  expr.second]
         exprs = [replace_function_names(e, resolution_guide, active) for e in child_exprs]
@@ -294,6 +295,10 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
     for expr in exprs:
         if not isinstance(expr, ConstantExpression):
             expr = replace_function_names(expr, resolution_guide_local)
+            # expr = expr.visit_structured(
+            #     lambda e: rename_guided(e, resolution_guide),
+            #     expr.__class__)
+            # expr = rename_guided(expr, resolution_guide)
         new_exprs.append(expr)
     signature = typecheck(new_exprs)
 
