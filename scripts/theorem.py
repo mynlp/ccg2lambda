@@ -159,6 +159,8 @@ class Theorem(object):
 
     def to_xml(self):
         ts_node = etree.Element('theorems')
+        if self.labels:
+            ts_node.append(make_parser_labels_node(self.labels))
         # Add premises node.
         ps_node = etree.Element('premises')
         ts_node.append(ps_node)
@@ -209,6 +211,16 @@ class Theorem(object):
             t_node.append(f_node)
         return ts_node
 
+
+def make_parser_labels_node(labels):
+    ls_node = etree.Element('parser_labels')
+    for label in labels:
+        assert len(label) == 2
+        l_node = etree.Element('parser_label')
+        l_node.set('ccg_id', label[0])
+        l_node.set('ccg_parser', label[1])
+        ls_node.append(l_node)
+    return ls_node
 
 def make_failure_log_node(failure_log):
     fnode = etree.Element('failure_log')
@@ -428,13 +440,19 @@ class MasterTheorem(Theorem):
                 return theorem
         return self.theorems[0]
 
-    def to_xml(self):
+    def to_xml_(self):
         theorem = self.get_best_theorem()
         if not theorem:
             ts_node = etree.Element('theorems')
         else:
             ts_node = theorem.to_xml()
         return ts_node
+
+    def to_xml(self):
+        mt_node = etree.Element('master_theorem')
+        for theorem in self.theorems:
+            mt_node.append(theorem.to_xml())
+        return mt_node
 
 
 def generate_semantics_from_doc(doc, max_gen=1):
