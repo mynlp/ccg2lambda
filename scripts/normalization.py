@@ -49,6 +49,8 @@ def denormalize_token(token):
     denormalized = re.sub('_AMPERSAND', r'^&$', denormalized)
     denormalized = re.sub('_EXCLAMATION', r'!', denormalized)
     denormalized = re.sub('_dash_', r'-', denormalized)
+    # Remove possible suffix that was introduced to avoid type clashes.
+    denormalized = re.sub(r'_[a-z][0-9]$', '', denormalized)
     denormalized = denormalized.lstrip('_')
     return denormalized
 

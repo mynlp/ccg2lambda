@@ -203,14 +203,8 @@ def combine_signatures_safe(signatures):
     combined_signature = defaultdict(list)
     for signature in signatures:
         for predicate, predtypes_exprs in signature.items():
-            # from pudb import set_trace; set_trace()
             for predtype, expr in predtypes_exprs:
                 combined_signature[predicate].append((predtype, expr))
-    # for pred, sigs_exprs in combined_signature:
-    #     if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, expr) in sigs_exprs)) > 1:
-    #         for pred_type, expr in sigs_exprs:
-    #             new_pred_name = make_new_pred_name(pred, pred_type)
-    #             combined_signature[predicate].append((pred_type, expr))
     return combined_signature
 
 def convert_to_multitypes(signature, expr):
@@ -237,6 +231,49 @@ def resolve_types_rec(expr, signature=None):
                                    lambda parts: combine_signatures_safe(parts))
     return signature
 
+def make_new_pred_name(pred, pred_type):
+    type_len = type_length(pred_type)
+    # from pudb import set_trace; set_trace()
+    if type_len > 2:
+        pred_name = '{0}_{1}{2}'.format(str(pred), str(pred_type.first), type_len)
+    elif type_len == 2:
+        pred_name = '{0}_{1}{2}'.format(str(pred), str(pred_type.first), type_len)
+    else:
+        pred_name = '{0}_{1}{2}'.format(str(pred), str(pred_type), type_len)
+    return pred_name
+
+resolution_guide = {}
+
+# def resolve_types_and_rename_collisions(expr, signature = {}):
+#     """
+#     Function that is used to traverse the structure of a NLTK formula
+#     and infer types bottom up, resolving unknowns '?' into 't' (Prop).
+#     """
+#     global resolution_guide
+#     signature = resolve_types_rec(expr, signature)
+# 
+#     resolution_guide = {}
+#     for pred, sigs_exprs in signature.items():
+#         if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, _) in sigs_exprs)) > 1:
+#             for pred_type, ex in sigs_exprs:
+#                 new_pred_name = make_new_pred_name(pred, pred_type)
+#                 resolution_guide[ex] = (pred, new_pred_name)
+# 
+#     expr = expr.visit_structured(
+#         lambda e: rename_guided(e, resolution_guide),
+#         expr.__class__)
+#     try:
+#         signature = expr.typecheck()
+#     except:
+#         from pudb import set_trace; set_trace()
+# 
+#     signature = remove_reserved_predicates(signature)
+#     signature = resolve_types_in_signature(signature)
+#     signature = remove_colliding_predicates(signature, expr)
+#     # signature = remove_reserved_predicates(signature)
+#     signature = resolve_types_in_signature(signature)
+#     return signature, expr
+
 def rename_guided(expr, resolution_guide):
     """
     resolution_guide is a dictionary whose keys are expressions
@@ -248,45 +285,6 @@ def rename_guided(expr, resolution_guide):
         prev_pred, new_pred = resolution_guide[expr]
         return expr.replace(Variable(prev_pred), lexpr(new_pred))
     return expr
-
-def make_new_pred_name(pred, pred_type):
-    type_len = type_length(pred_type)
-    # from pudb import set_trace; set_trace()
-    if type_len > 2:
-        pred_name = '{0}_{1}'.format(str(pred), type_len)
-    elif type_len == 2:
-        pred_name = '{0}_{1}'.format(str(pred), str(pred_type.first))
-    else:
-        pred_name = '{0}_{1}'.format(str(pred), str(pred_type))
-    return pred_name
-
-resolution_guide = {}
-
-def resolve_types_and_rename_collisions(expr, signature = {}):
-    """
-    Function that is used to traverse the structure of a NLTK formula
-    and infer types bottom up, resolving unknowns '?' into 't' (Prop).
-    """
-    global resolution_guide
-    signature = resolve_types_rec(expr, signature)
-
-    resolution_guide = {}
-    for pred, sigs_exprs in signature.items():
-        if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, _) in sigs_exprs)) > 1:
-            for pred_type, ex in sigs_exprs:
-                new_pred_name = make_new_pred_name(pred, pred_type)
-                resolution_guide[ex] = (pred, new_pred_name)
-
-    expr = expr.visit_structured(
-        lambda e: rename_guided(e, resolution_guide),
-        expr.__class__)
-    signature = expr.typecheck()
-
-    signature = remove_reserved_predicates(signature)
-    # signature = remove_colliding_predicates(signature, expr)
-    # signature = remove_reserved_predicates(signature)
-    signature = resolve_types_in_signature(signature)
-    return signature, expr
 
 def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
     """
@@ -316,19 +314,19 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
 
     new_exprs = []
     for expr in exprs:
-        expr = expr.visit_structured(
-            lambda e: rename_guided(e, resolution_guide),
-            expr.__class__)
+        if not isinstance(expr, ConstantExpression):
+            expr = expr.visit_structured(
+                lambda e: rename_guided(e, resolution_guide),
+                expr.__class__)
+            expr = rename_guided(expr, resolution_guide)
         new_exprs.append(expr)
     signature = typecheck(new_exprs)
 
     signature = remove_reserved_predicates(signature)
-    # signature = remove_colliding_predicates(signature, expr)
-    # signature = remove_reserved_predicates(signature)
-    try:
-        signature = resolve_types_in_signature(signature)
-    except:
-        from pudb import set_trace; set_trace()
+    signature = resolve_types_in_signature(signature)
+    for expr in exprs:
+        signature = remove_colliding_predicates(signature, expr)
+    signature = resolve_types_in_signature(signature)
     return signature, new_exprs
 
 
@@ -446,6 +444,19 @@ def parse_exprs_if_str(exprs):
     return exprs_logic
 
 def build_dynamic_library(exprs, preferred_signature=None):
+    """
+    Create a dynamic library with types of objects that appear in coq formulae.
+    Optionally, it may receive partially specified signatures for objects
+    using the format by NLTK (e.g. {'_john' : e, '_mary' : e, '_love' : <e,<e,t>>}).
+    """
+    # If expressions are strings, convert them into logic formulae.
+    exprs_logic = parse_exprs_if_str(exprs)
+    signature, exprs = combine_signatures_or_rename_preds(
+        None, exprs_logic, preferred_signature)
+    signature = remove_reserved_predicates(signature)
+    return signature, exprs
+
+def build_dynamic_library_(exprs, preferred_signature=None):
     """
     Create a dynamic library with types of objects that appear in coq formulae.
     Optionally, it may receive partially specified signatures for objects
