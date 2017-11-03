@@ -197,7 +197,8 @@ def formula_to_tree(expr):
        isinstance(expr, AbstractVariableExpression) or \
        isinstance(expr, Variable):
         G.graph['head_node'] = next(node_id_gen)
-        G.add_node(G.graph['head_node'], label=expr_str, type='variable')
+        type_str = 'constant' if isinstance(expr, ConstantExpression) else 'variable'
+        G.add_node(G.graph['head_node'], label=expr_str, type=type_str)
     elif isinstance(expr, BinaryExpression):
         G.graph['head_node'] = next(node_id_gen)
         G.add_node(G.graph['head_node'], label=expr.getOp(), type='op')
@@ -230,8 +231,17 @@ def formula_to_tree(expr):
         G = merge_graphs_to(G, graphs)
     return G
 
-def get_label(graph, node_id, label='label'):
-    return graph.nodes[node_id].get(label, None)
+def get_label_(graph, node_id, label='label', default=None):
+    return graph.nodes[node_id].get(label, default)
+
+def get_label(graph, node_id, label='label', default=None):
+    if isinstance(label, str):
+       return graph.nodes[node_id].get(label, default)
+    elif isinstance(label, list):
+        for l in label:
+            if l in graph.nodes[node_id]:
+                return graph.nodes[node_id][l]
+    return default
 
 quantifiers = Tokens.QUANTS
 
