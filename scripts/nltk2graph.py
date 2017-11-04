@@ -234,6 +234,12 @@ def formula_to_tree(expr):
 def get_label_(graph, node_id, label='label', default=None):
     return graph.nodes[node_id].get(label, default)
 
+def get_node_token(graph, node_id):
+    token = get_label(graph, node_id, ['surf', 'label'], '<unk>')
+    if get_label(graph, node_id, 'type') != 'constant':
+        token = '<{0}>'.format(token)
+    return token
+
 def get_label(graph, node_id, label='label', default=None):
     if isinstance(label, str):
        return graph.nodes[node_id].get(label, default)
