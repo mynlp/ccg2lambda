@@ -82,152 +82,238 @@ def make_child_parent_branch(token_emb):
     inputs = child_rel_inputs + parent_rel_inputs + [normalizer]
     return outputs, inputs
 
-
-from embeddings import DynamicEmbedding
-
-embs = np.array([
-    [0.0, 0.0],
-    [1.0, 1.0],
-    [2.0, 2.0],
-    [3.0, 3.0],
-    [4.0, 4.0]], dtype='float32')
-embs = np.expand_dims(embs, axis=0)
-print(embs.shape)
-
-indices_input = Input(shape=(2,), dtype='int32')
-embs_input = Input(shape=(5, 2), dtype='float32')
-
-# dyn_embs = Reshape((6, 2))(embs_input)
-emb_layer = DynamicEmbedding(embs_input, mode='tensor', dropout=0.0)
-x = emb_layer.call(indices_input)
-
-model = Model(inputs=[embs_input, indices_input], outputs=[x])
-model.compile(
-    optimizer='rmsprop',
-    loss='categorical_crossentropy',
-    metrics=['accuracy'])
-
-indices = np.array([
-    [0, 1],
-    [0, 2]],
-    dtype='int32')
-out = model.predict([embs, indices])
-print(out)
-print(out.shape)
-import sys
-sys.exit(1)
-
-
-embs = np.expand_dims(embs, axis=0)
-
-children = np.zeros((1, 5, 5), dtype='float32')
-children[0, 0, 1] = 1
-children[0, 0, 3] = 1
-children[0, 1, 1] = 1
-children[0, 1, 2] = 1
-children[0, 2, 3] = 1
-
-indices = np.array([0, 1], dtype='int32').reshape(1,2,1)
-print('indices shape: {0}'.format(indices.shape))
-
-# print(children.dot(embs))
-
-children_input = Input(shape=(5, 5))
-indices_input = Input(shape=(2,1), dtype='int32')
-embs_input = Input(shape=(5, 2))
-
-# x = Dot(axes=(2, 1))([children_input, embs_input])
+batch_size = 2
 def gather(data_and_inds):
     data, inds = data_and_inds
-    return K.gather(data, inds)
+    num_rows = data.shape[1]
+    num_dims = data.shape[2]
+    num_inds = inds.shape[2]
+    print(inds.shape)
+    print(data.shape)
+    print(inds._keras_shape)
+    print(data._keras_shape)
+    data_perm = K.permute_dimensions(data, (1, 2, 0))
+    inds_perm = K.permute_dimensions(inds, (1, 2, 0))
+    out = K.gather(data_perm, inds_perm)
+    out = K.permute_dimensions(out, (4, 2, 0, 1, 3))
+    # out = K.reshape(out, (4, 4, 3, 5))
+    # out = K.gather(out, K.arange(2))
+    out = K.reshape(out, (4, num_rows, num_inds, num_dims))
+    out = K.gather(out, K.arange(batch_size))
+    return out
+
+def make_zero_one():
+    """
+    Makes the following matrix:
+    0 0
+    1 0
+    """
+    zero_one = K.reshape(K.arange(2), (2, 1))
+    zeros = K.reshape(K.concatenate((
+        K.arange(1),
+        K.arange(1)), axis=0), (2, 1))
+    inds1 = K.concatenate((zero_one, zeros), axis=1)
+    print(K.get_value(inds1))
+    return inds1
+
 
 def gather_output_shape(data_and_inds_shape):
     data_shape, inds_shape = data_and_inds_shape
     return data_shape
 
-x  = Lambda(gather, output_shape=gather_output_shape)([embs_input, indices_input])
+indices_input = Input(shape=(4, 3), dtype='int32')
+embs_input = Input(shape=(4, 5), dtype='float32')
+
+# x = Lambda(gather, output_shape=gather_output_shape)([embs_input, indices_input])
+lamb = Lambda(gather, output_shape=gather_output_shape)
+
+# from pudb import set_trace; set_trace()
+print('test')
+x = lamb([embs_input, indices_input])
 
 model = Model(inputs=[embs_input, indices_input], outputs=[x])
 model.compile(
     optimizer='rmsprop',
     loss='categorical_crossentropy',
     metrics=['accuracy'])
-print(model.predict([embs, indices]))
 
-import sys
-sys.exit(1)
+embs = np.array([
+    [0.0, 0.0, 0.0, 0.0, 0.0],
+    [1.0, 1.0, 1.0, 1.0, 1.0],
+    [2.0, 2.0, 2.0, 2.0, 2.0],
+    [3.0, 3.0, 3.0, 3.0, 3.0]], dtype='float32')
+embs = np.tile(embs, (2, 1, 1))
+# embs = np.expand_dims(embs, axis=0)
 
-formulas_str = [
-    'exists x. pred1(x)',
-    'exists y. pred1(y)',
-    'exists y. all x. (pred1(y) & pred2(x, y))',
-    'exists y. all x. (pred1(y) & pred2(y, x))']
-formulas = [lexpr(f) for f in formulas_str]
-graph_data = GraphData.from_formulas(formulas)
-graph_data.make_matrices()
-# print(graph_data.birel_norm)
-# print(graph_data.treelets_norm)
-# print(graph_data.word2ind)
-# import sys
-# sys.exit(1)
+indices = np.array([
+    [[0, 1, 2],
+     [1, 2, 3],
+     [2, 3, 0],
+     [3, 0, 1]],
+    [[0, 0, 1],
+     [1, 1, 2],
+     [2, 2, 3],
+     [3, 3, 0]]],
+    dtype='int32')
+# indices = np.expand_dims(indices, axis=0)
+# indices = np.tile(indices, (2, 1, 1))
+out1 = model.predict([embs, indices], batch_size=2)
+# out2 = model.predict([embs, indices], batch_size=2)
+# out = model.predict([embs, indices], batch_size=2)
+print(out1)
+print(embs.shape)
+print(indices.shape)
+print(out1.shape)
 
-max_nodes = graph_data.max_nodes
-max_bi_relations = graph_data.max_bi_relations
-max_tri_relations = graph_data.max_treelets
-emb_dim = 2
-num_words = graph_data.num_words
-
-# embs_ini = np.array([
-#     [0.0, 0.0],
-#     [1.0, 1.0],
-#     [2.0, 2.0],
-#     [3.0, 3.0]])
-embs_ini = np.random.uniform(size=num_words * emb_dim).reshape(num_words, emb_dim)
-embs_ini[0, :] = [0.0, 0.0]
-token_emb = Embedding(
-    input_dim=graph_data.num_words,
-    output_dim=emb_dim,
-    weights=[embs_ini],
-    mask_zero=False, # Reshape layer does not support masking.
-    trainable=True,
-    name='token_emb')
-# token_emb = Embedding(
-#     input_dim=num_words,
-#     output_dim=emb_dim,
-#     weights=[embs_ini],
-#     mask_zero=False, # Reshape layer does not support masking.
-#     trainable=True,
-#     name='token_emb')
-
-outputs, inputs = make_child_parent_branch(token_emb)
-
-model = Model(
-    inputs=inputs,
-    outputs=outputs)
-
-model.compile(
-    optimizer='rmsprop',
-    loss='categorical_crossentropy',
-    metrics=['accuracy'])
-
-# Zero should be reserved for no-relation.
-children = np.zeros((1, max_nodes, max_bi_relations, 2), dtype='int32')
-children[0, 0, 0, :] = [0, 1] # graph 0, child relation, node 0, 0 -> 1
-children[0, 0, 1, :] = [0, 2] # graph 0, child relation, node 0, 0 -> 2
-children[0, 1, 0, :] = [1, 2] # graph 0, child relation, node 1, 1 -> 2
-children[0, 1, 1, :] = [1, 3] # graph 0, child relation, node 1, 1 -> 3
-print(children)
-
-parents = np.zeros((1, max_nodes, max_bi_relations, 2), dtype='int32')
-parents[0, 1, 0, :] = [1, 0] # graph 0, parent relation, node 1, 1 -> 0
-print(parents)
-
-normalizer = np.ones((1, max_nodes, 1), dtype='float32')
-normalizer[0, 0, 0] = 1. / 2
-normalizer[0, 1, 0] = 1. / 3
-
-# prediction = model.predict([children, parents, normalizer])
-prediction = model.predict([
-    graph_data.children, graph_data.parents, graph_data.birel_norm])
-print(prediction.shape)
-print(prediction)
+## import sys
+## sys.exit(1)
+## 
+## 
+## from embeddings import DynamicEmbedding
+## 
+## embs = np.array([
+##     [0.0, 0.0],
+##     [1.0, 1.0],
+##     [2.0, 2.0],
+##     [3.0, 3.0],
+##     [4.0, 4.0]], dtype='float32')
+## embs = np.expand_dims(embs, axis=0)
+## print(embs.shape)
+## 
+## indices_input = Input(shape=(2,), dtype='int32')
+## embs_input = Input(shape=(5, 2), dtype='float32')
+## 
+## # dyn_embs = Reshape((6, 2))(embs_input)
+## emb_layer = DynamicEmbedding(embs_input, mode='tensor', dropout=0.0)
+## x = emb_layer.call(indices_input)
+## 
+## model = Model(inputs=[embs_input, indices_input], outputs=[x])
+## model.compile(
+##     optimizer='rmsprop',
+##     loss='categorical_crossentropy',
+##     metrics=['accuracy'])
+## 
+## indices = np.array([
+##     [0, 1],
+##     [0, 2]],
+##     dtype='int32')
+## out = model.predict([embs, indices])
+## print(out)
+## print(out.shape)
+## import sys
+## sys.exit(1)
+## 
+## 
+## embs = np.expand_dims(embs, axis=0)
+## 
+## children = np.zeros((1, 5, 5), dtype='float32')
+## children[0, 0, 1] = 1
+## children[0, 0, 3] = 1
+## children[0, 1, 1] = 1
+## children[0, 1, 2] = 1
+## children[0, 2, 3] = 1
+## 
+## indices = np.array([0, 1], dtype='int32').reshape(1,2,1)
+## print('indices shape: {0}'.format(indices.shape))
+## 
+## # print(children.dot(embs))
+## 
+## children_input = Input(shape=(5, 5))
+## indices_input = Input(shape=(2,1), dtype='int32')
+## embs_input = Input(shape=(5, 2))
+## 
+## # x = Dot(axes=(2, 1))([children_input, embs_input])
+## # def gather(data_and_inds):
+## #     data, inds = data_and_inds
+## #     return K.gather(data, inds)
+## # 
+## # def gather_output_shape(data_and_inds_shape):
+## #     data_shape, inds_shape = data_and_inds_shape
+## #     return data_shape
+## 
+## x  = Lambda(gather, output_shape=gather_output_shape)([embs_input, indices_input])
+## 
+## model = Model(inputs=[embs_input, indices_input], outputs=[x])
+## model.compile(
+##     optimizer='rmsprop',
+##     loss='categorical_crossentropy',
+##     metrics=['accuracy'])
+## print(model.predict([embs, indices]))
+## 
+## import sys
+## sys.exit(1)
+## 
+## formulas_str = [
+##     'exists x. pred1(x)',
+##     'exists y. pred1(y)',
+##     'exists y. all x. (pred1(y) & pred2(x, y))',
+##     'exists y. all x. (pred1(y) & pred2(y, x))']
+## formulas = [lexpr(f) for f in formulas_str]
+## graph_data = GraphData.from_formulas(formulas)
+## graph_data.make_matrices()
+## # print(graph_data.birel_norm)
+## # print(graph_data.treelets_norm)
+## # print(graph_data.word2ind)
+## # import sys
+## # sys.exit(1)
+## 
+## max_nodes = graph_data.max_nodes
+## max_bi_relations = graph_data.max_bi_relations
+## max_tri_relations = graph_data.max_treelets
+## emb_dim = 2
+## num_words = graph_data.num_words
+## 
+## # embs_ini = np.array([
+## #     [0.0, 0.0],
+## #     [1.0, 1.0],
+## #     [2.0, 2.0],
+## #     [3.0, 3.0]])
+## embs_ini = np.random.uniform(size=num_words * emb_dim).reshape(num_words, emb_dim)
+## embs_ini[0, :] = [0.0, 0.0]
+## token_emb = Embedding(
+##     input_dim=graph_data.num_words,
+##     output_dim=emb_dim,
+##     weights=[embs_ini],
+##     mask_zero=False, # Reshape layer does not support masking.
+##     trainable=True,
+##     name='token_emb')
+## # token_emb = Embedding(
+## #     input_dim=num_words,
+## #     output_dim=emb_dim,
+## #     weights=[embs_ini],
+## #     mask_zero=False, # Reshape layer does not support masking.
+## #     trainable=True,
+## #     name='token_emb')
+## 
+## outputs, inputs = make_child_parent_branch(token_emb)
+## 
+## model = Model(
+##     inputs=inputs,
+##     outputs=outputs)
+## 
+## model.compile(
+##     optimizer='rmsprop',
+##     loss='categorical_crossentropy',
+##     metrics=['accuracy'])
+## 
+## # Zero should be reserved for no-relation.
+## children = np.zeros((1, max_nodes, max_bi_relations, 2), dtype='int32')
+## children[0, 0, 0, :] = [0, 1] # graph 0, child relation, node 0, 0 -> 1
+## children[0, 0, 1, :] = [0, 2] # graph 0, child relation, node 0, 0 -> 2
+## children[0, 1, 0, :] = [1, 2] # graph 0, child relation, node 1, 1 -> 2
+## children[0, 1, 1, :] = [1, 3] # graph 0, child relation, node 1, 1 -> 3
+## print(children)
+## 
+## parents = np.zeros((1, max_nodes, max_bi_relations, 2), dtype='int32')
+## parents[0, 1, 0, :] = [1, 0] # graph 0, parent relation, node 1, 1 -> 0
+## print(parents)
+## 
+## normalizer = np.ones((1, max_nodes, 1), dtype='float32')
+## normalizer[0, 0, 0] = 1. / 2
+## normalizer[0, 1, 0] = 1. / 3
+## 
+## # prediction = model.predict([children, parents, normalizer])
+## prediction = model.predict([
+##     graph_data.children, graph_data.parents, graph_data.birel_norm])
+## print(prediction.shape)
+## print(prediction)

@@ -82,7 +82,7 @@ fi
 # Set a variable with the command to invoke the CCG parser for Japanese.
 parser_cmd="java -Xmx4g -cp \"${parser_dir}/jar/*\" jigg.pipeline.Pipeline \
   -annotators ssplit,kuromoji,ccg \
-  -ccg.kBest 5 -file"
+  -ccg.kBest 10 -file"
 
 # Syntactic parse the sentences into an XML file in $parsed_dir.
 if [ ! -e "${parsed_dir}/${sentences_basename}.jigg.xml" ]; then
