@@ -24,13 +24,15 @@ from nltk2graph import formula_to_graph
 from nltk2graph import get_label
 from nltk2graph import get_node_token
 
+import networkx as nx
+
 class GraphStructures(object):
     """
     For a certain graph, it indexes graph structures for all its nodes.
     """
 
     def __init__(self, graph):
-        self.graph = graph
+        self.graph = nx.convert_node_labels_to_integers(graph, first_label=1)
         # Child nodes.
         self.children = defaultdict(list)
         # Parent nodes.
@@ -82,6 +84,8 @@ class GraphData(object):
             '<unk>', '<exists>', '<all>', '<&>', '<|>',
             '<=>', '<Subj>', '<root>']
         self.word2ind['<unk>'] # index 0 for unknown word.
+        self.word_embs = None
+        self.node_inds = None
         self._max_nodes = self.max_nodes
         self._max_bi_relations = self.max_bi_relations
         self._max_treelets = self.max_treelets
@@ -114,7 +118,7 @@ class GraphData(object):
     @property
     def max_nodes(self):
         # TODO: compute other statistics.
-        return max(len(gs.graph.nodes) for gs in self.graph_structs)
+        return max(len(gs.graph.nodes) for gs in self.graph_structs) + 1
 
     @property
     def num_words(self):
@@ -159,6 +163,7 @@ class GraphData(object):
         vocab = special + constants
         assert '<unk>' not in vocab
         [self.word2ind[w] for w in vocab]
+        self.word2emb = np.random.uniform(size=(len(self.word2ind), 2))
         return self.word2ind
 
     # TODO: guard against index-out-of-bounds error when preparing trial and
@@ -176,12 +181,13 @@ class GraphData(object):
                 for k, rel_nid in enumerate(getattr(gs, relation)[nid]):
                     rel_token = get_node_token(gs.graph, rel_nid)
                     try:
-                        birel[i, j, k, :] = [
-                            self.word2ind[nid_token], self.word2ind[rel_token]]
+                        # birel[i, j, k, :] = [nid_token, rel_token]
+                        birel[i, j, k, :] = [nid, rel_nid]
                     except IndexError:
                         continue
         return birel
 
+    # TODO: remove word2ind mapping.
     def make_treelet_matrix(self, relation='treelet_predicate'):
         treelets = np.zeros((
             len(self.graph_structs),
@@ -201,6 +207,9 @@ class GraphData(object):
                         self.word2ind[rel2_token]]
         return treelets
 
+    # TODO:
+    # Combine the normalizer with a mask, by multiplying by 0.0 if
+    # row is not valid, and 1/num for the rest.
     def make_birel_normalizers(self):
         birel_norm = np.ones((
             len(self.graph_structs),
@@ -232,10 +241,32 @@ class GraphData(object):
                     treelets_norm[i, j, 0] = 1. / num_treelets
         return treelets_norm
 
+    def make_node_inds(self):
+        node_inds = np.zeros((
+            len(self.graph_structs),
+            self._max_nodes,
+            1),
+            dtype='float32')
+        for i, gs in enumerate(self.graph_structs):
+            for j, nid in enumerate(gs.graph.nodes):
+                node_token = get_node_token(gs.graph, nid)
+                node_inds[i, nid, :] = self.word2ind[node_token]
+        return node_inds
+
+    def make_node_embeddings(self):
+        embeddings = np.random.uniform(size=(
+            len(self.word2ind), 2))
+        # embeddings[self.word2ind['<&>'], :] *= 100
+        embeddings[0, :] *= 0.0
+        # embeddings[self.word2ind['<unk>'], :] *= 0
+        return embeddings
+
     def make_matrices(self):
         # Populates self.word2ind
         self.make_vocabulary()
 
+        self.node_embs = self.make_node_embeddings()
+        self.node_inds = self.make_node_inds()
         # Makes relations between pairs of nodes (children and parents).
         self.children = self.make_birel_matrix(relation='children')
         self.parents = self.make_birel_matrix(relation='parents')
