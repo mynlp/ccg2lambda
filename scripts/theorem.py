@@ -217,7 +217,7 @@ def make_parser_labels_node(labels):
     for label in labels:
         assert len(label) == 2
         l_node = etree.Element('parser_label')
-        l_node.set('ccg_id', label[0])
+        l_node.set('ccg_id', str(label[0]))
         l_node.set('ccg_parser', str(label[1]))
         ls_node.append(l_node)
     return ls_node

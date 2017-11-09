@@ -169,10 +169,9 @@ def prove_doc_ind(document_ind):
         label = proof_node.get('inference_result', 'unknown')
     lock.acquire()
     if ARGS.print_length == 'full':
-        print('{0} {1}'.format(
-            doc.get('pair_id', ''),
-            label,
-            end='\n', file=sys.stdout))
+        pair_id = doc.get('pair_id', '').strip()
+        result = '{0} {1}'.format(pair_id, label) if len(pair_id) > 0 else label
+        print(result, end='\n', file=sys.stdout)
     elif ARGS.print_length == 'short':
         print(label[0], end='', file=sys.stdout)
     lock.release()
