@@ -43,6 +43,18 @@ from logic_parser import lexpr
 from normalization import normalize_token
 from tree_tools import tree_or_string
 
+COQLIB_PATH='coqlib.v'
+def get_reserved_preds_from_coq_static_lib(coq_static_lib_path):
+    finput = codecs.open(coq_static_lib_path, 'r', 'utf-8')
+    type_definitions = \
+        [line.strip() for line in finput if line.startswith('Parameter ')]
+    finput.close()
+    reserved_predicates = \
+        [type_definition.split()[1] for type_definition in type_definitions]
+    return reserved_predicates
+RESERVED_PREDS=get_reserved_preds_from_coq_static_lib(COQLIB_PATH)
+print(RESERVED_PREDS)
+
 def linearize_type(pred_type):
     linearized_type = []
     if not pred_type.__dict__:
@@ -213,10 +225,9 @@ def resolve_types_rec(expr, signature=None):
     return signature
 
 def make_new_pred_name(pred, pred_type):
-    if not str(pred).startswith('_'):
-        return str(pred)
+    if pred in RESERVED_PREDS:
+        return pred
     type_len = type_length(pred_type)
-    # from pudb import set_trace; set_trace()
     if type_len > 2:
         pred_name = '{0}_{1}{2}'.format(str(pred), str(pred_type.first), type_len)
     elif type_len == 2:
@@ -281,6 +292,8 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sigs=None):
     """
     if preferred_sigs is None:
         preferred_sigs = [{}] * len(exprs)
+    elif isinstance(preferred_sigs, dict):
+        preferred_sigs = [preferred_sigs]
     signatures = [resolve_types_rec(expr) for expr in exprs]
     signature = defaultdict(list)
     for s, preferred_sig in zip(signatures, preferred_sigs):
@@ -322,7 +335,7 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sigs=None):
 
 def type_check_safe(exprs):
     """
-    Returns the signature most specific (longest).
+    Returns the signature most specific (longest), ignoring type conflicts.
     """
     signatures = [resolve_types_rec(expr) for expr in exprs]
     combined_signature = {}
@@ -430,7 +443,6 @@ def get_dynamic_library_from_doc(doc, semantics_nodes):
     dynamic_library = merge_dynamic_libraries(
         nltk_sig_arbi,
         nltk_sig_auto,
-        coq_static_lib_path='coqlib.v', 
         doc=doc)
     dynamic_library_str = '\n'.join(sorted(dynamic_library))
     return dynamic_library_str, formulas
@@ -660,21 +672,12 @@ def build_arbitrary_dynamic_library(ccg_trees):
     dynamic_library = sorted(list(set(dynamic_library)))
     return dynamic_library
 
-def get_reserved_preds_from_coq_static_lib(coq_static_lib_path):
-    finput = codecs.open(coq_static_lib_path, 'r', 'utf-8')
-    type_definitions = \
-        [line.strip() for line in finput if line.startswith('Parameter ')]
-    finput.close()
-    reserved_predicates = \
-        [type_definition.split()[1] for type_definition in type_definitions]
-    return reserved_predicates
-
 def get_predicate_type_from_library(predicate, lib):
     assert isinstance(lib, dict)
     return lib.get(predicate, None)
 
-def merge_dynamic_libraries(sig_arbi, sig_auto, coq_static_lib_path, doc):
-    reserved_predicates = get_reserved_preds_from_coq_static_lib(coq_static_lib_path)
+def merge_dynamic_libraries(sig_arbi, sig_auto, doc):
+    # reserved_predicates = get_reserved_preds_from_coq_static_lib(coq_static_lib_path)
     # Get base forms, unless the base form is '*', in which case get surf form.
     base_forms = get_tokens_from_xml_node(doc)
     required_predicates = set(normalize_token(t) for t in base_forms)
@@ -682,7 +685,7 @@ def merge_dynamic_libraries(sig_arbi, sig_auto, coq_static_lib_path, doc):
     sig_merged.update(sig_arbi) # overwrites automatically inferred types.
     # Remove predicates that are reserved or not required (e.g. variables).
     preds_to_remove = set()
-    preds_to_remove.update(reserved_predicates)
+    preds_to_remove.update(RESERVED_PREDS)
     for pred in sig_merged:
         if pred not in required_predicates and not re.match(r'\S+_[a-z][0-9]', pred):
             preds_to_remove.add(pred)
@@ -697,7 +700,7 @@ def merge_dynamic_libraries(sig_arbi, sig_auto, coq_static_lib_path, doc):
     result_lib = list(set(dynamic_library))
     return result_lib
 
-def merge_dynamic_libraries_(coq_lib, nltk_lib, coq_static_lib_path, doc):
+def merge_dynamic_libraries_(coq_lib, nltk_lib, doc):
     reserved_predicates = get_reserved_preds_from_coq_static_lib(coq_static_lib_path)
     # Get base forms, unless the base form is '*', in which case get surf form.
     base_forms = get_tokens_from_xml_node(doc)
@@ -709,7 +712,7 @@ def merge_dynamic_libraries_(coq_lib, nltk_lib, coq_static_lib_path, doc):
                         for nltk_lib_entry in nltk_lib}
     result_lib = []
     for predicate in required_predicates:
-        if predicate in reserved_predicates:
+        if predicate in RESERVED_PREDS:
             continue
         coq_predicate_type = get_predicate_type_from_library(predicate, coq_lib_index)
         nltk_predicate_type = get_predicate_type_from_library(predicate, nltk_lib_index)

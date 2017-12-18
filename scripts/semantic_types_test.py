@@ -88,6 +88,7 @@ class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
 
     def test_different_in_same_expression(self):
         exprs = [lexpr(r'pred1(x) & pred1(e)'), lexpr(r'pred1(e)')]
+        # from pudb import set_trace; set_trace()
         sigs, new_exprs = combine_signatures_or_rename_preds(3, exprs)
         expected_exprs = [
             lexpr(r'pred1_e2(x) & pred1_v2(e)'), lexpr(r'pred1_v2(e)')]
@@ -220,7 +221,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig = convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib, _ = build_dynamic_library(expression, coq_sig)
-        lib = merge_dynamic_libraries(coq_sig, nltk_lib, './coqlib.v', sentence)
+        lib = merge_dynamic_libraries(coq_sig, nltk_lib, sentence)
         expected_lib = ["Parameter _base2 : Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop."]
         self.assertCountEqual(expected_lib, lib)
@@ -252,7 +253,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig = convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib, _ = build_dynamic_library(expression, coq_sig)
-        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
+        lib = merge_dynamic_libraries(coq_lib, nltk_lib, sentence)
         expected_lib = ["Parameter _base2 : Entity -> Prop.",
                         "Parameter _base1 : Entity -> Prop."]
         self.assertCountEqual(expected_lib, lib)
@@ -284,7 +285,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig = convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib, _ = build_dynamic_library(expression, coq_sig)
-        lib = merge_dynamic_libraries(coq_lib, nltk_lib, './coqlib.v', sentence)
+        lib = merge_dynamic_libraries(coq_lib, nltk_lib, sentence)
         expected_lib = ["Parameter _base2 : Entity -> (Entity -> Prop).",
                         "Parameter _base1 : Entity -> Prop."]
         self.assertCountEqual(expected_lib, lib)
@@ -316,7 +317,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig = convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib, _ = build_dynamic_library(expression, coq_sig)
-        lib = merge_dynamic_libraries(coq_sig, nltk_lib, './coqlib.v', sentence)
+        lib = merge_dynamic_libraries(coq_sig, nltk_lib, sentence)
         expected_lib = ["Parameter _base2 : Prop -> (Entity -> Prop).",
                         "Parameter _base1 : Entity -> Prop."]
         self.assertCountEqual(expected_lib, lib)
@@ -349,7 +350,7 @@ class ArbiAutoTypesTestCase(unittest.TestCase):
         expression = [ccg_tree.get('sem')]
         coq_sig = convert_coq_signatures_to_nltk(coq_lib)
         nltk_lib, _ = build_dynamic_library(expression, coq_sig)
-        lib = merge_dynamic_libraries(coq_sig, nltk_lib, './coqlib.v', sentence)
+        lib = merge_dynamic_libraries(coq_sig, nltk_lib, sentence)
         expected_lib = ["Parameter _base2 : Prop -> (Entity -> Prop).",
                         "Parameter _base1 : Entity -> (Prop -> Prop)."]
         self.assertCountEqual(expected_lib, lib)
