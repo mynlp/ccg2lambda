@@ -49,21 +49,19 @@ def make_axioms_from_preds(premise_preds, conclusion_pred, pred_args):
 
 
 def try_abductions(theorem):
-    assert len(theorem.variations) == 2, 'Got %d variations' % len(theorem.variations)
-    theorem_master = theorem.variations[0]
-    theorem_negated = theorem.variations[1]
-    t_pos, t_neg = theorem_master, theorem_negated
+    assert len(theorem.variations) == 2, 'Got %d != 2 variations' % len(theorem.variations)
+    t_pos, t_neg = theorem.variations[:2] # theorem positive and negated.
+    theorem_master = t_pos
 
-    direct_proof_script = t_pos.coq_script
-    reverse_proof_script = t_neg.coq_script
     axioms = t_pos.axioms.union(t_neg.axioms)
     current_axioms = t_pos.axioms.union(t_neg.axioms)
-    failure_logs = []
     while True:
+        # TODO: should be previous_axioms=axioms?
         abduction_theorem = try_abduction(
             t_pos, previous_axioms=current_axioms, expected='yes')
+        # TODO: should we add this adbuction_theorem in theorem_master.variations?
         current_axioms = axioms.union(abduction_theorem.axioms)
-        reverse_proof_scripts = []
+        # TODO: should it be abduction_theorem.result == 'unknown'?
         if theorem_master.result == 'unknown':
             abduction_theorem = try_abduction(
                 t_neg, previous_axioms=current_axioms, expected='no')

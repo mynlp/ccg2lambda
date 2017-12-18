@@ -40,14 +40,15 @@
 USAGE="Usage: ./rte_en_mp.sh <sentences.txt> <semantic_templates.yaml>"
 
 # Check that the number of arguments is correct.
-if [ "$#" -ne 2 ]; then
+if [ "$#" -ge 2 ]; then
   echo "Error: Number of arguments invalid".
   echo $USAGE
+  echo "$#"
   exit 1
 fi
 
 # This variable contains the filename where the category templates are.
-category_templates=$2
+category_templates=${2:-en/semantic_templates_en_event.yaml}
 if [ ! -f $category_templates ]; then
   echo "Error: File with semantic templates does not exist."
   echo $USAGE
@@ -189,6 +190,7 @@ if [ ! -e "${results_dir}/${sentences_basename/.tok/.answer}" ]; then
         $parsed_dir/${sentences_basename}.${parser}.sem.xml \
         --graph_out ${results_dir}/${sentences_basename}.${parser}.html \
         --abduction spsa \
+        --ncores 3 \
         --proof ${results_dir}/${sentences_basename}.${parser}.proof.xml \
         > ${results_dir}/${sentences_basename}.${parser}.answer \
         2> ${results_dir}/${sentences_basename}.${parser}.err

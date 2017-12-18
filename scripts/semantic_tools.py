@@ -35,7 +35,7 @@ def build_knowledge_axioms(doc):
     axioms_str += '\n'
     return axioms_str
 
-def prove_doc(doc, abduction=None):
+def prove_doc(doc, abduction=None, args=None):
     """
     Retrieve from trees the logical formulas and the types
     (dynamic library).
@@ -45,8 +45,9 @@ def prove_doc(doc, abduction=None):
     # TODO: parameterize the switch to choose the type of theorem...
     # .. unless the MasterTheorem mechanism is a complete generalization.
     # theorem = Theorem.from_doc(doc)
-    theorem = MasterTheorem.from_doc(doc)
-    theorem.timeout = 100
+    use_gold_trees = False if args is None else args.gold_trees
+    theorem = MasterTheorem.from_doc(doc, use_gold_trees)
+    theorem.timeout = 100 if args is None else args.timeout
     theorem.prove(abduction)
     return theorem
 

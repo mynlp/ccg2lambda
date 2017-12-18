@@ -20,8 +20,8 @@ cp ja/jsem.xml .
 python extract_jsem_problems.py jsem.xml ja_plain
 
 ### Plain results ###
-./ja/emnlp2016exp_set.sh $cores $results_dir plain
-./ja/emnlp2016exp_eval.sh $results_dir plain
+# ./ja/emnlp2016exp_set.sh $cores $results_dir plain
+# ./ja/emnlp2016exp_eval.sh $results_dir plain
 
 ### Gold-tree results ###
 # Remove semantically-parsed files from previous plain run.

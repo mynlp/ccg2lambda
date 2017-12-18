@@ -60,13 +60,15 @@ def main(args = None):
     parser.add_argument("--abduction", nargs='?', type=str, default="no",
         choices=["no", "naive", "spsa"],
         help="Activate on-demand axiom injection (default: no axiom injection).")
-    parser.add_argument("--gold_trees", action="store_true", default=False)
+    parser.add_argument("--gold_trees", action="store_true", default=True)
     parser.add_argument("--print", nargs='?', type=str, default="result",
         choices=["result", "status"],
         help="Print to standard output the inference result or termination status.")
     parser.add_argument("--print_length", nargs='?', type=str, default="full",
         choices=["full", "short", "zero"],
         help="Length of printed output.")
+    parser.add_argument("--timeout", nargs='?', type=int, default="100",
+        help="Maximum running time for each possible theorem.")
     parser.add_argument("--ncores", nargs='?', type=int, default="1",
         help="Number of cores for multiprocessing.")
     ARGS = parser.parse_args()
@@ -145,7 +147,7 @@ def prove_doc_ind(document_ind):
     proof_node = etree.Element('proof')
     inference_result = 'unknown'
     try:
-        theorem = prove_doc(doc, ABDUCTION)
+        theorem = prove_doc(doc, ABDUCTION, ARGS)
         proof_node.set('status', 'success')
         inference_result = theorem.result
         proof_node.set('inference_result', inference_result)

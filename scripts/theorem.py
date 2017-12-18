@@ -400,12 +400,13 @@ class MasterTheorem(Theorem):
         return isinstance(other, MasterTheorem) and self.__hash__() == other.__hash__()
 
     @staticmethod
-    def from_doc(doc):
+    def from_doc(doc, use_gold_trees=False):
         """
         Build multiple theorems from an XML document produced by semparse.py script.
         """
+        # from pudb import set_trace; set_trace()
         theorems = []
-        for semantics in generate_semantics_from_doc(doc, max_gen=100):
+        for semantics in generate_semantics_from_doc(doc, 100, use_gold_trees):
             # from pudb import set_trace; set_trace()
             formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics]
             assert formulas and len(formulas) > 1
@@ -424,6 +425,7 @@ class MasterTheorem(Theorem):
             theorem.prove(abduction)
             if theorem.result != 'unknown':
                 break
+        return
 
     @property
     def result(self):
@@ -455,7 +457,7 @@ class MasterTheorem(Theorem):
         return mt_node
 
 
-def generate_semantics_from_doc(doc, max_gen=1):
+def generate_semantics_from_doc(doc, max_gen=1, use_gold_trees=False):
     """
     Returns string representations of logical formulas,
     as stored in the "sem" attribute of the root node
@@ -470,7 +472,18 @@ def generate_semantics_from_doc(doc, max_gen=1):
         return
     semantics_lists = []
     for sentence in sentences:
-        semantics_lists.append(sentence.xpath('./semantics'))
+        semantics = sentence.xpath('./semantics')
+        if use_gold_trees:
+            try:
+                gold_ind = int(sentence.get('gold_tree', 0))
+            except:
+                gold_ind = 0
+            if 0 <= gold_ind < len(semantics):
+                if semantics[gold_ind].get('status', 'failed') != 'success':
+                    logging.warning('Requested gold_tree has a failed semantic parse: {0}\n{1}'.format(
+                        sentence.attrib, semantics[gold_ind].attrib))
+                semantics = [semantics[gold_ind]]
+        semantics_lists.append(semantics)
     # Case: the conclusion has no semantic interpretations.
     if len(semantics_lists[-1]) == 0:
         return

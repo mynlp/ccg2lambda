@@ -213,6 +213,8 @@ def resolve_types_rec(expr, signature=None):
     return signature
 
 def make_new_pred_name(pred, pred_type):
+    if not str(pred).startswith('_'):
+        return str(pred)
     type_len = type_length(pred_type)
     # from pudb import set_trace; set_trace()
     if type_len > 2:
@@ -266,7 +268,7 @@ def replace_function_names(expr, resolution_guide, active=None):
             'Expression not recognized: {0}, type: {1}'.format(expr, type(expr)))
     return expr
 
-def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
+def combine_signatures_or_rename_preds(unused, exprs, preferred_sigs=None):
     """
     `signatures` is a list of dictionaries. Each dictionary has key-value
       pairs where key is a predicate name, and value is a type object.
@@ -277,11 +279,17 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
     in the signature dictionary. The target predicate is also renamed in
     the logical expressions.
     """
+    if preferred_sigs is None:
+        preferred_sigs = [{}] * len(exprs)
     signatures = [resolve_types_rec(expr) for expr in exprs]
     signature = defaultdict(list)
-    for s in signatures:
-        for k, v in s.items():
-            signature[k].extend(v)
+    for s, preferred_sig in zip(signatures, preferred_sigs):
+        for pred, type_and_expr_list in s.items():
+            pred_types = set([te[0] for te in type_and_expr_list])
+            if pred in preferred_sig and len(pred_types.difference(set([preferred_sig[pred]]))) > 0:
+                # != type_and_expr_list[0][0]:
+                type_and_expr_list = [(preferred_sig[pred], te[1]) for te in type_and_expr_list]
+            signature[pred].extend(type_and_expr_list)
     
     resolution_guide = defaultdict(list)
     for pred, sigs_exprs in signature.items():
@@ -300,7 +308,10 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
             #     expr.__class__)
             # expr = rename_guided(expr, resolution_guide)
         new_exprs.append(expr)
-    signature = typecheck(new_exprs)
+    # signature = typecheck(new_exprs)
+    # signatures = [expr.typecheck() for expr in new_exprs]
+    signatures = type_check_safe(new_exprs)
+    signature = combine_signatures_(preferred_sigs + [signatures])
 
     signature = remove_reserved_predicates(signature)
     signature = resolve_types_in_signature(signature)
@@ -308,6 +319,55 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sig=None):
         signature = remove_colliding_predicates(signature, expr)
     signature = resolve_types_in_signature(signature)
     return signature, new_exprs
+
+def type_check_safe(exprs):
+    """
+    Returns the signature most specific (longest).
+    """
+    signatures = [resolve_types_rec(expr) for expr in exprs]
+    combined_signature = {}
+    for signature in signatures:
+        for predicate, predicate_types_exprs in signature.items():
+            types = [te[0] for te in predicate_types_exprs]
+            assert len(types) > 0
+            types.sort(key=lambda t: type_length(t), reverse=True)
+            if predicate not in combined_signature:
+                combined_signature[predicate] = types[0]
+            else:
+                sig_length_previous = type_length(combined_signature[predicate])
+                sig_length_new = type_length(types[0])
+                if sig_length_new > sig_length_previous:
+                    combined_signature[predicate] = types[0]
+    return combined_signature
+
+def combine_signatures_or_rename_preds_(signatures, exprs, preferred_sig=None):
+    """
+    `signatures` is a list of dictionaries. Each dictionary has key-value
+      pairs where key is a predicate name, and value is a type object.
+    `exprs` are logical formula objects.
+    This function return a single signature dictionary with merged signatures.
+    If there is a predicate for which there are differing types, then the
+    predicate is renamed and each version is associated to a different type
+    in the signature dictionary. The target predicate is also renamed in
+    the logical expressions.
+    """
+    assert len(signatures) == len(exprs), '{0} vs. {1}'.format(signatures, exprs)
+    signatures_merged = {}
+    exprs_new = []
+    for i, (signature, expr) in enumerate(zip(signatures, exprs)):
+        expr_new = expr
+        for pred, typ in signature.items():
+            if preferred_sig is not None and pred in preferred_sig:
+                continue
+            if pred not in signatures_merged:
+                signatures_merged[pred] = typ
+            else:
+                if typ != signatures_merged[pred]:
+                    pred_new = pred + '_' + str(i)
+                    signatures_merged[pred_new] = typ
+                    expr_new = expr_new.replace(Variable(pred), lexpr(pred_new))
+        exprs_new.append(expr_new)
+    return signatures_merged, exprs_new
 
 
 def resolve_types(expr, signature = {}):
@@ -351,6 +411,7 @@ def remove_reserved_predicates(signature):
 
 def get_dynamic_library_from_doc(doc, semantics_nodes):
     # Each type is of the form "predicate : basic_type -> ... -> basic_type."
+    # from pudb import set_trace; set_trace()
     types_sets = []
     for semantics_node in semantics_nodes:
       types = set(semantics_node.xpath('./span/@type'))
@@ -359,11 +420,13 @@ def get_dynamic_library_from_doc(doc, semantics_nodes):
     nltk_sigs_arbi = [convert_coq_signatures_to_nltk(coq_lib) for coq_lib in coq_libs]
     formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics_nodes]
     formulas = parse_exprs_if_str(formulas)
-    nltk_sig_arbi, formulas = combine_signatures_or_rename_preds(nltk_sigs_arbi, formulas)
-    nltk_sig_auto, formulas = build_dynamic_library(formulas, nltk_sig_arbi)
+    nltk_sig_arbi, formulas = combine_signatures_or_rename_preds(nltk_sigs_arbi, formulas, nltk_sigs_arbi)
+    # nltk_sig_auto, formulas = build_dynamic_library(formulas, nltk_sig_arbi)
+    nltk_sig_auto = {}
     # coq_static_lib_path is useful to get reserved predicates.
     # ccg_xml_trees is useful to get full list of tokens
     # for which we need to specify types.
+    nltk_sig_arbi = combine_signatures_(nltk_sigs_arbi)
     dynamic_library = merge_dynamic_libraries(
         nltk_sig_arbi,
         nltk_sig_auto,
@@ -448,35 +511,6 @@ def build_dynamic_library_(exprs, preferred_signature=None):
         signatures, exprs_logic, preferred_signature)
     signature = remove_reserved_predicates(signature)
     return signature, exprs
-
-def combine_signatures_or_rename_preds_(signatures, exprs, preferred_sig=None):
-    """
-    `signatures` is a list of dictionaries. Each dictionary has key-value
-      pairs where key is a predicate name, and value is a type object.
-    `exprs` are logical formula objects.
-    This function return a single signature dictionary with merged signatures.
-    If there is a predicate for which there are differing types, then the
-    predicate is renamed and each version is associated to a different type
-    in the signature dictionary. The target predicate is also renamed in
-    the logical expressions.
-    """
-    assert len(signatures) == len(exprs), '{0} vs. {1}'.format(signatures, exprs)
-    signatures_merged = {}
-    exprs_new = []
-    for i, (signature, expr) in enumerate(zip(signatures, exprs)):
-        expr_new = expr
-        for pred, typ in signature.items():
-            if preferred_sig is not None and pred in preferred_sig:
-                continue
-            if pred not in signatures_merged:
-                signatures_merged[pred] = typ
-            else:
-                if typ != signatures_merged[pred]:
-                    pred_new = pred + '_' + str(i)
-                    signatures_merged[pred_new] = typ
-                    expr_new = expr_new.replace(Variable(pred), lexpr(pred_new))
-        exprs_new.append(expr_new)
-    return signatures_merged, exprs_new
 
 def convert_coq_to_nltk_type(coq_type):
     """
