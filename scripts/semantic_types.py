@@ -53,7 +53,6 @@ def get_reserved_preds_from_coq_static_lib(coq_static_lib_path):
         [type_definition.split()[1] for type_definition in type_definitions]
     return reserved_predicates
 RESERVED_PREDS=get_reserved_preds_from_coq_static_lib(COQLIB_PATH)
-print(RESERVED_PREDS)
 
 def linearize_type(pred_type):
     linearized_type = []
