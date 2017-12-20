@@ -17,6 +17,7 @@
 import codecs
 from collections import defaultdict
 from copy import deepcopy
+import functools
 import logging
 import re
 
@@ -259,20 +260,25 @@ def replace_function_names(expr, resolution_guide, active=None):
        isinstance(expr, Variable):
         return expr
     elif isinstance(expr, NegatedExpression):
-        replace_function_names(expr.term, resolution_guide, active)
+        expr.term = replace_function_names(expr.term, resolution_guide, active)
         return expr
     elif isinstance(expr, BinaryExpression):
         child_exprs = [expr.first,  expr.second]
         exprs = [replace_function_names(e, resolution_guide, active) for e in child_exprs]
+        expr.first = exprs[0]
+        expr.second = exprs[1]
     elif isinstance(expr, ApplicationExpression):
         func, args = expr.uncurry()
         if str(func) in active:
             expr.function = ConstantExpression(Variable(active[str(func)]))
         child_exprs = [func] + args
         exprs = [replace_function_names(e, resolution_guide, active) for e in child_exprs]
+        expr = functools.reduce(lambda f, a: ApplicationExpression(f, a), exprs)
     elif isinstance(expr, VariableBinderExpression):
         child_exprs = [expr.variable,  expr.term]
         exprs = [replace_function_names(e, resolution_guide, active) for e in child_exprs]
+        expr.variable = exprs[0]
+        expr.term = exprs[1]
     else:
         raise NotImplementedError(
             'Expression not recognized: {0}, type: {1}'.format(expr, type(expr)))

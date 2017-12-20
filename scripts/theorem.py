@@ -134,6 +134,7 @@ class Theorem(object):
         return False, failure_log
 
     def prove_simple(self):
+        # from pudb import set_trace; set_trace()
         self.coq_script = make_coq_script(
             self.premises,
             self.conclusion,
@@ -196,7 +197,6 @@ class Theorem(object):
             self.premises, negate_conclusion(self.conclusion), reverse=True)
         ts_node.append(reverse_node_neg)
         # Add theorem(s) node.
-        # from pudb import set_trace; set_trace()
         for theorem in self.variations:
             t_node = etree.Element('theorem')
             ts_node.append(t_node)
@@ -404,10 +404,8 @@ class MasterTheorem(Theorem):
         """
         Build multiple theorems from an XML document produced by semparse.py script.
         """
-        # from pudb import set_trace; set_trace()
         theorems = []
         for semantics in generate_semantics_from_doc(doc, 100, use_gold_trees):
-            # from pudb import set_trace; set_trace()
             formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics]
             assert formulas and len(formulas) > 1
             dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, semantics)
