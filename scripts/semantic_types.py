@@ -328,8 +328,8 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sigs=None):
         new_exprs.append(expr)
     # signature = typecheck(new_exprs)
     # signatures = [expr.typecheck() for expr in new_exprs]
-    signatures = type_check_safe(new_exprs)
-    signature = combine_signatures_(preferred_sigs + [signatures])
+    signature = type_check_safe(new_exprs)
+    signature = combine_signatures_(preferred_sigs + [signature])
 
     signature = remove_reserved_predicates(signature)
     signature = resolve_types_in_signature(signature)
@@ -444,7 +444,7 @@ def get_dynamic_library_from_doc(doc, semantics_nodes):
     # coq_static_lib_path is useful to get reserved predicates.
     # ccg_xml_trees is useful to get full list of tokens
     # for which we need to specify types.
-    nltk_sig_arbi = combine_signatures_(nltk_sigs_arbi)
+    # nltk_sig_arbi = combine_signatures_(nltk_sigs_arbi)
     dynamic_library = merge_dynamic_libraries(
         nltk_sig_arbi,
         nltk_sig_auto,
