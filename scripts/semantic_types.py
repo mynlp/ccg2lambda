@@ -78,6 +78,8 @@ def type_length(expr_type):
     type_length(<e, <e,t>>) = 3
     """
     acc_first, acc_second = 0, 0
+    if expr_type is None:
+        return 0
     if 'first' not in expr_type.__dict__ \
        and 'second' not in expr_type.__dict__:
         return 1
@@ -270,9 +272,9 @@ def replace_function_names(expr, resolution_guide, active=None):
     elif isinstance(expr, ApplicationExpression):
         func, args = expr.uncurry()
         if str(func) in active:
-            expr.function = ConstantExpression(Variable(active[str(func)]))
-        child_exprs = [func] + args
-        exprs = [replace_function_names(e, resolution_guide, active) for e in child_exprs]
+            func = type(func)(Variable(active[str(func)]))
+        args_exprs = [replace_function_names(e, resolution_guide, active) for e in args]
+        exprs = [func] + args_exprs
         expr = functools.reduce(lambda f, a: ApplicationExpression(f, a), exprs)
     elif isinstance(expr, VariableBinderExpression):
         child_exprs = [expr.variable,  expr.term]
@@ -284,7 +286,7 @@ def replace_function_names(expr, resolution_guide, active=None):
             'Expression not recognized: {0}, type: {1}'.format(expr, type(expr)))
     return expr
 
-def combine_signatures_or_rename_preds(unused, exprs, preferred_sigs=None):
+def combine_signatures_or_rename_preds(exprs, preferred_sigs=None):
     """
     `signatures` is a list of dictionaries. Each dictionary has key-value
       pairs where key is a predicate name, and value is a type object.
@@ -305,7 +307,6 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sigs=None):
         for pred, type_and_expr_list in s.items():
             pred_types = set([te[0] for te in type_and_expr_list])
             if pred in preferred_sig and len(pred_types.difference(set([preferred_sig[pred]]))) > 0:
-                # != type_and_expr_list[0][0]:
                 type_and_expr_list = [(preferred_sig[pred], te[1]) for te in type_and_expr_list]
             signature[pred].extend(type_and_expr_list)
     
@@ -314,20 +315,15 @@ def combine_signatures_or_rename_preds(unused, exprs, preferred_sigs=None):
         if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, _) in sigs_exprs)) > 1:
             for pred_type, ex in sigs_exprs:
                 new_pred_name = make_new_pred_name(pred, pred_type)
-                resolution_guide[ex].append((pred, new_pred_name))
+                if (pred, new_pred_name) not in resolution_guide[ex]:
+                    resolution_guide[ex].append((pred, new_pred_name))
 
     resolution_guide_local = deepcopy(resolution_guide)
     new_exprs = []
     for expr in exprs:
         if not isinstance(expr, ConstantExpression):
             expr = replace_function_names(expr, resolution_guide_local)
-            # expr = expr.visit_structured(
-            #     lambda e: rename_guided(e, resolution_guide),
-            #     expr.__class__)
-            # expr = rename_guided(expr, resolution_guide)
         new_exprs.append(expr)
-    # signature = typecheck(new_exprs)
-    # signatures = [expr.typecheck() for expr in new_exprs]
     signature = type_check_safe(new_exprs)
     signature = combine_signatures_(preferred_sigs + [signature])
 
@@ -436,15 +432,15 @@ def get_dynamic_library_from_doc(doc, semantics_nodes):
       types_sets.append(types)
     coq_libs = [['Parameter {0}.'.format(t) for t in types] for types in types_sets]
     nltk_sigs_arbi = [convert_coq_signatures_to_nltk(coq_lib) for coq_lib in coq_libs]
+    nltk_sig_arbi = combine_signatures_(nltk_sigs_arbi)
+
     formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics_nodes]
     formulas = parse_exprs_if_str(formulas)
-    nltk_sig_arbi, formulas = combine_signatures_or_rename_preds(nltk_sigs_arbi, formulas, nltk_sigs_arbi)
+    nltk_sig_auto, formulas = combine_signatures_or_rename_preds(formulas, nltk_sigs_arbi)
     # nltk_sig_auto, formulas = build_dynamic_library(formulas, nltk_sig_arbi)
-    nltk_sig_auto = {}
     # coq_static_lib_path is useful to get reserved predicates.
     # ccg_xml_trees is useful to get full list of tokens
     # for which we need to specify types.
-    # nltk_sig_arbi = combine_signatures_(nltk_sigs_arbi)
     dynamic_library = merge_dynamic_libraries(
         nltk_sig_arbi,
         nltk_sig_auto,
@@ -511,7 +507,7 @@ def build_dynamic_library(exprs, preferred_signature=None):
     # If expressions are strings, convert them into logic formulae.
     exprs_logic = parse_exprs_if_str(exprs)
     signature, exprs = combine_signatures_or_rename_preds(
-        None, exprs_logic, preferred_signature)
+        exprs_logic, preferred_signature)
     signature = remove_reserved_predicates(signature)
     return signature, exprs
 
@@ -525,7 +521,7 @@ def build_dynamic_library_(exprs, preferred_signature=None):
     exprs_logic = parse_exprs_if_str(exprs)
     signatures = [resolve_types(e) for e in exprs_logic]
     signature, exprs = combine_signatures_or_rename_preds(
-        signatures, exprs_logic, preferred_signature)
+        exprs_logic, preferred_signature)
     signature = remove_reserved_predicates(signature)
     return signature, exprs
 

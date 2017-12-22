@@ -29,85 +29,58 @@ from semantic_types import combine_signatures_or_rename_preds
 from semantic_types import convert_coq_signatures_to_nltk
 from semantic_types import convert_coq_to_nltk_type
 from semantic_types import get_coq_types
+from semantic_types import get_dynamic_library_from_doc
 from semantic_types import merge_dynamic_libraries
 from semantic_types import read_type
 from semantic_types import resolve_types
+from semparse import filter_attributes
 
 from nltk.sem.logic import Variable, Expression
 
 class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
-    # def test_resolve(self):
-    #     expr = lexpr(r'pred1(x)')
-    #     from pudb import set_trace; set_trace()
-    #     resolve_types(expr)
-    #     expr2 = lexpr(r'pred1(x) & pred2(e) & pred3(v)')
-    #     expr3 = lexpr(r'exists x e. (pred1(x) & pred2(e) & (exists x. pred2(x)))')
-    #     # print(expr2.visit_structured(
-    #     #     lambda e: e,
-    #     #     lambda es: [e.replace(Variable('pred2'), lexpr('pred22')) for e in es]))
-    #     print(expr2.visit_structured(
-    #         lambda e: e.replace(Variable('pred2'), lexpr('pred22')),
-    #         expr2.__class__))
 
     def test_different_onepred(self):
         exprs = [lexpr(r'pred1(x)'), lexpr(r'pred2(x)')]
-        sigs = [resolve_types(e) for e in exprs]
-        sig, exprs_new = combine_signatures_or_rename_preds(sigs, exprs)
-        # self.assertEqual(3, len(sig), msg='Unexpected signature: {0}'.format(sig))
+        sig, exprs_new = combine_signatures_or_rename_preds(exprs)
         self.assertEqual(exprs, exprs_new)
 
     def test_equal_onepred(self):
         exprs = [lexpr(r'pred1(x)'), lexpr(r'pred1(x)')]
-        sigs = [resolve_types(e) for e in exprs]
-        sig, exprs_new = combine_signatures_or_rename_preds(sigs, exprs)
+        sig, exprs_new = combine_signatures_or_rename_preds(exprs)
         self.assertEqual(2, len(sig), msg='Unexpected signature: {0}'.format(sig))
         self.assertEqual(exprs, exprs_new)
 
     def test_equalvar_onepred(self):
         exprs = [lexpr(r'pred1(x)'), lexpr(r'pred1(y)')]
-        sigs = [resolve_types(e) for e in exprs]
-        sig, exprs_new = combine_signatures_or_rename_preds(sigs, exprs)
+        sig, exprs_new = combine_signatures_or_rename_preds(exprs)
         self.assertEqual(3, len(sig), msg='Unexpected signature: {0}'.format(sig))
         self.assertEqual(exprs, exprs_new)
 
-    @unittest.expectedFailure
     def test_different_one_two_pred(self):
         exprs = [lexpr(r'pred1(x)'), lexpr(r'pred1(x,y)')]
         expected_exprs = [lexpr(r'pred1_e2(x)'), lexpr(r'pred1_e3(x,y)')]
-        # sigs = [resolve_types(e) for e in exprs]
-        # from pudb import set_trace; set_trace()
-        sig, new_exprs = combine_signatures_or_rename_preds(3, exprs)
-        # self.assertEqual(4, len(sig), msg='Unexpected signature: {0}'.format(sig))
+        sig, new_exprs = combine_signatures_or_rename_preds(exprs)
         self.assertEqual(expected_exprs, new_exprs)
 
     def test_different_one_pred_vartype(self):
         exprs = [lexpr(r'pred1(x)'), lexpr(r'pred1(e)')]
         expected_exprs = [lexpr(r'pred1_e2(x)'), lexpr(r'pred1_v2(e)')]
-        sig, exprs_new = combine_signatures_or_rename_preds(3, exprs)
+        sig, exprs_new = combine_signatures_or_rename_preds(exprs)
         self.assertEqual(expected_exprs, exprs_new)
 
     def test_different_in_same_expression(self):
         exprs = [lexpr(r'pred1(x) & pred1(e)'), lexpr(r'pred1(e)')]
-        # from pudb import set_trace; set_trace()
-        sigs, new_exprs = combine_signatures_or_rename_preds(3, exprs)
+        sigs, new_exprs = combine_signatures_or_rename_preds(exprs)
         expected_exprs = [
             lexpr(r'pred1_e2(x) & pred1_v2(e)'), lexpr(r'pred1_v2(e)')]
         self.assertEqual(expected_exprs, new_exprs)
 
     def test_different_in_same_expression_embed(self):
         exprs = [lexpr(r'exists x. (pred1(x) & exists e. pred1(e))')]
-        sigs, new_exprs = combine_signatures_or_rename_preds(3, exprs)
+        sigs, new_exprs = combine_signatures_or_rename_preds(exprs)
         expected_exprs = [
             lexpr(r'exists x. (pred1_e2(x) & exists e. pred1_v2(e))')]
         self.assertEqual(expected_exprs, new_exprs)
-
-    # def test_same_expression_japanese(self):
-    #     from pudb import set_trace; set_trace()
-    #     exprs = [lexpr(r'exists x.(_上場(x) & _等(x) & _株式(x) & exists z3.(_新株(z3) & _権(z3) & _予約(z3) & exists z2.(exists z1.(_日本(z1) & (z2 = z1)) & _金融(z2) & _商品(z2) & _所(z2) & _取引(z2) & exists e.(_上場(e) & _する(e) & (Nom(e) = z3) & (Dat(e) = z2))) & exists v.(_含む(v) & (Nom(v) = x) & (Acc(v) = z3))))')]
-    #     sigs, new_exprs = combine_signatures_or_rename_preds(3, exprs)
-    #     expected_exprs = [
-    #         lexpr(r'pred1_e2(x) & pred1_v2(e)'), lexpr(r'pred1_v2(e)')]
-    #     self.assertEqual(expected_exprs, new_exprs)
 
 # TODO: also test for types that are Propositions 't'.
 
@@ -119,7 +92,46 @@ def nltk_sig_to_coq_lib(nltk_sig):
         coq_lib.append(library_entry)
     return sorted(set(coq_lib))
 
+def semparse_sentence(sentence, semantic_index):
+    sem_node = etree.Element('semantics')
+    sem_tree = assign_semantics_to_ccg(sentence, semantic_index)
+    filter_attributes(sem_tree)
+    sem_node.extend(sem_tree.xpath('.//descendant-or-self::span'))
+    sem_node.set('status', 'success')
+    sem_node.set('root', sentence.xpath('./ccg[1]/@root')[0])
+    sentence.append(sem_node)
+    return sentence
+
 class build_arbitrary_dynamic_libraryTestCase(unittest.TestCase):
+    def test_type_arbitrary_raised(self):
+        semantic_index = SemanticIndex(None)
+        semantic_rules = [SemanticRule(r'N1', r'\P.P', {'coq_type' : 'Entity -> Prop'}),
+                          SemanticRule(r'N2', r'\P.P', {'coq_type' : 'Entity'}),
+                          SemanticRule(r'NP', r'\P Q.(_new(P, Q))', {'rule' : 'lex'})]
+        semantic_index.rules = semantic_rules
+        sentence_str = r"""
+      <sentence id="s1">
+        <tokens>
+          <token base="base1" pos="pos1" surf="surf1" id="t1_1"/>
+          <token base="base2" pos="pos1" surf="surf2" id="t1_2"/>
+        </tokens>
+        <ccg root="sp1-3" id="test1">
+          <span terminal="t1_1" category="N1" end="2" begin="1" id="sp1-1"/>
+          <span terminal="t1_2" category="N2" end="3" begin="2" id="sp1-2"/>
+          <span child="sp1-1 sp1-2" rule="lex" category="NP" end="2" begin="1" id="sp1-3"/>
+        </ccg>
+      </sentence>
+    """
+        sentence = etree.fromstring(sentence_str)
+        sentence_sem = semparse_sentence(sentence, semantic_index)
+        lib, formulas = get_dynamic_library_from_doc(
+            sentence_sem, sentence_sem.xpath('./semantics'))
+        coq_types = get_coq_types(sentence_sem)
+        expected_coq_types = [
+            "Parameter _base1 : Entity -> Prop.",
+            "Parameter _base2 : Entity."]
+        self.assertEqual(expected_coq_types, lib.split('\n'))
+
     def test_lexical_unary_one_type(self):
         semantic_index = SemanticIndex(None)
         semantic_rules = [SemanticRule(r'N', r'\P.P', {'coq_type' : 'Entity -> Prop'}),
@@ -426,7 +438,7 @@ class Coq2NLTKTypesTestCase(unittest.TestCase):
 class build_dynamic_libraryTestCase(unittest.TestCase):
     def test_entity(self):
         exprs = [lexpr('Python')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter Python : Entity.']
@@ -434,7 +446,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_predicate1_argument1(self):
         exprs = [lexpr('language(Python)')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter Python : Entity.',
@@ -445,7 +457,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_predicate1_argument2(self):
         exprs = [lexpr('language(Python, Scala)')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter Python : Entity.',
@@ -457,20 +469,21 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_predicate2_argument1_and_2(self):
         exprs = [lexpr('AND(language(Python, Scala), nice(Python))')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter nice : Entity -> Prop.',
            'Parameter Python : Entity.',
            'Parameter Scala : Entity.',
-           'Parameter language : Entity -> (Entity -> Prop).']
+           'Parameter language : Entity -> (Entity -> Prop).',
+           'Parameter AND : Prop -> (Prop -> Prop).']
         for item in dynamic_library:
             self.assertIn(item, expected_dynamic_library)
         self.assertEqual(len(expected_dynamic_library), len(dynamic_library))
 
     def test_predicate2_argument1_and_2Exprs2(self):
         exprs = [lexpr('language(Python, Scala)'), lexpr('nice(Python)')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter nice : Entity -> Prop.',
@@ -483,7 +496,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_pred1_prop_prop(self):
         exprs = [lexpr('nice(language(Python, Scala))')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter nice : Prop -> Prop.',
@@ -497,7 +510,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
     def test_pred2_prop_prop(self):
         exprs = [lexpr('nice(language(Python, Scala))'),
                  lexpr('fun(language(Python, Scala))')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter nice : Prop -> Prop.',
@@ -511,7 +524,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_exists(self):
         exprs = [lexpr('exists x.P(x)')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Prop.',
@@ -522,7 +535,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_exist(self):
         exprs = [lexpr('exist x.P(x)')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Prop.',
@@ -533,7 +546,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda1exists1(self):
         exprs = [lexpr('\P.exist x.P(x)')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter P : Entity -> Prop.',
@@ -544,7 +557,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda2exists1(self):
         exprs = [lexpr('\P y.exist x.P(x, y)')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter P : Entity -> (Entity -> Prop).',
@@ -556,7 +569,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda3exists1(self):
         exprs = [lexpr('\P y.\T.exist x.T(P(x, y))')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter P : Entity -> (Entity -> Prop).',
@@ -569,7 +582,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda3exists2(self):
         exprs = [lexpr('\P y.\T.exist x.exists z.T(P(x, y), z)')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter P : Entity -> (Entity -> Prop).',
@@ -583,7 +596,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda3exists2All1(self):
         exprs = [lexpr('\P y.\T.all w.exist x.exists z.T(P(x, y), z, w)')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter P : Entity -> (Entity -> Prop).',
@@ -598,7 +611,7 @@ class build_dynamic_libraryTestCase(unittest.TestCase):
 
     def test_Lambda3exists2All1Mixed(self):
         exprs = [lexpr('\P y.\T.all w.exists z.T(exist x.P(x, y), z, w)')]
-        dynamic_library, _ = build_dynamic_library(exprs)
+        dynamic_library, _ = combine_signatures_or_rename_preds(exprs)
         dynamic_library = nltk_sig_to_coq_lib(dynamic_library)
         expected_dynamic_library = \
           ['Parameter P : Entity -> (Entity -> Prop).',

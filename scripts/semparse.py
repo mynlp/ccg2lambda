@@ -134,6 +134,9 @@ def semantic_parse_sentence(sentence_ind):
     # TODO: try to prevent semantic parsing for fragmented CCG trees.
     # Otherwise, produce fragmented semantics.
     if ARGS.gold_trees:
+        # In xpath, elements are 1-indexed.
+        # However, gold_tree annotations assumed zero-index.
+        # This line fixes it.
         tree_indices = [int(sentence.get('gold_tree', '0')) + 1]
     if ARGS.nbest != 1:
         tree_indices = get_tree_indices(sentence, ARGS.nbest)
