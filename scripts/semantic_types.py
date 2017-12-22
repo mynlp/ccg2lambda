@@ -35,7 +35,6 @@ from nltk.sem.logic import BinaryExpression
 from nltk.sem.logic import ApplicationExpression
 from nltk.sem.logic import VariableBinderExpression
 from nltk.sem.logic import InconsistentTypeHierarchyException
-from nltk.sem.logic import LogicalExpressionException
 from nltk.sem.logic import Variable
 from nltk.sem.logic import typecheck
 
@@ -130,7 +129,7 @@ def remove_colliding_predicates(signature, expr):
             'expression {0} with signature {1}'.format(str(expr), signature))
     return signature
 
-def combine_signatures_(signatures):
+def combine_signatures(signatures):
     """
     Combinator function necessary for .visit method.
     If one predicate is resolved as different types, only the shortest
@@ -147,49 +146,6 @@ def combine_signatures_(signatures):
                 if sig_length_new > sig_length_previous:
                     combined_signature[predicate] = predicate_sig
     return combined_signature
-
-def resolve_types_(expr, signature=None):
-    try:
-        return resolve_types_in_signature(expr.typecheck())
-    except InconsistentTypeHierarchyException:
-        pass
-    if signature is None:
-        signature = {}
-    if isinstance(expr, ConstantExpression) or \
-       isinstance(expr, AbstractVariableExpression) or \
-       isinstance(expr, Variable):
-        return resolve_types_in_signature(expr.typecheck())
-    elif isinstance(expr, NegatedExpression):
-        return resolve_types_in_signature(expr.term.typecheck())
-    elif isinstance(expr, BinaryExpression):
-        child_exprs = [expr.first,  expr.second]
-        signatures = [resolve_types(e) for e in child_exprs]
-    elif isinstance(expr, ApplicationExpression):
-        func, args = expr.uncurry()
-        child_exprs = [func] + args
-    elif isinstance(expr, VariableBinderExpression):
-        child_exprs = [expr.variable,  expr.term]
-    else:
-        raise NotImplementedError(
-            'Expression not recognized: {0}, type: {1}'.format(expr, type(expr)))
-    signatures = [resolve_types(e) for e in child_exprs]
-    return signatures
-
-def resolve_types_(expr, signature = {}):
-    """
-    Function that is used to traverse the structure of a NLTK formula
-    and infer types bottom up, resolving unknowns '?' into 't' (Prop).
-    """
-    if isinstance(expr, ConstantExpression) or \
-       isinstance(expr, AbstractVariableExpression):
-        return expr.typecheck(), expr
-    signature = expr.visit(lambda e: resolve_types(e, signature),
-                           lambda parts: combine_signatures(parts))
-    signature = remove_reserved_predicates(signature)
-    signature = remove_colliding_predicates(signature, expr)
-    signature = remove_reserved_predicates(signature)
-    signature = resolve_types_in_signature(signature)
-    return signature
 
 def combine_signatures_safe(signatures):
     """
@@ -325,7 +281,7 @@ def combine_signatures_or_rename_preds(exprs, preferred_sigs=None):
             expr = replace_function_names(expr, resolution_guide_local)
         new_exprs.append(expr)
     signature = type_check_safe(new_exprs)
-    signature = combine_signatures_(preferred_sigs + [signature])
+    signature = combine_signatures(preferred_sigs + [signature])
 
     signature = remove_reserved_predicates(signature)
     signature = resolve_types_in_signature(signature)
@@ -354,62 +310,6 @@ def type_check_safe(exprs):
                     combined_signature[predicate] = types[0]
     return combined_signature
 
-def combine_signatures_or_rename_preds_(signatures, exprs, preferred_sig=None):
-    """
-    `signatures` is a list of dictionaries. Each dictionary has key-value
-      pairs where key is a predicate name, and value is a type object.
-    `exprs` are logical formula objects.
-    This function return a single signature dictionary with merged signatures.
-    If there is a predicate for which there are differing types, then the
-    predicate is renamed and each version is associated to a different type
-    in the signature dictionary. The target predicate is also renamed in
-    the logical expressions.
-    """
-    assert len(signatures) == len(exprs), '{0} vs. {1}'.format(signatures, exprs)
-    signatures_merged = {}
-    exprs_new = []
-    for i, (signature, expr) in enumerate(zip(signatures, exprs)):
-        expr_new = expr
-        for pred, typ in signature.items():
-            if preferred_sig is not None and pred in preferred_sig:
-                continue
-            if pred not in signatures_merged:
-                signatures_merged[pred] = typ
-            else:
-                if typ != signatures_merged[pred]:
-                    pred_new = pred + '_' + str(i)
-                    signatures_merged[pred_new] = typ
-                    expr_new = expr_new.replace(Variable(pred), lexpr(pred_new))
-        exprs_new.append(expr_new)
-    return signatures_merged, exprs_new
-
-
-def resolve_types(expr, signature = {}):
-    """
-    Function that is used to traverse the structure of a NLTK formula
-    and infer types bottom up, resolving unknowns '?' into 't' (Prop).
-    """
-    global resolution_guide
-    signature = resolve_types_rec(expr, signature)
-
-    resolution_guide = {}
-    for pred, sigs_exprs in signature.items():
-        if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, _) in sigs_exprs)) > 1:
-            for pred_type, ex in sigs_exprs:
-                new_pred_name = make_new_pred_name(pred, pred_type)
-                resolution_guide[ex] = (pred, new_pred_name)
-
-    expr = expr.visit_structured(
-        lambda e: rename_guided(e, resolution_guide),
-        expr.__class__)
-    signature = expr.typecheck()
-
-    signature = remove_reserved_predicates(signature)
-    # signature = remove_colliding_predicates(signature, expr)
-    # signature = remove_reserved_predicates(signature)
-    signature = resolve_types_in_signature(signature)
-    return signature
-
 def remove_reserved_predicates(signature):
     """
     Some predicates are already defined in coq, and they are not necessary
@@ -425,19 +325,17 @@ def remove_reserved_predicates(signature):
 
 def get_dynamic_library_from_doc(doc, semantics_nodes):
     # Each type is of the form "predicate : basic_type -> ... -> basic_type."
-    # from pudb import set_trace; set_trace()
     types_sets = []
     for semantics_node in semantics_nodes:
       types = set(semantics_node.xpath('./span/@type'))
       types_sets.append(types)
     coq_libs = [['Parameter {0}.'.format(t) for t in types] for types in types_sets]
     nltk_sigs_arbi = [convert_coq_signatures_to_nltk(coq_lib) for coq_lib in coq_libs]
-    nltk_sig_arbi = combine_signatures_(nltk_sigs_arbi)
+    nltk_sig_arbi = combine_signatures(nltk_sigs_arbi)
 
     formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics_nodes]
     formulas = parse_exprs_if_str(formulas)
     nltk_sig_auto, formulas = combine_signatures_or_rename_preds(formulas, nltk_sigs_arbi)
-    # nltk_sig_auto, formulas = build_dynamic_library(formulas, nltk_sig_arbi)
     # coq_static_lib_path is useful to get reserved predicates.
     # ccg_xml_trees is useful to get full list of tokens
     # for which we need to specify types.
@@ -471,21 +369,6 @@ def build_library_entry(predicate, pred_type):
                   + '.'
     return library_entry
 
-def build_library_entry_(predicate, pred_type):
-    """
-    Creates a library entry out of a pair (predicate, pred_type),
-    where pred_type is a tree such as <e, t> or <e, <e, t>>, etc.
-    It returns a string of the form
-    "Parameter pred : Entity -> Prop."
-    """
-    linearized_type = linearize_type(pred_type)
-    library_entry = 'Parameter ' \
-                  + predicate \
-                  + ' : ' \
-                  + ' -> '.join(linearized_type) \
-                  + '.'
-    return library_entry
-
 def parse_exprs_if_str(exprs):
     """
     If expressions are strings, convert them into logic formulae.
@@ -506,20 +389,6 @@ def build_dynamic_library(exprs, preferred_signature=None):
     """
     # If expressions are strings, convert them into logic formulae.
     exprs_logic = parse_exprs_if_str(exprs)
-    signature, exprs = combine_signatures_or_rename_preds(
-        exprs_logic, preferred_signature)
-    signature = remove_reserved_predicates(signature)
-    return signature, exprs
-
-def build_dynamic_library_(exprs, preferred_signature=None):
-    """
-    Create a dynamic library with types of objects that appear in coq formulae.
-    Optionally, it may receive partially specified signatures for objects
-    using the format by NLTK (e.g. {'_john' : e, '_mary' : e, '_love' : <e,<e,t>>}).
-    """
-    # If expressions are strings, convert them into logic formulae.
-    exprs_logic = parse_exprs_if_str(exprs)
-    signatures = [resolve_types(e) for e in exprs_logic]
     signature, exprs = combine_signatures_or_rename_preds(
         exprs_logic, preferred_signature)
     signature = remove_reserved_predicates(signature)
@@ -568,40 +437,6 @@ def remove_labels_and_unaries(tree):
             if len(tree[p]) == 1:
                 tree[p] = tree[p][0]
     return str(tree)
-
-def convert_coq_to_nltk_type_(coq_type):
-    """
-    Given a coq_type specification such as:
-      Parameter _love : Entity -> Entity -> Prop.
-    return the equivalent NLTK type specification:
-      {'_love' : read_type('<e, <e, t>>')}
-    """
-    assert isinstance(coq_type, str)
-    coq_type_list = coq_type.split()
-    assert len(coq_type_list) >= 4, 'Wrong coq_type format: %s' % coq_type
-    parameter, surface, colon = coq_type_list[:3]
-    assert parameter == 'Parameter' and colon == ':'
-    # This list contains something like ['Entity', '->', 'Prop', '->', 'Prop'...]
-    type_sig = coq_type_list[3:]
-    type_ids = []
-    for i, type_item in enumerate(type_sig):
-        assert (i % 2 == 1) == (type_item == '->')
-        if type_item.startswith('Entity'):
-            type_ids.append('e')
-        elif type_item.startswith('Prop'):
-            type_ids.append('t')
-        elif type_item.startswith('Event'):
-            type_ids.append('v')
-        elif type_item != '->':
-            raise(ValueError('Invalid type name: %s in %s' % (type_item, coq_type)))
-    assert len(type_ids) > 0
-    if len(type_ids) == 1:
-        nltk_type_str = type_ids[0]
-    else:
-        # Create a string like "<e, <t, t>>"
-        nltk_type_str = '<' + ', <'.join(type_ids[:-1]) \
-                      + ', ' + type_ids[-1] + '>' * len(type_ids)
-    return {surface : read_type(nltk_type_str)}
 
 def read_type(type_string):
     assert isinstance(type_string, string_types)
@@ -659,20 +494,6 @@ def get_coq_types(xml_node):
     types = types.split(' ||| ')
     return types
 
-def build_arbitrary_dynamic_library(ccg_trees):
-    """
-    Given a list of CCG trees whose root nodes are annotated with an
-    attribute 'coq_type', it produces a list of entries for the dynamic
-    library that is piped to coq. The output is something like:
-    ["Parameter dog : Entity.", "Parameter walk : Entity -> Prop.", ...]
-    """
-    dynamic_library = []
-    for ccg_tree in ccg_trees:
-        coq_types = get_coq_types(ccg_tree)
-        dynamic_library.extend(coq_types)
-    dynamic_library = sorted(list(set(dynamic_library)))
-    return dynamic_library
-
 def get_predicate_type_from_library(predicate, lib):
     assert isinstance(lib, dict)
     return lib.get(predicate, None)
@@ -701,29 +522,3 @@ def merge_dynamic_libraries(sig_arbi, sig_auto, doc):
     result_lib = list(set(dynamic_library))
     return result_lib
 
-def merge_dynamic_libraries_(coq_lib, nltk_lib, doc):
-    reserved_predicates = get_reserved_preds_from_coq_static_lib(coq_static_lib_path)
-    # Get base forms, unless the base form is '*', in which case get surf form.
-    base_forms = get_tokens_from_xml_node(doc)
-    required_predicates = set(normalize_token(t) for t in base_forms)
-    # required_predicates = set(normalize_token(t) for t in doc.xpath('//token/@base'))
-    coq_lib_index = {coq_lib_entry.split()[1] : coq_lib_entry \
-                       for coq_lib_entry in coq_lib}
-    nltk_lib_index = {nltk_lib_entry.split()[1] : nltk_lib_entry \
-                        for nltk_lib_entry in nltk_lib}
-    result_lib = []
-    for predicate in required_predicates:
-        if predicate in RESERVED_PREDS:
-            continue
-        coq_predicate_type = get_predicate_type_from_library(predicate, coq_lib_index)
-        nltk_predicate_type = get_predicate_type_from_library(predicate, nltk_lib_index)
-        if coq_predicate_type is not None:
-            result_lib.append(coq_predicate_type)
-        elif nltk_predicate_type is not None:
-            result_lib.append(nltk_predicate_type)
-    # Add possible renamed predicates for NLTK signature.
-    for coq_style_entry in nltk_lib:
-      if re.match(r'\S+_[0-9]', coq_style_entry.split()[1]):
-        result_lib.append(coq_style_entry)
-    result_lib = list(set(result_lib))
-    return result_lib

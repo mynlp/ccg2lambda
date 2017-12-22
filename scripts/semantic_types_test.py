@@ -32,7 +32,6 @@ from semantic_types import get_coq_types
 from semantic_types import get_dynamic_library_from_doc
 from semantic_types import merge_dynamic_libraries
 from semantic_types import read_type
-from semantic_types import resolve_types
 from semparse import filter_attributes
 
 from nltk.sem.logic import Variable, Expression
