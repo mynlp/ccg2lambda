@@ -40,7 +40,7 @@
 USAGE="Usage: ./rte_en_mp.sh <sentences.txt> <semantic_templates.yaml>"
 
 # Check that the number of arguments is correct.
-if [ "$#" -ge 2 ]; then
+if [ "$#" -ne 2 ]; then
   echo "Error: Number of arguments invalid".
   echo $USAGE
   echo "$#"
@@ -48,7 +48,7 @@ if [ "$#" -ge 2 ]; then
 fi
 
 # This variable contains the filename where the category templates are.
-category_templates=${2:-en/semantic_templates_en_event.yaml}
+category_templates=$2
 if [ ! -f $category_templates ]; then
   echo "Error: File with semantic templates does not exist."
   echo $USAGE
