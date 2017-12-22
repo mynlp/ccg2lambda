@@ -102,7 +102,7 @@ done
 # Set a variable with the command to invoke Jigg
 parser_cmd="java -Xmx4g -cp \"${jigg_dir}/jar/*\" jigg.pipeline.Pipeline \
   -annotators ssplit,kuromoji,ccg \
-  -ccg.kBest 5 -file"
+  -ccg.kBest 1 -file"
 
 tagging_cmd="java -Xmx4g -cp \"${jigg_dir}/jar/*\" jigg.pipeline.Pipeline \
   -annotators ssplit,kuromoji -file"
@@ -128,6 +128,7 @@ function parse_depccg() {
     ${depccg_dir}/models/ja_headfinal \
     ja \
     ${parsed_dir}/${base_fname}.tagged.xml \
+    --nbest 2 \
     > ${parsed_dir}/${base_fname}.depccg.jigg.xml
 }
 

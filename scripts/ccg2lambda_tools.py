@@ -72,14 +72,23 @@ def assign_semantics_to_ccg(ccg_xml, semantic_index, tree_index=1):
     This is the key function. It builds first an XML tree structure with
     the CCG tree, and then assigns semantics (lambda expressions) to each node
     in post-order (first assigns semantics to children, and then to node).
-    In returns a CCG lxml tree structure with a new 'sem' field that
+    It returns a CCG lxml tree structure with a new 'sem' field that
     contains the semantics at each node.
     """
     # If the use of gold trees is requested, we get the gold tree index
     # from the XML attribute 'gold_tree'. Note that in xpath, lists are
     # one-indexed arrays.
-    ccg_flat_tree = copy.deepcopy(
-        ccg_xml.xpath('./ccg[{0}]'.format(tree_index))[0])
+    # from pudb import set_trace; set_trace()
+    ccg_flat_trees = ccg_xml.xpath('./ccg[{0}]'.format(tree_index))
+    if not ccg_flat_trees:
+        raise ValueError(
+            'No CCG tree found in:\n{0}'.format(
+            etree.tostring(
+                ccg_xml,
+                encoding='utf-8',
+                pretty_print=True).decode('utf-8')))
+    ccg_flat_tree = copy.deepcopy(ccg_flat_trees[0])
+    #   ccg_xml.xpath('./ccg[{0}]'.format(tree_index))[0])
     ccg_tree = build_ccg_tree(ccg_flat_tree)
     tokens = copy.deepcopy(ccg_xml.find('.//tokens'))
     tokens = normalize_tokens(tokens)

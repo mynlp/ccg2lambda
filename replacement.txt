@@ -4,6 +4,7 @@
 ・ middot
 々 ono
 £ pound
-$ doller
+$ dollar
 「 lbr
 」 rbr
+! excl

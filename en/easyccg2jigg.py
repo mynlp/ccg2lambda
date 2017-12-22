@@ -22,6 +22,7 @@ from collections import defaultdict
 import logging
 from lxml import etree
 import os
+import string
 import sys
 
 from nltk import Tree
@@ -36,16 +37,21 @@ logging.basicConfig(level=logging.DEBUG)
 def substitute_chars(sin):
   sout = []
   inside_tag = False
-  for s in sin:
-    if s == '<':
+  prev_char = None
+  for i, s in enumerate(sin):
+    if s == '<' and prev_char == '(':
       inside_tag = True
       t = s
-    elif s == '>':
+    elif s == '>' and (
+        prev_char in string.punctuation or \
+        prev_char.isupper() or \
+        prev_char in string.digits or \
+        prev_char == 'j'):
       inside_tag = False
       t = s
     elif inside_tag:
       if s == ' ':
-        t = '_'
+        t = '|||'
       elif s == '(':
         t = '-lb-'
       elif s == ')':
@@ -55,6 +61,7 @@ def substitute_chars(sin):
     else:
       t = s
     sout.append(t)
+    prev_char = s
   return ''.join(sout)
 
 def denormalize_category(category):
@@ -62,7 +69,12 @@ def denormalize_category(category):
  
 def make_tree(line):
   tree_str = substitute_chars(line.strip())
-  tree = Tree.fromstring(tree_str)
+  # from pudb import set_trace; set_trace()
+  try:
+    tree = Tree.fromstring(tree_str)
+  except ValueError:
+    tree = None
+    logging.warning('Failed to Tree parse line: {0}'.format(line))
   return tree
 
 def make_tokens_node(tree, sentence_id):
@@ -93,7 +105,7 @@ def get_child_inds(tree, parent=None, i=0, d=None):
 
 def get_attributes_from_leaf(node_label):
   try:
-    _, cat, word, lemma, pos, ner, _, _ = node_label.split('_')
+    _, cat, word, lemma, pos, ner, _, _ = node_label.split('|||')
   except:
     # from pudb import set_trace; set_trace()
     raise(ValueError(
@@ -112,7 +124,7 @@ def get_attributes_from_leaf(node_label):
 
 def get_attributes_from_node(node_label):
   try:
-    _, cat, rule, _, _ = node_label.split('_')
+    _, cat, rule, _, _ = node_label.split('|||')
   except:
     raise(ValueError(
       ('CCG node {0} with wrong format. '.format(node_label),
@@ -183,13 +195,14 @@ def make_jigg_sentence(line, sentence_id):
   </sentence>
   """
   sentence_id -= 1
-  tree = make_tree(line)
-  tokens_node = make_tokens_node(tree, sentence_id)
-  ccg_node = make_ccg_node(tree, sentence_id)
   sentence_node = etree.Element('sentence')
   sentence_node.set('id', 's' + str(sentence_id))
-  sentence_node.append(tokens_node)
-  sentence_node.append(ccg_node)
+  tree = make_tree(line)
+  if tree is not None:
+    tokens_node = make_tokens_node(tree, sentence_id)
+    ccg_node = make_ccg_node(tree, sentence_id)
+    sentence_node.append(tokens_node)
+    sentence_node.append(ccg_node)
   return sentence_node
 
 def add_ccg_nodes(line, sentence_node, sentence_id, ccg_count):
@@ -223,7 +236,11 @@ for line in codecs.open(args.infile, 'r', 'utf-8'):
   else:
     if is_new_sentence:
       is_new_sentence = False
-      sentence_tree = make_jigg_sentence(line, sentence_id)
+      try:
+        sentence_tree = make_jigg_sentence(line, sentence_id)
+      except ValueError as e:
+        logging.error('Error: {0}.\nLine: {1}'.format(e, line))
+        raise
       sentences_node.append(sentence_tree)
     else:
       if sentence_tree is not None:

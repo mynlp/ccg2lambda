@@ -101,7 +101,7 @@ def get_semantics_mathml(semantics):
     return "<mtext " \
            + " fontsize='" + str(kOtherSize) + "'" \
            + " color='" + kSemanticsColor + "'>" \
-           + semantics \
+           + cgi.escape(semantics) \
            + "</mtext>\n"
 
 def convert_node_to_mathml(ccg_node, sem_tree, tokens):
@@ -157,79 +157,98 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
 
 def get_surf_from_xml_node(node):
     tokens = node.xpath(
-        ".//token[not(@surf='*')]/@surf | //token[@surf='*']/@base")
+        "./tokens/token[not(@surf='*')]/@surf | ./tokens/token[@surf='*']/@base")
     return ' '.join(tokens)
 
-def convert_root_to_mathml(root, verbatim_strings = [], use_gold_trees=False):
+def convert_doc_to_mathml(doc, use_gold_trees=False):
+    """
+    This function expects an XML <document>, which is then converted
+    into a presentation MathML string.
+    """
+    num_sentences = int(doc.xpath('count(./sentences/sentence)'))
+    mathml_str = ""
+    for sent_ind, sentence in enumerate(doc.xpath('./sentences/sentence')):
+        gold_tree_index = int(sentence.get('gold_tree', -1))
+        if sent_ind < num_sentences - 1:
+            sentence_label = 'Premise {0}'.format(sent_ind)
+        else:
+            sentence_label = 'Conclusion'
+        sentence_text = get_surf_from_xml_node(sentence)
+        ccg_trees = sentence.xpath('./ccg')
+        sem_trees = sentence.xpath('./semantics')
+        tokens = sentence.xpath('./tokens')
+        if not tokens:
+            return mathml_str
+        tokens = tokens[0]
+        assert len(ccg_trees) >= len(sem_trees)
+        for i in range(len(ccg_trees)):
+            ccg_tree_id = ccg_trees[i].get('id', str(i))
+            try:
+                ccg_tree = build_ccg_tree(ccg_trees[i])
+            except ValueError:
+                mathml_str += "<p>{0}, tree {1}: {2}</p>\n".format(
+                                sentence_label, ccg_tree_id, sentence_text) \
+                            + "<p>Syntactic parse error. Visualization skipped.</p>"
+                continue
+            if gold_tree_index == i:
+                ccg_tree_id += " (gold)"
+            sem_tree = None if i >= len(sem_trees) else sem_trees[i]
+            if sem_tree is not None:
+                sem_tree = build_ccg_tree(sem_tree)
+            mathml_str += "<p>{0}, tree {1}: {2}</p>\n".format(
+                            sentence_label, ccg_tree_id, sentence_text) \
+                        + "<math xmlns='http://www.w3.org/1998/Math/MathML'>\n" \
+                        + convert_node_to_mathml(ccg_tree, sem_tree, tokens) \
+                        + "</math>\n"
+    verbatim_strings = doc.xpath('./proof/master_theorem/theorems/theorem/coq_script/text()')
+    verbatim_text = ""
+    if verbatim_strings:
+       verbatim_text = "<p>Script piped to coq</p>"
+       for vb_str in verbatim_strings:
+           verbatim_text += "<pre>\n" + vb_str + "\n</pre>\n"
+    doc_mathml_str = '{0}\n{1}'.format(mathml_str, verbatim_text)
+    return doc_mathml_str
+
+def wrap_mathml_in_html(mathml_str):
+    html_str = """\
+    <!DOCTYPE html>
+    <html lang='en'>
+    <head>
+      <meta charset='UTF-8'/>
+      <title>CCG to Lambda conversion</title>
+      <style>
+        body {
+          font-size: 1em;
+        }
+      </style>
+      <script type="text/javascript"
+              src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+      </script>
+    </head>
+    <body>
+    """
+    html_str += mathml_str
+    html_str += """\
+    </body>
+    </html>
+    """
+    return html_str
+
+def convert_root_to_mathml(root, use_gold_trees=False):
     """
     This function expects an XML root. Then, it converts each document doc
     into a presentation MathML string, and wraps them with HTML code.
-    verbatim_strings is a list of strings that should be printed verbatim at
-    the end of the HTML document, for debugging.
     """
     doc_mathml_strs = []
     for doc_ind, doc in enumerate(root.xpath('./document')):
         doc_id = doc.get('id', doc_ind)
-        num_sentences = int(doc.xpath('count(./sentences/sentence)'))
-        mathml_str = ""
-        for sent_ind, sentence in enumerate(doc.xpath('./sentences/sentence')):
-            gold_tree_index = int(sentence.get('gold_tree', -1))
-            if sent_ind < num_sentences - 1:
-                sentence_label = 'Premise {0}'.format(sent_ind)
-            else:
-                sentence_label = 'Conclusion'
-            sentence_text = get_surf_from_xml_node(sentence)
-            ccg_trees = sentence.xpath('./ccg')
-            sem_trees = sentence.xpath('./semantics')
-            tokens = sentence.xpath('./tokens')[0]
-            assert len(ccg_trees) >= len(sem_trees)
-            for i in range(len(ccg_trees)):
-                ccg_tree_id = ccg_trees[i].get('id', str(i))
-                ccg_tree = build_ccg_tree(ccg_trees[i])
-                if gold_tree_index == i:
-                    ccg_tree_id += " (gold)"
-                sem_tree = None if i >= len(sem_trees) else sem_trees[i]
-                if sem_tree is not None:
-                    sem_tree = build_ccg_tree(sem_tree)
-                mathml_str += "<p>{0}, tree {1}: {2}</p>\n".format(
-                                sentence_label, ccg_tree_id, sentence_text) \
-                            + "<math xmlns='http://www.w3.org/1998/Math/MathML'>\n" \
-                            + convert_node_to_mathml(ccg_tree, sem_tree, tokens) \
-                            + "</math>\n"
-        verbatim_text = ""
-        if verbatim_strings:
-           verbatim_text = "<p>Script piped to coq</p>"
-           for vb_str in verbatim_strings:
-               verbatim_text += "<pre>\n" + vb_str + "\n</pre>\n"
-        doc_mathml_str = '{0}\n{1}'.format(mathml_str, verbatim_text)
+        doc_mathml_str = convert_doc_to_mathml(doc, use_gold_trees)
         doc_mathml_strs.append(doc_mathml_str)
-
-    html_str = """\
-  <!doctype html>
-  <html lang='en'>
-  <head>
-    <meta charset='UTF-8'>
-    <title>CCG to Lambda conversion</title>
-    <style>
-      body {
-        font-size: 1em;
-      }
-    </style>
-    <script type="text/javascript"
-            src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-    </script>
-  </head>
-  <body>
-  """
-    html_str += '\n'.join([s for s in doc_mathml_strs])
-    html_str += """\
-  </body>
-  </html>
-  """
+    html_str = wrap_mathml_in_html('\n'.join([s for s in doc_mathml_strs]))
     return html_str
 
 # TODO: possibly deprecated. Confirm and then remove this function.
-def convert_doc_to_mathml(doc, verbatim_strings = [], use_gold_trees=False):
+def convert_doc_to_mathml_(doc, verbatim_strings = [], use_gold_trees=False):
     """
     This function expects a list of ccg_trees, and a list of tokens
     (as produced by transccg). Then, it converts each pair (ccg_tree, ccg_tokens)
@@ -239,16 +258,16 @@ def convert_doc_to_mathml(doc, verbatim_strings = [], use_gold_trees=False):
     """
     ccg_trees = []
     if use_gold_trees:
-        for sentence in doc.xpath('//sentence'):
+        for sentence in doc.xpath('./sentences/sentence'):
             gold_tree_index = int(sentence.get('gold_tree', '0'))
             ccg_trees.append(sentence.xpath('./ccg')[gold_tree_index])
         ccg_trees = [build_ccg_tree(c) for c in ccg_trees]
     else:
-        ccg_trees = [build_ccg_tree(c) for c in doc.xpath('//sentence/ccg[1]')]
-    sem_trees = [build_ccg_tree(c) for c in doc.xpath('//semantics')]
+        ccg_trees = [build_ccg_tree(c) for c in doc.xpath('./sentences/sentence/ccg[1]')]
+    sem_trees = [build_ccg_tree(c) for c in doc.xpath('./sentences/sentence/semantics')]
     if not sem_trees:
         sem_trees = [None] * len(ccg_trees)
-    tokens = doc.xpath('//tokens')
+    tokens = doc.xpath('./sentences/sentence/tokens')
     assert len(ccg_trees) == len(tokens) 
     num_hypotheses = len(ccg_trees) - 1
     sentence_ids = ["Premise {0}: ".format(i + 1) for i in range(num_hypotheses)]
@@ -271,13 +290,13 @@ def convert_doc_to_mathml(doc, verbatim_strings = [], use_gold_trees=False):
   <!doctype html>
   <html lang='en'>
   <head>
-    <meta charset='UTF-8'>
-    <title>CCG to Lambda conversion</title>
     <style>
       body {
         font-size: 1em;
       }
     </style>
+    <meta charset='UTF-8'>
+    <title>CCG to Lambda conversion</title>
     <script type="text/javascript"
             src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
@@ -290,4 +309,4 @@ def convert_doc_to_mathml(doc, verbatim_strings = [], use_gold_trees=False):
   </body>
   </html>
   """
-    return html_str
+    return cgi.escape(html_str)

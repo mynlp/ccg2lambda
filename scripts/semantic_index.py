@@ -133,12 +133,6 @@ def find_node_by_id(node_id, xml_tree):
         raise(ValueError('It should have found a span for id {0}'.format(node_id)))
     return nodes[0]
 
-def find_node_by_id_(node_id, xml_tree):
-    for span in xml_tree:
-        if span.get('id') == node_id:
-            return span
-    raise(ValueError('It should have found a span for id {0}'.format(node_id)))
-
 def load_semantic_rules(fn):
     semantic_rules = []
     loaded = None

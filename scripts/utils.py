@@ -1,6 +1,7 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-#  Copyright 2015 Pascual Martinez-Gomez
+#  Copyright 2017 Pascual Martinez-Gomez
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,16 +14,16 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 import logging
+import time
 
-from nltk.sem.logic import LogicParser
-from nltk.sem.logic import LogicalExpressionException
+def time_count(fn):
+  # Funtion wrapper used to measure time consumption
+  def _wrapper(*args, **kwargs):
+    start = time.clock()
+    returns = fn(*args, **kwargs)
+    logging.debug("[time_count]: %s took %fs" % (fn.__name__, time.clock() - start))
+    return returns
+  return _wrapper
 
-logic_parser = LogicParser(type_check=False)
-def lexpr(formula_str):
-    try:
-        expr = logic_parser.parse(formula_str)
-    except LogicalExpressionException as e:
-        logging.error('Failed to parse {0}. Error: {1}'.format(formula_str, e))
-        raise
-    return expr
