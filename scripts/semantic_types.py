@@ -482,9 +482,15 @@ def convert_coq_signatures_to_nltk(coq_sig):
     assert isinstance(coq_sig, list)
     nltk_sig = {}
     nltk_types = []
+    colliding_predicates = set()
     for coq_type in coq_sig:
         nltk_type = convert_coq_to_nltk_type(coq_type)
+        for pred, typ in nltk_type.items():
+            if pred in nltk_sig:
+                colliding_predicates.add(pred)
         nltk_sig.update(nltk_type)
+    for pred in colliding_predicates:
+        del nltk_sig[pred]
     return nltk_sig
 
 def get_coq_types(xml_node):

@@ -18,6 +18,7 @@
 import unittest
 
 from lxml import etree
+from nltk.sem.logic import Variable, Expression
 
 from ccg2lambda_tools import assign_semantics_to_ccg
 from logic_parser import lexpr
@@ -33,8 +34,7 @@ from semantic_types import get_dynamic_library_from_doc
 from semantic_types import merge_dynamic_libraries
 from semantic_types import read_type
 from semparse import filter_attributes
-
-from nltk.sem.logic import Variable, Expression
+from theorem import get_formulas_from_doc
 
 class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
 
@@ -80,6 +80,38 @@ class combine_signatures_or_rename_predsTestCase(unittest.TestCase):
         expected_exprs = [
             lexpr(r'exists x. (pred1_e2(x) & exists e. pred1_v2(e))')]
         self.assertEqual(expected_exprs, new_exprs)
+
+    def test_arbitrary_different_same_pred(self):
+        doc_str = r"""
+        <document>
+          <sentences>
+            <sentence id="s1">
+              <tokens>
+                <token base="pred_same" pos="pos1" surf="surf1" id="t1_1"/>
+                <token base="pred_same" pos="pos2" surf="surf2" id="t1_2"/>
+              </tokens>
+              <ccg root="sp1-3">
+                <span terminal="t1_1" category="cat1" end="2" begin="1" id="sp1-1"/>
+                <span terminal="t1_2" category="cat2" end="3" begin="2" id="sp1-2"/>
+                <span child="sp1-1 sp1-2" rule="lex" category="NP" end="3" begin="1" id="sp1-3"/>
+              </ccg>
+              <semantics root="sp1-3">
+                <span sem="exists x e. _pred_same(x) -> _pred_same(e)" child="sp1-1 sp1-2"/>
+                <span sem="_pred_same" type="pred_same : Entity -> Prop" id="sp1-1"/>
+                <span sem="_pred_same" type="pred_same : Event -> Prop" id="sp1-2"/>
+              </semantics>
+            </sentence>
+          </sentences>
+        </document>
+        """
+        doc = etree.fromstring(doc_str)
+        sem_nodes = doc.xpath('//semantics')
+        dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, sem_nodes)
+        coq_types = dynamic_library_str.split('\n')
+        expected_coq_types = ["Parameter _pred_same_e2 : Entity -> Prop.",
+                              "Parameter _pred_same_v2 : Event -> Prop."]
+        self.assertEqual(expected_coq_types, coq_types,
+            msg="\n{0}\nvs\n{1}".format(expected_coq_types, coq_types))
 
 # TODO: also test for types that are Propositions 't'.
 
