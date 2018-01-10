@@ -26,6 +26,7 @@ class Category(object):
             self.type_features = category.type_features
         else:
             self.types = remove_feats_from_category(category)
+            self.types = self.types.replace('|', '(/|\\\)')
             self.type_features = get_feats_from_category(category)
 
     def __repr__(self):
@@ -33,7 +34,7 @@ class Category(object):
 
     def match(self, other):
         return isinstance(other, self.__class__) \
-          and self.types == other.types \
+          and re.fullmatch(re.sub(r'\\', r'\\\\', self.types), other.types) \
           and len(self.type_features) == len(other.type_features) \
           and all([a.subsumes(b) \
                    for (a, b) in zip(self.type_features, other.type_features)])
