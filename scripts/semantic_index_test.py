@@ -182,7 +182,6 @@ class GetSemanticRepresentationTestCase(unittest.TestCase):
                           SemanticRule(r'NP|NP', r'\F1 F2.(F1 -> F2)', {'rule' : '>'}),
                           SemanticRule(r'NP/NP', r'\F1 F2.(F1 & F2)', {'rule' : '>'})]
         semantic_index.rules = semantic_rules
-        # from pudb import set_trace; set_trace()
         ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
         semantics = lexpr(ccg_tree.get('sem', None))
         expected_semantics = lexpr(r'(_base1 -> _base2)')

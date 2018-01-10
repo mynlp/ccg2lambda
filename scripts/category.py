@@ -26,7 +26,6 @@ class Category(object):
             self.type_features = category.type_features
         else:
             self.types = remove_feats_from_category(category)
-            # self.types = self.types.replace('|', r'[/\]')
             self.type_features = get_feats_from_category(category)
 
     def __repr__(self):
@@ -37,6 +36,7 @@ class Category(object):
             return False
         if len(self.type_features) != len(other.type_features):
             return False
+        # TODO: Ideally these substitutions should be precomputed for speed-up.
         types = re.sub(r'\\', r'\\\\', self.types)
         types = types.replace('|', '[/\\\]')
         types = types.replace('(', '\\(').replace(')', '\\)')
