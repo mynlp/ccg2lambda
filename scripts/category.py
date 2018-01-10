@@ -26,20 +26,31 @@ class Category(object):
             self.type_features = category.type_features
         else:
             self.types = remove_feats_from_category(category)
-            self.types = self.types.replace('|', r'[/\]')
-            # self.types = self.types.replace('|', r'(/|\{2})')
+            # self.types = self.types.replace('|', r'[/\]')
             self.type_features = get_feats_from_category(category)
 
     def __repr__(self):
         return "Types: {0}\tFeats: {1}".format(self.types, self.type_features)
 
     def match(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        if len(self.type_features) != len(other.type_features):
+            return False
+        types = re.sub(r'\\', r'\\\\', self.types)
+        types = types.replace('|', '[/\\\]')
+        types = types.replace('(', '\\(').replace(')', '\\)')
+        if not re.fullmatch(types, other.types):
+            return False
+        return all([a.subsumes(b)
+                    for (a, b) in zip(self.type_features, other.type_features)])
+
+    def match_(self, other):
         return isinstance(other, self.__class__) \
           and len(self.type_features) == len(other.type_features) \
           and re.fullmatch(re.sub(r'\\', r'\\\\', self.types), other.types) \
           and all([a.subsumes(b) \
                    for (a, b) in zip(self.type_features, other.type_features)])
-          # and re.fullmatch(re.sub(r'\\', r'\\\\', self.types), other.types) \
 
     def get_num_args(self):
         return len(self.type_features) - 1
