@@ -74,10 +74,15 @@ class CategoryTestCase(unittest.TestCase):
         cat2 =  Category('NP\\NP')
         self.assertFalse(cat1.match(cat2))
 
-    def test_vertical_bar_match(self):
+    def test_vertical_bar_right_bar_match(self):
         cat1 =  Category('NP|NP')
         cat2 =  Category('NP/NP')
         # from pudb import set_trace; set_trace()
+        self.assertTrue(cat1.match(cat2))
+
+    def test_vertical_bar_left_bar_match(self):
+        cat1 =  Category('NP|NP')
+        cat2 =  Category('NP\\NP')
         self.assertTrue(cat1.match(cat2))
 
     def test_hyphen_not_match(self):
@@ -89,6 +94,12 @@ class CategoryTestCase(unittest.TestCase):
         cat1 =  Category('NP/NP')
         cat2 =  Category('NP/NPZ')
         self.assertFalse(cat1.match(cat2))
+
+    def test_vertical_bar_complex_match(self):
+        cat1 =  Category('NP|NP|NP')
+        cat2 =  Category('NP/NP\\NP')
+        # from pudb import set_trace; set_trace()
+        self.assertTrue(cat1.match(cat2))
 
 
 if __name__ == '__main__':
