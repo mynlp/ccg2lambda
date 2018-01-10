@@ -77,7 +77,6 @@ class CategoryTestCase(unittest.TestCase):
     def test_vertical_bar_right_bar_match(self):
         cat1 =  Category('NP|NP')
         cat2 =  Category('NP/NP')
-        # from pudb import set_trace; set_trace()
         self.assertTrue(cat1.match(cat2))
 
     def test_vertical_bar_left_bar_match(self):
@@ -98,6 +97,11 @@ class CategoryTestCase(unittest.TestCase):
     def test_vertical_bar_complex_match(self):
         cat1 =  Category('NP|NP|NP')
         cat2 =  Category('NP/NP\\NP')
+        self.assertTrue(cat1.match(cat2))
+
+    def test_vertical_bar_parenthesis_match(self):
+        cat1 =  Category('(NP/NP)|NP')
+        cat2 =  Category('(NP/NP)\\NP')
         # from pudb import set_trace; set_trace()
         self.assertTrue(cat1.match(cat2))
 
