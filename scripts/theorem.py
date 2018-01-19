@@ -400,7 +400,6 @@ class MasterTheorem(Theorem):
         return isinstance(other, MasterTheorem) and self.__hash__() == other.__hash__()
 
     @staticmethod
-    # def from_doc(doc, use_gold_trees=False):
     def from_doc(doc, args=None):
         """
         Build multiple theorems from an XML document produced by semparse.py script.

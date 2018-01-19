@@ -45,9 +45,7 @@ def prove_doc(doc, abduction=None, args=None):
     # TODO: parameterize the switch to choose the type of theorem...
     # .. unless the MasterTheorem mechanism is a complete generalization.
     # theorem = Theorem.from_doc(doc)
-    # use_gold_trees = False if args is None else args.gold_trees
     theorem = MasterTheorem.from_doc(doc, args)
-    # theorem.timeout = 100 if args is None else args.timeout
     theorem.prove(abduction)
     return theorem
 
