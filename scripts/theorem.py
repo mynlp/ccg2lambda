@@ -400,10 +400,13 @@ class MasterTheorem(Theorem):
         return isinstance(other, MasterTheorem) and self.__hash__() == other.__hash__()
 
     @staticmethod
-    def from_doc(doc, use_gold_trees=False):
+    # def from_doc(doc, use_gold_trees=False):
+    def from_doc(doc, args=None):
         """
         Build multiple theorems from an XML document produced by semparse.py script.
         """
+        use_gold_trees = False if args is None else args.gold_trees
+        timeout = 100 if args is None else args.timeout
         theorems = []
         for semantics in generate_semantics_from_doc(doc, 100, use_gold_trees):
             formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics]
@@ -414,8 +417,10 @@ class MasterTheorem(Theorem):
             labels = [(s.get('ccg_id', None), s.get('ccg_parser', None)) for s in semantics]
             theorem.labels = labels
             theorem.doc = doc
+            theorem.timeout = timeout
             theorems.append(theorem)
         master_theorem = MasterTheorem(theorems)
+        master_theorem.timeout = timeout
         return master_theorem
 
     def prove(self, abduction=None):
