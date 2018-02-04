@@ -76,37 +76,6 @@ green_color="rgb(0,255,0)"
 white_color="rgb(255,255,255)"
 gray_color="rgb(136,136,136)"
 
-# for gold_filename in `ls -v ${plain_dir}/sick_${dataset}_*.answer`; do
-#   base_filename=${gold_filename##*/} # this line obtains the filename, without the directory path.
-#   system_filename=${results_dir}/${base_filename/.answer/.txt.answer}
-#   gold_answer=`cat $gold_filename`
-#   echo '<tr>
-#   <td>'${base_filename/.answer/}'</td>
-#   <td>'$gold_answer'</td>' >> $results_dir/main.html
-#   for parser in "" "candc." "easyccg." "depccg."; do 
-#     if [ -e ${results_dir}/${base_filename/.answer/.txt}.${parser}answer ]; then
-#       system_answer=`cat ${results_dir}/${base_filename/.answer/.txt}.${parser}answer`
-#       time_filename=${results_dir}/${base_filename/.answer/.txt.time}
-#     else
-#       system_answer="error"
-#     fi
-#     color=$white_color
-#     if [ "$gold_answer" == "yes" ] || [ "$gold_answer" == "no" ]; then
-#       if [ "$gold_answer" == "$system_answer" ]; then
-#         color=$green_color
-#       else
-#         color=$red_color
-#       fi
-#     elif [ "$system_answer" == "yes" ] || [ "$system_answer" == "no" ]; then
-#       color=$red_color
-#     else
-#       color=$white_color
-#     fi
-#     echo '<td><a style="background-color:'$color';" href="'${base_filename/.answer/.txt}.${parser}html'">'$system_answer'</a>' >> $results_dir/main.html
-#   done
-#   echo '</tr>' >> $results_dir/main.html
-# done
-
 for gold_filename in `ls -v ${plain_dir}/sick_${dataset}_*.txt`; do
   base_filename=${gold_filename##*/}
   # candc
@@ -148,37 +117,3 @@ echo "
 </body>
 </html>
 " >> $results_dir/main_${dataset}.html
-
-# # Collect results and print accuracies.
-# for f in ${plain_dir}/sick_${dataset}*.tok; do
-#   filename=${f##*/}
-#   base_filename=${filename/.txt.tok/}
-#   num_lines=`cat $f | wc -l`
-#   premises="single"
-#   if [ "$num_lines" -gt 2 ]; then
-#     premises="multi"
-#   fi
-#   # gold_answer=`cat ${plain_dir}/${base_filename}.answer`
-#   system_answer=`cat ${results_dir}/${base_filename}.txt.answer`
-#   candc_answer=`cat ${results_dir}/${base_filename}.txt.candc.answer`
-#   easyccg_answer=`cat ${results_dir}/${base_filename}.txt.easyccg.answer`
-#   depccg_answer=`cat ${results_dir}/${base_filename}.txt.depccg.answer`
-#   # echo $base_filename $premises $gold_answer >> gold.results
-#   echo $base_filename $premises $system_answer >> system.results
-#   echo $base_filename $premises $candc_answer >> candc.results
-#   echo $base_filename $premises $easyccg_answer >> easyccg.results
-#   echo $base_filename $premises $depccg_answer >> depccg.results
-# done
-
-# echo -e "Multi-parsers:" > ${results_dir}/score.txt
-# python en/report_results_sick.py gold.results system.results >> ${results_dir}/score.txt
-# echo -e "C&C:" >> ${results_dir}/score.txt
-# python en/report_results_sick.py gold.results candc.results >> ${results_dir}/score.txt
-# echo -e "EasyCCG:" >> ${results_dir}/score.txt
-# python en/report_results_sick.py gold.results easyccg.results >> ${results_dir}/score.txt
-# echo -e "depccg:" >> ${results_dir}/score.txt
-# python en/report_results_sick.py gold.results depccg.results >> ${results_dir}/score.txt
-
-# cat ${results_dir}/score.txt
-
-# rm -f gold.results system.results candc.results easyccg.results depccg.results
