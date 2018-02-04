@@ -97,11 +97,6 @@
   semantics: \V Q F1 F2. Q(\x.(V(\G1 G2.G2(x), \e.True) & F1(x)), F2)
   child0_category: S|NP
 
-# - category: NP|NP
-#   rule: lex
-#   semantics: \V Q F1 F2. Q(\x.(V(\G1 G2.G2(x), \e.True) & F1(x)), F2)
-#   child0_category: S|NP
-
 ## (S|NP)|NP => NP|NP
 - category: NP|NP
   rule: lex
@@ -138,21 +133,6 @@
   semantics: \V2 V1 Q K. Q(\x.True, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
   child0_category: S|NP
 
-# ## S|NP ==> (S|NP)|(S|NP)
-# - category: (S|NP)|(S|NP)
-#   rule: lex
-#   semantics: \V2 V1 Q K. Q(\x.True, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
-
-# ## S|NP ==> (S|NP)|(S|NP)
-# - category: (S|NP)|(S|NP)
-#   rule: lex
-#   semantics: \V2 V1 Q K. Q(\x.True, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
-
-# ## S|NP ==> (S|NP)|(S|NP)
-# - category: (S|NP)|(S|NP)
-#   rule: lex
-#   semantics: \V2 V1 Q K. Q(\x.True, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
-
 ## S[ng]|NP => (S|NP)|(S|NP)
 - category: (S|NP)|(S|NP)
   rule: lex
@@ -164,11 +144,6 @@
   rule: tr
   semantics: \Q V K. V(Q,K)
   child0_category: NP
-
-# ## NP => S|(S|NP)
-# - category: S|(S|NP)
-#   rule: tr
-#   semantics: \Q V K. V(Q,K)
 
 ## PP => (S[X=true]|NP)|((S[X=true]|NP)|PP)
 - category: (S|NP)|((S|NP)|PP)
@@ -208,10 +183,6 @@
   rule: conj
   semantics: \L M2 M1 S K. M1(M2(S),K)
 
-# - category: (S|S)|(S|S)
-#   rule: conj
-#   semantics: \L M2 M1 S K. M1(M2(S),K)
-
 - category: NP|NP
   rule: conj
   semantics: \L Q2 Q1 F1 F2. (Q1(F1,F2) & Q2(F1,F2))
@@ -229,29 +200,9 @@
   # semantics: \L V2 V1 Q K. (V1(Q,K) & V2(Q,K)) # SICK-6358
   semantics: \L V2 V1 Q K. Q(\x.True, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K))) # SICK-7649
 
-# - category: (S|NP)|(S|NP)
-#   rule: conj
-#   semantics: \L V2 V1 Q K. Q(\x.True, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
-
-# - category: (S|NP)|(S|NP)
-#   rule: conj
-#   semantics: \L V2 V1 Q K. Q(\x.True, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
-
-# - category: (S|NP)|(S|NP)
-#   rule: conj
-#   semantics: \L V2 V1 Q K. Q(\x.True, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K)))
-
 - category: (N|N)|(N|N)
   rule: conj
   semantics: \L M1 M2 F x. M1(M2(F),x)
-
-# - category: (N|N)|(N|N)
-#   rule: conj
-#   semantics: \L M1 M2 F x. M1(M2(F),x)
-
-# - category: (N|N)|(N|N)
-#   rule: conj
-#   semantics: \L M1 M2 F x. M1(M2(F),x)
 
 - category: (N|PP)|(N|PP)
   rule: conj
@@ -305,12 +256,6 @@
   child0_surf: ","
   child1_category: (S|S)|(S|S)
 
-# - category: (S|S)|(S|S)
-#   rule: conj
-#   semantics: \L S. S
-#   child0_surf: ","
-#   child1_category: (S|S)|(S|S)
-
 - category: (S|NP)|(S|NP)
   rule: conj
   semantics: \L R. R
@@ -345,11 +290,6 @@
   semantics: \L F2 F1 x. (F1(x) | F2(x))
   child0_surf: or
 
-# - category: N|N
-#   rule: conj
-#   semantics: \L F2 F1 x. (F1(x) | F2(x))
-#   child0_surf: or
-
 - category: (S|NP)|(S|NP)
   rule: conj
   semantics: \L V2 V1 Q K. Q(\x.True, \x.(V1(\F1 F2.F2(x),K) | V2(\F1 F2.F2(x),K)))
@@ -359,11 +299,6 @@
   rule: conj
   semantics: \L M2 M1 F x. (M1(F,x) | M2(F,x))
   child0_surf: or
-
-# - category: (N|N)|(N|N)
-#   rule: conj
-#   semantics: \L M1 M2 F x. M1(M2(F),x)
-#   child0_surf: or
 
 - category: PP|PP
   rule: conj
@@ -382,10 +317,6 @@
   rule: lp
   semantics: \L R. R
 
-# - category: S|S
-#   rule: lp
-#   semantics: \L R. R
-
 - category: NP
   rule: lp
   semantics: \L R. R
@@ -401,7 +332,6 @@
 - category: (S|NP)|(S|NP)
   rule: lp
   semantics: \L R. R
-  # child1_category: (S|NP)|(S|NP)
 
 - category: (S|NP)|(S|NP)
   rule: lp
@@ -413,10 +343,6 @@
   semantics: \L R. R
   # child1_category: NP|NP  
 
-# - category: NP|NP
-#   rule: lp
-#   semantics: \L R. R
-
 - category: NP|NP
   rule: lp
   semantics: \L Q2 Q1 F1 F2. (Q1(F1,F2) & Q2(F1,F2))
@@ -425,10 +351,6 @@
 - category: N|N
   rule: lp
   semantics: \L R. R
-
-# - category: N|N
-#   rule: lp
-#   semantics: \L R. R
 
 - category: (NP|NP)|(NP|NP)
   rule: lp
@@ -448,7 +370,6 @@
 - category: S
   rule: rp
   semantics: \L R. L
-  # child0_surf: ","
 
 - category: NP
   rule: rp
@@ -474,10 +395,6 @@
   rule: rp
   semantics: \L R. L
 
-# - category: NP|NP
-#   rule: rp
-#   semantics: \L R. L
-
 - category: N|PP
   rule: rp
   semantics: \L R. L
@@ -494,12 +411,6 @@
   rule: rp
   semantics: \L R. L
   child1_category: RQU
-
-# # sententce final particle
-# - category: S
-#   rule: rp
-#   semantics: \S D. S(\e.True)
-# #   child1_category: "."
 
 # "," NP => (S|NP)|(S|NP)
 - category: (S|NP)|(S|NP)
@@ -630,7 +541,6 @@
 #   semantics: \E. E
 #   pos: NNP
 
-# event.yaml
 # ## Number words 
 # - category: N
 #   semantics: \E. E
@@ -654,33 +564,9 @@
   semantics: \E M Q F1 F2. Q(\x.(E(x) & M(\G1 G2.G1(x),\w.True,\w.True) & F1(x)), F2)
   coq_type: Entity -> Prop
 
-# - category: (NP|NP)|(NP|NP) 
-#   semantics: \E M Q F1 F2. Q(\x.(E(x) & M(\G1 G2.G1(x),\w.True,\w.True) & F1(x)), F2)
-#   coq_type: Entity -> Prop
-
-# - category: (NP|NP)|(NP|NP) 
-#   semantics: \E M Q F1 F2. Q(\x.(E(x) & M(\G1 G2.G1(x),\w.True,\w.True) & F1(x)), F2)
-#   coq_type: Entity -> Prop
-
-# - category: (NP|NP)|(NP|NP) 
-#   semantics: \E M Q F1 F2. Q(\x.(E(x) & M(\G1 G2.G1(x),\w.True,\w.True) & F1(x)), F2)
-#   coq_type: Entity -> Prop
-
 - category: ((NP|NP)|(NP|NP))|NP
   semantics: \E Q1 M Q2 F1 F2. Q2(\y.True,\y.Q1(\x.(E(x,y) & M(\G1 G2.G1(x),\w.True,\w.True) & F1(x)), F2))
   coq_type: Entity -> Entity -> Prop
-
-# - category: ((NP|NP)|(NP|NP))|NP
-#   semantics: \E Q1 M Q2 F1 F2. Q2(\y.True,\y.Q1(\x.(E(x,y) & M(\G1 G2.G1(x),\w.True,\w.True) & F1(x)), F2))
-#   coq_type: Entity -> Entity -> Prop
-
-# - category: ((NP|NP)|(NP|NP))|NP
-#   semantics: \E Q1 M Q2 F1 F2. Q2(\y.True,\y.Q1(\x.(E(x,y) & M(\G1 G2.G1(x),\w.True,\w.True) & F1(x)), F2))
-#   coq_type: Entity -> Entity -> Prop
-
-# - category: ((NP|NP)|(NP|NP))|NP
-#   semantics: \E Q1 M Q2 F1 F2. Q2(\y.True,\y.Q1(\x.(E(x,y) & M(\G1 G2.G1(x),\w.True,\w.True) & F1(x)), F2))
-#   coq_type: Entity -> Entity -> Prop
 
 
 ##### Templates for Determiners #####
@@ -700,29 +586,13 @@
   semantics: \E V Q K. V(Q, \e.(E(e) & K(e)))
   coq_type: Event -> Prop
 
-# - category: (S|NP)|(S|NP)
-#   semantics: \E V Q K. V(Q, \e.(E(e) & K(e)))
-#   coq_type: Event -> Prop
-
 - category: S|S
   semantics: \E S K. S(\e.(E(e) & K(e)))
   coq_type: Event -> Prop
 
-# - category: S|S
-#   semantics: \E S K. S(\e.(E(e) & K(e)))
-#   coq_type: Event -> Prop
-
 - category: (S|S)|NP
   semantics: \E Q S K. S(\e.(Q(\x.True, \x.E(e,x)) & K(e)))
   coq_type: Event -> Entity -> Prop
-
-# - category: (S|S)|NP
-#   semantics: \E Q S K. S(\e.(Q(\x.True, \x.E(e,x)) & K(e)))
-#   coq_type: Event -> Entity -> Prop
-
-# - category: (S|S)|NP
-#   semantics: \E Q S K. S(\e.(Q(\x.True, \x.E(e,x)) & K(e)))
-#   coq_type: Event -> Entity -> Prop
 
 - category: (S|S)|(S|S)
   semantics: \E M S K1. S(\e.((E(e) & M(\K2.K2(e),\e.True)) & K1(e)))
@@ -739,18 +609,6 @@
   semantics: \E A V Q K. Q(\x.True, \x.(A(V,\F1 F2.(F2(x) & E(x)),K)))
   coq_type: Entity -> Prop
 
-# - category: ((S|NP)|(S|NP))|((S|NP)|(S|NP))
-#   semantics: \E A V Q K. Q(\x.True, \x.(A(V,\F1 F2.(F2(x) & E(x)),K)))
-#   coq_type: Entity -> Prop
-
-# - category: ((S|NP)|(S|NP))|((S|NP)|(S|NP))
-#   semantics: \E A V Q K. Q(\x.True, \x.(A(V,\F1 F2.(F2(x) & E(x)),K)))
-#   coq_type: Entity -> Prop
-
-# - category: ((S|NP)|(S|NP))|((S|NP)|(S|NP))
-#   semantics: \E A V Q K. Q(\x.True, \x.(A(V,\F1 F2.(F2(x) & E(x)),K)))
-#   coq_type: Entity -> Prop
-
 - category: ((S|NP)|(S|NP))|(S|NP)
   semantics: \E V1 V2 Q K. Q(\x.True,\x.(V1(\F1 F2.F2(x),\e.True) & V2(\F1 F2.F2(x),K)))
   # semantics: \E V1 V2 Q K. Q(\x.True,\x.(V2(\F1 F2.F2(x),K) & V1(\F1 F2.F2(x),\e.True)))
@@ -764,23 +622,23 @@
 
 ##### Templates for Modifiers #####
 
+## Adjectives
 - category: N|N
-  semantics: \E F x. (F(x) & E(x))
+  semantics: \E F x. (F(x) & E(x)) # plain semantics
   coq_type: Entity -> Prop
 
-# flat.yaml
 # - category: N|N
-#   semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
+#   semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x)) # event semantics
 #   coq_type: Event -> Prop
 #   pos: JJ
 
 # - category: N|N
-#   semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
+#   semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x)) # event semantics
 #   coq_type: Event -> Prop
 #   pos: JJR
 
 # - category: N|N
-#   semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
+#   semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x)) # event semantics
 #   coq_type: Event -> Prop
 #   pos: JJS
 
@@ -789,42 +647,9 @@
   coq_type: Event -> Prop
   pos: VBN
 
-# - category: N|N
-#   semantics: \E F x. (E(x) & F(x)) # event.yaml
-#   # semantics: \E F x. (F(x) & E(x))
-#   coq_type: Entity -> Prop
-
-# - category: N|N
-#   semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
-#   coq_type: Event -> Prop
-#   pos: JJ
-
-# - category: N|N
-#   semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
-#   coq_type: Event -> Prop
-#   pos: JJR
-
-# - category: N|N
-#   semantics: \E F x. exists e.(E(e) & (Subj(e) = x) & F(x))
-#   coq_type: Event -> Prop
-#   pos: JJS
-
-# - category: N|N
-#   semantics: \E F x. exists e.(E(e) & (Acc(e) = x) & F(x))
-#   coq_type: Event -> Prop
-#   pos: VBN
-
-# - category: NP|NP
-#   semantics: \E Q F1 F2. Q(\x.(E(x) & F1(x)),F2)
-#   coq_type: Entity -> Prop
-
 - category: (N|N)|NP
   semantics: \E Q F x. Q(\y.True, \y.(E(x,y) & F(x)))
   coq_type: Entity -> Entity -> Prop
-
-# - category: (N|N)|NP
-#   semantics: \E Q F x. Q(\y.True, \y.(E(x,y) & F(x)))
-#   coq_type: Entity -> Entity -> Prop
 
 - category: (NP|NP)|N
   semantics: \E F Q F1 F2. Q(\x.(F(x) & F1(x)),F2)
@@ -840,15 +665,6 @@
 - category: (N|N)|N
   semantics: \E F G x. (F(x) & G(x))
 
-# - category: (N|N)|N
-#   semantics: \E F G x. (F(x) & G(x))
-
-# - category: (N|N)|N
-#   semantics: \E F G x. (F(x) & G(x))
-
-# - category: (N|N)|N
-#   semantics: \E F G x. (F(x) & G(x))
-
 - category: ((N|N)|(N|N))|(N|N)
   semantics: \E M1 M2 F x. (M1(\x.True,x) & M2(\x.True,x) & F(x))
 
@@ -860,18 +676,6 @@
   semantics: \E F V Q K. Q(\x.True, \x.(E(x) & V(\F1 F2.F2(x), K) & F(x)))
   coq_type: Entity -> Prop
 
-# - category: ((S|NP)|(S|NP))|N
-#   semantics: \E F V Q K. Q(\x.True, \x.(E(x) & V(\F1 F2.F2(x), K) & F(x)))
-#   coq_type: Entity -> Prop
-
-# - category: ((S|NP)|(S|NP))|N
-#   semantics: \E F V Q K. Q(\x.True, \x.(E(x) & V(\F1 F2.F2(x), K) & F(x)))
-#   coq_type: Entity -> Prop
-
-# - category: ((S|NP)|(S|NP))|N
-#   semantics: \E F V Q K. Q(\x.True, \x.(E(x) & V(\F1 F2.F2(x), K) & F(x)))
-#   coq_type: Entity -> Prop
-
 
 ##### Templates for Preposition #####
 
@@ -882,18 +686,6 @@
   # semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.True, \y.exists e.(E(e) & (Subj(e) = x) & (Dat(e) = y) & F1(x)))), F2)
   # coq_type: Event -> Prop
   # semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.True, \y.(x = y)) & F1(x)), F2)
-
-# - category: (NP|NP)|NP
-#   semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.True, \y.exists e.(E(e,y) & (Subj(e) = x) & F1(x)))), F2)
-#   coq_type: Event -> Entity -> Prop
-
-# - category: (NP|NP)|NP
-#   semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.True, \y.exists e.(E(e,y) & (Subj(e) = x) & F1(x)))), F2)
-#   coq_type: Event -> Entity -> Prop
-
-# - category: (NP|NP)|NP
-#   semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.True, \y.exists e.(E(e,y) & (Subj(e) = x) & F1(x)))), F2)
-#   coq_type: Event -> Entity -> Prop
 
 - category: (NP|NP)|NP
   semantics: \E Q1 Q2 F1 F2. Q2(\x.(Q1(\w.True, \y.(x = y)) & F1(x)), F2)
@@ -933,14 +725,6 @@
   semantics: \E K1 V Q K2. Q(\x.True, \x.(V(\F1 F2.F2(x), \e.(E(e) & K1(e) & K2(e)))))
   coq_type: Event -> Prop
 
-# - category: ((S|NP)|(S|NP))|PP
-#   semantics: \E K1 V Q K2. Q(\x.True, \x.(V(\F1 F2.F2(x), \e.(E(e) & K1(e) & K2(e)))))
-#   coq_type: Event -> Prop
-
-# - category: ((S|NP)|(S|NP))|NP
-#   semantics: \E Q1 V Q2 K. V(Q2, \e.Q1(\x.True, \x.(E(e,x) & K(e))))
-#   coq_type: Event -> Entity -> Prop
-
 - category: ((S|NP)|(S|NP))|NP
   semantics: \E Q1 V Q2 K. V(Q2, \e.Q1(\x.True, \x.(E(e,x) & K(e))))
   coq_type: Event -> Entity -> Prop
@@ -961,32 +745,14 @@
 #   semantics: \E Q1 V Q2 K. Q2(\x.True, \x.Q1(\y.True, \y.(V(\F1 F2.F2(x), \w.True) & E(x,y))))
 #   coq_type: Entity -> Entity -> Prop
 
-# - category: ((S|NP)|(S|NP))|(S|NP)
-#   semantics: \E V1 V2 Q K. Q(\x.True, \x.V1(\F1 F2.(V2(\G1 G2.G2(x), \e.True) & F2(x)), K))
-
 - category: (((S|NP)|(S|NP))|(S|NP))|NP
   semantics: \E Q1 V1 V2 Q2 K. Q2(\x.True,\x.(Q1(\y.True,\y.(y = x)) & V1(\F1 F2.F2(x),\e.True) & V2(\F1 F2.F2(x),K)))
   # semantics: \E Q1 V1 V2 Q2 K. Q2(\x.True, \x.V1(\F1 F2.(V2(\G1 G2.G2(x), \e.True) & F2(x)), K))
-
-# - category: (((S|NP)|(S|NP))|(S|NP))|NP
-#   semantics: \E Q1 V1 V2 Q2 K. Q2(\x.True, \x.Q1(\y.True, \y.exists e.((Subj(e) = x) & (Acc(e) = y) & V1(\F1 F2.F2(y),\w.True) & V2(\F1 F2.F2(y),\w.True) & K(e))))
+  # semantics: \E Q1 V1 V2 Q2 K. Q2(\x.True, \x.Q1(\y.True, \y.exists e.((Subj(e) = x) & (Acc(e) = y) & V1(\F1 F2.F2(y),\w.True) & V2(\F1 F2.F2(y),\w.True) & K(e))))
 
 - category: (((S|NP)|(S|NP))|(S|NP))|N
   semantics: \E F V1 V2 Q K. Q(\x.True,\x.(F(x) & V1(\F1 F2.F2(x),\e.True) & V2(\F1 F2.F2(x),K)))
   # semantics: \E F V1 V2 Q K. Q(\x.True,\x.(F(x) & V1(\F1 F2.(V2(\G1 G2.G2(x),\e.True) & F2(x)),K)))
-
-# - category: (NP|NP)|(S|NP)
-#   semantics: \E V Q F1 F2. Q(\x.V(\G1 G2.(G2(x) & F1(x)), \e.True), F2)
-# Cf. relative clause
-
-# - category: (NP|NP)|(S|NP)
-#   semantics: \E V Q F1 F2. Q(\x.V(\G1 G2.(G2(x) & F1(x)), \e.True), F2)
-
-# - category: (NP|NP)|(S|NP)
-#   semantics: \E V Q F1 F2. Q(\x.V(\G1 G2.(G2(x) & F1(x)), \e.True), F2)
-
-# - category: (N|N)|(S|NP)
-#   semantics: \E V F x. (V(\G1 G2.G2(x), \e.True) & F(x))
 
 - category: (PP|PP)|(PP|PP)
   semantics: \E X. X
@@ -994,24 +760,13 @@
 - category: ((N|N)|(N|N))|(S|NP)
   semantics: \E V M F x. (V(\G1 G2. G2(x), \e.True) & M(F,x))
 
-# - category: ((N|N)|(N|N))|(S|NP)
-#   semantics: \E V M F x. (V(\G1 G2. G2(x), \e.True) & M(F,x))
-
 - category: ((N|N)|(N|N))|NP
   semantics: \E Q A F x. Q(\x.True, \x. (E(x) & A(F,x)))
   coq_type: Entity -> Prop
 
-# - category: ((N|N)|(N|N))|NP
-#   semantics: \E Q A F x. Q(\x.True, \x. (E(x) & A(F,x)))
-#   coq_type: Entity -> Prop
-
 - category: (((S|NP)|(S|NP))|((S|NP)|(S|NP)))|NP 
   semantics: \E Q1 M V Q2 K. M(V,Q2,\e.(Q1(\x.True,\x.(E(e,x) & K(e)))))
   coq_type: Event -> Entity -> Prop
-
-# - category: (((S|NP)|(S|NP))|((S|NP)|(S|NP)))|NP
-#   semantics: \E Q1 M V Q2 K. M(V,Q2,\e.(Q1(\x.True,\x.(E(e,x) & K(e)))))
-#   coq_type: Event -> Entity -> Prop
 
 - category: (((S|NP)|(S|NP))|((S|NP)|(S|NP)))|S
   semantics: \E S X. X
@@ -1040,18 +795,10 @@
   semantics: \E Q K. Q(\x.True, \x.exists e.(E(e) & (Subj(e) = x) & K(e)))
   coq_type: Event -> Prop
 
-# - category: S|NP
-#   semantics: \E Q K. Q(\x.True, \x.exists e.(E(e) & (Subj(e) = x) & K(e)))
-#   coq_type: Event -> Prop
-
 ## transitive verbs
 - category: (S|NP)|NP
   semantics: \E Q1 Q2 K. Q2(\x.True, \x.Q1(\y.True, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K(e))))
   coq_type: Event -> Prop
-
-# - category: (S|NP)|NP
-#   semantics: \E Q1 Q2 K. Q2(\x.True, \x.Q1(\y.True, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K(e))))
-#   coq_type: Event -> Prop
 
 ## perceptual verbs
 - category: ((S\NP)/(S\NP))/NP
@@ -1093,10 +840,6 @@
   semantics: \E K1 Q1 Q2 K1. Q2(\x.True, \x.Q1(\y.True, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K1(e) & K2(e))))
   coq_type: Event -> Prop
 
-# - category: ((S|NP)|NP)|PP
-#   semantics: \E K1 Q1 Q2 K1. Q2(\x.True, \x.Q1(\y.True, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K1(e) & K2(e))))
-#   coq_type: Event -> Prop
-
 - category: ((S|NP)|PP)|PP
   semantics: \E F1 F2 Q K. Q(\x.True, \x.exists e.(E(e) & (Subj(e) = x) & F1(e) & F2(e) & K(e)))
   coq_type: Event -> Prop
@@ -1109,10 +852,6 @@
 - category: ((S|NP)|NP)|(S|NP)
   semantics: \E V Q1 Q2 K. Q2(\x.True, \x.Q1(\y.True, \y.exists e.(E(e) & (Subj(e) = x) & AccI(e,V(\F1 F2.F2(y),\w.True)) & K(e))))
   coq_type: Event -> Prop
-
-# - category: ((S|NP)|NP)|(S|NP)
-#   semantics: \E V Q1 Q2 K. Q2(\x.True, \x.Q1(\y.True, \y.exists e.(E(e) & (Subj(e) = x) & AccI(e,V(\F1 F2.F2(y),\w.True)) & K(e))))
-#   coq_type: Event -> Prop
 
 - category: ((S|NP)|S)|NP
   semantics: \E Q1 S Q2 K. Q1(\y.True, \y.Q2(\x.True, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,S(\w.True)) & (Dat(e) = y) & K(e))))
@@ -1135,10 +874,6 @@
   semantics: \E Q1 V S Q2 K. Q2(\x.True, \x.exists e. (E(e) & (Subj(e) = x) & AccI(e,S(\w.True)) & K(e)))
   coq_type: Event -> Prop
 
-# - category: (S|S)|NP
-#   semantics: \E Q S K. Q(\x.True, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,S(\w.True)) & K(e)))
-#   coq_type: Event -> Prop
-
 - category: (S|NP)|S[qem=true]
   semantics: \E S Q K. Q(\x.True, \x.exists e.(E(e) & (Subj(e) = x) & AccI(e,S(\w.True)) & K(e)))
   coq_type: Event -> Prop
@@ -1148,9 +883,6 @@
 
 - category: (NP|NP)|(S|NP)
   semantics: \E V Q F1 F2. Q(\x.(V(\G1 G2.G2(x), \e.True) & F1(x)), F2)
-
-# - category: (NP|NP)|(S|NP)
-#   semantics: \E V Q F1 F2. Q(\x.(V(\G1 G2.G2(x), \e.True) & F1(x)), F2)
 
 - category: NP|(S|NP)
   semantics: \E V F1 F2. exists x. (V(\F1 F2.F2(x),\e.True) & F1(x) & F2(x))
@@ -1168,9 +900,6 @@
   semantics: \E M Q F1 F2. Q(\y. exists x. (M(\G1 G2.G1(x),\w.True,\w.True) & Rel(x,y) & F1(y)), F2)
   base: whose
 
-# - category: NP|(S|NP)
-#   semantics: \E V F1 F2. exists x. (V(\G1 G2.G2(x), \e.True) & F1(x) & F2(x))
-
 - category: ((NP|NP)|(NP|NP))|S
   semantics: \E S M Q F1 F2. Q(\x.(S(\e.(Dat(e) = x)) & M(\G1 G2.G1(x),\w.True,\w.True) & F1(x)), F2)
 
@@ -1184,23 +913,14 @@
   semantics: \E M S Q F1 F2. Q(\x.(S(\e.(Dat(e) = x)) & F1(x)),F2)
   coq_type: Event -> Prop
 
-# - category: ((S|NP)|(S|NP))|(S|NP)
-#   semantics: \E V1 V2 Q K. Q(\x.(V1(\F1 F2. F2(x), \e.True) & V2(\F1 F2. F2(x), \e.True)),K)
-
 
 ##### Templates for questions #####
 
 - category: S|(S|NP)
   semantics: \E V K. exists x. V(\G1 G2. G2(x), \e.True)
 
-# - category: S|(S|NP)
-#   semantics: \E V K. exists x. V(\G1 G2. G2(x), \e.True)
-
 - category: (S|(S|NP))|N
   semantics: \E F V K. exists x. (F(x) & V(\G1 G2. G2(x), \e.True))
-
-# - category: (S|(S|NP))|N
-#   semantics: \E F V K. exists x. (F(x) & V(\G1 G2. G2(x), \e.True))
 
 
 ##### Templates for connectives #####
@@ -1209,26 +929,8 @@
 - category: (S|S)|S
   semantics: \E S1 S2 K. (S2(\e.True) & S1(\e.True))
 
-# - category: (S|S)|S
-#   semantics: \E S1 S2 K. (S2(\e.True) & S1(\e.True))
-
-# - category: (S|S)|S
-#   semantics: \E S1 S2 K. (S2(\e.True) & S1(\e.True))
-
-# - category: (S|S)|S
-#   semantics: \E S1 S2 K. (S2(\e.True) & S1(\e.True))
-
 - category: ((S|NP)|(S|NP))|S
   semantics: \E S V Q K. (V(Q,\e.True) & S(\e.True))
-
-# - category: ((S|NP)|(S|NP))|S
-#   semantics: \E S V Q K. (V(Q,\e.True) & S(\e.True))
-
-# - category: ((S|NP)|(S|NP))|S
-#   semantics: \E S V Q K. (V(Q,\e.True) & S(\e.True))
-
-# - category: ((S|NP)|(S|NP))|S
-#   semantics: \E S V Q K. (V(Q,\e.True) & S(\e.True))
 
 
 ########## Templates with syntactic features ##########
@@ -1237,9 +939,6 @@
 
 - category: ((S|NP[expl=true])|S[em=true])|(S[adj=true]|NP)
   semantics: \E V S Q K. V(\F1 F2.F2(S(K)),\e.True)
-
-# - category: ((S|NP)|(S|NP))|(S|NP)
-#   semantics: \E V1 V2 Q K. Q(\x.True,\x.((V1(\F1 F2.F2(x),\e.True) & V2(\F1 F2.F2(x),\e.True))))
 
 
 ##### Templates for Adjectives #####
@@ -1253,7 +952,7 @@
 - category: (S[adj=true]|NP)|NP
   semantics: \E Q1 Q2 K. Q2(\x.True, \x.Q1(\y.True, \y.E(x,y))) # plain semantics
   coq_type: Entity -> Entity -> Prop
-  # semantics: \E Q1 Q2 K. Q2(\x.True, \x.Q1(\y.True, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K(e))))
+  # semantics: \E Q1 Q2 K. Q2(\x.True, \x.Q1(\y.True, \y.exists e.(E(e) & (Subj(e) = x) & (Acc(e) = y) & K(e)))) # event semantics
   # coq_type: Entity -> Prop
 
 ## tough constructions
@@ -1318,18 +1017,6 @@
   # semantics: \E Q V K. Q(\x.True, \x.V(\F1 F2.F2(x),K)) # flat semantics2
   # coq_type: Event -> Prop
 
-# - category: (S|(S|NP))|NP
-#   semantics: \E Q V K. Q(\x.True, \x.(E(x) & V(\F1 F2.F2(x),K)))
-#   coq_type: Entity -> Prop
-
-# - category: (S|(S|NP))|NP
-#   semantics: \E Q V K. Q(\x.True, \x.(E(x) & V(\F1 F2.F2(x),K)))
-#   coq_type: Entity -> Prop
-
-# - category: (S|(S|NP))|NP
-#   semantics: \E Q V K. Q(\x.True, \x.(E(x) & V(\F1 F2.F2(x),K)))
-#   coq_type: Entity -> Prop
-
 
 ############### Semantic templates for rebanked parsers #################
 
@@ -1348,10 +1035,6 @@
 - category: N|(S|NP)
   semantics: \E V x. (E(x) & V(\F1 F2.F2(x),\w.True))
   coq_type: Entity -> Prop
-
-# - category: (N|N)|NP
-#   semantics: \E Q F x. Q(\y.True, \y.exists e.(E(e,y) & (Subj(e) = x) & F(x)))
-#   coq_type: Event -> Entity -> Prop
 
 - category: (N|PP)|PP
   semantics: \E K1 K2 x. (E(x) & exists e. ((Subj(e) = x) & K1(e) & K2(e)))
@@ -1379,17 +1062,8 @@
 - category: (N|N)|(S|NP)
   semantics: \E V F x. (V(\G1 G2.G2(x),\w.True) & F(x))
 
-# - category: (N|N)|(S|NP)
-#   semantics: \E V F x. (V(\G1 G2.G2(x),\w.True) & F(x))
-
 - category: (N|N)|S
   semantics: \E S F x. (S(\w.True) & F(x))
-
-# - category: (N|N)|(S|NP) 
-#   semantics: \E V F x. (V(\G1 G2.G2(x),\w.True) & F(x))
-
-# - category: (N|N)|(S|NP) 
-#   semantics: \E V F x. (V(\G1 G2.G2(x),\w.True) & F(x))
 
 - category: ((N|PP)|(N|PP))|(S|NP)
   semantics: \E V M K x. (V(\F1 F2.F2(x),\w.True) & M(\w.True,x) & exists e. ((Subj(e) = x) & K(e)))
