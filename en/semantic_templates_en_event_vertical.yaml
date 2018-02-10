@@ -82,7 +82,7 @@
 # S[to]|NP => N|N
 - category: N|N
   rule: lex
-  semantics: \V F x. (V(\G1 G2.G2(x), \e.True) & F(x))
+  semantics: \V F x. (F(x) & V(\G1 G2.G2(x), \e.True))
   child0_category: S|NP
 
 ## S[ng]|NP => NP
@@ -157,11 +157,11 @@
   semantics: \V M Q K. M(V,Q,K)
   child0_category: S|NP
 
-## NP => (S|NP)|((S|NP)|NP)
+## S|NP => (S|NP)|((S|NP)|NP)
 - category: (S|NP)|((S|NP)|NP)
   rule: tr
   semantics: \Q1 V2 Q2 K. V2(Q2,Q1,K)
-  child0_category: S|NP
+  child0_category: NP
 
 
 ##### Binary lexical rules #####
@@ -200,6 +200,10 @@
   # semantics: \L V2 V1 Q K. (V1(Q,K) & V2(Q,K)) # SICK-6358
   semantics: \L V2 V1 Q K. Q(\x.True, \x.(V1(\F1 F2.F2(x),K) & V2(\F1 F2.F2(x),K))) # SICK-7649
 
+- category: ((S|NP)|PP)|((S|NP)|PP)
+  rule: conj
+  semantics: \L V1 V2 K1 Q K2. Q(\x.True,\x.(V2(\e.True,\F1 F2.F2(x),\e.(K1(e) & K2(e))) & V1(\e.True,\F1 F2.F2(x),\e.True)))
+
 - category: (N|N)|(N|N)
   rule: conj
   semantics: \L M1 M2 F x. M1(M2(F),x)
@@ -232,29 +236,39 @@
   rule: conj
   semantics: \L M1 M2 V2 Q K. (M1(V2,Q,K) & M2(V2,Q,K))
 
-- category: NP|NP
+- category: (((S|NP)|PP)|NP)|(((S|NP)|PP)|NP)
   rule: conj
-  semantics: \L Q. Q
-  child0_surf: ","
-  child1_category: NP|NP
-
-- category: PP|PP
-  rule: conj
-  semantics: \L F. F
-  child0_surf: ","
-  child1_category: PP|PP
+  semantics: \L M1 M2 Q1 K1 Q2 K2. (M1(Q1,K1,Q2,K2) & M2(Q1,K1,Q2,K2))
 
 - category: S|S
   rule: conj
-  semantics: \L S. S
+  semantics: \L R. R
   child0_surf: ","
   child1_category: S|S
 
 - category: (S|S)|(S|S)
   rule: conj
-  semantics: \L S. S
+  semantics: \L R. R
   child0_surf: ","
   child1_category: (S|S)|(S|S)
+
+- category: NP|NP
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: NP|NP
+
+- category: N|N
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: N|N
+
+- category: PP|PP
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: PP|PP
 
 - category: (S|NP)|(S|NP)
   rule: conj
@@ -262,10 +276,60 @@
   child0_surf: ","
   child1_category: (S|NP)|(S|NP)
 
-- category: ((S|NP)|(S|NP))|((S|NP)|(S|NP))
+- category: ((S|NP)|PP)|((S|NP)|PP)
   rule: conj
   semantics: \L R. R
+  child0_surf: ","
+  child1_category: (S|NP)|PP
+
+- category: (N|N)|(N|N)
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: (N|N)|(N|N)
+
+- category: (N|PP)|(N|PP)
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: (N|PP)|(N|PP)
+
+- category: (NP|NP)|(NP|NP)
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: (NP|NP)|(NP|NP)
+
+- category: (NP|N)|(NP|N)
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: (NP|N)|(NP|N)
+
+- category: ((S|NP)|NP)|((S|NP)|NP)
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: ((S|NP)|NP)|((S|NP)|NP)
+
+- category: ((S|NP)|(S|NP))|((S|NP)|(S|NP))
+  rule: conj
+  child0_surf: ","
+  semantics: \L R. R
   child1_category: ((S|NP)|(S|NP))|((S|NP)|(S|NP))
+
+- category: (((S|NP)|(S|NP))|NP)|(((S|NP)|(S|NP))|NP)
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: (((S|NP)|(S|NP))|NP)|(((S|NP)|(S|NP))|NP)
+
+- category: ((S|NP)|((S|NP)|NP))|((S|NP)|((S|NP)|NP))
+  rule: conj
+  semantics: \L R. R
+  child0_surf: ","
+  child1_category: ((S|NP)|((S|NP)|NP))|((S|NP)|((S|NP)|NP))
+
 
 ## Disjunction
 
@@ -326,6 +390,10 @@
   semantics: \L R. R
 
 - category: S|NP
+  rule: lp
+  semantics: \L R. R
+
+- category: (S|NP)|NP
   rule: lp
   semantics: \L R. R
 
@@ -521,6 +589,16 @@
   semantics: \L R. L(R,\K.exists e.K(e),\e.True)
   root: "true"
 
+- category: (S|NP)|((S|NP)|NP)
+  rule: bc
+  semantics: \L R. R(L(\Q1 Q2 K.exists e.Q2(\x.True,\x.((Subj(e) = x) & K(e)))),\F1 F2.exists x.F2(x),\e.True)
+  root: "true"
+
+- category: (S|NP)|((S|NP)|NP)
+  rule: ba
+  semantics: \L R. R(L,\Q1 Q2 K.exists e.Q2(\x.True,\x.((Subj(e) = x) & K(e))),\F1 F2.exists x.F2(x),\e.True)
+  root: "true"
+
 # - category: S
 #   rule: rp
 #   semantics: \L R. L
@@ -602,7 +680,11 @@
   semantics: \E Q M S K1. S(\e.Q(\x.True, \x.(E(e,x) & M(\K2.K2(e),\e.True) & K1(e))))
 
 - category: (S|S)|(S|NP)
-  semantics: \E V S K. S(\e.(E(e) & exists x. V(\F1 F2.F2(x), \w.(Subj(w) = Subj(e))) & K(e)))
+  semantics: \E V S K. S(\e1.(E(e1) & exists x. V(\F1 F2.F2(x), \e2.(Subj(e2) = Subj(e1))) & K(e1)))
+  coq_type: Event -> Prop
+
+- category: ((S|S)|(S|NP))|NP
+  semantics: \E Q V S K. S(\e1.(E(e1) & Q(\x.True,\x.V(\F1 F2.F2(x),\e2.(Subj(e2) = Subj(e1)))) & K(e1)))
   coq_type: Event -> Prop
 
 - category: ((S|NP)|(S|NP))|((S|NP)|(S|NP))
@@ -709,14 +791,19 @@
 
 - category: (PP|PP)|NP
   semantics: \E Q K e. Q(\x.True, \x.(E(e,x) & K(e)))
-  coq_type: Event -> Event -> Prop
+  coq_type: Event -> Entity -> Prop
 
 - category: PP|S
   semantics: \E S e. (E(e) & S(\e.True))
   coq_type: Event -> Prop
 
 - category: PP|(S|NP)
-  semantics: \E V e1. exists x. V(\F1 F2.F2(x),\e.True)
+  semantics: \E V e1. exists x. V(\F1 F2.F2(x),\e2.((Subj(e2) = x) & E(e1,x)))
+  coq_type: Event -> Entity -> Prop
+
+- category: (PP|(S|NP))|NP
+  semantics: \E Q V e1. (Q(\x.True,\x.E(e1,x)) & exists x. V(\F1 F2.F2(x),\e2.((Subj(e2) = x) & (e2 = e1))))
+  coq_type: Event -> Entity -> Prop
 
 - category: (NP|NP)|S
   semantics: \E S Q F1 F2. (Q(F1,F2) & S(\e.True))
@@ -774,6 +861,7 @@
 - category: ((NP|NP)|(NP|NP))|((NP|NP)|(NP|NP))
   semantics: \E X. X
 
+
 ### DEFAULT TEST ###
 - category: ((NP|NP)|NP)|NP
   semantics: \E Q1 Q2 Q3 F1 F2. Q3(\x.(Q2(\y.True,\y.((x = y) & Q1(\z.True,\z.(E(y,z))))) & F1(x)),F2)
@@ -812,6 +900,10 @@
 
 - category: (S[pss=true]|NP)|(PP|NP)
   semantics: \E M Q K. Q(\x.True, \x.exists e.(E(e) & M(\F1 F2.F2(x),e) & K(e)))
+  coq_type: Event -> Prop
+
+- category: ((S|NP)|PP)|(S[adj=true]|NP)
+  semantics: \E V K1 Q K2. Q(\x.True,\x.exists e.(E(e) & (Subj(e) = x) & V(\F1 F2.F2(x),\e.True) & K1(e))) # plain semantics
   coq_type: Event -> Prop
 
 ## control verbs
@@ -897,7 +989,11 @@
   semantics: \E V F1 F2. exists x y. (V(\F1 F2.F2(y),\G1 G2.G2(x),\e.True) & F1(x) & F2(x))
 
 - category: (NP|NP)|(NP|NP) 
-  semantics: \E M Q F1 F2. Q(\y. exists x. (M(\G1 G2.G1(x),\w.True,\w.True) & Rel(x,y) & F1(y)), F2)
+  semantics: \E M Q F1 F2. Q(\y. exists x.(M(\G1 G2.G1(x),\w.True,\w.True) & Rel(x,y) & F1(y)),F2)
+  base: whose
+
+- category: ((NP|NP)|(S|NP))|N
+  semantics: \E F V Q F1 F2. Q(\y.exists x.(F(x) & Rel(x,y) & V(\F1 F2.F2(x),\e.True) & F1(x)),F2)
   base: whose
 
 - category: ((NP|NP)|(NP|NP))|S
@@ -993,6 +1089,22 @@
 
 - category: (S|S)|(S[asup=true]|NP)
   semantics: \E X Y. Y
+
+- category: N|N
+  semantics: \E F x. F(x)
+  pos: LQU
+
+- category: N|N
+  semantics: \E F x. F(x)
+  pos: RQU
+
+- category: N
+  semantics: \E x. True
+  pos: RQU
+
+- category: (NP|N)|NP
+  semantics: \E Q F F1 F2. Q(\x.(F(x) & F1(x)),F2)
+  # pos: RQU
 
 
 ##### Templates for complementizers #####
@@ -1346,18 +1458,18 @@
   base: be
 
 - category: (S|NP[thr=true])|NP
-  semantics: \E Q1 Q2 K. Q1(\x.True, \x.exists e.((Subj(e) = Subj(e)) & K(e)))
+  semantics: \E Q1 Q2 K. Q1(\x.True,\x.exists e.((Subj(e) = Subj(e)) & K(e)))
 
 - category: (S|NP)|PP
-  semantics: \E F Q K. Q(\x.True, \x.exists e.(F(e) & (Subj(e) = x) & K(e)))
+  semantics: \E K1 Q K2. Q(\x.True,\x.exists e.(K1(e) & (Subj(e) = x) & K2K(e)))
   base: be
 
 - category: (S|PP)|NP
-  semantics: \E F Q K. Q(\x.True, \x.exists e.(F(e) & (Subj(e) = x) & K(e)))
+  semantics: \E Q K1 K2. Q(\x.True,\x.exists e.(K1(e) & (Subj(e) = x) & K2(e)))
   base: be
 
 - category: ((S|NP)|S)|(S|NP)
-  semantics: \E V S Q K. Q(\x.True, \x.exists e. (V(\F1 F2.F2(x),\w.True) & (Subj(e) = x) & AccI(e,S(\w.True)) & K(e)))
+  semantics: \E V S Q K. Q(\x.True,\x.exists e.(V(\F1 F2.F2(x),\w.True) & (Subj(e) = x) & AccI(e,S(\w.True)) & K(e)))
   base: be
 
 
