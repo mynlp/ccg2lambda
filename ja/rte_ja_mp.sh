@@ -21,13 +21,16 @@
 # 'yes' (the premises entail the conclusion), 'no' (there is a contradiction) or
 # 'unknown' (none of the former).
 # You can use it as:
-# 
-# ./rte_ja_mp.sh <sentences.txt> <semantic_templates.yaml>
-# 
+#
+# ./rte_ja_mp.sh <sentences.txt> <semantic_templates.yaml> <nbest>
+#
 # E.g.
-# ./rte_ja_mp.sh ja/sample_ja.txt ja/semantic_templates_ja.yaml
+# ./rte_ja_mp.sh ja/sample_ja.txt ja/semantic_templates_ja.yaml 3
 
-USAGE="Usage: ./rte_ja_mp.sh <sentences.txt> <semantic_templates.yaml>"
+USAGE="Usage: ./rte_ja_mp.sh <sentences.txt> <semantic_templates.yaml> <nbest>"
+
+# Set the number of nbest parses (Default: 1)
+nbest=${3:-1}
 
 # Create a file named "parser_location_ja.txt" at the "ja" directory and
 # write a list of CCG parsers installed, as in:
@@ -36,11 +39,11 @@ USAGE="Usage: ./rte_ja_mp.sh <sentences.txt> <semantic_templates.yaml>"
 # depccg:/path/to/depccg/build
 
 # Check that the number of arguments is correct.
-if [ "$#" -ne 2 ]; then
-  echo "Error: Number of arguments invalid".
-  echo $USAGE
-  exit 1
-fi
+# if [ "$#" -ne 2 ]; then
+#   echo "Error: Number of arguments invalid".
+#   echo $USAGE
+#   exit 1
+# fi
 
 # This variable contains the filename where the category templates are.
 category_templates=$2
@@ -67,7 +70,9 @@ results_dir="ja_results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
 
 # Copy the input text to plain_dir
-cp $sentences_fname ${plain_dir}/${sentences_basename}
+if [ ! -f ${plain_dir}/${sentences_basename} ]; then
+  cp $sentences_fname ${plain_dir}/${sentences_basename}
+fi
 
 function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
 
@@ -102,7 +107,7 @@ done
 # Set a variable with the command to invoke Jigg
 parser_cmd="java -Xmx4g -cp \"${jigg_dir}/jar/*\" jigg.pipeline.Pipeline \
   -annotators ssplit,kuromoji,ccg \
-  -ccg.kBest 1 -file"
+  -ccg.kBest \"${nbest}\" -file"
 
 tagging_cmd="java -Xmx4g -cp \"${jigg_dir}/jar/*\" jigg.pipeline.Pipeline \
   -annotators ssplit,kuromoji -file"
@@ -124,11 +129,11 @@ function parse_depccg() {
     2> ${parsed_dir}/${base_fname}.log.err
   mv ${plain_dir}/${base_fname}.xml ${parsed_dir}/${base_fname}.tagged.xml
   env PYTHONPATH=$depccg_dir/src:$PYTHONPATH \
-    python ja/rte.py \
+    python2 ja/rte.py \
     ${depccg_dir}/models/ja_headfinal \
     ja \
     ${parsed_dir}/${base_fname}.tagged.xml \
-    --nbest 2 \
+    --nbest "${nbest}" \
     > ${parsed_dir}/${base_fname}.depccg.jigg.xml
 }
 
@@ -200,12 +205,12 @@ for parser in `cat ja/parser_location_ja.txt`; do
     echo "${parser_name} parsing ${plain_dir}/${sentences_basename}"
     parse_$parser_name $sentences_basename
   fi
-  if [ ! -e ${parsed_dir}/${sentences_basename}.${parser_name}.sem.xml ]; then  
+  # if [ ! -e ${parsed_dir}/${sentences_basename}.${parser_name}.sem.xml ]; then
     echo "semantic parsing $parsed_dir/${sentences_basename}.${parser_name}.sem.xml"
-    semantic_parsing $parser_name $sentences_basename 
-  fi
-  if [ ! -e ${results_dir}/${sentences_basename}.${parser_name}.answer ]; then  
-    proving $parser_name $sentences_basename 
+    semantic_parsing $parser_name $sentences_basename
+  # fi
+  # if [ ! -e ${results_dir}/${sentences_basename}.${parser_name}.answer ]; then
+    proving $parser_name $sentences_basename
     select_answer ${parser_name}
-  fi
+  # fi
 done
