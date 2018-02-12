@@ -129,7 +129,7 @@ function parse_depccg() {
     2> ${parsed_dir}/${base_fname}.log.err
   mv ${plain_dir}/${base_fname}.xml ${parsed_dir}/${base_fname}.tagged.xml
   env PYTHONPATH=$depccg_dir/src:$PYTHONPATH \
-    python2 ja/rte.py \
+    python ja/rte.py \
     ${depccg_dir}/models/ja_headfinal \
     ja \
     ${parsed_dir}/${base_fname}.tagged.xml \
