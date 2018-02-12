@@ -501,7 +501,6 @@
   semantics: \L R. R
   child0_surf: and
 
-# gbx
 # ((S|NP)|S)|(S|NP) and (S|NP)|(S|NP) ==> ((S|NP)|S)|(S|NP)
 - category: ((S|NP)|S)|(S|NP)
   rule: gbx
@@ -512,10 +511,20 @@
   rule: gbx
   semantics: \L R V. L(R(V))
 
+# ((S|NP)|PP)|NP and (S|NP)|(S|NP) ==> ((S|NP)|PP)|NP
+- category: ((S|NP)|PP)|NP
+  rule: gbx
+  semantics: \L R V. L(R(V))
+
 # ((S|NP)|NP)|((S|NP)|NP) and (S|NP)|(S|NP) ==> ((S|NP)|NP)|((S|NP)|NP)
 - category: ((S|NP)|NP)|((S|NP)|NP)
   rule: gbx
   semantics: \L R V2 Q1 Q2 K. L(V2,Q1,Q2,\e.(R(\K1 K2.K2(e),\w.True,\w.True) & K(e)))
+
+# N/N and (N/N)\(N/N) ==> (N/N)\(N/N)
+- category: (N/N)\(N/N)
+  rule: gfc
+  semantics: \L R M F. L(R(M,F))
 
 ## NP and NP => NP
 - category: NP
@@ -580,6 +589,11 @@
   root: "true"
 
 - category: S|NP
+  rule: ba
+  semantics: \L R. R(L,\F1 F2.exists x.F2(x),\e.True)
+  root: "true"
+
+- category: S|NP
   rule: rp
   semantics: \L R. L(\F1 F2.exists x.F2(x),\e.True)
   root: "true"
@@ -636,6 +650,10 @@
 
 - category: NP|NP
   semantics: \E Q F1 F2. Q(\x.(E(x) & F1(x)), F2)
+  coq_type: Entity -> Prop
+
+- category: N|NP
+  semantics: \E Q x. Q(\y.True,\y.(E(y) & (y = x)))
   coq_type: Entity -> Prop
 
 - category: (NP|NP)|(NP|NP) 
