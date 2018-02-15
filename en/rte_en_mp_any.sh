@@ -22,12 +22,15 @@
 # 'unknown' (none of the former).
 # You can use it as:
 # 
-# ./rte_en_mp_any.sh <sentences.txt> <semantic_templates.yaml>
+# ./rte_en_mp_any.sh <sentences.txt> <semantic_templates.yaml> <nbest>
 # 
 # E.g.
-# ./rte_en_mp_any.sh en/sample_en.txt en/semantic_templates_en.yaml
+# ./rte_en_mp_any.sh en/sample_en.txt en/semantic_templates_en.yaml 3
 
-USAGE="Usage: ./rte_en_mp_any.sh <sentences.txt> <semantic_templates.yaml>"
+USAGE="Usage: ./rte_en_mp_any.sh <sentences.txt> <semantic_templates.yaml> <nbest>"
+
+# Set the number of nbest parses (Default: 1)
+nbest=${3:-1}
 
 # Create a file named "parser_location.txt" at the "en" directory and
 # write a list of CCG parsers installed, as in:
@@ -37,12 +40,12 @@ USAGE="Usage: ./rte_en_mp_any.sh <sentences.txt> <semantic_templates.yaml>"
 # easysrl:/path/to/EasySRL
 # depccg:/path/to/depccg
 
-# Check that the number of arguments is correct.
-if [ "$#" -ne 2 ]; then
-  echo "Error: Number of arguments invalid".
-  echo $USAGE
-  exit 1
-fi
+# # Check that the number of arguments is correct.
+# if [ "$#" -ne 2 ]; then
+#   echo "Error: Number of arguments invalid".
+#   echo $USAGE
+#   exit 1
+# fi
 
 # This variable contains the filename where the category templates are.
 category_templates=$2
@@ -159,7 +162,7 @@ function parse_easyccg() {
     -i POSandNERtagged \
     -o extended \
     --maxLength 100 \
-    --nbest 1 \
+    --nbest "${nbest}" \
     > ${parsed_dir}/${base_fname}.easyccg \
     2> ${parsed_dir}/${base_fname}.easyccg.log
   python en/easyccg2jigg.py \
@@ -184,7 +187,7 @@ function parse_easyccg_question() {
     -i POSandNERtagged \
     -o extended \
     --maxLength 100 \
-    --nbest 1 \
+    --nbest "${nbest}" \
     > ${parsed_dir}/${base_fname}.easyccg \
     2> ${parsed_dir}/${base_fname}.easyccg.log
   python en/easyccg2jigg.py \
@@ -208,7 +211,7 @@ function parse_easysrl() {
     --model ${easysrl_dir}/model \
     -o extended \
     -i POSandNERtagged \
-    --nbest 1 \
+    --nbest "${nbest}" \
     > ${parsed_dir}/${base_fname}.easysrl \
     2> ${parsed_dir}/${base_fname}.easysrl.log
   python en/easyccg2jigg.py \
@@ -220,7 +223,7 @@ function parse_easysrl() {
 function lemmatize() {
     # apply easyccg's lemmatizer to input file
     input_file=$1
-    lemmatized=`mktemp -t tmp`
+    lemmatized=`mktemp -t tmp-XXX`
     cat $input_file | java -cp ${easyccg_dir}/easyccg.jar \
         uk.ac.ed.easyccg.lemmatizer.MorphaStemmer \
         > $lemmatized \
@@ -248,7 +251,7 @@ function parse_depccg() {
         --ifmt "%w|%l|%p \n" \
         --ofmt "%w|%l|%p|%n \n" \
         2> /dev/null | \
-    python2 ${depccg_dir}/src/run.py \
+    python ${depccg_dir}/src/run.py \
         ${depccg_dir}/models/tri_headfirst \
         en \
         --input-format POSandNERtagged \
@@ -336,5 +339,9 @@ for parser in `cat en/parser_location.txt`; do
   if [ ! -e ${results_dir}/${sentences_basename}.${parser_name}.answer ]; then
     proving $parser_name $sentences_basename 
     select_answer ${parser_name}
+  fi
+  if [ ! -e ${results_dir}/${sentences_basename}.${parser_name}.answer ]; then
+    python scripts/visualize.py ${parsed_dir}/${sentences_basename}.${parser_name}.sem.xml \
+    > ${results_dir}/${sentences_basename}.${parser_name}.html
   fi
 done
