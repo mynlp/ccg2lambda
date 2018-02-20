@@ -129,7 +129,7 @@ function parse_depccg() {
     2> ${parsed_dir}/${base_fname}.log.err
   mv ${plain_dir}/${base_fname}.xml ${parsed_dir}/${base_fname}.tagged.xml
   env PYTHONPATH=$depccg_dir/src:$PYTHONPATH \
-    python ja/rte.py \
+    python2 ja/rte.py \
     ${depccg_dir}/models/ja_headfinal \
     ja \
     ${parsed_dir}/${base_fname}.tagged.xml \
@@ -205,12 +205,16 @@ for parser in `cat ja/parser_location_ja.txt`; do
     echo "${parser_name} parsing ${plain_dir}/${sentences_basename}"
     parse_$parser_name $sentences_basename
   fi
-  # if [ ! -e ${parsed_dir}/${sentences_basename}.${parser_name}.sem.xml ]; then
+  if [ ! -e ${parsed_dir}/${sentences_basename}.${parser_name}.sem.xml ]; then
     echo "semantic parsing $parsed_dir/${sentences_basename}.${parser_name}.sem.xml"
     semantic_parsing $parser_name $sentences_basename
-  # fi
-  # if [ ! -e ${results_dir}/${sentences_basename}.${parser_name}.answer ]; then
+  fi
+  if [ ! -e ${results_dir}/${sentences_basename}.${parser_name}.answer ]; then
     proving $parser_name $sentences_basename
     select_answer ${parser_name}
-  # fi
+  fi
+  if [ ! -e ${results_dir}/${sentences_basename}.${parser_name}.answer ]; then
+    python scripts/visualize.py ${parsed_dir}/${sentences_basename}.${parser_name}.sem.xml \
+    > ${results_dir}/${sentences_basename}.${parser_name}.html
+  fi
 done
