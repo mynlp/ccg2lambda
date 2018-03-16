@@ -112,6 +112,7 @@ def make_pair_branch(token_emb, label='child'):
         name=label + '_node_inds')
 
     node_embs = token_emb(node_indices)
+    # 2 = emb_dim
     node_embs = Reshape((max_nodes, 2))(node_embs)
     logging.debug('node_embs shape: {0}'.format(node_embs.shape))
     x = Lambda(gather3, output_shape=gather_output_shape3)([node_embs, node_rel])
@@ -200,7 +201,7 @@ prediction = model.predict([
     graph_data.node_inds, graph_data.children, graph_data.node_inds, graph_data.parents, graph_data.birel_norm],
     batch_size=batch_size)
 logging.debug(prediction.shape)
-logging.debug(prediction)
+logging.debug('\n{0}'.format(prediction))
 
 
 import sys
