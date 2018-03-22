@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#  Copyright 2017 Pascual Martinez-Gomez
+#  Copyright 2018 Pascual Martinez-Gomez
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import tensorflow as tf
 import keras
 import keras.backend as K
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 
 def gather3(data_and_inds):
     data, inds = data_and_inds
@@ -53,5 +53,6 @@ def gather3(data_and_inds):
     return out
 
 def gather_output_shape3(data_and_inds_shape):
-    return (2,12,3)
+    data_shape, inds_shape = data_and_inds_shape
+    return (data_shape[0], inds_shape[1], inds_shape[2], inds_shape[3], data_shape[-1])
 
