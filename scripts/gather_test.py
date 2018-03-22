@@ -115,7 +115,8 @@ class GatherTestCase(unittest.TestCase):
              1, 10, 100,
              1, 10, 100],
             dtype='float32').reshape(output.shape)
-        self.assertTrue(np.allclose(expected_output, output))
+        self.assertTrue(np.allclose(expected_output, output),
+            msg='\nExpected:\n{0}\nGot:\n{1}'.format(expected_output, output))
 
     def test_binary_rel_noseq(self):
         node_inds = np.array([[1, 3]], dtype='int32')
@@ -140,7 +141,8 @@ class GatherTestCase(unittest.TestCase):
              3, 30, 300,
              3, 30, 300],
             dtype='float32').reshape(output.shape)
-        self.assertTrue(np.allclose(expected_output, output))
+        self.assertTrue(np.allclose(expected_output, output),
+            msg='\nExpected:\n{0}\nGot:\n{1}'.format(expected_output, output))
 
     def test_error_out_of_bounds(self):
         node_inds = np.array([[1, 3]], dtype='int32')
@@ -187,7 +189,8 @@ class GatherTestCase(unittest.TestCase):
              3, 30, 300,
              4, 40, 400],
             dtype='float32').reshape(output.shape)
-        self.assertTrue(np.allclose(expected_output, output))
+        self.assertTrue(np.allclose(expected_output, output),
+            msg='\nExpected:\n{0}\nGot:\n{1}'.format(expected_output, output))
 
     def test_binary_rel_max_rel3(self):
         node_inds = np.array([[2, 5]], dtype='int32')
@@ -218,7 +221,8 @@ class GatherTestCase(unittest.TestCase):
              2, 20, 200,
              2, 20, 200],
             dtype='float32').reshape(output.shape)
-        self.assertTrue(np.allclose(expected_output, output))
+        self.assertTrue(np.allclose(expected_output, output),
+            msg='\nExpected:\n{0}\nGot:\n{1}'.format(expected_output, output))
 
     def test_ternary(self):
         node_inds = np.array([[1, 3]], dtype='int32')
@@ -247,53 +251,46 @@ class GatherTestCase(unittest.TestCase):
              3, 30, 300,
              3, 30, 300],
             dtype='float32').reshape(output.shape)
-        self.assertTrue(np.allclose(expected_output, output))
+        self.assertTrue(np.allclose(expected_output, output),
+            msg='\nExpected:\n{0}\nGot:\n{1}'.format(expected_output, output))
 
-    # def test_binary_rel(self):
-    #     max_nodes = 3
-    #     max_bi_relations = 2
-    #     # node_rel specifies node relationships. In case of binary parent-child
-    #     # relations, they are [parent_node, child_node].
-    #     node_rel_input = Input(
-    #         shape=(max_nodes, max_bi_relations, 2),
-    #         dtype='int32',
-    #         name='node_rel')
-    #     # Specifies the indices of the dataset node embeddings that are part
-    #     # of the current graph.
-    #     node_inds_input = Input(
-    #         shape=(max_nodes,),
-    #         dtype='int32',
-    #         name='node_inds')
+    def test_batch2(self):
+        node_inds = np.array([[1, 3], [3, 6]], dtype='int32')
+        node_rels = np.array([
+            [[[0, 0],
+              [0, 1]],
+             [[1, 0],
+              [1, 1]]],
+            [[[1, 0],
+              [0, 1]],
+             [[1, 1],
+              [0, 0]]]],
+            dtype='int32')
+        assert node_inds.shape[1] == node_rels.shape[1], \
+            'Number of nodes must be equal: {0} vs. {1}.'.format(
+            node_inds.shape[1], node_rels.shape[1])
 
-    #     x = self.token_emb(node_inds_input)
-    #     x = self.gather_layer([x, node_rel_input])
-    #     model = Model(inputs=[node_rel_input, node_inds_input], outputs=[x])
-
-    #     node_inds = np.array([
-    #         [0,1,2],
-    #         [5,6,7]], dtype='int32')
-
-    #     node_rels = np.array([
-    #         [[[0, 1],
-    #           [1, 2]],
-    #          [[1, 1],
-    #           [2, 2]],
-    #          [[2, 2],
-    #           [2, 2]]],
-    #         [[[1, 2],
-    #           [0, 0]],
-    #          [[0, 0],
-    #           [0, 0]],
-    #          [[0, 0],
-    #           [1, 2]]]],
-    #         dtype='int32')
-
-    #     print('Inds shape: {0}'.format(node_rels.shape))
-    #     output = model.predict([node_rels, node_inds])
-    #     print(output)
-    #     print(output.shape)
-
-    #     self.assertEqual(True, True)
+        output = self.make_layer_and_evaluate(node_inds, node_rels)
+        expected_output = np.array(
+            [1, 10, 100,
+             1, 10, 100,
+             1, 10, 100,
+             3, 30, 300,
+             3, 30, 300,
+             1, 10, 100,
+             3, 30, 300,
+             3, 30, 300,
+             6, 60, 600,
+             3, 30, 300,
+             3, 30, 300,
+             6, 60, 600,
+             6, 60, 600,
+             6, 60, 600,
+             3, 30, 300,
+             3, 30, 300],
+            dtype='float32').reshape(output.shape)
+        self.assertTrue(np.allclose(expected_output, output),
+            msg='\nExpected:\n{0}\nGot:\n{1}'.format(expected_output, output))
 
 if __name__ == '__main__':
     suite1 = unittest.TestLoader().loadTestsFromTestCase(GatherTestCase)
