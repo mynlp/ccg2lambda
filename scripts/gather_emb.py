@@ -24,28 +24,6 @@ import keras.backend as K
 
 logging.basicConfig(level=logging.DEBUG)
 
-batch_size = 2
-factor=2
-def gather3_(data_and_inds):
-    data, inds = data_and_inds
-    num_rows = data.shape[1]
-    num_dims = data.shape[2]
-    num_inds = inds.shape[2]
-    logging.debug('Indices shape: {0}'.format(inds.shape))
-    logging.debug('Data shape: {0}'.format(data.shape))
-    logging.debug(inds._keras_shape)
-    logging.debug(data._keras_shape)
-    logging.debug('gather3 Data:\n{0}'.format(data.value))
-    data_perm = K.permute_dimensions(data, (1, 2, 0))
-    inds_perm = K.permute_dimensions(inds, (1, 2, 3, 0))
-    out = K.gather(data_perm, inds_perm)
-    logging.debug(out.shape)
-    out = K.permute_dimensions(out, (3, 5, 0, 1, 2, 4))
-    logging.debug(out.shape)
-    out = K.reshape(out, (batch_size**factor, num_rows, inds.shape[2], inds.shape[-1], data.shape[-1]))
-    out = K.gather(out, K.arange(batch_size))
-    return out
-
 def gather3(data_and_inds):
     data, inds = data_and_inds
     num_rows = data.shape[1]
@@ -76,11 +54,4 @@ def gather3(data_and_inds):
 
 def gather_output_shape3(data_and_inds_shape):
     return (2,12,3)
-
-def gather_output_shape3_(data_and_inds_shape):
-    data_shape, inds_shape = data_and_inds_shape
-    num_rows = data_shape[1]
-    num_dims = data_shape[2]
-    num_inds = inds_shape[2]
-    return (batch_size**factor, num_rows, inds_shape[2], inds_shape[-1], data_shape[-1])
 
