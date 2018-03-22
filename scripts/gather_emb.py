@@ -14,34 +14,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import argparse, logging, os
+import logging
+
 import numpy as np
-import pickle
-
-from logic_parser import lexpr
-from graph_struct import GraphData
-seed = 23
-np.random.seed(seed=seed)
-
 import tensorflow as tf
-tf.set_random_seed(seed=seed)
 
 import keras
 import keras.backend as K
-from keras.models import Model
-from keras.layers.recurrent import LSTM
-from keras.layers import Input, Dropout, Dense, TimeDistributed
-from keras.layers import Dot, Permute, Multiply, Concatenate, Reshape
-from keras.layers import MaxPooling2D, AveragePooling2D, Add, Multiply
-from keras.layers import GlobalMaxPooling1D
-from keras.layers.core import Lambda, Flatten
-from keras.layers.embeddings import Embedding
-from keras.layers.wrappers import Bidirectional
-from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, CSVLogger
-from keras.regularizers import l2
-from keras.layers.normalization import BatchNormalization
-from keras.engine.topology import Layer
-from keras.layers import Activation
 
 logging.basicConfig(level=logging.DEBUG)
 
