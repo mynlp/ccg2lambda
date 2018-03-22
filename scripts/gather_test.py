@@ -18,13 +18,7 @@
 import unittest
 
 import numpy as np
-
-seed = 23
-np.random.seed(seed=seed)
-
 import tensorflow as tf
-tf.set_random_seed(seed=seed)
-
 from keras.models import Model
 from keras.layers import Input
 from keras.layers.core import Lambda
@@ -33,7 +27,6 @@ from keras.layers.embeddings import Embedding
 from gather_emb import gather3
 from gather_emb import gather_output_shape3
 
-# TODO: change max_nodes, max_bi_relations and the expressiveness of relations (bi, tri).
 class GatherTestCase(unittest.TestCase):
     def setUp(self):
         self.embs = np.array([

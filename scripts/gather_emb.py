@@ -26,9 +26,6 @@ logging.basicConfig(level=logging.WARNING)
 
 def gather3(data_and_inds):
     data, inds = data_and_inds
-    # num_embs_per_batch = data.shape[1]
-    # max_ind_value = tf.reduce_max(inds)
-    # logging.warning('Max ind value: {0}'.format(max_ind_value.get_value()))
     num_dims = data.shape[2]
     num_inds = inds.shape[2]
     feat_dim = tf.shape(data)[-1]

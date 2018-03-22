@@ -14,92 +14,28 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import argparse, logging, os
+import logging
 import numpy as np
-import pickle
 
 from logic_parser import lexpr
 from graph_struct import GraphData
+from gather_emb import gather3
+from gather_emb import gather_output_shape3
 seed = 23
 np.random.seed(seed=seed)
 
-import tensorflow as tf
-tf.set_random_seed(seed=seed)
-
-import keras
 import keras.backend as K
 from keras.models import Model
-from keras.layers.recurrent import LSTM
-from keras.layers import Input, Dropout, Dense, TimeDistributed
-from keras.layers import Dot, Permute, Multiply, Concatenate, Reshape
-from keras.layers import MaxPooling2D, AveragePooling2D, Add, Multiply
+from keras.layers import Input, Dense, TimeDistributed
+from keras.layers import Reshape
+from keras.layers import Add, Multiply
 from keras.layers import GlobalMaxPooling1D
-from keras.layers.core import Lambda, Flatten
+from keras.layers.core import Lambda
 from keras.layers.embeddings import Embedding
-from keras.layers.wrappers import Bidirectional
-from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, CSVLogger
-from keras.regularizers import l2
 from keras.layers.normalization import BatchNormalization
-from keras.engine.topology import Layer
 from keras.layers import Activation
 
 logging.basicConfig(level=logging.DEBUG)
-
-def gather_(data_and_inds):
-    data, inds = data_and_inds
-    num_rows = data.shape[1]
-    num_dims = data.shape[2]
-    num_inds = inds.shape[2]
-    logging.debug('Indices shape: {0}'.format(inds.shape))
-    logging.debug('Data shape: {0}'.format(data.shape))
-    logging.debug(inds._keras_shape)
-    logging.debug(data._keras_shape)
-    data_perm = K.permute_dimensions(data, (1, 2, 0))
-    inds_perm = K.permute_dimensions(inds, (1, 2, 0))
-    out = K.gather(data_perm, inds_perm)
-    out = K.permute_dimensions(out, (4, 2, 0, 1, 3))
-    logging.debug(out._keras_shape)
-    # out = K.reshape(out, (4, 4, 3, 5))
-    # out = K.gather(out, K.arange(2))
-    out = K.reshape(out, (4, num_rows, num_inds, num_dims))
-    out = K.gather(out, K.arange(batch_size))
-    return out
-
-batch_size = 2
-factor=2
-def gather3(data_and_inds):
-    data, inds = data_and_inds
-    num_rows = data.shape[1]
-    num_dims = data.shape[2]
-    num_inds = inds.shape[2]
-    logging.debug('Indices shape: {0}'.format(inds.shape))
-    logging.debug('Data shape: {0}'.format(data.shape))
-    logging.debug(inds._keras_shape)
-    logging.debug(data._keras_shape)
-    data_perm = K.permute_dimensions(data, (1, 2, 0))
-    inds_perm = K.permute_dimensions(inds, (1, 2, 3, 0))
-    out = K.gather(data_perm, inds_perm)
-    logging.debug(out.shape)
-    out = K.permute_dimensions(out, (3, 5, 0, 1, 2, 4))
-    logging.debug(out.shape)
-    out = K.reshape(out, (batch_size**factor, num_rows, inds.shape[2], inds.shape[-1], data.shape[-1]))
-    out = K.gather(out, K.arange(batch_size))
-    return out
-
-# TODO: fix this function (but perhaps not necessary for TensorFlow backend).
-def gather_output_shape(data_and_inds_shape):
-    data_shape, inds_shape = data_and_inds_shape
-    num_rows = data_shape[1]
-    num_dims = data_shape[2]
-    num_inds = inds_shape[2]
-    return (batch_size, num_rows, num_inds, num_dims)
-
-def gather_output_shape3(data_and_inds_shape):
-    data_shape, inds_shape = data_and_inds_shape
-    num_rows = data_shape[1]
-    num_dims = data_shape[2]
-    num_inds = inds_shape[2]
-    return (batch_size**factor, num_rows, inds_shape[2], inds_shape[-1], data_shape[-1])
 
 def make_pair_branch(token_emb, label='child'):
     node_rel = Input(
