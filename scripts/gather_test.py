@@ -157,6 +157,68 @@ class GatherTestCase(unittest.TestCase):
             output = self.make_layer_and_evaluate(node_inds, node_rels)
         self.assertTrue('InvalidArgumentError' in str(context.exception))
 
+    def test_binary_rel_max_nodes3(self):
+        node_inds = np.array([[1, 3, 4]], dtype='int32')
+        node_rels = np.array([
+            [[[0, 0],
+              [0, 1]],
+             [[0, 2],
+              [2, 1]],
+             [[1, 0],
+              [1, 2]]]],
+            dtype='int32')
+        assert node_inds.shape[1] == node_rels.shape[1], \
+            'Number of nodes must be equal: {0} vs. {1}.'.format(
+            node_inds.shape[1], node_rels.shape[1])
+
+        output = self.make_layer_and_evaluate(node_inds, node_rels)
+        expected_output = np.array(
+            [1, 10, 100,
+             1, 10, 100,
+             1, 10, 100,
+             3, 30, 300,
+             1, 10, 100,
+             4, 40, 400,
+             4, 40, 400,
+             3, 30, 300,
+             3, 30, 300,
+             1, 10, 100,
+             3, 30, 300,
+             4, 40, 400],
+            dtype='float32').reshape(output.shape)
+        self.assertTrue(np.allclose(expected_output, output))
+
+    def test_binary_rel_max_rel3(self):
+        node_inds = np.array([[2, 5]], dtype='int32')
+        node_rels = np.array([
+            [[[0, 0],
+              [0, 1],
+              [1, 0]],
+             [[1, 0],
+              [1, 1],
+              [0, 0]]]],
+            dtype='int32')
+        assert node_inds.shape[1] == node_rels.shape[1], \
+            'Number of nodes must be equal: {0} vs. {1}.'.format(
+            node_inds.shape[1], node_rels.shape[1])
+
+        output = self.make_layer_and_evaluate(node_inds, node_rels)
+        expected_output = np.array(
+            [2, 20, 200,
+             2, 20, 200,
+             2, 20, 200,
+             5, 50, 500,
+             5, 50, 500,
+             2, 20, 200,
+             5, 50, 500,
+             2, 20, 200,
+             5, 50, 500,
+             5, 50, 500,
+             2, 20, 200,
+             2, 20, 200],
+            dtype='float32').reshape(output.shape)
+        self.assertTrue(np.allclose(expected_output, output))
+
     # def test_binary_rel(self):
     #     max_nodes = 3
     #     max_bi_relations = 2
