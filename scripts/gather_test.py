@@ -60,11 +60,12 @@ class GatherTestCase(unittest.TestCase):
 
     def make_layer_and_evaluate(self, node_inds, node_rels):
         max_nodes = node_inds.shape[1]
-        max_bi_relations = node_rels.shape[2]
+        max_relations = node_rels.shape[2]
+        relation_length = node_rels.shape[-1]
         # node_rel specifies node relationships. In case of binary parent-child
         # relations, they are [parent_node, child_node].
         node_rel_input = Input(
-            shape=(max_nodes, max_bi_relations, 2),
+            shape=(max_nodes, max_relations, relation_length),
             dtype='int32',
             name='node_rel')
         # Specifies the indices of the dataset node embeddings that are part
@@ -83,8 +84,8 @@ class GatherTestCase(unittest.TestCase):
         expected_output_shape = (
             batch_size,
             max_nodes,
-            max_bi_relations,
-            2,
+            max_relations,
+            relation_length,
             self.emb_dim)
         self.assertEqual(expected_output_shape, output.shape,
             msg='Unequal output shape: {0} vs {1}'.format(
@@ -216,6 +217,35 @@ class GatherTestCase(unittest.TestCase):
              5, 50, 500,
              2, 20, 200,
              2, 20, 200],
+            dtype='float32').reshape(output.shape)
+        self.assertTrue(np.allclose(expected_output, output))
+
+    def test_ternary(self):
+        node_inds = np.array([[1, 3]], dtype='int32')
+        node_rels = np.array([
+            [[[0, 0, 1],
+              [0, 1, 0]],
+             [[1, 0, 1],
+              [1, 1, 1]]]],
+            dtype='int32')
+        assert node_inds.shape[1] == node_rels.shape[1], \
+            'Number of nodes must be equal: {0} vs. {1}.'.format(
+            node_inds.shape[1], node_rels.shape[1])
+
+        output = self.make_layer_and_evaluate(node_inds, node_rels)
+        expected_output = np.array(
+            [1, 10, 100,
+             1, 10, 100,
+             3, 30, 300,
+             1, 10, 100,
+             3, 30, 300,
+             1, 10, 100,
+             3, 30, 300,
+             1, 10, 100,
+             3, 30, 300,
+             3, 30, 300,
+             3, 30, 300,
+             3, 30, 300],
             dtype='float32').reshape(output.shape)
         self.assertTrue(np.allclose(expected_output, output))
 
