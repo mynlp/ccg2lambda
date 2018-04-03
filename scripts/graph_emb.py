@@ -91,16 +91,11 @@ def tp1_node_update(graph_node_embs, node_rel, node_rel_weight, max_nodes, max_b
     return x
 
 # TODO: Dense use_bias=True
-# TODO: To debug solutions, we could initialize weights to something easy.
-def make_pair_branch(token_emb, max_nodes, max_bi_relations, label='child'):
+def make_pair_branch(graph_node_embs, max_nodes, max_bi_relations, label='child'):
     embed_dim = 2
     dense_dim = embed_dim
     num_updates = 1
 
-    node_indices = Input(
-        shape=(max_nodes,),
-        dtype='int32',
-        name=label + '_node_inds')
     node_rel = Input(
         shape=(max_nodes, max_bi_relations, 2),
         dtype='int32',
@@ -111,14 +106,9 @@ def make_pair_branch(token_emb, max_nodes, max_bi_relations, label='child'):
         dtype='float32',
         name=label + '_rel_weight')
 
-    node_embs = token_emb(node_indices)
-    orig_embs = token_emb(node_indices)
-    gathered_embs = gather_layer([orig_embs, node_rel])
-    logging.debug('node_embs shape: {0}'.format(node_embs.shape))
-
     for i in range(num_updates):
-        node_embs = tp1_node_update(
-            node_embs,
+        graph_node_embs = tp1_node_update(
+            graph_node_embs,
             node_rel,
             node_rel_weight,
             max_nodes,
@@ -126,26 +116,42 @@ def make_pair_branch(token_emb, max_nodes, max_bi_relations, label='child'):
             embed_dim,
             label + '_it' + str(i))
 
-    return [node_embs], [node_indices, node_rel, node_rel_weight]
-    # return [node_embs, orig_embs, gathered_embs], [node_indices, node_rel, node_rel_weight]
+    return [graph_node_embs], [node_rel, node_rel_weight]
 
-def make_child_parent_branch(token_emb):
-    # Normalize summations dividing by the node degree. 
-    normalizer = Input(
-        shape=(max_nodes, 1),
-        dtype='float32',
-        name='node_degree')
-    child_rel_outputs, child_rel_inputs = make_pair_branch(token_emb, label='child')
-    parent_rel_outputs, parent_rel_inputs = make_pair_branch(token_emb, label='parent')
+# def make_child_parent_branch_(token_emb):
+#     # Normalize summations dividing by the node degree. 
+#     normalizer = Input(
+#         shape=(max_nodes, 1),
+#         dtype='float32',
+#         name='node_degree')
+#     child_rel_outputs, child_rel_inputs = make_pair_branch(token_emb, label='child')
+#     parent_rel_outputs, parent_rel_inputs = make_pair_branch(token_emb, label='parent')
+#     x = Add(name='child_parent_add')(
+#         child_rel_outputs + parent_rel_outputs)
+#     logging.debug('After child parent merge shape: {0}'.format(x.shape))
+#     logging.debug('normalizer shape: {0}'.format(normalizer.shape))
+#     x = Multiply(name='child_parent_normalize')([x, normalizer])
+#     logging.debug('Multiply shape: {0}'.format(x.shape))
+#     x = GlobalMaxPooling1D()(x)
+#     outputs = [x]
+#     inputs = child_rel_inputs + parent_rel_inputs + [normalizer]
+#     return outputs, inputs
+
+def make_child_parent_branch(token_emb, max_nodes, max_bi_relations):
+    node_indices = Input(
+        shape=(max_nodes,),
+        dtype='int32',
+        name='node_inds')
+    graph_node_embs = token_emb(node_indices)
+
+    child_rel_outputs, child_rel_inputs = make_pair_branch(graph_node_embs, max_nodes, max_bi_relations, label='child')
+    parent_rel_outputs, parent_rel_inputs = make_pair_branch(graph_node_embs, max_nodes, max_bi_relations, label='parent')
+
     x = Add(name='child_parent_add')(
         child_rel_outputs + parent_rel_outputs)
-    logging.debug('After child parent merge shape: {0}'.format(x.shape))
-    logging.debug('normalizer shape: {0}'.format(normalizer.shape))
-    x = Multiply(name='child_parent_normalize')([x, normalizer])
-    logging.debug('Multiply shape: {0}'.format(x.shape))
-    x = GlobalMaxPooling1D()(x)
+
     outputs = [x]
-    inputs = child_rel_inputs + parent_rel_inputs + [normalizer]
+    inputs = [node_indices] + child_rel_inputs + parent_rel_inputs
     return outputs, inputs
 
 logging.basicConfig(level=logging.DEBUG)
@@ -175,22 +181,24 @@ token_emb = Embedding(
     trainable=True,
     name='token_emb')
 
-# outputs, inputs = make_child_parent_branch(token_emb)
-outputs, inputs = make_pair_branch(
+outputs, inputs = make_child_parent_branch(
     token_emb,
     graph_data.max_nodes,
-    graph_data.max_bi_relations,
-    label='child')
+    graph_data.max_bi_relations)
 
 model = Model(inputs=inputs, outputs=outputs)
 
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
 logging.debug('child_node_inds: {0}'.format(graph_data.node_inds.shape))
-logging.debug('Birel child normalizer shape: {0}'.format(graph_data.birel_norm.shape))
+logging.debug('Birel child normalizer shape: {0}'.format(graph_data.birel_child_norm.shape))
 logging.debug('Birel child normalizer:\n{0}'.format(graph_data.birel_norm))
-prediction = model.predict(
-    [graph_data.node_inds, graph_data.children, graph_data.birel_norm])
+prediction = model.predict([
+    graph_data.node_inds,
+    graph_data.children,
+    graph_data.birel_child_norm,
+    graph_data.parents,
+    graph_data.birel_parent_norm])
 # prediction = model.predict([
 #     graph_data.node_inds, graph_data.children, graph_data.node_inds, graph_data.parents, graph_data.birel_norm])
 logging.debug('Result:')
