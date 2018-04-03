@@ -87,7 +87,7 @@ class GraphData(object):
             '<=>', '<Subj>', '<root>']
         self.word2ind['<unk>'] # index 0 for unknown word.
         self.emb_dim = 2
-        self.word_embs = None
+        self.node_embs = None
         self.node_inds = None
         self._max_nodes = self.max_nodes
         self._max_bi_relations = self.max_bi_relations

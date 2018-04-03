@@ -17,18 +17,13 @@
 import logging
 import numpy as np
 
-from logic_parser import lexpr
-from graph_struct import GraphData
-from gather_emb import gather3
-from gather_emb import gather_output_shape3
+from gather import gather3
+from gather import gather_output_shape3
 seed = 23
 np.random.seed(seed=seed)
 
-import tensorflow as tf
-
 import keras.backend as K
 from keras import initializers
-from keras.models import Model
 from keras.layers import Input, Dense, TimeDistributed
 from keras.layers import Reshape
 from keras.layers import Permute
@@ -37,7 +32,6 @@ from keras.layers import Flatten
 from keras.layers import Add, Multiply
 from keras.layers import GlobalMaxPooling1D
 from keras.layers.core import Lambda
-from keras.layers.embeddings import Embedding
 from keras.layers.normalization import BatchNormalization
 from keras.layers import Activation
 
@@ -118,25 +112,6 @@ def make_pair_branch(graph_node_embs, max_nodes, max_bi_relations, label='child'
 
     return [graph_node_embs], [node_rel, node_rel_weight]
 
-# def make_child_parent_branch_(token_emb):
-#     # Normalize summations dividing by the node degree. 
-#     normalizer = Input(
-#         shape=(max_nodes, 1),
-#         dtype='float32',
-#         name='node_degree')
-#     child_rel_outputs, child_rel_inputs = make_pair_branch(token_emb, label='child')
-#     parent_rel_outputs, parent_rel_inputs = make_pair_branch(token_emb, label='parent')
-#     x = Add(name='child_parent_add')(
-#         child_rel_outputs + parent_rel_outputs)
-#     logging.debug('After child parent merge shape: {0}'.format(x.shape))
-#     logging.debug('normalizer shape: {0}'.format(normalizer.shape))
-#     x = Multiply(name='child_parent_normalize')([x, normalizer])
-#     logging.debug('Multiply shape: {0}'.format(x.shape))
-#     x = GlobalMaxPooling1D()(x)
-#     outputs = [x]
-#     inputs = child_rel_inputs + parent_rel_inputs + [normalizer]
-#     return outputs, inputs
-
 def make_child_parent_branch(token_emb, max_nodes, max_bi_relations):
     node_indices = Input(
         shape=(max_nodes,),
@@ -144,85 +119,23 @@ def make_child_parent_branch(token_emb, max_nodes, max_bi_relations):
         name='node_inds')
     graph_node_embs = token_emb(node_indices)
 
-    child_rel_outputs, child_rel_inputs = make_pair_branch(graph_node_embs, max_nodes, max_bi_relations, label='child')
-    parent_rel_outputs, parent_rel_inputs = make_pair_branch(graph_node_embs, max_nodes, max_bi_relations, label='parent')
+    child_rel_outputs, child_rel_inputs = make_pair_branch(
+        graph_node_embs,
+        max_nodes,
+        max_bi_relations,
+        label='child')
+    parent_rel_outputs, parent_rel_inputs = make_pair_branch(
+        graph_node_embs,
+        max_nodes,
+        max_bi_relations,
+        label='parent')
 
     x = Add(name='child_parent_add')(
         child_rel_outputs + parent_rel_outputs)
+    # Integrate node embeddings into a single graph embedding.
+    x = GlobalMaxPooling1D()(x)
 
     outputs = [x]
     inputs = [node_indices] + child_rel_inputs + parent_rel_inputs
     return outputs, inputs
-
-logging.basicConfig(level=logging.DEBUG)
-formulas_str = [
-    'exists x. pred1(x)',
-    'exists y. pred1(y)',
-    'exists y. all x. (pred1(y) & pred2(x, y))',
-    'exists y. all x. (pred1(y) & pred2(y, x))',
-    'exists y. all x. (pred2(y, x) & pred1(y))',
-    'exists y. all x. (pred2(y, x) & pred1(y))']
-formulas = [lexpr(f) for f in formulas_str]
-graph_data = GraphData.from_formulas(formulas)
-graph_data.make_matrices()
-
-max_nodes = graph_data.max_nodes
-max_bi_relations = graph_data.max_bi_relations
-max_tri_relations = graph_data.max_treelets
-emb_dim = 2
-num_words = graph_data.num_words
-logging.debug('Embeddings shape: {0}'.format(graph_data.node_embs.shape))
-
-token_emb = Embedding(
-    input_dim=graph_data.num_words,
-    output_dim=emb_dim,
-    weights=[graph_data.node_embs],
-    mask_zero=False, # Reshape layer does not support masking.
-    trainable=True,
-    name='token_emb')
-
-outputs, inputs = make_child_parent_branch(
-    token_emb,
-    graph_data.max_nodes,
-    graph_data.max_bi_relations)
-
-model = Model(inputs=inputs, outputs=outputs)
-
-model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
-
-logging.debug('child_node_inds: {0}'.format(graph_data.node_inds.shape))
-logging.debug('Birel child normalizer shape: {0}'.format(graph_data.birel_child_norm.shape))
-logging.debug('Birel child normalizer:\n{0}'.format(graph_data.birel_norm))
-prediction = model.predict([
-    graph_data.node_inds,
-    graph_data.children,
-    graph_data.birel_child_norm,
-    graph_data.parents,
-    graph_data.birel_parent_norm])
-# prediction = model.predict([
-#     graph_data.node_inds, graph_data.children, graph_data.node_inds, graph_data.parents, graph_data.birel_norm])
-logging.debug('Result:')
-logging.debug(prediction.shape)
-logging.debug('\n{0}'.format(prediction))
-
-# logging.debug('graph_data.node_embs:')
-# logging.debug(graph_data.node_embs.shape)
-# logging.debug('\n{0}'.format(graph_data.node_embs))
-# 
-# logging.debug('graph_data.node_inds:')
-# logging.debug(graph_data.node_inds.shape)
-# logging.debug('\n{0}'.format(graph_data.node_inds))
-# 
-# logging.debug('graph_node_embs:')
-# logging.debug(graph_node_embs.shape)
-# logging.debug('\n{0}'.format(graph_node_embs))
-# 
-# logging.debug('graph_data.children:')
-# logging.debug(graph_data.children.shape)
-# logging.debug('\n{0}'.format(graph_data.children))
-# 
-# logging.debug('gathered_embs:')
-# logging.debug(gathered_embs.shape)
-# logging.debug('\n{0}'.format(gathered_embs))
-
 
