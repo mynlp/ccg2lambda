@@ -210,9 +210,6 @@ class GraphData(object):
                         self.word2ind[rel2_token]]
         return treelets
 
-    # TODO:
-    # Combine the normalizer with a mask, by multiplying by 0.0 if
-    # row is not valid, and 1/num for the rest.
     def make_birel_normalizers(self, relation='children'):
         birel_norm = np.zeros((
             len(self.graph_structs),
@@ -281,7 +278,8 @@ class GraphData(object):
 
         # Makes normalizers (numbers between 0 and 1) to weight the sum
         # and obtain average embeddings.
-        self.birel_norm = self.make_birel_normalizers()
+        self.birel_child_norm = self.make_birel_normalizers(relation='children')
+        self.birel_parent_norm = self.make_birel_normalizers(relation='parents')
         self.treelets_norm = self.make_treelets_normalizers()
         return None
 

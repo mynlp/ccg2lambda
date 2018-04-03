@@ -65,6 +65,7 @@ def tp1_node_update(graph_node_embs, node_rel, node_rel_weight, max_nodes, max_b
             kernel_initializer=initializers.Ones(),
             bias_initializer=initializers.Zeros(),
             name=label + '_dense1'))(x)
+    # TODO: re-enable the batch normalization.
     # x = BatchNormalization(axis=2, name=label + '_bn1')(x)
     x = Activation('relu')(x)
     x = TimeDistributed(
