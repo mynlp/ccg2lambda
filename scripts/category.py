@@ -32,9 +32,23 @@ class Category(object):
         return "Types: {0}\tFeats: {1}".format(self.types, self.type_features)
 
     def match(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        if len(self.type_features) != len(other.type_features):
+            return False
+        # TODO: Ideally these substitutions should be precomputed for speed-up.
+        types = re.sub(r'\\', r'\\\\', self.types)
+        types = types.replace('|', '[/\\\]')
+        types = types.replace('(', '\\(').replace(')', '\\)')
+        if not re.fullmatch(types, other.types):
+            return False
+        return all([a.subsumes(b)
+                    for (a, b) in zip(self.type_features, other.type_features)])
+
+    def match_(self, other):
         return isinstance(other, self.__class__) \
-          and self.types == other.types \
           and len(self.type_features) == len(other.type_features) \
+          and re.fullmatch(re.sub(r'\\', r'\\\\', self.types), other.types) \
           and all([a.subsumes(b) \
                    for (a, b) in zip(self.type_features, other.type_features)])
 

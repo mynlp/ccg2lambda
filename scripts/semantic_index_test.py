@@ -23,7 +23,8 @@ from nltk.sem.logic import LogicalExpressionException
 
 from ccg2lambda_tools import assign_semantics_to_ccg
 from logic_parser import lexpr
-from semantic_index import SemanticRule, SemanticIndex
+from semantic_index import SemanticIndex
+from semantic_index import SemanticRule
 
 # TODO: ensure that 'var_paths' is not matching attributes in CCG XML trees.
 class GetSemanticRepresentationTestCase(unittest.TestCase):
@@ -105,6 +106,85 @@ class GetSemanticRepresentationTestCase(unittest.TestCase):
         ccg_tree = assign_semantics_to_ccg(self.sentence, semantic_index)
         semantics = lexpr(ccg_tree.get('sem', None))
         expected_semantics = lexpr(r'((_base3 & _base2) -> _base1)')
+        self.assertEqual(expected_semantics, semantics)
+
+    def test_right_arg_bar(self):
+        sentence_str = r"""
+      <sentence id="s1">
+        <tokens>
+          <token base="base1" pos="pos1" surf="surf1" id="t1_1"/>
+          <token base="base2" pos="pos2" surf="surf2" id="t1_2"/>
+        </tokens>
+        <ccg root="sp1-3">
+          <span terminal="t1_1" category="N" end="2" begin="1" id="sp1-1"/>
+          <span terminal="t1_2" category="N" end="3" begin="2" id="sp1-2"/>
+          <span child="sp1-1 sp1-2" category="NP/NP" rule=">" end="3" begin="1" id="sp1-3"/>
+        </ccg>
+      </sentence>
+    """
+        sentence = etree.fromstring(sentence_str)
+
+        semantic_index = SemanticIndex(None)
+        semantic_rules = [SemanticRule(r'N', r'\P.P', {}),
+                          SemanticRule(r'NP\NP', r'\F1 F2.(F1 | F2)', {'rule' : '>'}),
+                          SemanticRule(r'NP/NP', r'\F1 F2.(F1 & F2)', {'rule' : '>'})]
+        semantic_index.rules = semantic_rules
+        ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
+        semantics = lexpr(ccg_tree.get('sem', None))
+        expected_semantics = lexpr(r'(_base1 & _base2)')
+        self.assertEqual(expected_semantics, semantics)
+
+    def test_left_arg_bar(self):
+        sentence_str = r"""
+      <sentence id="s1">
+        <tokens>
+          <token base="base1" pos="pos1" surf="surf1" id="t1_1"/>
+          <token base="base2" pos="pos2" surf="surf2" id="t1_2"/>
+        </tokens>
+        <ccg root="sp1-3">
+          <span terminal="t1_1" category="N" end="2" begin="1" id="sp1-1"/>
+          <span terminal="t1_2" category="N" end="3" begin="2" id="sp1-2"/>
+          <span child="sp1-1 sp1-2" category="NP\NP" rule=">" end="3" begin="1" id="sp1-3"/>
+        </ccg>
+      </sentence>
+    """
+        parser = etree.XMLParser(encoding='utf-8', remove_blank_text=True)
+        sentence = etree.fromstring(sentence_str)
+
+        semantic_index = SemanticIndex(None)
+        semantic_rules = [SemanticRule(r'N', r'\P.P', {}),
+                          SemanticRule(r'NP\NP', r'\F1 F2.(F1 | F2)', {'rule' : '>'}),
+                          SemanticRule(r'NP/NP', r'\F1 F2.(F1 & F2)', {'rule' : '>'})]
+        semantic_index.rules = semantic_rules
+        ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
+        semantics = lexpr(ccg_tree.get('sem', None))
+        expected_semantics = lexpr(r'(_base1 | _base2)')
+        self.assertEqual(expected_semantics, semantics)
+
+    def test_vertical_bar(self):
+        sentence_str = r"""
+      <sentence id="s1">
+        <tokens>
+          <token base="base1" pos="pos1" surf="surf1" id="t1_1"/>
+          <token base="base2" pos="pos2" surf="surf2" id="t1_2"/>
+        </tokens>
+        <ccg root="sp1-3">
+          <span terminal="t1_1" category="N" end="2" begin="1" id="sp1-1"/>
+          <span terminal="t1_2" category="N" end="3" begin="2" id="sp1-2"/>
+          <span child="sp1-1 sp1-2" category="NP\NP" rule=">" end="3" begin="1" id="sp1-3"/>
+        </ccg>
+      </sentence>
+    """
+        sentence = etree.fromstring(sentence_str)
+
+        semantic_index = SemanticIndex(None)
+        semantic_rules = [SemanticRule(r'N', r'\P.P', {}),
+                          SemanticRule(r'NP|NP', r'\F1 F2.(F1 -> F2)', {'rule' : '>'}),
+                          SemanticRule(r'NP/NP', r'\F1 F2.(F1 & F2)', {'rule' : '>'})]
+        semantic_index.rules = semantic_rules
+        ccg_tree = assign_semantics_to_ccg(sentence, semantic_index)
+        semantics = lexpr(ccg_tree.get('sem', None))
+        expected_semantics = lexpr(r'(_base1 -> _base2)')
         self.assertEqual(expected_semantics, semantics)
 
 if __name__ == '__main__':
