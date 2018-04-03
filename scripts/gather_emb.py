@@ -21,8 +21,9 @@ import tensorflow as tf
 
 import keras
 import keras.backend as K
+from keras.layers.core import Lambda
 
-logging.basicConfig(level=logging.WARNING)
+# logging.basicConfig(level=logging.WARNING)
 
 def gather3(data_and_inds):
     data, inds = data_and_inds
@@ -47,8 +48,8 @@ def gather3(data_and_inds):
     indsc = tf.stack([batch_inds, indsr], axis=1)
     logging.debug('gather3 indsc shape {0}'.format(indsc.shape))
     out = tf.gather_nd(data, indsc)
-    logging.debug('gather3 out shape {0}'.format(out.shape))
     out = tf.reshape(out, (batch_size, tf.shape(inds)[1], tf.shape(inds)[2], tf.shape(inds)[3], feat_dim))
+    logging.debug('gather3 out shape {0}'.format(out.shape))
     return out
 
 def gather_output_shape3(data_and_inds_shape):

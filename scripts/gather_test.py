@@ -141,7 +141,7 @@ class GatherTestCase(unittest.TestCase):
         node_inds = np.array([[1, 3]], dtype='int32')
         node_rels = np.array([
             [[[0, 0],
-              [0, 1]],
+              [1, 1]],
              [[1, 0],
               [1, 2]]]],
             dtype='int32')

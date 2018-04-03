@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#  Copyright 2017 Pascual Martinez-Gomez
+#  Copyright 2018 Pascual Martinez-Gomez
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ from nltk2graph import get_label
 from nltk2graph import get_node_token
 
 import networkx as nx
+
+# TODO: node id 0 should be reserved for "no node".
 
 class GraphStructures(object):
     """
@@ -84,6 +86,7 @@ class GraphData(object):
             '<unk>', '<exists>', '<all>', '<&>', '<|>',
             '<=>', '<Subj>', '<root>']
         self.word2ind['<unk>'] # index 0 for unknown word.
+        self.emb_dim = 2
         self.word_embs = None
         self.node_inds = None
         self._max_nodes = self.max_nodes
@@ -210,19 +213,18 @@ class GraphData(object):
     # TODO:
     # Combine the normalizer with a mask, by multiplying by 0.0 if
     # row is not valid, and 1/num for the rest.
-    def make_birel_normalizers(self):
-        birel_norm = np.ones((
+    def make_birel_normalizers(self, relation='children'):
+        birel_norm = np.zeros((
             len(self.graph_structs),
             self._max_nodes,
-            1),
+            self._max_bi_relations),
             dtype='float32')
         for i, gs in enumerate(self.graph_structs):
             for j, nid in enumerate(gs.graph.nodes):
                 degree = len(gs.children[nid]) + len(gs.parents[nid])
-                if degree == 0:
-                    birel_norm[i, j, 0] = 0.0
-                else:
-                    birel_norm[i, j, 0] = 1. / degree
+                rel_degree = len(getattr(gs, relation)[nid])
+                for k in range(rel_degree):
+                    birel_norm[i, j, k] = 1. / degree
         return birel_norm
             
     def make_treelets_normalizers(self):
@@ -244,18 +246,19 @@ class GraphData(object):
     def make_node_inds(self):
         node_inds = np.zeros((
             len(self.graph_structs),
-            self._max_nodes,
-            1),
+            self._max_nodes),
             dtype='float32')
         for i, gs in enumerate(self.graph_structs):
             for j, nid in enumerate(gs.graph.nodes):
                 node_token = get_node_token(gs.graph, nid)
-                node_inds[i, nid, :] = self.word2ind[node_token]
+                node_inds[i, nid] = self.word2ind[node_token]
         return node_inds
 
     def make_node_embeddings(self):
-        embeddings = np.random.uniform(size=(
-            len(self.word2ind), 2))
+        # embeddings = np.random.uniform(size=(
+        #     len(self.word2ind), self.emb_dim))
+        embeddings = np.array(range(len(self.word2ind) * self.emb_dim), dtype='float32').reshape(
+            len(self.word2ind), self.emb_dim) * 100
         # embeddings[self.word2ind['<&>'], :] *= 100
         embeddings[0, :] *= 0.0
         # embeddings[self.word2ind['<unk>'], :] *= 0
