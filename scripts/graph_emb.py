@@ -28,7 +28,6 @@ from keras.layers import Input, Dense, TimeDistributed
 from keras.layers import Reshape
 from keras.layers import Permute
 from keras.layers import RepeatVector
-from keras.layers import Flatten
 from keras.layers import Add, Multiply
 from keras.layers import GlobalMaxPooling1D
 from keras.layers.core import Lambda
