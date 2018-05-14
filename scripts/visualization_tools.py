@@ -222,7 +222,7 @@ def wrap_mathml_in_html(mathml_str):
         }
       </style>
       <script type="text/javascript"
-              src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+              src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
       </script>
     </head>
     <body>
@@ -298,7 +298,7 @@ def convert_doc_to_mathml_(doc, verbatim_strings = [], use_gold_trees=False):
     <meta charset='UTF-8'>
     <title>CCG to Lambda conversion</title>
     <script type="text/javascript"
-            src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
   </head>
   <body>
