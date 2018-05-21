@@ -1479,7 +1479,7 @@
   semantics: \E Q1 Q2 K. Q1(\x.True,\x.exists e.((Subj(e) = Subj(e)) & K(e)))
 
 - category: (S|NP)|PP
-  semantics: \E K1 Q K2. Q(\x.True,\x.exists e.(K1(e) & (Subj(e) = x) & K2K(e)))
+  semantics: \E K1 Q K2. Q(\x.True,\x.exists e.(K1(e) & (Subj(e) = x) & K2(e)))
   base: be
 
 - category: (S|PP)|NP
