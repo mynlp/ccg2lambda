@@ -189,6 +189,7 @@ If you wish to reproduce our reported results, please follow the instructions be
 * [Experiments on JSeM at EMNLP 2016](ja/jsem.md)
 * [Experiments on SICK at EACL 2017](en/sick.md)
 * [Experiments on STS for SICK and MSRvid at EMNLP 2017](en/emnlp2017_sts.md)
+* [Experiments on SICK at NAACL-HLT 2018](https://github.com/verypluming/ccg2lambda/blob/naacl/en/naacl2018.md)
 
 ## Interpreting (and writing your own) semantic templates.
 
@@ -227,6 +228,22 @@ If you use this software or the semantic templates for your work, please conside
   url       = {https://aclweb.org/anthology/P/P16/P16-4015.pdf}
 }
 ```
+
+## A system to inject phrasal axioms on-demand (phrase abduction):
+
+ * Hitomi Yanaka, Koji Mineshima, Pascual Martínez-Gómez and Daisuke Bekki. Acquisition of Phrase Correspondences using Natural Deduction Proofs. Proceedings of 16th Annual Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, New Orleans, Louisiana, 1-6 June 2018. [arXiv](https://arxiv.org/pdf/1804.07656.pdf)
+
+ ```
+ @InProceedings{yanaka-EtAl:2018:NAACL-HLT,
+   author    = {Yanaka, Hitomi and Mineshima, Koji  and  Mart\'{i}nez-G\'{o}mez, Pascual  and  Bekki, Daisuke},
+   title     = {Acquisition of Phrase Correspondences using Natural Deduction Proofs},
+   booktitle = {Proceedings of 16th Annual Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies},
+   month     = {June},
+   year      = {2018},
+   address   = {New Orleans, Louisiana},
+   publisher = {Association for Computational Linguistics},
+ }
+ ```
 
 ## A system to compute Semantic Sentence Similarity:
 
