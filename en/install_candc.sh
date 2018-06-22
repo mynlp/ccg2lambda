@@ -7,6 +7,7 @@
 # Stephen Clark and James Curran (2007): Wide-Coverage Efficient Statistical Parsing with CCG and Log-Linear Models. In Computational Linguistics 33(4), http://aclweb.org/anthology-new/J/J07/J07-4004.pdf
 
 candc_url="http://www.cl.cam.ac.uk/~sc609/resources/candc-downloads/candc-linux-1.00.tgz"
+# candc_url="http://www.cl.cam.ac.uk/~sc609/resources/candc-downloads/candc-macosxu-1.00.tgz"
 models_url="http://www.cl.cam.ac.uk/~sc609/resources/candc-downloads/models-1.02.tgz"
 parser_basename=`basename $candc_url`
 models_basename=`basename $models_url`
