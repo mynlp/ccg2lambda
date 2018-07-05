@@ -46,6 +46,7 @@ coqc coqlib.v
 ```
 
 Our system assigns semantics to CCG structures. At the moment, we support C&C for English, and Jigg for Japanese.
+If you are working with templates that require semantic tags, you will also need a universal semantic tagger.
 
 ### Installing [C&C parser](http://www.cl.cam.ac.uk/~sc609/candc-1.00.html) (for English)
 
@@ -71,6 +72,16 @@ Simply do:
 ```
 
 The command above will download Jigg, its models, and create the file `ja/jigg_location.txt` where the path to Jigg is specified. That is all.
+
+### Installing [semtagger](https://github.com/ginesam/semtagger) (optional)
+
+The tagger can be obtained directly from its repository:
+
+```bash
+git clone https://github.com/ginesam/semtagger "/path/to/semtagger/"
+```
+
+Note that after downloading, you must follow the instructions given in order to train a tagging model.
 
 ## Using the Semantic Parser
 
