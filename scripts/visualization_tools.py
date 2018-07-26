@@ -124,7 +124,8 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
         pos = token.get('pos')
         pos_mathml = get_pos_mathml(pos)
         stag = token.get('stag')
-        stag_mathml = get_stag_mathml(stag)
+        if stag:
+            stag_mathml = get_stag_mathml(stag)
         entity = token.get('entity')
         if not entity == None:
             entity_mathml = get_entity_mathml(entity)
