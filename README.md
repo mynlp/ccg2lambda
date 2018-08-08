@@ -73,15 +73,18 @@ Simply do:
 
 The command above will download Jigg, its models, and create the file `ja/jigg_location.txt` where the path to Jigg is specified. That is all.
 
-### Installing [semtagger](https://github.com/ginesam/semtagger) (optional)
+### Installing [semtagger](https://github.com/ginesam/semtagger) (for English, optional)
 
-The tagger can be obtained directly from its repository:
+You can optionally download and install a semantic tagger by running the following 
+script from  the ccg2lambda directory:
 
 ```bash
-git clone https://github.com/ginesam/semtagger "/path/to/semtagger/"
+./en/install_semtagger.sh
 ```
 
-Note that after downloading, you must follow the instructions given in order to train a tagging model.
+This will generate a file `en/semtagger_location.txt` with the path to the semantic tagger.
+Note that after downloading, you must follow the instructions given [here](https://github.com/ginesam/semtagger) in order to train a 
+tagging model.
 
 ## Using the Semantic Parser
 
