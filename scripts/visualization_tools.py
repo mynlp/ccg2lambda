@@ -31,6 +31,7 @@ kCategoryColor = 'Red'
 kFeatureColor = 'Purple'
 kSemanticsColor = 'Blue'
 kLexicalColor = 'Black'
+kStagColor = 'Fuchsia'
 # The full list of colors is:
 # Black Green Silver Lime Gray Olive White Maroon Red Purple Fuchsia Yellow Navy
 # Blue Teal Aqua
@@ -46,6 +47,13 @@ def get_fraction_mathml(numerator, denominator, line_thickness = 3,
     if rule:
         mathml_str = "<mrow><mo>" + cgi.escape(rule) + "</mo>" + mathml_str + "</mrow>"
     return mathml_str
+
+def get_stag_mathml(stag):
+    return "<mtext " \
+           + " fontsize='" + str(kOtherSize) + "'" \
+           + " color='" + kStagColor + "'>" \
+           + stag \
+           + "</mtext>\n"
 
 def get_category_mathml(category):
     cats_feats = re.findall(r'([\w\\/()]+)(\[.+?\])*', category)
@@ -94,7 +102,13 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
         token = find_node_by_id(token_id, tokens)
         surf = token.get('surf')
         surf_mathml = get_surface_mathml(surf)
-        mathml_str = get_fraction_mathml(category_mathml, surf_mathml, '0')
+        stag = token.get('stag')
+        if stag:
+            stag_mathml = get_stag_mathml(stag)
+            mathml_stag_str = get_fraction_mathml(category_mathml, stag_mathml, '0')
+            mathml_str = get_fraction_mathml(mathml_stag_str, surf_mathml, '0')
+        else:
+            mathml_str = get_fraction_mathml(category_mathml, surf_mathml, '0')
     elif len(ccg_node) == 1:
         mathml_str_child = convert_node_to_mathml(ccg_node[0], sem_tree, tokens)
         rule = ccg_node.get('rule')
