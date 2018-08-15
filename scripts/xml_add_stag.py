@@ -155,7 +155,10 @@ for sent in root.iter('sentence'):
     word_index = 0
     for token in sent[0].findall('token'):
         token.set('stag', stags[sent_index][word_index])
-        token.set('costag', fine2coarse[stags[sent_index][word_index]])
+        if stags[sent_index][word_index] in fine2coarse:
+            token.set('costag', fine2coarse[stags[sent_index][word_index]])
+        else:
+            token.set('costag', 'UNK')
         word_index = word_index + 1
 
     word_index = 0
@@ -163,7 +166,10 @@ for sent in root.iter('sentence'):
         surf = span.get('surf')
         if surf:
             span.set('stag', stags[sent_index][word_index])
-            span.set('costag', fine2coarse[stags[sent_index][word_index]])
+            if stags[sent_index][word_index] in fine2coarse:
+                span.set('costag', fine2coarse[stags[sent_index][word_index]])
+            else:
+                span.set('costag', 'UNK')
             word_index = word_index + 1
 
 # write out result
