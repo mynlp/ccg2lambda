@@ -409,7 +409,7 @@
 
 - category: (S\NP)/NP
   semantics: \E Q1 Q2. Q2(\w.TrueP, \x.Q1(\w.TrueP, \y.(x = y)))
-  costag: TNS
+  base: be
 
 - category: (S[dcl=true]\NP)/PP
   semantics: \E F Q. Q(\w.TrueP, F)
