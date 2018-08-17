@@ -20,7 +20,7 @@ If you are using semantic tags in your template, you can similarly do:
 
 ```bash
 git checkout semtag-fracas
-./en/emnlp2015exp.sh en/semantic_templates_en_emnlp2015.yaml fracas.xml
+./en/emnlp2015exp.sh en/semantic_templates_en_semtags_emnlp2015.yaml fracas.xml
 ```
 
 The scripts will:
