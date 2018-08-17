@@ -16,7 +16,7 @@ git checkout tags/fracas
 ./en/emnlp2015exp.sh en/semantic_templates_en_emnlp2015.yaml fracas.xml
 ```
 
-If you are using semantic tags in your template, you can similarly do:
+If you are using semantic tags in your templates, you can similarly do:
 
 ```bash
 git checkout semtag-fracas
