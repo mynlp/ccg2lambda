@@ -16,7 +16,14 @@ git checkout tags/fracas
 ./en/emnlp2015exp.sh en/semantic_templates_en_emnlp2015.yaml fracas.xml
 ```
 
-This script will:
+If you are using semantic tags in your template, you can similarly do:
+
+```bash
+git checkout semtag-fracas
+./en/emnlp2015exp.sh en/semantic_templates_en_emnlp2015.yaml fracas.xml
+```
+
+The scripts will:
 
 1. Extract the plain text corresponding to the hypotheses and conclusions of all fracas problems. These hypotheses and conclusions are stored in a different file for each fracas problem, under the directory `fracas.xml_plain`. The gold entailment judgment is stored in files `fracas.xml_plain/*.answer`.
 2. Parse the hypotheses and conclusions using C&C parser, and save them under the directory `fracas.xml_parsed`.
