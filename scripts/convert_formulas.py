@@ -9,6 +9,7 @@ import textwrap
 
 from nltk.sem.drt import *
 from nltk2drs import convert_to_drs
+from nltk2normal import remove_true
 from nltk2tptp import convert_to_tptp_proof
 from logic_parser import lexpr
 
@@ -35,7 +36,7 @@ def main(args = None):
     parser.add_argument("sem", help="XML input filename with semantics")
 
     parser.add_argument("--format", nargs='?', type=str, default="drs",
-        choices=["fol", "drs", "drsbox", "tptp"],
+        choices=["fol", "drs", "notrue", "drsbox", "tptp"],
         help="Output format (default: drs).")
      
     ARGS = parser.parse_args()
@@ -56,6 +57,8 @@ def main(args = None):
         results = [convert_to_drs(lexpr(formula)) for formula in formulas]
     if ARGS.format == "fol":
         results = [convert_to_drs(lexpr(formula)).fol() for formula in formulas]
+    if ARGS.format == "notrue":
+        results = [remove_true(lexpr(formula)) for formula in formulas]
     if ARGS.format == "tptp":
         inference = [lexpr(f) for f in formulas]
         results = convert_to_tptp_proof(inference)
