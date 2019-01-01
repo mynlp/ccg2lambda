@@ -226,7 +226,7 @@ def main(args=None):
     transccg_trees = []
     sentence_num = 1
     for ccg_tree in ccg_trees:
-        if sentence_num in failed_inds:
+        while sentence_num in failed_inds:
             # Make empty sentence node if C&C failed to parse.
             transccg_tree = etree.Element('sentence')
             transccg_trees.append(transccg_tree)

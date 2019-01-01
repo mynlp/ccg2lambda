@@ -118,7 +118,8 @@ def get_attributes_from_leaf(node_label):
     'pos' : pos,
     'entity' : ner,
     'cat' : cat_norm,
-    'surf' : word.lower(),
+    'surf' : word,
+    # 'surf' : word.lower(),
     'base' : lemma.lower()}
   return attributes
 

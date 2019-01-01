@@ -420,6 +420,10 @@
   rule: lp
   semantics: \L R. R
 
+- category: PP|PP
+  rule: lp
+  semantics: \L R. R
+
 - category: (NP|NP)|(NP|NP)
   rule: lp
   semantics: \L R. R
