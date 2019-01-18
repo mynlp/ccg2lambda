@@ -26,7 +26,7 @@ from coq_analyzer import analyze_coq_output
 from nltk2coq import normalize_interpretation
 from semantic_types import get_dynamic_library_from_doc
 from tactics import get_tactics
-
+from normalization import substitute_invalid_chars
 
 class Theorem(object):
     """
@@ -328,13 +328,6 @@ def run_coq_script(coq_script, timeout=100):
     output_lines = [
         str(line).strip() for line in output.decode('utf-8').split('\n')]
     return output_lines
-
-def substitute_invalid_chars(script, replacement_filename):
-    with codecs.open(replacement_filename, 'r', 'utf-8') as finput:
-        repl = dict(line.strip().split() for line in finput)
-        for invalid_char, valid_char in repl.items():
-            script = script.replace(invalid_char, valid_char)
-    return script
 
 # Given a string reprsenting the logical interpretation of the conclusion,
 # it returns a string with the negated conclusion.

@@ -40,7 +40,7 @@ from nltk.sem.logic import typecheck
 
 from knowledge import get_tokens_from_xml_node
 from logic_parser import lexpr
-from normalization import normalize_token
+from normalization import normalize_token, substitute_invalid_chars
 from tree_tools import tree_or_string
 
 COQLIB_PATH='coqlib.v'
@@ -329,6 +329,7 @@ def get_dynamic_library_from_doc(doc, semantics_nodes):
     for semantics_node in semantics_nodes:
       types = set(semantics_node.xpath('./span/@type'))
       types_sets.append(types)
+    types_sets = [[substitute_invalid_chars(t, 'replacement.txt') for t in types] for types in types_sets]
     coq_libs = [['Parameter {0}.'.format(t) for t in types] for types in types_sets]
     nltk_sigs_arbi = [convert_coq_signatures_to_nltk(coq_lib) for coq_lib in coq_libs]
     nltk_sig_arbi = combine_signatures(nltk_sigs_arbi)
@@ -508,6 +509,7 @@ def merge_dynamic_libraries(sig_arbi, sig_auto, doc):
     # reserved_predicates = get_reserved_preds_from_coq_static_lib(coq_static_lib_path)
     # Get base forms, unless the base form is '*', in which case get surf form.
     base_forms = get_tokens_from_xml_node(doc)
+    base_forms = [substitute_invalid_chars(t, 'replacement.txt') for t in base_forms]
     required_predicates = set(normalize_token(t) for t in base_forms)
     sig_merged = sig_auto
     sig_merged.update(sig_arbi) # overwrites automatically inferred types.

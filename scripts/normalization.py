@@ -15,6 +15,7 @@
 #  limitations under the License.
 
 import re
+import codecs
 
 def normalize_token(token):
     """
@@ -53,4 +54,11 @@ def denormalize_token(token):
     denormalized = re.sub(r'_[a-z][0-9]$', '', denormalized)
     denormalized = denormalized.lstrip('_')
     return denormalized
+
+def substitute_invalid_chars(script, replacement_filename):
+    with codecs.open(replacement_filename, 'r', 'utf-8') as finput:
+        repl = dict(line.strip().split() for line in finput)
+        for invalid_char, valid_char in repl.items():
+            script = script.replace(invalid_char, valid_char)
+    return script
 
