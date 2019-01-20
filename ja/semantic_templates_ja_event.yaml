@@ -640,7 +640,6 @@
 
 - category: (S/S)\NP
   semantics: \E Q S C1 C2 C3 K. S(C1,C2,C3,\J e1.K(\e2.(J(e2) & Q(\I.I,\x.((Dat(e2) = x)))),e1)) # narrow scope
-  coq_type: Event -> Entity -> Prop
   base: に
 
 - category: (S/S)\NP
