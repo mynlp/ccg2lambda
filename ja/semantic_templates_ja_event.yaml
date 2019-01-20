@@ -644,7 +644,6 @@
 
 - category: (S/S)\NP
   semantics: \E Q S C1 C2 C3 K. Q(\I.I, \x.S(C1,C2,C3,\J e1.K(\e2.(J(e2) & (Acc(e2) = x)),e1)))
-  coq_type: Event -> Entity -> Prop
   base: を
 
 - category: (S/S)\NP
