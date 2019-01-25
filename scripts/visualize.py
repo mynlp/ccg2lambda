@@ -16,6 +16,7 @@
 #  limitations under the License.
 
 import argparse
+import codecs
 import logging
 from lxml import etree
 import os
@@ -23,6 +24,8 @@ import sys
 import textwrap
 
 from visualization_tools import convert_root_to_mathml
+from visualization_vertical_tools import convert_vertical_to_mathml
+from visualization_latex import convert_doc_to_latex
 
 def main(args = None):
     DESCRIPTION=textwrap.dedent("""\
@@ -37,9 +40,13 @@ def main(args = None):
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=DESCRIPTION)
     parser.add_argument("trees_xml")
-    parser.add_argument("--nbest", nargs='?', type=int, default="1")
-    args = parser.parse_args()
+
+    parser.add_argument("--format", nargs='?', type=str, default="plain",
+        choices=["plain", "vertical", "latex"],
+        help="Graphical tree output (default: plain CCG tree).")
       
+    args = parser.parse_args()
+
     if not os.path.exists(args.trees_xml):
         print('File does not exist: {0}'.format(args.trees_xml))
         sys.exit(1)
@@ -49,8 +56,17 @@ def main(args = None):
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.parse(args.trees_xml, parser)
 
-    html_str = convert_root_to_mathml(root)
-    print(html_str)
+    if args.format == "plain":
+        html_str = convert_root_to_mathml(root)
+        print(html_str)
+
+    if args.format == "vertical":
+        html_str = convert_vertical_to_mathml(root)
+        print(html_str)
+
+    if args.format == "latex":
+        latex_str = convert_doc_to_latex(root)
+        print(latex_str)
 
 if __name__ == '__main__':
     main()

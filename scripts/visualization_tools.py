@@ -24,6 +24,7 @@ from lxml import etree
 from ccg2lambda_tools import build_ccg_tree
 from knowledge import get_tokens_from_xml_node
 from semantic_index import find_node_by_id
+from nltk2normal import *
 
 kUpwardsTree = True
 kDisplaySemantics = True
@@ -151,6 +152,8 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
         span_id = ccg_node.get('id')
         sem_node = find_node_by_id(span_id, sem_tree)
         semantics = sem_node.get('sem')
+        # semantics = remove_true(semantics)
+        # semantics = rename_variable(semantics)
         semantics_mathml = get_semantics_mathml(semantics)
         mathml_str = get_fraction_mathml(semantics_mathml, mathml_str, '0')
     return mathml_str
