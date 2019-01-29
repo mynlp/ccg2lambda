@@ -32,16 +32,26 @@ def get_atomic_formulas(expression):
         return set([expression])
     elif isinstance(expression, EqualityExpression):
         return set([expression])
-    elif isinstance(expression, IndividualVariableExpression):
-        return set([expression])
-    elif isinstance(expression, EventVariableExpression):
-        return set([expression])
-    elif isinstance(expression, FunctionVariableExpression):
-        return set([expression])
-    elif isinstance(expression, ConstantExpression):
+    elif isinstance(expression, AbstractVariableExpression):
         return set([expression])
     else:
         return expression.visit(get_atomic_formulas,
+                       lambda parts: reduce(operator.or_, parts, set()))
+
+def get_role_formulas(expression):
+    if isinstance(expression, EqualityExpression):
+        if isinstance(expression.first, ApplicationExpression):
+            variable = expression.first.argument
+            if isinstance(variable, EventVariableExpression):
+                return set([expression])
+            else:
+                return set()
+        else:
+            return set()
+    elif isinstance(expression, AbstractVariableExpression):
+        return set()
+    else:
+        return expression.visit(get_role_formulas,
                        lambda parts: reduce(operator.or_, parts, set()))
 
 def new_variable(var):
@@ -61,6 +71,77 @@ def new_variable(var):
 true_preds = ['True', 'TrueP']
 
 def remove_true(expression):
+    # Remove True and TrueP
+    if isinstance(expression, ApplicationExpression):
+        function = remove_true(expression.function)
+        argument = remove_true(expression.argument)
+        expr = ApplicationExpression(function, argument)
+    elif isinstance(expression, EqualityExpression):
+        left = remove_true(expression.first)
+        right = remove_true(expression.second)
+        expr = EqualityExpression(left, right)
+    elif isinstance(expression, AndExpression):
+        # True & A <=> A & True <=> A
+        left = expression.first
+        right = expression.second
+        left_str = str(left)
+        right_str = str(right)
+        if left_str in true_preds:
+            expr = remove_true(right)
+        elif right_str in true_preds:
+            expr = remove_true(left)
+        else:
+            left = remove_true(left)
+            right = remove_true(right)
+            expr = AndExpression(left, right)
+    elif isinstance(expression, OrExpression):
+        # True or A <=> A or True <=> True
+        left = expression.first
+        right = expression.second
+        left_str = str(left)
+        right_str = str(right)
+        if left_str in true_preds:
+            expr = remove_true(left)
+        elif right_str in true_preds:
+            expr = remove_true(right)
+        else:
+            left = remove_true(left)
+            right = remove_true(right)
+            expr = OrExpression(left, right)
+    elif isinstance(expression, ImpExpression):
+        # True -> A <=> A
+        left = expression.first
+        right = expression.second
+        left_str = str(left)
+        if left_str in true_preds:
+            expr = remove_true(right)
+        else:
+            left = remove_true(expression.first)
+            right = remove_true(expression.second)
+            expr = ImpExpression(left, right)
+    elif isinstance(expression, NegatedExpression):
+        term = remove_true(expression.term)
+        expr = NegatedExpression(term)
+    elif isinstance(expression, ExistsExpression):
+        variable = expression.variable
+        term = expression.term
+        term = remove_true(term)
+        expr = ExistsExpression(variable, term)
+    elif isinstance(expression, AllExpression):
+        variable = expression.variable
+        term = expression.term
+        term = remove_true(term)
+        expr = AllExpression(variable, term)
+    elif isinstance(expression, LambdaExpression):
+        variable = expression.variable
+        term = expression.term
+        term = remove_true(term)
+        expr = LambdaExpression(variable, term)
+    else:
+        expr = expression
+    return expr
+
+def remove_true_(expression):
     # Remove True and TrueP
     if isinstance(expression, ApplicationExpression):
         function = remove_true(expression.function)
@@ -147,7 +228,6 @@ def remove_true(expression):
     else:
         expr = expression
     return expr
-
 
 def rename_variable(expression):
     # Rename bound variables so that no variable with the same name is bound
