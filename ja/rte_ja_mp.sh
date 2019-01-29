@@ -155,6 +155,7 @@ function proving() {
     timeout 100 python scripts/prove.py \
       ${parsed_dir}/${sentences_basename}.${parser}.sem.xml \
       --graph_out ${results_dir}/${sentences_basename}.${parser}.html \
+      --proof ${results_dir}/${sentences_basename}.${parser}.coq.xml \
       > ${results_dir}/${sentences_basename}.${parser}.answer \
       2> ${results_dir}/${sentences_basename}.${parser}.err
   rte_answer=`cat ${results_dir}/${sentences_basename}.${parser}.answer`
