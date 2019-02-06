@@ -158,6 +158,30 @@ def combine_signatures_safe(signatures):
                 combined_signature[predicate].append((predtype, expr))
     return combined_signature
 
+    # for entries in nltk_sigs_arbi:
+    #     entries_with_type = {}
+    #     for pred, pred_type in entries.items():
+    #         type_str = replace_type_brackets(pred_type)
+    #         pred_name = '{0}{1}'.format(str(pred), type_str)
+    #         entries_with_type[pred_name] = pred_type
+    #         nltk_sigs_arbi_with_type.append(entries_with_type)
+
+def combine_signatures_with_type(signatures):
+    """
+    Combinator function necessary for .visit method.
+    Each predicate is annotated with its type.
+    """
+    combined_signature = {}
+    for signature in signatures:
+        for predicate, predicate_type in signature.items():
+            type_str = replace_type_brackets(predicate_type)
+            predicate_name = '{0}{1}'.format(str(predicate), type_str)
+            # combined_signature[predicate_name] = predicate_type
+            if predicate not in combined_signature:
+                combined_signature[predicate_name] = predicate_type
+                # combined_signature[predicate] = predicate_sig
+    return combined_signature
+
 def convert_to_multitypes(signature, expr):
     multi_signature = defaultdict(list)
     for k, v in signature.items():
@@ -194,6 +218,16 @@ def make_new_pred_name(pred, pred_type):
         pred_name = '{0}_{1}{2}'.format(str(pred), str(pred_type), type_len)
     return pred_name
 
+def make_new_pred_name_with_type(pred, pred_type):
+    if pred in RESERVED_PREDS:
+        return pred
+    pred_name = str(pred)
+    if pred_name[0] == '_':
+        type_str = replace_type_brackets(pred_type)
+        # type_str = str(pred_type).replace(',','').replace('<','_').replace('>','_')
+        pred_name = '{0}{1}'.format(pred_name, type_str)
+    return pred_name
+
 def rename_guided(expr, resolution_guide):
     """
     resolution_guide is a dictionary whose keys are expressions
@@ -205,6 +239,16 @@ def rename_guided(expr, resolution_guide):
         expr = expr.replace(Variable(prev_pred), lexpr(new_pred))
     return expr
 
+def replace_type_brackets(pred_type):
+    type_str = str(pred_type).\
+               replace(',','').\
+               lstrip('<').\
+               rstrip('>').\
+               replace('<','_').\
+               replace('>','_')
+    type_str = '_' + type_str 
+    return type_str
+
 def replace_function_names(expr, resolution_guide, active=None):
     if active is None:
         active = {}
@@ -213,11 +257,7 @@ def replace_function_names(expr, resolution_guide, active=None):
     if expr in resolution_guide:
         for prev_pred, new_pred in resolution_guide[expr]:
             active[prev_pred] = new_pred
-    if isinstance(expr, ConstantExpression) or \
-       isinstance(expr, AbstractVariableExpression) or \
-       isinstance(expr, Variable):
-        return expr
-    elif isinstance(expr, NegatedExpression):
+    if isinstance(expr, NegatedExpression):
         expr.term = replace_function_names(expr.term, resolution_guide, active)
         return expr
     elif isinstance(expr, BinaryExpression):
@@ -233,10 +273,16 @@ def replace_function_names(expr, resolution_guide, active=None):
         exprs = [func] + args_exprs
         expr = functools.reduce(lambda f, a: ApplicationExpression(f, a), exprs)
     elif isinstance(expr, VariableBinderExpression):
-        child_exprs = [expr.variable,  expr.term]
+        child_exprs = [expr.variable, expr.term]
         exprs = [replace_function_names(e, resolution_guide, active) for e in child_exprs]
         expr.variable = exprs[0]
         expr.term = exprs[1]
+    elif isinstance(expr, ConstantExpression):
+        expr = ConstantExpression(Variable(active[str(expr)]))
+        return expr
+    elif isinstance(expr, AbstractVariableExpression) or \
+       isinstance(expr, Variable):
+        return expr
     else:
         raise NotImplementedError(
             'Expression not recognized: {0}, type: {1}'.format(expr, type(expr)))
@@ -267,12 +313,13 @@ def combine_signatures_or_rename_preds(exprs, preferred_sigs=None):
             signature[pred].extend(type_and_expr_list)
     
     resolution_guide = defaultdict(list)
+    # Temporally removed:
     for pred, sigs_exprs in signature.items():
-        if len(sigs_exprs) > 1 and len(set(pred_type for (pred_type, _) in sigs_exprs)) > 1:
-            for pred_type, ex in sigs_exprs:
-                new_pred_name = make_new_pred_name(pred, pred_type)
-                if (pred, new_pred_name) not in resolution_guide[ex]:
-                    resolution_guide[ex].append((pred, new_pred_name))
+        for pred_type, ex in sigs_exprs:
+            # new_pred_name = make_new_pred_name(pred, pred_type)
+            new_pred_name = make_new_pred_name_with_type(pred, pred_type)
+            if (pred, new_pred_name) not in resolution_guide[ex]:
+                resolution_guide[ex].append((pred, new_pred_name))
 
     resolution_guide_local = deepcopy(resolution_guide)
     new_exprs = []
@@ -332,17 +379,13 @@ def get_dynamic_library_from_doc(doc, semantics_nodes):
     types_sets = [[substitute_invalid_chars(t, 'replacement.txt') for t in types] for types in types_sets]
     coq_libs = [['Parameter {0}.'.format(t) for t in types] for types in types_sets]
     nltk_sigs_arbi = [convert_coq_signatures_to_nltk(coq_lib) for coq_lib in coq_libs]
-    nltk_sig_arbi = combine_signatures(nltk_sigs_arbi)
+    nltk_sig_arbi_with_type = combine_signatures_with_type(nltk_sigs_arbi)
 
     formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics_nodes]
     formulas = parse_exprs_if_str(formulas)
     nltk_sig_auto, formulas = combine_signatures_or_rename_preds(formulas, nltk_sigs_arbi)
-    # coq_static_lib_path is useful to get reserved predicates.
-    # ccg_xml_trees is useful to get full list of tokens
-    # for which we need to specify types.
-    dynamic_library = merge_dynamic_libraries(
-        nltk_sig_arbi,
-        nltk_sig_auto,
+    dynamic_library = construct_dynamic_libraries(
+        nltk_sig_arbi_with_type,
         doc=doc)
     dynamic_library_str = '\n'.join(sorted(dynamic_library))
     return dynamic_library_str, formulas
@@ -525,6 +568,25 @@ def merge_dynamic_libraries(sig_arbi, sig_auto, doc):
     # Convert into coq style library entries.
     dynamic_library = []
     for predicate, pred_type in sig_merged.items():
+        library_entry = build_library_entry(predicate, pred_type)
+        dynamic_library.append(library_entry)
+    result_lib = list(set(dynamic_library))
+    return result_lib
+
+def construct_dynamic_libraries(sig_arbi, doc):
+    # Get base forms, unless the base form is '*', in which case get surf form.
+    base_forms = get_tokens_from_xml_node(doc)
+    base_forms = [substitute_invalid_chars(t, 'replacement.txt') for t in base_forms]
+    required_predicates = set(normalize_token(t) for t in base_forms)
+    # Remove predicates that are reserved or not required (e.g. variables).
+    preds_to_remove = set()
+    preds_to_remove.update(RESERVED_PREDS)
+    for pred in preds_to_remove:
+        if pred in sig_arbi:
+            del sig_arbi[pred]
+    # Convert into coq style library entries.
+    dynamic_library = []
+    for predicate, pred_type in sig_arbi.items():
         library_entry = build_library_entry(predicate, pred_type)
         dynamic_library.append(library_entry)
     result_lib = list(set(dynamic_library))
