@@ -37,6 +37,8 @@ def convert_tptp(expression):
         tptp_str = convert_tptp_or(expression)
     elif isinstance(expression, ImpExpression):
         tptp_str = convert_tptp_imp(expression)
+    elif isinstance(expression, IffExpression):
+        tptp_str = convert_tptp_iff(expression)
     elif isinstance(expression, NegatedExpression):
         tptp_str = convert_tptp_not(expression)
     elif isinstance(expression, ExistsExpression):
@@ -88,6 +90,12 @@ def convert_tptp_imp(expression):
     first = convert_tptp(expression.first)
     second = convert_tptp(expression.second)
     tptp_str = Tokens.OPEN + first + ' => ' + second + Tokens.CLOSE
+    return tptp_str
+
+def convert_tptp_iff(expression):
+    first = convert_tptp(expression.first)
+    second = convert_tptp(expression.second)
+    tptp_str = Tokens.OPEN + first + ' <=> ' + second + Tokens.CLOSE
     return tptp_str
 
 def convert_tptp_not(expression):
