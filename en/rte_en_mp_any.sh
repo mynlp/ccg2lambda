@@ -110,8 +110,8 @@ for parser in `cat en/parser_location.txt`; do
     fi
   fi
   if [ "${parser_name}" == "depccg" ]; then
-    depccg_dir=${parser_dir}
-    if [ ! -d "${depccg_dir}" ] || [ ! -e "${depccg_dir}"/src/run.py ]; then
+    depccg_exists=`pip freeze | grep depccg`
+    if [ "${depccg_exists}" == "" ]; then
       echo "depccg parser directory incorrect. Exit."
       exit 1
     fi
@@ -220,45 +220,14 @@ function parse_easysrl() {
     2> ${parsed_dir}/${base_fname}.easysrl.xml.log
 }
 
-function lemmatize() {
-    # apply easyccg's lemmatizer to input file
-    input_file=$1
-    lemmatized=`mktemp -t tmp-XXX`
-    cat $input_file | java -cp ${easyccg_dir}/easyccg.jar \
-        uk.ac.ed.easyccg.lemmatizer.MorphaStemmer \
-        > $lemmatized \
-        2>/dev/null
-    paste -d "|" $input_file $lemmatized | \
-        awk '{split($0, res, "|");
-             slen = split(res[1], sent1);split(res[2], sent2);
-             for (i=1; i <= slen; i++) {
-                printf sent1[i] "|" sent2[i]
-                if (i < slen) printf " "
-            }; print ""}'
-}
-
 function parse_depccg() {
     # Parse using depccg.
     base_fname=$1
-    lemmatize ${plain_dir}/${base_fname}.tok | \
-    ${candc_dir}/bin/pos \
-        --model ${candc_dir}/models/pos \
-        --ifmt "%w|%l \n" \
-        --ofmt "%w|%l|%p \n" \
-        2> /dev/null | \
-    ${candc_dir}/bin/ner \
-        --model ${candc_dir}/models/ner \
-        --ifmt "%w|%l|%p \n" \
-        --ofmt "%w|%l|%p|%n \n" \
-        2> /dev/null | \
-    python ${depccg_dir}/src/run.py \
-        ${depccg_dir}/models/tri_headfirst \
-        en \
-        --input-format POSandNERtagged \
-        --format xml \
-    2> ${parsed_dir}/${base_fname}.depccg.xml.log \
-    > ${parsed_dir}/${base_fname}.depccg.xml
-  python en/candc2transccg.py ${parsed_dir}/${base_fname}.depccg.xml \
+    cat ${plain_dir}/${base_fname}.tok | \
+    env CANDC=${candc_dir} depccg_en \
+        --input-format raw \
+        --annotator candc \
+        --format jigg_xml \
     > ${parsed_dir}/${base_fname}.depccg.jigg.xml \
     2> ${parsed_dir}/${base_fname}.log
 }
