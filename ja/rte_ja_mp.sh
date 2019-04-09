@@ -96,8 +96,8 @@ for parser in `cat ja/parser_location_ja.txt`; do
     fi
   fi
   if [ "${parser_name}" == "depccg" ]; then
-    depccg_dir=${parser_dir}
-    if [ ! -d "${depccg_dir}" ] || [ ! -e "${depccg_dir}"/src/run.py ]; then
+    depccg_exists=`pip freeze | grep depccg`
+    if [ "${depccg_exists}" == "" ]; then
       echo "depccg parser directory incorrect. Exit."
       exit 1
     fi
@@ -109,9 +109,6 @@ parser_cmd="java -Xmx4g -cp \"${jigg_dir}/jar/*\" jigg.pipeline.Pipeline \
   -annotators ssplit,kuromoji,ccg \
   -ccg.kBest \"${nbest}\" -file"
 
-tagging_cmd="java -Xmx4g -cp \"${jigg_dir}/jar/*\" jigg.pipeline.Pipeline \
-  -annotators ssplit,kuromoji -file"
-
 function parse_jigg() {
   # Parse using jigg.
   base_fname=$1
@@ -122,19 +119,15 @@ function parse_jigg() {
 }
 
 function parse_depccg() {
-  # Parse using depccg.
-  base_fname=$1
-  eval $tagging_cmd ${plain_dir}/$base_fname \
-    > ${parsed_dir}/${base_fname}.log.std \
-    2> ${parsed_dir}/${base_fname}.log.err
-  mv ${plain_dir}/${base_fname}.xml ${parsed_dir}/${base_fname}.tagged.xml
-  env PYTHONPATH=$depccg_dir/src:$PYTHONPATH \
-    python ja/rte.py \
-    ${depccg_dir}/models/ja_headfinal \
-    ja \
-    ${parsed_dir}/${base_fname}.tagged.xml \
-    --nbest "${nbest}" \
-    > ${parsed_dir}/${base_fname}.depccg.jigg.xml
+    # Parse using depccg.
+    base_fname=$1
+    cat ${plain_dir}/${base_fname} | \
+    env JIGG=${jigg_dir} depccg_ja \
+        --input-format raw \
+        --annotator jigg \
+        --format jigg_xml \
+    > ${parsed_dir}/${base_fname}.depccg.jigg.xml \
+    2> ${parsed_dir}/${base_fname}.log
 }
 
 function semantic_parsing() {
