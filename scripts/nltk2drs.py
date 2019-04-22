@@ -9,8 +9,8 @@ from nltk2normal import *
 dp = nltk.sem.DrtExpression.fromstring
 
 def convert_to_drs(expression):
-    expression = rename_variable(expression)
     expression = remove_true(expression)
+    expression = rename(expression)
     drs_expr = convert_drs(DRS([],[]), expression)
     return drs_expr
 

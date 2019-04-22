@@ -9,7 +9,7 @@ import textwrap
 
 from nltk.sem.drt import *
 from nltk2drs import convert_to_drs
-from nltk2normal import remove_true
+from nltk2normal import remove_true, rename
 from nltk2tptp import convert_to_tptp_proof
 from logic_parser import lexpr
 
@@ -17,9 +17,16 @@ ARGS=None
 DOCS=None
 
 def get_formulas_from_xml(doc):
-    formulas = [s.get('sem', None) for s in doc.xpath(
-        './sentences/sentence/semantics[1]/span[1]')]
-    formulas = [f for f in formulas if f is not None]
+    formulas = []
+    for f in doc.xpath('./sentences/sentence'):
+        if f.xpath('semantics'):
+            s = f.xpath('semantics')[0]
+            if s.get('status') == 'success':
+                formulas += s.xpath('span[1]/@sem')
+            else:
+                formulas.append('semantics_error')
+        else:
+            formulas.append('syntax_error')
     return formulas
 
 def main(args = None):
@@ -38,14 +45,14 @@ def main(args = None):
     parser.add_argument("--format", nargs='?', type=str, default="drs",
         choices=["fol", "drs", "notrue", "drsbox", "tptp"],
         help="Output format (default: drs).")
-     
+
     ARGS = parser.parse_args()
 
     if not os.path.exists(ARGS.sem):
         print('File does not exist: {0}'.format(ARGS.sem), file=sys.stderr)
         parser.print_help(file=sys.stderr)
         sys.exit(1)
-    
+
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.parse(ARGS.sem, parser)
 
@@ -58,7 +65,7 @@ def main(args = None):
     if ARGS.format == "fol":
         results = [convert_to_drs(lexpr(formula)).fol() for formula in formulas]
     if ARGS.format == "notrue":
-        results = [remove_true(lexpr(formula)) for formula in formulas]
+        results = [rename(remove_true(lexpr(formula))) for formula in formulas]
     if ARGS.format == "tptp":
         inference = [lexpr(f) for f in formulas]
         results = convert_to_tptp_proof(inference)

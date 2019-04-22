@@ -2,27 +2,28 @@
 
 from nltk.sem.logic import *
 from logic_parser import lexpr
-from nltk2normal import rename_variable, remove_true
+from nltk2normal import rename_variable, remove_true, rename
 
 def convert_to_tptp_proof(formulas):
     if len(formulas) == 1:
         conjecture = formulas[0]
-        tptp_script = ['fof(h,conjecture,{0}).'.format(conjecture)]
+        tptp_script = ['tff(h,conjecture,{0}).'.format(conjecture)]
     else:
         premises, conjecture = formulas[:-1], formulas[-1]
         tptp_script = []
         num = 1
         for formula in premises:
             formula = convert_to_tptp(formula)
-            tptp_script.append('fof(t{0},axiom,{1}).'.format(num,formula))
+            tptp_script.append('tff(t{0},axiom,{1}).'.format(num,formula))
             num += 1
         conjecture = convert_to_tptp(conjecture)
-        tptp_script.append('fof(h,conjecture,{0}).'.format(conjecture))
-    return tptp_script        
+        tptp_script.append('tff(h,conjecture,{0}).'.format(conjecture))
+    return tptp_script
 
 def convert_to_tptp(expression):
-    expression = rename_variable(expression)
+    # expression = rename_variable(expression)
     expression = remove_true(expression)
+    expression = rename(expression)
     tptp_str = convert_tptp(expression)
     return tptp_str
 
@@ -106,13 +107,19 @@ def convert_tptp_not(expression):
 def convert_tptp_exists(expression):
     variable = convert_tptp(expression.variable).upper()
     term = convert_tptp(expression.term)
-    tptp_str = '?[' + variable + ']: ' + Tokens.OPEN + term + Tokens.CLOSE
+    if variable[0] == 'D':
+        tptp_str = '?[' + variable + ':$int]: ' + Tokens.OPEN + term + Tokens.CLOSE
+    else:
+        tptp_str = '?[' + variable + ']: ' + Tokens.OPEN + term + Tokens.CLOSE
     return tptp_str
 
 def convert_tptp_all(expression):
     variable = convert_tptp(expression.variable).upper()
     term = convert_tptp(expression.term)
-    tptp_str = '![' + variable + ']: ' + Tokens.OPEN + term + Tokens.CLOSE
+    if variable[0] == 'D':
+        tptp_str = '![' + variable + ':$int]: ' + Tokens.OPEN + term + Tokens.CLOSE
+    else:
+        tptp_str = '![' + variable + ']: ' + Tokens.OPEN + term + Tokens.CLOSE
     return tptp_str
 
 def convert_tptp_lambda(expression):

@@ -6,7 +6,12 @@ import unicodedata
 from nltk.internals import Counter
 from logic_parser import lexpr
 
-_counter = Counter()
+class NCounter(Counter):
+    def reset(self):
+        self._value = 0
+        return self._value
+
+_counter = NCounter()
 
 # Term t ::=
 #   x,y,z         <IndividualVariableExpression>
@@ -58,13 +63,16 @@ def new_variable(var):
     var = VariableExpression(var)
     # isinstance(var,EventVariableExpression) must come first
     if isinstance(var, EventVariableExpression):
-        prefix = 'e0'
+        prefix = 'e'
     elif isinstance(var, IndividualVariableExpression):
-        prefix = 'x0'
+        if str(var)[0] == 'd':
+            prefix = 'd'
+        else:
+            prefix = 'x'
     elif isinstance(var, FunctionVariableExpression):
-        prefix = 'F0'
+        prefix = 'F'
     else:
-        prefix = 'z0'
+        prefix = 'z'
     v = Variable("%s%s" % (prefix, _counter.get()))
     return v
 
@@ -291,6 +299,11 @@ def rename_variable(expression):
         expr = expression
     return expr
 
+def rename(f):
+    res = rename_variable(f)
+    _counter.reset()
+    return res
+
 def convert_to_prenex(expression):
     # Convert a formula to one where all existential quantifers come first.
     expression = remove_true(expression)
@@ -491,7 +504,6 @@ comp10 = lexpr(r'(exists x.(_john(x) & True & exists e.(_move(e) & (Subj(e) = x)
 comp11 = lexpr(r'(exists x.(_boy(x) & True & exists e.(_walk(e) & (Subj(e) = x) & _slowly(e) & True)) & exists x.(_girl(x) & True & exists e.(_walk(e) & (Subj(e) = x) & _slowly(e) & True)))')
 comp12 = lexpr(r'(exists x.(_boy(x) & True & exists e.(_walk(e) & (Subj(e) = x) & _slowly(e) & exists x.(_park(x) & True & _in(e,x) & True))) & exists x.(_girl(x) & True & exists e.(_walk(e) & (Subj(e) = x) & _slowly(e) & exists x.(_park(x) & True & _in(e,x) & True))))')
 comp13 = lexpr(r'exists x.(_walking(x) & _man(x) & True & exists e.((Subj(e) = Subj(e)) & True))')
-
 
 test = [v1,v2,v3,
         atom1,atom2,atom3,atom4,atom5,
