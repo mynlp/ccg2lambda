@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 #  Copyright 2015 Pascual Martinez-Gomez
+#  Copyright 2020 Riko Suzuki
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -62,7 +63,7 @@ def main(args = None):
         help="Activate on-demand axiom injection (default: no axiom injection).")
     parser.add_argument("--gold_trees", action="store_true", default=True)
     parser.add_argument("--print", nargs='?', type=str, default="result",
-        choices=["result", "status"],
+        choices=["result", "status", "both"],
         help="Print to standard output the inference result or termination status.")
     parser.add_argument("--print_length", nargs='?', type=str, default="full",
         choices=["full", "short", "zero"],
@@ -71,6 +72,9 @@ def main(args = None):
         help="Maximum running time for each possible theorem.")
     parser.add_argument("--ncores", nargs='?', type=int, default="1",
         help="Number of cores for multiprocessing.")
+    parser.add_argument("--subgoals", action="store_true", default=False)
+    parser.add_argument("--subgoals_out", nargs='?', type=str, default="",
+        help="subgoals output filename.")
     ARGS = parser.parse_args()
 
     logging.basicConfig(level=logging.WARNING)
@@ -106,6 +110,15 @@ def main(args = None):
         with codecs.open(ARGS.graph_out, 'w', 'utf-8') as fout:
             fout.write(html_str)
 
+    if ARGS.subgoals_out:
+        subgoals = []
+        for p in proof_nodes:
+          subgoals.extend(p.xpath('//subgoals'))
+        subgoals = [s.text for s in subgoals]
+        subgoals = [s.replace(',','\n') for s in subgoals if s is not None]
+        with codecs.open(ARGS.subgoals_out, 'w', 'utf-8') as fout:
+          fout.write('\n'.join(subgoals))
+
 @time_count
 def serialize_tree_to_file(tree_xml, fname):
     root_xml_str = serialize_tree(tree_xml)
@@ -119,7 +132,7 @@ def prove_docs(document_inds, ncores=1):
         proof_nodes = prove_docs_seq(document_inds)
     else:
         proof_nodes = prove_docs_par(document_inds, ncores)
-    print('', file=sys.stdout)
+    #print('', file=sys.stdout)
     proof_nodes = [etree.fromstring(p) for p in proof_nodes]
     return proof_nodes
 
@@ -167,8 +180,10 @@ def prove_doc_ind(document_ind):
         proof_node.set('inference_result', 'unknown')
     if ARGS.print == 'status':
         label = proof_node.get('status')
-    else:
+    if ARGS.print == 'result':
         label = proof_node.get('inference_result', 'unknown')
+    else:
+        label = proof_node.get('inference_result', 'unknown') + ' (' + proof_node.get('status') +')'
     lock.acquire()
     if ARGS.print_length == 'full':
         pair_id = doc.get('pair_id', '').strip()

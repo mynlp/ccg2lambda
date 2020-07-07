@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 #  Copyright 2016 Pascual Martinez-Gomez
+#  Copyright 2020 Riko Suzuki
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -36,14 +37,24 @@
 # $ cat jigg_location.txt
 #   /home/pasmargo/software/jigg
 
-USAGE="Usage: ./ja/rte_ja.sh <sentences.txt> <semantic_templates.yaml>"
+USAGE="Usage: ./ja/rte_ja.sh <sentences.txt> <semantic_templates.yaml> [--subgoals]"
 
 # Check that the number of arguments is correct.
-if [ "$#" -ne 2 ]; then
+flag_subgoals=false
+case $# in
+  2) ;;
+  3) if [ "$3" = "--subgoals" ]; then
+       flag_subgoals=true
+     else
+       echo "Error: Number of arguments invalid".
+       echo $USAGE
+       exit 1
+     fi ;;
+  *) 
   echo "Error: Number of arguments invalid".
   echo $USAGE
   exit 1
-fi
+esac
 
 # This variable contains the filename of the RTE problem.
 sentences_fname=$1
@@ -82,7 +93,7 @@ fi
 # Set a variable with the command to invoke the CCG parser for Japanese.
 parser_cmd="java -Xmx4g -cp \"${parser_dir}/jar/*\" jigg.pipeline.Pipeline \
   -annotators ssplit,kuromoji,ccg \
-  -ccg.kBest 10 -file"
+  -ccg.kBest 1 -file"
 
 # Syntactic parse the sentences into an XML file in $parsed_dir.
 if [ ! -e "${parsed_dir}/${sentences_basename}.jigg.xml" ]; then
@@ -112,15 +123,33 @@ fi
 
 # Judge entailment with a theorem prover (Coq, at the moment).
 if [ ! -e "${results_dir}/${sentences_basename}.answer" ]; then
-  start_time=`python -c 'import time; print(time.time())'`
-  python scripts/prove.py \
-    $parsed_dir/${sentences_basename}.sem.xml \
-    --graph_out ${results_dir}/${sentences_basename}.html \
-    > ${results_dir}/${sentences_basename}.answer \
-    2> ${results_dir}/${sentences_basename}.err
-  end_time=`python -c 'import time; print(time.time())'`
-  echo "${end_time} - ${start_time}" | \
-    bc -l | awk '{printf("%.2f\n", $1)}' \
-    > ${results_dir}/${sentences_basename}.time
+  if "${flag_subgoals}"; then
+    start_time=`python -c 'import time; print(time.time())'`
+    python scripts/prove.py \
+      $parsed_dir/${sentences_basename}.sem.xml \
+      --graph_out ${results_dir}/${sentences_basename}.html \
+      --subgoals \
+      --subgoals_out ${results_dir}/${sentences_basename}.subgoals \
+      --timeout 100 \
+      --print both \
+      > ${results_dir}/${sentences_basename}.answer \
+      2> ${results_dir}/${sentences_basename}.err
+    end_time=`python -c 'import time; print(time.time())'`
+    echo "${end_time} - ${start_time}" | \
+      bc -l | awk '{printf("%.2f\n", $1)}' \
+      > ${results_dir}/${sentences_basename}.time
+  else
+    start_time=`python -c 'import time; print(time.time())'`
+    python scripts/prove.py \
+      $parsed_dir/${sentences_basename}.sem.xml \
+      --graph_out ${results_dir}/${sentences_basename}.html \
+      --print both \
+      > ${results_dir}/${sentences_basename}.answer \
+      2> ${results_dir}/${sentences_basename}.err
+    end_time=`python -c 'import time; print(time.time())'`
+    echo "${end_time} - ${start_time}" | \
+      bc -l | awk '{printf("%.2f\n", $1)}' \
+      > ${results_dir}/${sentences_basename}.time
+  fi
 fi
 echo "Judged entailment for $parsed_dir/${sentences_basename}.sem.xml "`cat ${results_dir}/${sentences_basename}.answer`

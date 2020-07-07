@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 #  Copyright 2015 Pascual Martinez-Gomez
+#  Copyright 2020 Riko Suzuki
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -47,6 +48,8 @@ def prove_doc(doc, abduction=None, args=None):
     # theorem = Theorem.from_doc(doc)
     theorem = MasterTheorem.from_doc(doc, args)
     theorem.prove(abduction)
+    if args.subgoals:
+      theorem.get_subgoals(abduction)
     return theorem
 
 def prove_doc_(doc, abduction=None):
@@ -97,4 +100,3 @@ def resolve_prefix_to_infix_operations(expr_str, pred = 'R', symbol = '', bracke
             logging.warning('There is probably a problem in the resolution of ' \
                     'concatenation expressions in {0}'.format(expr_str))
     return cat_expr_str
-

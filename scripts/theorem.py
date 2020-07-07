@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 #  Copyright 2017 Pascual Martinez-Gomez
+#  Copyright 2020 Riko Suzuki
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -21,6 +22,7 @@ import itertools
 import logging
 from lxml import etree
 import subprocess
+import re
 
 from coq_analyzer import analyze_coq_output
 from nltk2coq import normalize_interpretation
@@ -47,6 +49,7 @@ class Theorem(object):
         self.failure_log = None
         self.timeout = 100
         self.labels = []
+        self.subgoals = []
 
     def __repr__(self):
         return self.coq_script
@@ -153,6 +156,20 @@ class Theorem(object):
             abduction.attempt(self)
         return
 
+    def get_subgoals(self, abduction=None):
+        coq_script = make_coq_script(
+            self.premises,
+            self.conclusion,
+            self.dynamic_library_str,
+            axioms=self.axioms)
+        current_tactics = get_tactics()
+        debug_tactics = 'Set Firstorder Depth 1. nltac. Set Firstorder Depth 3. repeat nltac_base. Qed'
+        coq_script = coq_script.replace(current_tactics, debug_tactics)
+        output_lines = run_coq_script(coq_script, self.timeout)
+
+        self.subgoals = get_subgoal_lines(output_lines)
+        return
+
     def reverse(self):
         if len(self.premises) != 1:
             return None
@@ -209,6 +226,9 @@ class Theorem(object):
             t_node.append(s_node)
             f_node = make_failure_log_node(failure_log)
             t_node.append(f_node)
+            g_node = etree.Element('subgoals')
+            g_node.text = ','.join(theorem.subgoals)
+            t_node.append(g_node)
         return ts_node
 
 
@@ -422,6 +442,11 @@ class MasterTheorem(Theorem):
                 break
         return
 
+    def get_subgoals(self, abduction=None):
+        for theorem in self.theorems:
+            theorem.get_subgoals(abduction)
+        return
+
     @property
     def result(self):
         for theorem in self.theorems:
@@ -498,3 +523,27 @@ def generate_semantics_from_doc(doc, max_gen=1, use_gold_trees=False):
         logging.warning('Cartesian product of semantic interpretations exhausted with i == 0')
     return
 
+def find_final_conclusion_sep_line_index(coq_output_lines):
+    indices = [i for i, line in enumerate(coq_output_lines)
+               if line.startswith('===') and line.endswith('===')]
+    if not indices:
+        return None
+    return indices[-1]
+
+## for text similarity task
+def get_subgoal_lines(coq_output_lines):
+    ## ConclusionLines
+    line_index_last_conclusion_sep = find_final_conclusion_sep_line_index(coq_output_lines)
+    if not line_index_last_conclusion_sep:
+        return None
+    ## extract all subgoals 
+    subgoals = []
+    subgoalflg = 0
+    subgoals.append(coq_output_lines[line_index_last_conclusion_sep+1])
+    for line in coq_output_lines[line_index_last_conclusion_sep+1:]:
+        if subgoalflg == 1:
+            subgoals.append(line)
+            subgoalflg = 0
+        if re.search("subgoal ", line):
+            subgoalflg = 1
+    return subgoals
