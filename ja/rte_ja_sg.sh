@@ -22,10 +22,10 @@
 # 'unknown' (none of the former).
 # You can use it as:
 # 
-# ./rte_ja.sh <sentences.txt> <semantic_templates.yaml>
+# ./rte_ja_sg.sh <sentences.txt> <semantic_templates.yaml>
 # 
 # E.g.
-# ./rte_ja.sh sample_en.txt semantic_templates_ja.yaml
+# ./rte_ja_sg.sh sample_en.txt semantic_templates_ja.yaml
 #
 # It should return 'yes'.
 # You need to have a file in the current directory named jigg_location.txt
@@ -37,7 +37,7 @@
 # $ cat jigg_location.txt
 #   /home/pasmargo/software/jigg
 
-USAGE="Usage: ./ja/rte_ja.sh <sentences.txt> <semantic_templates.yaml>"
+USAGE="Usage: ./ja/rte_ja_sg.sh <sentences.txt> <semantic_templates.yaml>"
 
 # Check that the number of arguments is correct.
 if [ "$#" -ne 2 ]; then

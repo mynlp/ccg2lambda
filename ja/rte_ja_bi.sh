@@ -23,12 +23,12 @@
 # 'unknown' (none of the former).
 # You can use it as:
 #
-# ./rte_ja_mp.sh <sentences.txt> <semantic_templates.yaml> <nbest>
+# ./rte_ja_bi.sh <sentences.txt> <semantic_templates.yaml> <nbest>
 #
 # E.g.
-# ./rte_ja_mp.sh ja/sample_ja.txt ja/semantic_templates_ja.yaml 3
+# ./rte_ja_bi.sh ja/sample_ja.txt ja/semantic_templates_ja.yaml 3
 
-USAGE="Usage: ./rte_ja_mp.sh <sentences.txt> <semantic_templates.yaml> <nbest>"
+USAGE="Usage: ./rte_ja_bi.sh <sentences.txt> <semantic_templates.yaml> <nbest>"
 
 # Set the number of nbest parses (Default: 1)
 nbest=${3:-1}
