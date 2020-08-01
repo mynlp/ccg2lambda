@@ -40,11 +40,13 @@ DOCS=None
 ABDUCTION=None
 kMaxTasksPerChild=None
 lock = Lock()
+SUBGOALS=[]
 
 def main(args = None):
     global ARGS
     global DOCS
     global ABDUCTION
+    global SUBGOALS
     DESCRIPTION=textwrap.dedent("""\
             The input file sem should contain the parsed sentences. All CCG trees correspond
             to the premises, except the last one, which is the hypothesis.
@@ -75,6 +77,7 @@ def main(args = None):
     parser.add_argument("--subgoals", action="store_true", default=False)
     parser.add_argument("--subgoals_out", nargs='?', type=str, default="",
         help="subgoals output filename.")
+    parser.add_argument("--bidirection", action="store_true", default=False)
     ARGS = parser.parse_args()
 
     logging.basicConfig(level=logging.WARNING)
@@ -111,13 +114,33 @@ def main(args = None):
             fout.write(html_str)
 
     if ARGS.subgoals_out:
-        subgoals = []
-        for p in proof_nodes:
-          subgoals.extend(p.xpath('//subgoals'))
-        subgoals = [s.text for s in subgoals]
-        subgoals = [s.replace(',','\n') for s in subgoals if s is not None]
-        with codecs.open(ARGS.subgoals_out, 'w', 'utf-8') as fout:
-          fout.write('\n'.join(subgoals))
+        subgoals = SUBGOALS[0]
+        AB_output = ARGS.subgoals_out
+        AB_subgoals = subgoals[0]
+
+        if (ARGS.bidirection and flag_rev):
+          BA_subgoals = subgoals[2]
+          with codecs.open(ARGS.subgoals_out+'1', 'w', 'utf-8') as fout:
+            fout.write('\n'.join(BA_subgoals))
+          AB_output = ARGS.subgoals_out+'0'
+
+        with codecs.open(AB_output, 'w', 'utf-8') as fout:
+          fout.write('\n'.join(AB_subgoals))
+#        for i, proof_node in enumerate(proof_nodes):
+#          for j, p in enumerate(proof_node):
+#            subgoals.extend(p.xpath('//subgoals'))
+#            subgoals = [s.replace(',','\n') for s in subgoals if s is not None]
+#            with codecs.open(ARGS.subgoals_out+str(i)+'_'+str(j), 'w', 'utf-8') as fout:
+#              fout.write('\n'.join(subgoals))
+
+#        for p in proof_nodes:
+#          subgoals.extend(p.xpath('//subgoals'))
+#        subgoals = [s.text for s in subgoals]
+#        subgoals = [s.replace(',','\n') for s in subgoals if s is not None]
+#        with codecs.open(ARGS.subgoals_out, 'w', 'utf-8') as fout:
+#          fout.write('\n'.join(subgoals))
+
+          
 
 @time_count
 def serialize_tree_to_file(tree_xml, fname):
@@ -156,6 +179,8 @@ def prove_doc_ind(document_ind):
     It returns an XML node with proof information.
     """
     global lock
+    global SUBGOALS
+    global flag_rev
     doc = DOCS[document_ind]
     proof_node = etree.Element('proof')
     inference_result = 'unknown'
@@ -164,11 +189,19 @@ def prove_doc_ind(document_ind):
         proof_node.set('status', 'success')
         inference_result = theorem.result
         proof_node.set('inference_result', inference_result)
+        inference_result_rev = theorem.result_rev
+        if inference_result_rev is None:
+          flag_rev = False
+        else:
+          flag_rev = True
+          proof_node.set('inference_result_rev', inference_result_rev)
+        SUBGOALS = theorem.all_subgoals
         theorems_node = theorem.to_xml()
         proof_node.append(theorems_node)
     except TimeoutExpired as e:
         proof_node.set('status', 'timedout')
         proof_node.set('inference_result', 'unknown')
+        proof_node.set('inference_result_rev', 'unknown')
     except Exception as e:
         doc_id = doc.get('id', '(unspecified)')
         lock.acquire()
@@ -178,17 +211,29 @@ def prove_doc_ind(document_ind):
         lock.release()
         proof_node.set('status', 'failed')
         proof_node.set('inference_result', 'unknown')
+        proof_node.set('inference_result_rev', 'unknown')
     if ARGS.print == 'status':
         label = proof_node.get('status')
     if ARGS.print == 'result':
         label = proof_node.get('inference_result', 'unknown')
     else:
         label = proof_node.get('inference_result', 'unknown') + ' (' + proof_node.get('status') +')'
+
+    if (ARGS.bidirection and flag_rev):
+      if ARGS.print == 'result':
+          label_rev = proof_node.get('inference_result_rev', 'unknown')
+      else:
+          label_rev = proof_node.get('inference_result_rev', 'unknown') + ' (' + proof_node.get('status') +')'
+        
     lock.acquire()
     if ARGS.print_length == 'full':
         pair_id = doc.get('pair_id', '').strip()
-        result = '{0} {1}'.format(pair_id, label) if len(pair_id) > 0 else label
-        print(result, end='\n', file=sys.stdout)
+        if (ARGS.bidirection and flag_rev):
+          result = '{0} {1}'.format(pair_id, label) if len(pair_id) > 0 else 'A=>B: ' + label + ', B=>A: ' + label_rev
+          print(result, end='\n', file=sys.stdout)
+        else:
+          result = '{0} {1}'.format(pair_id, label) if len(pair_id) > 0 else label
+          print(result, end='\n', file=sys.stdout)
     elif ARGS.print_length == 'short':
         print(label[0], end='', file=sys.stdout)
     lock.release()

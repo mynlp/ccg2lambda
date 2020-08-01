@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 #  Copyright 2016 Pascual Martinez-Gomez
+#  Copyright 2020 Riko Suzuki
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -116,6 +117,10 @@ if [ ! -e "${results_dir}/${sentences_basename}.answer" ]; then
   python scripts/prove.py \
     $parsed_dir/${sentences_basename}.sem.xml \
     --graph_out ${results_dir}/${sentences_basename}.html \
+    --subgoals \
+    --subgoals_out ${results_dir}/${sentences_basename}.subgoals \
+    --timeout 100 \
+    --print both \
     > ${results_dir}/${sentences_basename}.answer \
     2> ${results_dir}/${sentences_basename}.err
   end_time=`python -c 'import time; print(time.time())'`

@@ -36,7 +36,7 @@ class Theorem(object):
     """
 
     def __init__(self, premises, conclusion, axioms=None, dynamic_library_str='',
-                 is_negated=False):
+                 is_negated=False, is_reversed=False):
         self.premises = premises
         self.conclusion = conclusion
         self.axioms = set() if axioms is None else axioms
@@ -44,6 +44,8 @@ class Theorem(object):
         self.inference_result = None
         self.coq_script = None
         self.is_negated = is_negated
+        self.is_reversed = is_reversed
+        self.can_reverse = True
         self.variations = []
         self.doc = None
         self.failure_log = None
@@ -74,7 +76,7 @@ class Theorem(object):
         theorem.doc = doc
         return theorem
 
-    def copy(self, new_premises=None, new_conclusion=None, new_axioms=None, is_negated=None):
+    def copy(self, new_premises=None, new_conclusion=None, new_axioms=None, is_negated=None, is_reversed=None):
         if new_premises is None:
             new_premises = self.premises
         if new_conclusion is None:
@@ -83,9 +85,11 @@ class Theorem(object):
             new_axioms = self.axioms
         if is_negated is None:
             is_negated = self.is_negated
+        if is_reversed is None:
+            is_reversed = self.is_reversed
         theorem = Theorem(
             new_premises, new_conclusion, new_axioms,
-            self.dynamic_library_str, is_negated=is_negated)
+            self.dynamic_library_str, is_negated=is_negated, is_reversed=is_reversed)
         theorem.doc = self.doc
         theorem.timeout = self.timeout
         self.variations.append(theorem)
@@ -98,10 +102,42 @@ class Theorem(object):
             is_negated=not self.is_negated)
         return theorem
 
+    def reverse(self, is_negated=None):
+        if len(self.premises) != 1:
+            self.can_reverse = False
+            return None
+        if is_negated is None:
+            is_negated = self.is_negated
+        theorem = self.copy(
+            [self.conclusion], 
+            self.premises[0], 
+            is_reversed=not self.is_reversed,
+            is_negated=is_negated)
+        return theorem
+
+    @property
+    def all_subgoals(self):
+        lst = []
+        for theorem in self.variations:
+            lst.append(theorem.subgoals)
+        return lst
+
     @property
     def result(self):
         for theorem in self.variations:
+          if not theorem.is_reversed:
             if theorem.result_simple != 'unknown':
+                return theorem.result_simple
+        return 'unknown'
+
+    @property
+    def result_rev(self):
+        for theorem in self.variations:
+          if not self.can_reverse:
+            return None
+          else:
+            if theorem.is_reversed:
+              if theorem.result_simple != 'unknown':
                 return theorem.result_simple
         return 'unknown'
 
@@ -154,26 +190,31 @@ class Theorem(object):
             neg_theorem.prove_simple()
         if abduction and self.result == 'unknown' and self.doc is not None:
             abduction.attempt(self)
-        return
+        rev_theorem = self.reverse()
+        if rev_theorem is None:
+          return
+        else:
+          rev_theorem.prove_simple()
+          if rev_theorem.inference_result is False:
+              rev_neg_theorem = self.reverse(is_negated=True)
+              rev_neg_theorem.prove_simple()
+          return
 
     def get_subgoals(self, abduction=None):
-        coq_script = make_coq_script(
-            self.premises,
-            self.conclusion,
-            self.dynamic_library_str,
-            axioms=self.axioms)
-        current_tactics = get_tactics()
-        debug_tactics = 'Set Firstorder Depth 1. nltac. Set Firstorder Depth 3. repeat nltac_base. Qed'
-        coq_script = coq_script.replace(current_tactics, debug_tactics)
-        output_lines = run_coq_script(coq_script, self.timeout)
-
-        self.subgoals = get_subgoal_lines(output_lines)
+        for theorem in self.variations:
+          if not theorem.is_negated:
+            coq_script = make_coq_script(
+              theorem.premises,
+              theorem.conclusion,
+              theorem.dynamic_library_str,
+              axioms=theorem.axioms)
+            current_tactics = get_tactics()
+            debug_tactics = 'Set Firstorder Depth 1. nltac. Set Firstorder Depth 3. repeat nltac_base. Qed'
+            coq_script = coq_script.replace(current_tactics, debug_tactics)
+            output_lines = run_coq_script(coq_script, self.timeout)
+  
+            theorem.subgoals = get_subgoal_lines(output_lines)
         return
-
-    def reverse(self):
-        if len(self.premises) != 1:
-            return None
-        return self.copy([self.conclusion], self.premises[0])
 
     def to_xml(self):
         ts_node = etree.Element('theorems')
@@ -221,6 +262,7 @@ class Theorem(object):
                 _, failure_log = theorem.prove_debug()
             t_node.set('inference_result', theorem.result_simple)
             t_node.set('is_negated', str(theorem.is_negated))
+            t_node.set('is_reversed', str(theorem.is_reversed))
             s_node = etree.Element('coq_script')
             s_node.text = theorem.coq_script
             t_node.append(s_node)
@@ -435,6 +477,30 @@ class MasterTheorem(Theorem):
         master_theorem.timeout = timeout
         return master_theorem
 
+    @staticmethod
+    def from_doc_rev(doc, args=None):
+        """
+        Build multiple theorems from an XML document produced by semparse.py script.
+        """
+        use_gold_trees = False if args is None else args.gold_trees
+        timeout = 100 if args is None else args.timeout
+        theorems = []
+        for semantics in generate_semantics_from_doc(doc, 100, use_gold_trees):
+            formulas = [sem.xpath('./span[1]/@sem')[0] for sem in semantics]
+            assert formulas and len(formulas) > 1
+            dynamic_library_str, formulas = get_dynamic_library_from_doc(doc, semantics)
+            premises, conclusion = formulas[:-1], formulas[-1]
+            theorem = Theorem(premises, conclusion, set(), dynamic_library_str)
+            theorem = theorem.reverse()
+            labels = [(s.get('ccg_id', None), s.get('ccg_parser', None)) for s in semantics]
+            theorem.labels = labels
+            theorem.doc = doc
+            theorem.timeout = timeout
+            theorems.append(theorem)
+        master_theorem = MasterTheorem(theorems)
+        master_theorem.timeout = timeout
+        return master_theorem
+
     def prove(self, abduction=None):
         for theorem in self.theorems:
             theorem.prove(abduction)
@@ -448,10 +514,24 @@ class MasterTheorem(Theorem):
         return
 
     @property
+    def all_subgoals(self):
+        lst = []
+        for theorem in self.theorems:
+            lst.append(theorem.all_subgoals)
+        return lst
+
+    @property
     def result(self):
         for theorem in self.theorems:
             if theorem.result != 'unknown':
                 return theorem.result
+        return 'unknown'
+
+    @property
+    def result_rev(self):
+        for theorem in self.theorems:
+            if theorem.result_rev != 'unknown':
+                return theorem.result_rev
         return 'unknown'
 
     def get_best_theorem(self):
