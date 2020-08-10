@@ -71,61 +71,68 @@ results_dir="ja_results" # HTML semantic outputs, proving results, etc.
 mkdir -p $plain_dir $parsed_dir $results_dir
 
 # Here we check whether the variable is pointing to the right C&C parser directory.
-parser_dir=`cat ja/jigg_location.txt`
-if [ ! -d "${parser_dir}/jar" ]; then
+jigg_dir=`cat ja/jigg_location.txt`
+if [ ! -d "${jigg_dir}/jar" ]; then
   echo "Parser directory does not exist. Exit."
   exit 1
 fi
-if [ ! -e "${parser_dir}"/jar/ccg-models-*.jar ]; then
+if [ ! -e "${jigg_dir}"/jar/ccg-models-*.jar ]; then
   echo "Japanese CCG models not found. Refer to Jigg instructions to download them."
   exit 1
 fi
-# Set a variable with the command to invoke the CCG parser for Japanese.
-parser_cmd="java -Xmx4g -cp \"${parser_dir}/jar/*\" jigg.pipeline.Pipeline \
-  -annotators ssplit,kuromoji,ccg \
-  -ccg.kBest 10 -file"
+
+parser="depccg"
+depccg_exists=`pip freeze | grep depccg`
+if [ "${depccg_exists}" == "" ]; then
+  echo "depccg parser directory incorrect. Exit."
+  exit 1
+fi
+
+# Copy the input text to plain_dir
+if [ ! -f ${plain_dir}/${sentences_basename} ]; then
+  cp $sentences_fname ${plain_dir}/${sentences_basename}
+fi
 
 # Syntactic parse the sentences into an XML file in $parsed_dir.
-if [ ! -e "${parsed_dir}/${sentences_basename}.jigg.xml" ]; then
+if [ ! -e "${parsed_dir}/${sentences_basename}.depccg.jigg.xml" ]; then
   # C&C parse and conversion into transccg format.
   echo "Syntactic parsing ${sentences_fname}"
   # This will create a file ${sentences_fname}.xml
-  eval $parser_cmd ${sentences_fname} \
-    > ${parsed_dir}/${sentences_basename}.log.std \
-    2> ${parsed_dir}/${sentences_basename}.log.err
-  mv ${sentences_fname}.xml ${parsed_dir}/${sentences_basename}.jigg.xml
-fi
-
-if [ ! -e "${parsed_dir}/${sentences_basename}.xml" ]; then
-  cp ${parsed_dir}/${sentences_basename}.jigg.xml ${parsed_dir}/${sentences_basename}.xml
+  cat ${plain_dir}/${sentences_basename} | \
+  env JIGG=${jigg_dir} depccg_ja \
+    --input-format raw \
+    --annotator jigg \
+    --format jigg_xml \
+  > ${parsed_dir}/${sentences_basename}.depccg.jigg.xml \
+  2> ${parsed_dir}/${sentences_basename}.depccg.log 
 fi
 
 # Semantic parsing the CCG trees in XML.
-if [ ! -e "$parsed_dir/${sentences_basename}.sem.xml" ]; then
-  echo "Semantic parsing $parsed_dir/${sentences_basename}.xml"
+if [ ! -e "$parsed_dir/${sentences_basename}.depccg.sem.xml" ]; then
+  echo "Semantic parsing $parsed_dir/${sentences_basename}.depccg.jigg.xml"
   python scripts/semparse.py \
-    $parsed_dir/${sentences_basename}.xml \
+    $parsed_dir/${sentences_basename}.depccg.jigg.xml \
     $category_templates \
-    $parsed_dir/${sentences_basename}.sem.xml \
+    $parsed_dir/${sentences_basename}.depccg.sem.xml \
     --arbi-types \
-    2> $parsed_dir/${sentences_basename}.sem.err
+    2> $parsed_dir/${sentences_basename}.depccg.sem.err
 fi
 
 # Judge entailment with a theorem prover (Coq, at the moment).
-if [ ! -e "${results_dir}/${sentences_basename}.answer" ]; then
+if [ ! -e "${results_dir}/${sentences_basename}.depccg.answer" ]; then
   start_time=`python -c 'import time; print(time.time())'`
   python scripts/prove.py \
-    $parsed_dir/${sentences_basename}.sem.xml \
-    --graph_out ${results_dir}/${sentences_basename}.html \
+    $parsed_dir/${sentences_basename}.depccg.sem.xml \
+    --graph_out ${results_dir}/${sentences_basename}.depccg.html \
     --subgoals \
-    --subgoals_out ${results_dir}/${sentences_basename}.subgoals \
+    --subgoals_out ${results_dir}/${sentences_basename}.depccg.subgoals \
     --timeout 100 \
     --print both \
-    > ${results_dir}/${sentences_basename}.answer \
-    2> ${results_dir}/${sentences_basename}.err
+    > ${results_dir}/${sentences_basename}.depccg.answer \
+    2> ${results_dir}/${sentences_basename}.depccg.err
   end_time=`python -c 'import time; print(time.time())'`
   echo "${end_time} - ${start_time}" | \
     bc -l | awk '{printf("%.2f\n", $1)}' \
-    > ${results_dir}/${sentences_basename}.time
+    > ${results_dir}/${sentences_basename}.depccg.time
 fi
-echo "Judged entailment for $parsed_dir/${sentences_basename}.sem.xml "`cat ${results_dir}/${sentences_basename}.answer`
+echo "Judged entailment for $parsed_dir/${sentences_basename}.depccg.sem.xml "`cat ${results_dir}/${sentences_basename}.depccg.answer`
