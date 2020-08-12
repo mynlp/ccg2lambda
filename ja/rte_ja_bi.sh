@@ -184,12 +184,12 @@ function select_answer() {
   else
     :
   fi
-#  if [ ! -z "${prediction_fname}" ]; then
-#    cp ${parsed_dir}/${prediction_fname}.jigg.xml ${parsed_dir}/${sentences_basename}.xml
-#    cp ${parsed_dir}/${prediction_fname}.sem.xml ${parsed_dir}/${sentences_basename}.sem.xml
-#    cp ${results_dir}/${prediction_fname}.answer ${results_dir}/${sentences_basename}.answer
-#    cp ${results_dir}/${prediction_fname}.html ${results_dir}/${sentences_basename}.html
-#  fi
+  if [ ! -z "${prediction_fname}" ]; then
+    cp ${parsed_dir}/${prediction_fname}.jigg.xml ${parsed_dir}/${sentences_basename}.xml
+    cp ${parsed_dir}/${prediction_fname}.sem.xml ${parsed_dir}/${sentences_basename}.sem.xml
+    cp ${results_dir}/${prediction_fname}.answer ${results_dir}/${sentences_basename}.answer
+    cp ${results_dir}/${prediction_fname}.html ${results_dir}/${sentences_basename}.html
+  fi
 }
 
 # Set the current answer
@@ -208,9 +208,9 @@ if [ ! -e ${parsed_dir}/${sentences_basename}.${parser_name}.sem.xml ]; then
 fi
 if [ ! -e ${results_dir}/${sentences_basename}.${parser_name}.answer ]; then
   proving $parser_name $sentences_basename
-  select_answer ${parser_name}
-fi
-if [ ! -e ${results_dir}/${sentences_basename}.${parser_name}.answer ]; then
+#  select_answer ${parser_name}
   python scripts/visualize.py ${parsed_dir}/${sentences_basename}.${parser_name}.sem.xml \
   > ${results_dir}/${sentences_basename}.${parser_name}.html
+else
+  echo "judged entailment for $parsed_dir/${sentences_basename}.sem.xml "`cat ${results_dir}/${sentences_basename}.${parser_name}.answer`
 fi
