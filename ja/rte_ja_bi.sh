@@ -193,11 +193,11 @@ function select_answer() {
 }
 
 # Set the current answer
+parser_name=$3
 current_answer="unknown"
-prediction_fname="${sentences_basename}.jigg"
+prediction_fname="${sentences_basename}.${parser_name}"
 
 # CCG parsing, semantic parsing and theorem proving
-parser_name=$3
 if [ ! -e ${parsed_dir}/${sentences_basename}.${parser_name}.jigg.xml ]; then
   echo "${parser_name} parsing ${plain_dir}/${sentences_basename}"
   parse_$parser_name $sentences_basename
