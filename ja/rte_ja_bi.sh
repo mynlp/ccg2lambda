@@ -151,7 +151,7 @@ function proving() {
       --graph_out ${results_dir}/${sentences_basename}.${parser}.html \
       --proof ${results_dir}/${sentences_basename}.${parser}.coq.xml \
       --subgoals \
-      --subgoals_out ${results_dir}/${sentences_basename}.subgoals \
+      --subgoals_out ${results_dir}/${sentences_basename}.${parser}.subgoals \
       --bidirection \
       --print both \
       > ${results_dir}/${sentences_basename}.${parser}.answer \
@@ -161,7 +161,7 @@ function proving() {
   proof_end_time=`python -c 'import time; print(time.time())'`
   proving_time=`echo "${proof_end_time} - ${start_time}" | bc -l | \
        awk '{printf("%.2f\n",$1)}'`
-  echo $proving_time > ${results_dir}/${sentences_basename}.time
+  echo $proving_time > ${results_dir}/${sentences_basename}.${parser}.time
 }
 
 function select_answer() {
@@ -184,12 +184,12 @@ function select_answer() {
   else
     :
   fi
-  if [ ! -z "${prediction_fname}" ]; then
-    cp ${parsed_dir}/${prediction_fname}.jigg.xml ${parsed_dir}/${sentences_basename}.xml
-    cp ${parsed_dir}/${prediction_fname}.sem.xml ${parsed_dir}/${sentences_basename}.sem.xml
-    cp ${results_dir}/${prediction_fname}.answer ${results_dir}/${sentences_basename}.answer
-    cp ${results_dir}/${prediction_fname}.html ${results_dir}/${sentences_basename}.html
-  fi
+#  if [ ! -z "${prediction_fname}" ]; then
+#    cp ${parsed_dir}/${prediction_fname}.jigg.xml ${parsed_dir}/${sentences_basename}.xml
+#    cp ${parsed_dir}/${prediction_fname}.sem.xml ${parsed_dir}/${sentences_basename}.sem.xml
+#    cp ${results_dir}/${prediction_fname}.answer ${results_dir}/${sentences_basename}.answer
+#    cp ${results_dir}/${prediction_fname}.html ${results_dir}/${sentences_basename}.html
+#  fi
 }
 
 # Set the current answer
