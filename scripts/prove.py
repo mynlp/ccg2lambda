@@ -114,6 +114,7 @@ def main(args = None):
             fout.write(html_str)
 
     if ARGS.subgoals_out:
+      if len(SUBGOALS) != 0:
         subgoals = SUBGOALS[0]
         AB_output = ARGS.subgoals_out
         AB_subgoals = subgoals[0]
