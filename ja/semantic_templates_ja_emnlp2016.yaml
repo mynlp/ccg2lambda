@@ -77,6 +77,12 @@
   semantics: \S1 S2 C1 C2 K. (S1(C1,C2,K) & S2(C1,C2,K))
   child0_category: S
 
+# S\NP ==> (S\NP)/(S\NP)
+- category: (S\NP)/(S\NP)
+  rule: ADV0
+  semantics: \S1 S2 Q C1 C2 K. (S1(Q,C1,C2,K) & S2(Q,C1,C2,K))
+  child0_category: S\NP
+
 
 ##### Binary lexical rules #####
 
@@ -325,7 +331,6 @@
   child0_category: S\NP[case=ga]
   child1_base: れる
 
-
 ##### Semantic Templates #####
 
 # Templates for NPs
@@ -365,6 +370,10 @@
   semantics: \E S1 S2 C1 C2 K. S2(C1,C2,\J e1.K(\e2.(J(e2) & S1(\x e T.(T(e) = x),\x e T.(T(e) = x),\J e3.(J(e3) & (e3 = e2)))),e1))
 
 # Templates for VPs
+- category: S\NP[case=nc]
+  semantics: \E Q C1 C2 K. Q(\I.I, \x.exists e.(K(E,e) & C1(x,e,Nom)))
+  coq_type: Event -> Prop
+  
 - category: S\NP[case=ga]
   semantics: \E Q C1 C2 K. Q(\I.I, \x.exists e.(K(E,e) & C1(x,e,Nom)))
   coq_type: Event -> Prop
@@ -379,6 +388,22 @@
 
 - category: S\NP[case=to]
   semantics: \E Q C1 C2 K. exists e.(K(E,e) & AccI(e,Q(\x.True, \x.True)))
+  coq_type: Event -> Prop
+
+- category: S\NP[case=to]
+  semantics: \E Q C1 C2 K. exists e.(K(E,e) & AccI(e,Q(\x.True, \x.True)))
+  coq_type: Event -> Prop
+
+- category: S\NP[case=to]
+  semantics: \E Q C1 C2 K. exists e.(K(E,e) & AccI(e,Q(\x.True, \x.True)))
+  coq_type: Event -> Prop
+
+- category: (S\NP)\NP
+  semantics: \E Q2 Q1 C1 C2 K. Q1(\I.I, \x1.Q2(\I.I, \x2.exists e.(K(E,e) & C1(x1,e,Nom) & C2(x2,e,Acc))))
+  coq_type: Event -> Prop
+
+- category: (S\NP[case=ni])\NP[case=o]
+  semantics: \E Q2 Q1 C1 C2 K. Q1(\I.I, \x1.Q2(\I.I, \x2.exists e.(K(E,e) & C1(x1,e,Dat) & C2(x2,e,Acc))))
   coq_type: Event -> Prop
 
 - category: (S\NP[case=ga])\NP[case=o]
@@ -581,6 +606,10 @@
 # Lexical entries for particles and other expressions
 - category: NP\NP
   semantics: \E Q. Q
+  pos: 助詞
+
+- category: (NP/NP)\NP
+  semantics: \E Q1 Q2 N F. (Q1(N,F) & Q2(N,F))
   pos: 助詞
 
 - category: NP[case=to]\S
