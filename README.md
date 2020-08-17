@@ -1,3 +1,10 @@
+## Requirements
+
+* Python >= 3.6.0
+* lxml == 4.2.5
+* nltk == 3.4.5
+* Coq == 8.6
+
 ## Extract unproven terms
 
 ```
