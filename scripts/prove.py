@@ -197,7 +197,7 @@ def prove_doc_ind(document_ind):
         proof_node.set('inference_result', inference_result)
         inference_result_rev = theorem.result_rev
         if inference_result_rev is None:
-          flag_rev = Flase
+          flag_rev = False
           proof_node.set('inference_result_rev', 'unknown')
         else:
           flag_rev = True
