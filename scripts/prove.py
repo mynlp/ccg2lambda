@@ -121,16 +121,14 @@ def main(args = None):
 
         if (ARGS.bidirection and flag_rev):
           BA_subgoals = subgoals[2]
-          if BA_subgoals is None:
-            BA_subgoals = []
-          with codecs.open(ARGS.subgoals_out+'1', 'w', 'utf-8') as fout:
-            fout.write('\n'.join(BA_subgoals))
-          AB_output = ARGS.subgoals_out+'0'
+          if BA_subgoals is not None:
+            with codecs.open(ARGS.subgoals_out+'1', 'w', 'utf-8') as fout:
+              fout.write('\n'.join(BA_subgoals))
+            AB_output = ARGS.subgoals_out+'0'
 
-        if AB_subgoals is None:
-          AB_subgoals = []
-        with codecs.open(AB_output, 'w', 'utf-8') as fout:
-          fout.write('\n'.join(AB_subgoals))
+        if AB_subgoals is not None:
+          with codecs.open(AB_output, 'w', 'utf-8') as fout:
+            fout.write('\n'.join(AB_subgoals))
 #        for i, proof_node in enumerate(proof_nodes):
 #          for j, p in enumerate(proof_node):
 #            subgoals.extend(p.xpath('//subgoals'))
