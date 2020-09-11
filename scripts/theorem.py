@@ -269,6 +269,8 @@ class Theorem(object):
             f_node = make_failure_log_node(failure_log)
             t_node.append(f_node)
             g_node = etree.Element('subgoals')
+            if theorem.subgoals is None:
+              theorem.subgoals = []
             g_node.text = ','.join(theorem.subgoals)
             t_node.append(g_node)
         return ts_node
