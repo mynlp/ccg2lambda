@@ -185,15 +185,14 @@ def prove_doc_ind(document_ind):
     doc = DOCS[document_ind]
     proof_node = etree.Element('proof')
     inference_result = 'unknown'
+    flag_rev = False
     try:
         theorem = prove_doc(doc, ABDUCTION, ARGS)
         proof_node.set('status', 'success')
         inference_result = theorem.result
         proof_node.set('inference_result', inference_result)
         inference_result_rev = theorem.result_rev
-        if inference_result_rev is None:
-          flag_rev = False
-        else:
+        if inference_result_rev is not None:
           flag_rev = True
           proof_node.set('inference_result_rev', inference_result_rev)
         SUBGOALS = theorem.all_subgoals
