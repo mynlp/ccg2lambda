@@ -192,7 +192,10 @@ def prove_doc_ind(document_ind):
         inference_result = theorem.result
         proof_node.set('inference_result', inference_result)
         inference_result_rev = theorem.result_rev
-        if inference_result_rev is not None:
+        if inference_result_rev is None:
+          flag_rev = Flase
+          proof_node.set('inference_result_rev', 'unknown')
+        else:
           flag_rev = True
           proof_node.set('inference_result_rev', inference_result_rev)
         SUBGOALS = theorem.all_subgoals
