@@ -107,6 +107,7 @@ nltk2coq_quantifier = {'exists' : 'exists',
                        'forall' : 'forall'}
 def coq_string_quantified_expr(expression):
     variables = [expression.variable]
+    # ここで variableの変換を仕込む (unique nameにする)
     term = expression.term
     while term.__class__ == expression.__class__:
         variables.append(term.variable)

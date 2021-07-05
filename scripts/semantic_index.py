@@ -59,6 +59,8 @@ class SemanticIndex(object):
         else:
             semantic_rule = relevant_rules.pop()
             semantic_template = semantic_rule.semantics
+        # pos == NNP か？
+        # start, span でターゲットを検出する
         # Apply template to relevant (current, child or children) CCG node(s).
         if len(ccg_tree) == 0:
             base = rule_pattern.attributes.get('base')
@@ -69,6 +71,7 @@ class SemanticIndex(object):
                       rule_pattern.attributes)
             predicate_string = base if base != '*' else surf
             predicate = lexpr(predicate_string)
+            # 木の一番上。Semantic Template が _smith とかに適用される。
             semantics = semantic_template(predicate).simplify()
             # Assign coq types.
             if semantic_rule != None and 'coq_type' in semantic_rule.attributes:

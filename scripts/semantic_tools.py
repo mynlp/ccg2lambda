@@ -112,7 +112,7 @@ def prove_doc(doc, abduction=False):
         knowledge_axioms = build_knowledge_axioms(doc.xpath('//ccg'))
     else:
         knowledge_axioms = ""
-  
+
     dynamic_library_str += '\n\n' + knowledge_axioms
     premises, conclusion = formulas[:-1], formulas[-1]
     inference_result, coq_script = \

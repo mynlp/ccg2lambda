@@ -15,7 +15,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import cgi
+import html
 import re
 
 from ccg2lambda_tools import build_ccg_tree
@@ -44,7 +44,7 @@ def get_fraction_mathml(numerator, denominator, line_thickness = 3,
                + "  <mrow>" + denominator + "</mrow>\n" \
                + "</mfrac>\n"
     if rule:
-        mathml_str = "<mrow><mo>" + cgi.escape(rule) + "</mo>" + mathml_str + "</mrow>"
+        mathml_str = "<mrow><mo>" + html.escape(rule) + "</mo>" + mathml_str + "</mrow>"
     return mathml_str
 
 def get_category_mathml(category):
@@ -137,7 +137,7 @@ def convert_doc_to_mathml(doc, verbatim_strings = [], use_gold_trees=False):
     if not sem_trees:
         sem_trees = [None] * len(ccg_trees)
     tokens = doc.xpath('//tokens')
-    assert len(ccg_trees) == len(tokens) 
+    assert len(ccg_trees) == len(tokens)
     num_hypotheses = len(ccg_trees) - 1
     sentence_ids = ["Premise {0}: ".format(i + 1) for i in range(num_hypotheses)]
     sentence_ids.append("Conclusion: ")
