@@ -216,7 +216,6 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = '', 
       input_coq_script, \
       shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output_lines = [str(line).strip().split() for line in process.stdout.readlines()]
-    breakpoint()
     return is_theorem_defined(output_lines), input_coq_script
 
 # Given a string reprsenting the logical interpretation of the conclusion,

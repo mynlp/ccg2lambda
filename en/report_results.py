@@ -164,6 +164,7 @@ def main(args = None):
                      'comparatives',
                      'attitudes',
                      'verbs',
+                     'nominal_anaphora',
                      'total']
 
     system_accuracies = compare_answers(gold_answers, system_answers, section_names)

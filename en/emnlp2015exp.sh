@@ -17,9 +17,9 @@
 # This script evaluates a list of templates that assign semantics
 # to nodes of CCG derivations of fracas premises and hypotheses.
 # Please, use it as:
-# 
+#
 # ./en/emnlp2015exp.sh <semantic_template.yaml> <dataset>
-# 
+#
 # E.g.
 # ./en/emnlp2015exp.sh semantic_templates_en.yaml fracas.xml
 #
@@ -121,6 +121,10 @@ for f in ${plain_dir}/*.tok; do
     python en/candc2transccg.py ${parsed_dir}/${base_filename}.candc.xml \
       > ${parsed_dir}/${base_filename/.tok/}.xml
   fi
+  if [ ! -e "${parsed_dir}/${base_filename/.coref/}.json" ]; then
+    python scripts/coref.py $f \
+      > ${parsed_dir}/${base_filename/.coref/}.json
+  fi
 done
 echo
 
@@ -142,6 +146,8 @@ for f in ${plain_dir}/*.tok; do
       $parsed_dir/${base_filename/.tok/.xml} \
       $category_templates \
       $parsed_dir/${base_filename/.tok/.sem.xml} \
+      --coref $parsed_dir/${base_filename/.tok/.tok.json} \
+      --replacements $results_dir/${base_filename/.tok/.rep.json} \
       --arbi-types \
       2> $parsed_dir/${base_filename/.tok/.sem.err}
   fi
@@ -149,6 +155,8 @@ for f in ${plain_dir}/*.tok; do
     python scripts/prove.py \
       $parsed_dir/${base_filename/.tok/.sem.xml} \
     --graph_out ${results_dir}/${base_filename/.tok/.html} \
+    --coref $parsed_dir/${base_filename/.tok/.tok.json} \
+    --replacements $results_dir/${base_filename/.tok/.rep.json} \
     --abduction \
     > ${results_dir}/${base_filename/.tok/.answer} \
     2> ${results_dir}/${base_filename/.tok/.err}
