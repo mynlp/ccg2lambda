@@ -67,7 +67,7 @@ def normalize_tokens(tokens):
             token.set('surf', surf_normalized)
     return tokens
 
-def assign_semantics_to_ccg(ccg_xml, semantic_index, tree_index=1, coref_sentence=[], sentence_num=0, replacements=[]):
+def assign_semantics_to_ccg(ccg_xml, semantic_index, tree_index=1, coref_sentence=[], sentence_num=0, replacements={}):
     """
     This is the key function. It builds first an XML tree structure with
     the CCG tree, and then assigns semantics (lambda expressions) to each node

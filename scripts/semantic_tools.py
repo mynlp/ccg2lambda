@@ -23,12 +23,13 @@ import subprocess
 
 from nltk import Tree
 from nltk.sem.logic import (typecheck, read_type, ConstantExpression,
-  AbstractVariableExpression, InconsistentTypeHierarchyException)
+  AbstractVariableExpression, InconsistentTypeHierarchyException, AndExpression)
 
 from knowledge import get_lexical_relations, get_tokens_from_ccg_tree
 from logic_parser import lexpr
 from nltk2coq import normalize_interpretation
 from semantic_types import get_dynamic_library_from_doc
+from coref_utils import *
 
 def build_knowledge_axioms(ccg_trees):
     if ccg_trees is None:
@@ -95,7 +96,7 @@ def get_formulas_from_doc(doc):
     formulas = [f for f in formulas if f is not None]
     return formulas
 
-def prove_doc(doc, abduction=False):
+def prove_doc(doc, abduction=False, coref=None, replacements=None):
     """
     Retrieve from trees the logical formulas and the types
     (dynamic library).
@@ -116,7 +117,7 @@ def prove_doc(doc, abduction=False):
     dynamic_library_str += '\n\n' + knowledge_axioms
     premises, conclusion = formulas[:-1], formulas[-1]
     inference_result, coq_script = \
-      prove_statements(premises, conclusion, dynamic_library_str)
+      prove_statements(premises, conclusion, dynamic_library_str, coref, replacements)
     coq_scripts.append(coq_script)
     if inference_result:
         inference_result_str = 'yes'
@@ -166,15 +167,46 @@ try:
 except:
     pass
 
+def resolve_anaphora(formula, tag, coref, replacements):
+    for h_span in coref[tag]:
+        main_id = span_to_identifier(h_span['main'])
+        if replacements is not None and  main_id in replacements[tag]:
+            eq_var = replacements[tag][main_id]
+        else:
+            eq_var = find_func_arg(formula, main_id)
+        for mention in h_span['mentions']:
+            mention_id = span_to_identifier(mention)
+            formula = replace_with_equality(formula, mention_id, eq_var)
+            if replacements is not None and main_id in replacements[tag]:
+                formula = replace_const_back(formula, main_id, eq_var)
+            else:
+                formula = erace_predicate(formula, main_id)
+                formula = rescope_quantifier(formula, eq_var)
+    return formula
+
 # This function receives two arguments. The first one is a list of the logical
 # interpretations of the premises (only one interpretation per premise).
 # The second argument is a string with a single interpretation of the conclusion.
-def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
+def prove_statements(premise_interpretations, conclusion, dynamic_library = '', coref=None, replacements=None):
     # Transform these interpretations into coq format:
     #   interpretation1 -> interpretation2 -> ... -> conclusion
-    interpretations = premise_interpretations + [conclusion]
-    interpretations = [normalize_interpretation(interp) for interp in interpretations]
-    coq_formulae = ' -> '.join(interpretations)
+
+    # lexpr.replace (make var names different)
+    # extract ver names
+    # remove statements
+    if coref is None:
+        interpretations = premise_interpretations + [conclusion]
+        interpretations = [normalize_interpretation(interp) for interp in interpretations]
+        coq_formulae = ' -> '.join(interpretations)
+    else:
+        premise_formulae = [rename_bound_vars(lexpr(premise)) for premise in premise_interpretations]
+        conclusion_formula = rename_bound_vars(lexpr(conclusion))
+        premise_formula = premise_formulae[0]
+        for i in range(1, len(premise_formulae)):
+            premise_formula = AndExpression(premise_formula, premise_formulae[i])
+        premise_formula = resolve_anaphora(premise_formula, 'hypothesis', coref, replacements)
+        conclusion_formula = resolve_anaphora(conclusion_formula, 'conclusion', coref, replacements)
+        coq_formulae = f'{normalize_interpretation(premise_formula)} -> {normalize_interpretation(conclusion_formula)}'
     # Input these formulae to coq and retrieve the results.
     input_coq_script = ('echo \"Require Export coqlib.\n'
         '{0}\nTheorem t1: {1}. {2}.\" | coqtop').format(
@@ -184,6 +216,7 @@ def prove_statements(premise_interpretations, conclusion, dynamic_library = ''):
       input_coq_script, \
       shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output_lines = [str(line).strip().split() for line in process.stdout.readlines()]
+    breakpoint()
     return is_theorem_defined(output_lines), input_coq_script
 
 # Given a string reprsenting the logical interpretation of the conclusion,

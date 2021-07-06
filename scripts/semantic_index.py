@@ -48,7 +48,7 @@ class SemanticIndex(object):
                 relevant_rules.append(rule)
         return relevant_rules
 
-    def get_semantic_representation(self, ccg_tree, tokens, coref_sentence=[], sentence_num=0, replacements=[]):
+    def get_semantic_representation(self, ccg_tree, tokens, coref_sentence=[], sentence_num=0, replacements={}):
         rule_pattern = make_rule_pattern_from_ccg_node(ccg_tree, tokens)
         ats = rule_pattern.attributes
         # Obtain the semantic template.

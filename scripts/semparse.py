@@ -77,8 +77,8 @@ def main(args = None):
     else:
         with open(args.coref, 'r') as f:
             coref = json.load(f)
-    replacements_h = []
-    replacements_c = []
+    replacements_h = {}
+    replacements_c = {}
     for i, sentence in enumerate(root.findall('.//sentence')):
         sem_node = etree.Element('semantics')
         replacements = replacements_h if i < len(root.findall('.//sentence')) else replacements_c

@@ -24,6 +24,7 @@ from lxml import etree
 import os
 import sys
 import textwrap
+import json
 
 from semantic_tools import prove_doc
 from visualization_tools import convert_doc_to_mathml
@@ -40,21 +41,31 @@ def main(args = None):
     parser.add_argument("sem", help="XML input filename with semantics")
     parser.add_argument("--graph_out", nargs='?', type=str, default="",
         help="HTML graphical output filename.")
+    parser.add_argument("--coref", type=str, default="")
+    parser.add_argument("--replacements", type=str, default="")
     parser.add_argument("--abduction", action="store_true", default=False)
     parser.add_argument("--gold_trees", action="store_true", default=False)
     args = parser.parse_args()
-      
+
+    coref, replacements = None, None
+    if args.coref != "":
+        with open(args.coref, 'r') as f:
+            coref = json.load(f)
+    if args.replacements != "":
+        with open(args.replacements, 'r') as f:
+            replacements = json.load(f)
+
     if not os.path.exists(args.sem):
         print('File does not exist: {0}'.format(args.sem), file=sys.stderr)
         parser.print_help(file=sys.stderr)
         sys.exit(1)
-    
+
     logging.basicConfig(level=logging.WARNING)
 
     parser = etree.XMLParser(remove_blank_text=True)
     doc = etree.parse(args.sem, parser)
 
-    inference_result, coq_scripts = prove_doc(doc, args.abduction)
+    inference_result, coq_scripts = prove_doc(doc, args.abduction, coref, replacements)
     print(inference_result, file=sys.stdout)
 
     if args.graph_out:
