@@ -67,7 +67,7 @@ def normalize_tokens(tokens):
             token.set('surf', surf_normalized)
     return tokens
 
-def assign_semantics_to_ccg(ccg_xml, semantic_index, tree_index=1):
+def assign_semantics_to_ccg(ccg_xml, semantic_index, tree_index=1, coref_sentence=[], sentence_num=0, replacements=[]):
     """
     This is the key function. It builds first an XML tree structure with
     the CCG tree, and then assigns semantics (lambda expressions) to each node
@@ -83,7 +83,7 @@ def assign_semantics_to_ccg(ccg_xml, semantic_index, tree_index=1):
     ccg_tree = build_ccg_tree(ccg_flat_tree)
     tokens = copy.deepcopy(ccg_xml.find('.//tokens'))
     tokens = normalize_tokens(tokens)
-    assign_semantics(ccg_tree, semantic_index, tokens)
+    assign_semantics(ccg_tree, semantic_index, tokens, coref_sentence, sentence_num, replacements)
     return ccg_tree
 
 def is_forward_operation(ccg_tree):
@@ -133,7 +133,7 @@ def type_raise(function, order = 1):
         type_raised_function = type_raiser(function).simplify()
     return type_raised_function
 
-def combine_children_exprs(ccg_tree, tokens, semantic_index):
+def combine_children_exprs(ccg_tree, tokens, semantic_index, coref_sentence, sentence_num, replacements):
     """
     Perform forward/backward function application/combination.
     """
@@ -146,11 +146,11 @@ def combine_children_exprs(ccg_tree, tokens, semantic_index):
     if coq_types_left and coq_types_right:
         coq_types = coq_types_left + ' ||| ' + coq_types_right
     elif coq_types_left:
-        coq_types = coq_types_left 
+        coq_types = coq_types_left
     else:
         coq_types = coq_types_right
     ccg_tree.set('coq_type', coq_types)
-    semantics = semantic_index.get_semantic_representation(ccg_tree, tokens)
+    semantics = semantic_index.get_semantic_representation(ccg_tree, tokens, coref_sentence, sentence_num, replacements)
     if semantics:
         ccg_tree.set('sem', str(semantics))
         return None
@@ -174,22 +174,22 @@ def combine_children_exprs(ccg_tree, tokens, semantic_index):
     ccg_tree.set('sem', str(evaluation))
     return None
 
-def assign_semantics(ccg_tree, semantic_index, tokens):
+def assign_semantics(ccg_tree, semantic_index, tokens, coref_sentence, sentence_num, replacements):
     """
     Visit recursively the CCG tree in depth-first order, assigning lambda expressions
     (semantics) to each node.
     """
     category = ccg_tree.attrib['category']
     if len(ccg_tree) == 0:
-        semantics = semantic_index.get_semantic_representation(ccg_tree, tokens)
+        semantics = semantic_index.get_semantic_representation(ccg_tree, tokens, coref_sentence, sentence_num, replacements)
         ccg_tree.set('sem', str(semantics))
         return
     if len(ccg_tree) == 1:
-        assign_semantics(ccg_tree[0], semantic_index, tokens)
-        semantics = semantic_index.get_semantic_representation(ccg_tree, tokens)
+        assign_semantics(ccg_tree[0], semantic_index, tokens, coref_sentence, sentence_num, replacements)
+        semantics = semantic_index.get_semantic_representation(ccg_tree, tokens, coref_sentence, sentence_num, replacements)
         ccg_tree.set('sem', str(semantics))
         return
     for child in ccg_tree:
-        assign_semantics(child, semantic_index, tokens)
-    combine_children_exprs(ccg_tree, tokens, semantic_index)
+        assign_semantics(child, semantic_index, tokens, coref_sentence, sentence_num, replacements)
+    combine_children_exprs(ccg_tree, tokens, semantic_index, coref_sentence, sentence_num, replacements)
     return

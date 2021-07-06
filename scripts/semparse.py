@@ -24,6 +24,7 @@ from lxml import etree
 import os
 import sys
 import textwrap
+import json
 
 from nltk.sem.logic import LogicalExpressionException
 
@@ -52,33 +53,49 @@ def main(args = None):
     parser.add_argument("ccg")
     parser.add_argument("templates")
     parser.add_argument("sem")
+    parser.add_argument("--coref", type=str, default="")
+    parser.add_argument("--replacements", type=str, default="")
     parser.add_argument("--arbi-types", action="store_true", default=False)
     parser.add_argument("--gold_trees", action="store_true", default=True)
     args = parser.parse_args()
-      
+
     if not os.path.exists(args.templates):
         print('File does not exist: {0}'.format(args.templates))
         sys.exit(1)
     if not os.path.exists(args.ccg):
         print('File does not exist: {0}'.format(args.ccg))
         sys.exit(1)
-    
+
     logging.basicConfig(level=logging.WARNING)
 
     semantic_index = SemanticIndex(args.templates)
 
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.parse(args.ccg, parser)
-
-    for sentence in root.findall('.//sentence'):
+    if args.coref == "":
+        coref = {'hypothesis': [], 'conclusion': []}
+    else:
+        with open(args.coref, 'r') as f:
+            coref = json.load(f)
+    replacements_h = []
+    replacements_c = []
+    for i, sentence in enumerate(root.findall('.//sentence')):
         sem_node = etree.Element('semantics')
+        replacements = replacements_h if i < len(root.findall('.//sentence')) else replacements_c
         try:
             sem_node.set('status', 'success')
             tree_index = 1
             if args.gold_trees:
                 tree_index = int(sentence.get('gold_tree', '0')) + 1
+            if i < len(root.findall('.//sentence')) - 1:
+                coref_sentence = coref['hypothesis']
+                sentence_num = i
+            else:
+                coref_sentence = coref['conclusion']
+                sentence_num = 0
+
             sem_tree = assign_semantics_to_ccg(
-                sentence, semantic_index, tree_index)
+                sentence, semantic_index, tree_index, coref_sentence, sentence_num, replacements)
             sem_node.set('root',
                 sentence.xpath('./ccg[{0}]/@root'.format(tree_index))[0])
             filter_attributes(sem_tree)
@@ -86,6 +103,9 @@ def main(args = None):
         except LogicalExpressionException:
             sem_node.set('status', 'failed')
         sentence.append(sem_node)
+    if args.replacements != "":
+        with open(args.replacements, 'w') as f:
+            json.dump({'hypothesis': replacements_h, 'conclusion': replacements_c}, f)
 
     root_xml_str = serialize_tree(root)
     with codecs.open(args.sem, 'wb') as fout:

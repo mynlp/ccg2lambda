@@ -24,6 +24,7 @@ from etree_utils import get_node_at_path
 from logic_parser import lexpr
 from normalization import normalize_token
 from semantic_rule import SemanticRule
+from coref_utils import *
 
 class SemanticIndex(object):
     def __init__(self, contents):
@@ -47,8 +48,9 @@ class SemanticIndex(object):
                 relevant_rules.append(rule)
         return relevant_rules
 
-    def get_semantic_representation(self, ccg_tree, tokens):
+    def get_semantic_representation(self, ccg_tree, tokens, coref_sentence=[], sentence_num=0, replacements=[]):
         rule_pattern = make_rule_pattern_from_ccg_node(ccg_tree, tokens)
+        ats = rule_pattern.attributes
         # Obtain the semantic template.
         relevant_rules = self.get_relevant_rules(rule_pattern)
         if not relevant_rules and len(ccg_tree) == 2:
@@ -59,8 +61,6 @@ class SemanticIndex(object):
         else:
             semantic_rule = relevant_rules.pop()
             semantic_template = semantic_rule.semantics
-        # pos == NNP か？
-        # start, span でターゲットを検出する
         # Apply template to relevant (current, child or children) CCG node(s).
         if len(ccg_tree) == 0:
             base = rule_pattern.attributes.get('base')
@@ -69,10 +69,25 @@ class SemanticIndex(object):
               + '"base" and "surf". CCG node: {0}\nrule_pattern attributes: {1}'\
               .format(etree.tostring(ccg_tree, pretty_print=True),
                       rule_pattern.attributes)
+            # pos == NNP か？
+            # start, span でターゲットを検出する
+            # hypothesis/conclusionでターゲットを付け替えておけばあとで復元できる
+            # 一般名詞だったら新しい述語をつける
+            # TODO: 固有名詞だったら?置き換える、ただし置き換えは保存しておいてあとでAxiomとして使う
             predicate_string = base if base != '*' else surf
             predicate = lexpr(predicate_string)
             # 木の一番上。Semantic Template が _smith とかに適用される。
             semantics = semantic_template(predicate).simplify()
+            if rule_pattern.attributes['category'] in ['N', 'NP']:
+                start = int(rule_pattern.attributes['start'])
+                main = main_span(coref_sentence, start, sentence_num)
+                mention = mention_span(coref_sentence, start, sentence_num)
+
+                if main is not None:
+                    replace_main(semantics, main, replacements)
+
+                if mention is not None:
+                    replace_mention(semantics, mention)
             # Assign coq types.
             if semantic_rule != None and 'coq_type' in semantic_rule.attributes:
                 coq_types = semantic_rule.attributes['coq_type']
