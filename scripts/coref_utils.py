@@ -47,8 +47,12 @@ def replace_main(logic_expr, span, replacements):
 def replace_mention(logic_expr, span):
     if isinstance(logic_expr, LambdaExpression):
         function_name = ConstantExpression(Variable(span_to_identifier(span)))
-        function_arg = IndividualVariableExpression(logic_expr.term.term.variable)
-        logic_expr.term.term.term = AndExpression(ApplicationExpression(function_name, function_arg), logic_expr.term.term.term)
+        if isinstance(logic_expr.term, LambdaExpression):
+            function_arg = IndividualVariableExpression(logic_expr.term.term.variable)
+            logic_expr.term.term.term = AndExpression(ApplicationExpression(function_name, function_arg), logic_expr.term.term.term)
+        else:
+            function_arg = IndividualVariableExpression(logic_expr.variable)
+            logic_expr.term = AndExpression(ApplicationExpression(function_name, function_arg), logic_expr.term)
     else:
         raise Exception
 
