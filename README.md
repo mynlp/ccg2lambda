@@ -4,6 +4,13 @@ This is a tool to derive formal semantic representations of
 natural language sentences given CCG derivation trees and semantic templates.
 
 ## Installation
+If you can use Docker, [this Docker image](https://hub.docker.com/r/masashiy/ccg2lambda) is highly recommended.
+```bash
+docker pull masashiy/ccg2lambda
+```
+The installation guide below and our Dockerfile are not maintained now.
+
+----
 
 In order to run most part of this software, it is necessary to install python3,
 nltk 3, lxml, simplejson and yaml python libraries. I recommend to use a python virtual environment,
