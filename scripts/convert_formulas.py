@@ -60,15 +60,21 @@ def main(args = None):
     doc = DOCS[0]
 
     formulas = get_formulas_from_xml(doc)
-    if ARGS.format == "drs" or ARGS.format == "drsbox":
-        results = [convert_to_drs(lexpr(formula)) for formula in formulas]
-    if ARGS.format == "fol":
-        results = [convert_to_drs(lexpr(formula)).fol() for formula in formulas]
-    if ARGS.format == "notrue":
-        results = [rename(remove_true(lexpr(formula))) for formula in formulas]
+    results  = []
     if ARGS.format == "tptp":
         inference = [lexpr(f) for f in formulas]
         results = convert_to_tptp_proof(inference)
+    else:
+        for formula in formulas:
+            try:
+                if ARGS.format == "drs" or ARGS.format == "drsbox":
+                    results.append(convert_to_drs(lexpr(formula)))
+                if ARGS.format == "fol":
+                    results.append(convert_to_drs(lexpr(formula)).fol())
+                if ARGS.format == "notrue":
+                    results.append(rename(remove_true(lexpr(formula))))
+            except:
+                results.append('conversion_error')
 
     for formula in results:
         formula_str = str(formula)
