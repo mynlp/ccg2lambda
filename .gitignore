@@ -1,0 +1,11 @@
+# setting
+*_location*.txt
+tactics_coq.txt
+parsers/
+
+#generated
+en_*
+ja_*
+*.pyc
+coqlib.vo
+coqlib.glob
