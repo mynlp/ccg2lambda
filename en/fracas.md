@@ -1,6 +1,6 @@
 # Running the RTE pipeline on FraCas.
 
-First, ensure that you have downloaded C&C parser and wrote its location in the file `en/candc_location.txt`.
+First, ensure that you have downloaded C&C parser and wrote its location in the file `en/candc_location.txt`. Also ensure that you have downloaded semtagger, wrote its location in the file `en/semtagger_location.txt` and trained a tagging model in case you are willing to use semantic templates with semantic tags.
 
 Second, you need to download the copy of [FraCaS provided by MacCartney and Manning (2007)](http://www-nlp.stanford.edu/~wcmac/downloads/fracas.xml):
 
@@ -16,7 +16,14 @@ git checkout tags/fracas
 ./en/emnlp2015exp.sh en/semantic_templates_en_emnlp2015.yaml fracas.xml
 ```
 
-This script will:
+If you are using semantic tags in your templates, you can similarly do:
+
+```bash
+git checkout semtag-fracas
+./en/emnlp2015exp.sh en/semantic_templates_en_semtags_emnlp2015.yaml fracas.xml
+```
+
+The scripts will:
 
 1. Extract the plain text corresponding to the hypotheses and conclusions of all fracas problems. These hypotheses and conclusions are stored in a different file for each fracas problem, under the directory `fracas.xml_plain`. The gold entailment judgment is stored in files `fracas.xml_plain/*.answer`.
 2. Parse the hypotheses and conclusions using C&C parser, and save them under the directory `fracas.xml_parsed`.

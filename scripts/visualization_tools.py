@@ -36,6 +36,7 @@ kSemanticsColor = 'Blue'
 kLexicalColor = 'Black'
 kEntityColor = 'Green'
 kPosColor = 'Green'
+kStagColor = 'Fuchsia'
 # The full list of colors is:
 # Black Green Silver Lime Gray Olive White Maroon Red Purple Fuchsia Yellow Navy
 # Blue Teal Aqua
@@ -97,6 +98,13 @@ def get_pos_mathml(pos):
            + pos \
            + "</mtext>\n"
 
+def get_stag_mathml(stag):
+    return "<mtext " \
+           + " fontsize='" + str(kOtherSize) + "'" \
+           + " color='" + kStagColor + "'>" \
+           + stag \
+           + "</mtext>\n"
+
 def get_semantics_mathml(semantics):
     return "<mtext " \
            + " fontsize='" + str(kOtherSize) + "'" \
@@ -115,6 +123,9 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
         surf_mathml = get_surface_mathml(surf)
         pos = token.get('pos')
         pos_mathml = get_pos_mathml(pos)
+        stag = token.get('stag')
+        if stag:
+            stag_mathml = get_stag_mathml(stag)
         entity = token.get('entity')
         if not entity == None:
             entity_mathml = get_entity_mathml(entity)
@@ -132,10 +143,18 @@ def convert_node_to_mathml(ccg_node, sem_tree, tokens):
             pos3_mathml = get_pos_mathml(pos3)
             pos_mathml = pos_mathml + "<mspace width='.1em'/>" + pos3_mathml
         if pos == '.':
-            mathml_str = get_fraction_mathml(category_mathml, surf_mathml, '0')
+            if stag:
+                mathml_stag_str = get_fraction_mathml(category_mathml, stag_mathml, '0')
+                mathml_str = get_fraction_mathml(mathml_stag_str, surf_mathml, '0')
+            else:
+                mathml_str = get_fraction_mathml(category_mathml, surf_mathml, '0')
         else:
             mathml_pos_str = get_fraction_mathml(category_mathml, pos_mathml, '0')
-            mathml_str = get_fraction_mathml(mathml_pos_str, surf_mathml, '0')
+            if stag:
+                  mathml_stag_str = get_fraction_mathml(mathml_pos_str, stag_mathml, '0')
+                  mathml_str = get_fraction_mathml(mathml_stag_str, surf_mathml, '0')
+            else:
+                  mathml_str = get_fraction_mathml(mathml_pos_str, surf_mathml, '0')
     elif len(ccg_node) == 1:
         mathml_str_child = convert_node_to_mathml(ccg_node[0], sem_tree, tokens)
         rule = ccg_node.get('rule')

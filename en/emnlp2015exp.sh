@@ -65,6 +65,12 @@ parser_cmd="${parser_dir}/bin/candc \
     --candc-printer xml \
     --input"
 
+# Set a variable with the location of the semtagger tool (if used)
+semtagger_dir=""
+if [ -f en/semtagger_location.txt ]; then
+  semtagger_dir=`cat en/semtagger_location.txt`
+fi
+
 # These variables contain the names of the directories where intermediate
 # results will be written.
 plain_dir=${dataset}"_plain"
@@ -120,6 +126,25 @@ for f in ${plain_dir}/*.tok; do
   if [ ! -e "${parsed_dir}/${base_filename/.tok/}.xml" ]; then
     python en/candc2transccg.py ${parsed_dir}/${base_filename}.candc.xml \
       > ${parsed_dir}/${base_filename/.tok/}.xml
+  fi
+  # inject semantic tag information when using semtagger
+  if [ -n "$semtagger_dir" ]; then
+    if [ -f "$semtagger_dir"/run.sh ]; then
+        cp ${parsed_dir}/${base_filename/.tok/}.xml \
+           ${parsed_dir}/${base_filename/.tok/}.xml.old
+        python scripts/xml2conll.py ${parsed_dir}/${base_filename/.tok/}.xml.old \
+               > ${parsed_dir}/${base_filename/.tok/}.off
+        . ${semtagger_dir}/run.sh --predict \
+          --input ${parsed_dir}/${base_filename/.tok/}.off \
+          --output ${parsed_dir}/${base_filename/.tok/}.sem
+        python scripts/xml_add_stag.py \
+               ${parsed_dir}/${base_filename/.tok/}.xml.old \
+               ${parsed_dir}/${base_filename/.tok/}.sem \
+               ${parsed_dir}/${base_filename/.tok/}.xml
+        rm -f ${parsed_dir}/${base_filename/.tok/}.xml.old
+        rm -f ${parsed_dir}/${base_filename/.tok/}.off
+        rm -f ${parsed_dir}/${base_filename/.tok/}.sem
+    fi
   fi
 done
 echo
