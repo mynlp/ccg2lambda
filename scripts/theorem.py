@@ -200,7 +200,8 @@ class Theorem(object):
         for theorem in self.variations:
             t_node = etree.Element('theorem')
             ts_node.append(t_node)
-            if theorem.failure_log is None:
+            failure_log = theorem.failure_log
+            if failure_log is None:
                 _, failure_log = theorem.prove_debug()
             t_node.set('inference_result', theorem.result_simple)
             t_node.set('is_negated', str(theorem.is_negated))
